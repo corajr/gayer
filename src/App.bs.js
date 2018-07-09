@@ -30,9 +30,7 @@ var defaultState_012 = /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/*
 
 var defaultState_014 = /* canvasRef */[/* None */0];
 
-var defaultState_015 = /* windowHeight */Curry._1(Canvas$Gayer.getWindowHeight, /* () */0);
-
-var defaultState_016 = /* timerId */[/* None */0];
+var defaultState_015 = /* timerId */[/* None */0];
 
 var defaultState = /* record */[
   /* xIndex */0,
@@ -50,8 +48,7 @@ var defaultState = /* record */[
   defaultState_012,
   /* filterBank : None */0,
   defaultState_014,
-  defaultState_015,
-  defaultState_016
+  defaultState_015
 ];
 
 function setCanvasRef(theRef, param) {
@@ -129,7 +126,7 @@ function make($staropt$star, $staropt$star$1, _) {
               }
               Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */16][0] = /* Some */[setInterval((function () {
+              self[/* state */1][/* timerId */15][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
                       }), 33)];
               return /* () */0;
@@ -162,14 +159,25 @@ function make($staropt$star, $staropt$star$1, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("div", {
+                          style: {
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-between"
+                          },
                           onClick: (function () {
                               return Curry._1(self[/* send */3], /* Tick */1);
                             })
-                        }, React.createElement("h1", undefined, "GAYER"), React.createElement("canvas", {
+                        }, React.createElement("div", {
+                              style: {
+                                margin: "10px"
+                              }
+                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("a", {
+                                  href: "https://github.com/corajr/gayer"
+                                }, "source")), React.createElement("canvas", {
                               ref: Curry._1(self[/* handle */0], setCanvasRef),
                               style: {
                                 transform: "scale(4)",
-                                transformOrigin: "top left"
+                                transformOrigin: "top right"
                               },
                               height: height.toString(),
                               width: width.toString()
@@ -205,8 +213,7 @@ function make($staropt$star, $staropt$star$1, _) {
                               /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                               /* filterBank */state[/* filterBank */13],
                               /* canvasRef */state[/* canvasRef */14],
-                              /* windowHeight */state[/* windowHeight */15],
-                              /* timerId */state[/* timerId */16]
+                              /* timerId */state[/* timerId */15]
                             ],
                             (function (self) {
                                 return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
@@ -239,8 +246,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
@@ -266,8 +272,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 2 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -286,8 +291,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -306,8 +310,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -327,8 +330,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank : Some */[action[0]],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
@@ -354,8 +356,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 6 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -374,8 +375,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* windowHeight */state[/* windowHeight */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   
                 }

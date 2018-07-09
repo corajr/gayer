@@ -25,7 +25,6 @@ type state = {
   allowedPitchClasses: PitchSet.t,
   filterBank: option(filterBank),
   canvasRef: ref(option(Dom.element)),
-  windowHeight: int,
   timerId: ref(option(Js.Global.intervalId)),
 };
 
@@ -45,7 +44,6 @@ let defaultState: state = {
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
   filterBank: None,
   canvasRef: ref(None),
-  windowHeight: getWindowHeight(),
   timerId: ref(None),
 };
 
@@ -242,8 +240,22 @@ let make = (~width=120, ~height=120, _children) => {
       self.state.filterBank,
     ),
   render: self =>
-    <div onClick=(_event => self.send(Tick))>
-      <h1> (ReasonReact.string("GAYER")) </h1>
+    <div
+      onClick=(_event => self.send(Tick))
+      style=(
+        ReactDOMRe.Style.make(
+          ~display="flex",
+          ~flexDirection="row",
+          ~justifyContent="space-between",
+          (),
+        )
+      )>
+      <div style=(ReactDOMRe.Style.make(~margin="10px", ()))>
+        <h1> (ReasonReact.string("GAYER")) </h1>
+        <a href="https://github.com/corajr/gayer">
+          (ReasonReact.string("source"))
+        </a>
+      </div>
       <canvas
         ref=(self.handle(setCanvasRef))
         width=(Js.Int.toString(width))
@@ -251,7 +263,7 @@ let make = (~width=120, ~height=120, _children) => {
         style=(
           ReactDOMRe.Style.make(
             ~transform="scale(4)",
-            ~transformOrigin="top left",
+            ~transformOrigin="top right",
             (),
           )
         )

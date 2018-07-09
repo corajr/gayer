@@ -155,7 +155,7 @@ compressor.connect(defaultAudioCtx.destination);
 function defaultFilterBank($staropt$star, $staropt$star$1, $staropt$star$2) {
   var ctx = $staropt$star ? $staropt$star[0] : defaultAudioCtx;
   var n = $staropt$star$1 ? $staropt$star$1[0] : 120;
-  var q = $staropt$star$2 ? $staropt$star$2[0] : 50.0;
+  var q = $staropt$star$2 ? $staropt$star$2[0] : 34.127;
   return makeFilterBank(ctx, n, q, frequencyFromNoteNumber);
 }
 
@@ -184,7 +184,7 @@ function updateFilterBank(filterBank, filterValues, inputGain, outputGain) {
 
 var midiNoteA440Hz = 69;
 
-var defaultQ = 50.0;
+var defaultQ = 34.127;
 
 var defaultCompressor = compressor;
 

@@ -135,8 +135,6 @@ function imageDataToFloatArray(imageData, channel) {
               }));
 }
 
-var getWindowHeight = function (){return window.innerHeight};
-
 export {
   int_of_channel ,
   string_of_compositeOperation ,
@@ -145,7 +143,6 @@ export {
   mapImageData ,
   imageDataToPixels ,
   imageDataToFloatArray ,
-  getWindowHeight ,
   
 }
 /* No side effect */

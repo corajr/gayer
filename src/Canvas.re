@@ -243,5 +243,3 @@ let imageDataToFloatArray: (imageData, channel) => array(float) =
       float_of_int(rawData[offset + channelOffset]) /. 255.0
     );
   };
-
-let getWindowHeight = [%bs.raw () => {|return window.innerHeight|}];
