@@ -62,7 +62,7 @@ function drawCanvas(canvasElement, width, height, state) {
 }
 
 function make($staropt$star, $staropt$star$1, _) {
-  var width = $staropt$star ? $staropt$star[0] : 640;
+  var width = $staropt$star ? $staropt$star[0] : 120;
   var height = $staropt$star$1 ? $staropt$star$1[0] : 120;
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -133,7 +133,7 @@ function make($staropt$star, $staropt$star$1, _) {
                       /* xIndex */0,
                       /* xDelta */1,
                       /* inputGain */1.0,
-                      /* outputGain */0.05,
+                      /* outputGain */0.1,
                       /* filterInput */Audio$Gayer.defaultNoise,
                       /* visualInput : None */0,
                       /* micInput : None */0,

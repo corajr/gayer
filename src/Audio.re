@@ -134,11 +134,11 @@ let frequencyFromNoteNumber: int => float =
 let defaultQ = 50.0;
 
 let defaultCompressorValues: compressorParamValues = {
-  threshold: (-50.0),
-  knee: 40.0,
-  ratio: 0.5,
+  threshold: (-18.0),
+  knee: 3.0,
+  ratio: 10.0,
   attack: 0.01,
-  release: 0.25,
+  release: 0.05,
 };
 
 let makeCompressor =

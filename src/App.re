@@ -97,13 +97,13 @@ external requestAnimationFrame :
   (Dom.window, domHighResTimeStamp => unit) => unit =
   "";
 
-let make = (~width=640, ~height=120, _children) => {
+let make = (~width=120, ~height=120, _children) => {
   ...component,
   initialState: () => {
     xIndex: 0,
     xDelta: 1,
     inputGain: 1.0,
-    outputGain: 0.05,
+    outputGain: 0.1,
     filterInput: defaultNoise,
     visualInput: None,
     micInput: None,

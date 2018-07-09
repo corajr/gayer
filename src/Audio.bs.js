@@ -13,11 +13,11 @@ function frequencyFromNoteNumber(note) {
 }
 
 var defaultCompressorValues = /* record */[
-  /* threshold */-50.0,
-  /* knee */40.0,
-  /* ratio */0.5,
+  /* threshold */-18.0,
+  /* knee */3.0,
+  /* ratio */10.0,
   /* attack */0.01,
-  /* release */0.25
+  /* release */0.05
 ];
 
 function makeCompressor(audioCtx, paramValues) {
