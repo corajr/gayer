@@ -131,7 +131,7 @@ let frequencyFromNoteNumber: int => float =
 /* In principle, Q should be 1 / (2^(1/12) - 1) = 16.817 */
 /* but a higher Q sounds better. */
 
-let defaultQ = 34.127;
+let defaultQ = 50.0;
 
 let defaultCompressorValues: compressorParamValues = {
   threshold: (-50.0),

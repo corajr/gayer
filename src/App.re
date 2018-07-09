@@ -16,6 +16,8 @@ type state = {
   outputGain: float,
   filterInput,
   visualInput,
+  micInput: option(audioNode),
+  cameraInput: option(canvasImageSource),
   shouldClear: bool,
   channelToRead: channel,
   alpha: float,
@@ -31,6 +33,8 @@ type action =
   | Tick
   | SetFilterInput(audioNode)
   | SetVisualInput(option(canvasImageSource))
+  | SetMicInput(audioNode)
+  | SetCameraInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
   | SetXIndex(int)
   | SetXDelta(int);
@@ -66,8 +70,6 @@ let drawCanvas = (canvasElement, width, height, state) => {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
-  Ctx.setFillStyle(ctx, "white");
-  Ctx.fillRect(ctx, 0, 0, width, height);
   Ctx.setGlobalAlpha(ctx, state.alpha);
   Ctx.setGlobalCompositeOperation(ctx, state.compositeOperation);
 
@@ -79,8 +81,10 @@ let drawCanvas = (canvasElement, width, height, state) => {
   let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
   let values = imageDataToFloatArray(slice, state.channelToRead);
 
-  Ctx.setStrokeStyle(ctx, "white");
-  Ctx.line(ctx, (state.xIndex, 0), (state.xIndex, height));
+  Ctx.setGlobalAlpha(ctx, 1.0);
+  Ctx.setGlobalCompositeOperation(ctx, SourceOver);
+  Ctx.setFillStyle(ctx, "white");
+  Ctx.fillRect(ctx, state.xIndex, 0, 1, height);
   values;
 };
 
@@ -102,9 +106,11 @@ let make = (~width=640, ~height=120, _children) => {
     outputGain: 0.05,
     filterInput: defaultNoise,
     visualInput: None,
+    micInput: None,
+    cameraInput: None,
     shouldClear: true,
     alpha: 1.0,
-    compositeOperation: DestinationOver,
+    compositeOperation: SourceOver,
     channelToRead: R,
     allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
     filterBank: None,
@@ -115,6 +121,9 @@ let make = (~width=640, ~height=120, _children) => {
     switch (action) {
     | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
     | SetXDelta(delta) => ReasonReact.Update({...state, xDelta: delta})
+    | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
+    | SetCameraInput(camera) =>
+      ReasonReact.Update({...state, cameraInput: camera})
     | SetVisualInput(visualInput) =>
       ReasonReact.Update({...state, visualInput})
     | SetFilterInput(filterInput) =>
@@ -191,6 +200,8 @@ let make = (~width=640, ~height=120, _children) => {
         |> Js.Promise.then_(stream => {
              let audio = createMediaStreamSource(defaultAudioCtx, stream);
              let video = attachVideoStream(stream);
+             self.send(SetMicInput(audio));
+             self.send(SetCameraInput(Some(video)));
              self.send(SetFilterInput(audio));
              self.send(SetVisualInput(Some(video)));
              Js.Promise.resolve();
@@ -202,13 +213,9 @@ let make = (~width=640, ~height=120, _children) => {
 
     self.send(SetFilterBank(filterBank));
     self.send(Clear);
-    let rec doSendTick = t => {
-      self.send(Tick);
-      requestAnimationFrame(window, doSendTick);
-    };
 
     self.state.timerId :=
-      Some(Js.Global.setInterval(() => self.send(Tick), 100));
+      Some(Js.Global.setInterval(() => self.send(Tick), 300));
   },
   didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput !== newSelf.state.filterInput) {

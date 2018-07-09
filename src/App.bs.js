@@ -12,7 +12,7 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */12][0] = (theRef == null) ? /* None */0 : [theRef];
+  param[/* state */1][/* canvasRef */14][0] = (theRef == null) ? /* None */0 : [theRef];
   return /* () */0;
 }
 
@@ -42,28 +42,22 @@ function clearCanvas(canvasElement, width, height) {
 }
 
 function drawCanvas(canvasElement, width, height, state) {
-  if (state[/* shouldClear */6]) {
+  if (state[/* shouldClear */8]) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
-  ctx.fillStyle = "white";
-  ctx.fillRect(0, 0, width, height);
-  ctx.globalAlpha = state[/* alpha */8];
-  Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, state[/* compositeOperation */9]);
+  ctx.globalAlpha = state[/* alpha */10];
+  Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, state[/* compositeOperation */11]);
   var match = state[/* visualInput */5];
   if (match) {
     ctx.drawImage(match[0], 0, 0, width, height);
   }
   var slice = ctx.getImageData(state[/* xIndex */0], 0, 1, height);
-  var values = Canvas$Gayer.imageDataToFloatArray(slice, state[/* channelToRead */7]);
-  ctx.strokeStyle = "white";
-  Canvas$Gayer.Ctx[/* line */4](ctx, /* tuple */[
-        state[/* xIndex */0],
-        0
-      ], /* tuple */[
-        state[/* xIndex */0],
-        height
-      ]);
+  var values = Canvas$Gayer.imageDataToFloatArray(slice, state[/* channelToRead */9]);
+  ctx.globalAlpha = 1.0;
+  Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, /* SourceOver */0);
+  ctx.fillStyle = "white";
+  ctx.fillRect(state[/* xIndex */0], 0, 1, height);
   return values;
 }
 
@@ -83,21 +77,18 @@ function make($staropt$star, $staropt$star$1, _) {
                 match[0].then((function (stream) {
                         var audio = Audio$Gayer.defaultAudioCtx.createMediaStreamSource(stream);
                         var video = Video$Gayer.attachVideoStream(stream);
+                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
+                        Curry._1(self[/* send */3], /* SetCameraInput */Block.__(3, [/* Some */[video]]));
                         Curry._1(self[/* send */3], /* SetFilterInput */Block.__(0, [audio]));
                         Curry._1(self[/* send */3], /* SetVisualInput */Block.__(1, [/* Some */[video]]));
                         return Promise.resolve(/* () */0);
                       }));
               }
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(2, [filterBank]));
+              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               Curry._1(self[/* send */3], /* Clear */0);
-              var doSendTick = function () {
-                Curry._1(self[/* send */3], /* Tick */1);
-                window.requestAnimationFrame(doSendTick);
-                return /* () */0;
-              };
-              self[/* state */1][/* timerId */13][0] = /* Some */[setInterval((function () {
+              self[/* state */1][/* timerId */15][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
-                      }), 100)];
+                      }), 300)];
               return /* () */0;
             }),
           /* didUpdate */(function (param) {
@@ -107,13 +98,13 @@ function make($staropt$star, $staropt$star$1, _) {
                 var partial_arg = oldSelf[/* state */1][/* filterInput */4];
                 maybeMapFilterBank((function (param) {
                         return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-                      }), oldSelf[/* state */1][/* filterBank */11]);
+                      }), oldSelf[/* state */1][/* filterBank */13]);
               }
-              if (oldSelf[/* state */1][/* filterBank */11] !== newSelf[/* state */1][/* filterBank */11]) {
+              if (oldSelf[/* state */1][/* filterBank */13] !== newSelf[/* state */1][/* filterBank */13]) {
                 var partial_arg$1 = oldSelf[/* state */1][/* filterInput */4];
                 return maybeMapFilterBank((function (param) {
                               return Audio$Gayer.disconnectFilterBank(partial_arg$1, param);
-                            }), oldSelf[/* state */1][/* filterBank */11]);
+                            }), oldSelf[/* state */1][/* filterBank */13]);
               } else {
                 return 0;
               }
@@ -122,7 +113,7 @@ function make($staropt$star, $staropt$star$1, _) {
               var partial_arg = self[/* state */1][/* filterInput */4];
               return maybeMapFilterBank((function (param) {
                             return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-                          }), self[/* state */1][/* filterBank */11]);
+                          }), self[/* state */1][/* filterBank */13]);
             }),
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
@@ -145,10 +136,12 @@ function make($staropt$star, $staropt$star$1, _) {
                       /* outputGain */0.05,
                       /* filterInput */Audio$Gayer.defaultNoise,
                       /* visualInput : None */0,
+                      /* micInput : None */0,
+                      /* cameraInput : None */0,
                       /* shouldClear */true,
                       /* channelToRead : R */0,
                       /* alpha */1.0,
-                      /* compositeOperation : DestinationOver */4,
+                      /* compositeOperation : SourceOver */0,
                       /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/* of_list */25], /* :: */[
                             0,
                             /* :: */[
@@ -175,7 +168,7 @@ function make($staropt$star, $staropt$star$1, _) {
               if (typeof action === "number") {
                 if (action === 0) {
                   return /* SideEffects */Block.__(1, [(function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */12], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
                                               return clearCanvas(canvas, width, height);
                                             }));
                               })]);
@@ -188,22 +181,24 @@ function make($staropt$star, $staropt$star$1, _) {
                               /* outputGain */state[/* outputGain */3],
                               /* filterInput */state[/* filterInput */4],
                               /* visualInput */state[/* visualInput */5],
-                              /* shouldClear */state[/* shouldClear */6],
-                              /* channelToRead */state[/* channelToRead */7],
-                              /* alpha */state[/* alpha */8],
-                              /* compositeOperation */state[/* compositeOperation */9],
-                              /* allowedPitchClasses */state[/* allowedPitchClasses */10],
-                              /* filterBank */state[/* filterBank */11],
-                              /* canvasRef */state[/* canvasRef */12],
-                              /* timerId */state[/* timerId */13]
+                              /* micInput */state[/* micInput */6],
+                              /* cameraInput */state[/* cameraInput */7],
+                              /* shouldClear */state[/* shouldClear */8],
+                              /* channelToRead */state[/* channelToRead */9],
+                              /* alpha */state[/* alpha */10],
+                              /* compositeOperation */state[/* compositeOperation */11],
+                              /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                              /* filterBank */state[/* filterBank */13],
+                              /* canvasRef */state[/* canvasRef */14],
+                              /* timerId */state[/* timerId */15]
                             ],
                             (function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */12], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
                                               var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1]);
-                                              var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* allowedPitchClasses */10], rawFilterValues);
+                                              var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* allowedPitchClasses */12], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
                                                             return Audio$Gayer.updateFilterBank(filterBank, filterValues, self[/* state */1][/* inputGain */2], self[/* state */1][/* outputGain */3]);
-                                                          }), self[/* state */1][/* filterBank */11]);
+                                                          }), self[/* state */1][/* filterBank */13]);
                                             }));
                               })
                           ]);
@@ -219,20 +214,22 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* outputGain */state[/* outputGain */3],
                                   /* filterInput */action[0],
                                   /* visualInput */state[/* visualInput */5],
-                                  /* shouldClear */state[/* shouldClear */6],
-                                  /* channelToRead */state[/* channelToRead */7],
-                                  /* alpha */state[/* alpha */8],
-                                  /* compositeOperation */state[/* compositeOperation */9],
-                                  /* allowedPitchClasses */state[/* allowedPitchClasses */10],
-                                  /* filterBank */state[/* filterBank */11],
-                                  /* canvasRef */state[/* canvasRef */12],
-                                  /* timerId */state[/* timerId */13]
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
                                     return maybeMapFilterBank((function (param) {
                                                   return Audio$Gayer.connectFilterBank(partial_arg, param);
-                                                }), self[/* state */1][/* filterBank */11]);
+                                                }), self[/* state */1][/* filterBank */13]);
                                   })
                               ]);
                   case 1 : 
@@ -243,16 +240,56 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* outputGain */state[/* outputGain */3],
                                   /* filterInput */state[/* filterInput */4],
                                   /* visualInput */action[0],
-                                  /* shouldClear */state[/* shouldClear */6],
-                                  /* channelToRead */state[/* channelToRead */7],
-                                  /* alpha */state[/* alpha */8],
-                                  /* compositeOperation */state[/* compositeOperation */9],
-                                  /* allowedPitchClasses */state[/* allowedPitchClasses */10],
-                                  /* filterBank */state[/* filterBank */11],
-                                  /* canvasRef */state[/* canvasRef */12],
-                                  /* timerId */state[/* timerId */13]
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 2 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* xDelta */state[/* xDelta */1],
+                                  /* inputGain */state[/* inputGain */2],
+                                  /* outputGain */state[/* outputGain */3],
+                                  /* filterInput */state[/* filterInput */4],
+                                  /* visualInput */state[/* visualInput */5],
+                                  /* micInput : Some */[action[0]],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
+                                ]]);
+                  case 3 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* xDelta */state[/* xDelta */1],
+                                  /* inputGain */state[/* inputGain */2],
+                                  /* outputGain */state[/* outputGain */3],
+                                  /* filterInput */state[/* filterInput */4],
+                                  /* visualInput */state[/* visualInput */5],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */action[0],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
+                                ]]);
+                  case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* xIndex */state[/* xIndex */0],
@@ -261,23 +298,25 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* outputGain */state[/* outputGain */3],
                                   /* filterInput */state[/* filterInput */4],
                                   /* visualInput */state[/* visualInput */5],
-                                  /* shouldClear */state[/* shouldClear */6],
-                                  /* channelToRead */state[/* channelToRead */7],
-                                  /* alpha */state[/* alpha */8],
-                                  /* compositeOperation */state[/* compositeOperation */9],
-                                  /* allowedPitchClasses */state[/* allowedPitchClasses */10],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank : Some */[action[0]],
-                                  /* canvasRef */state[/* canvasRef */12],
-                                  /* timerId */state[/* timerId */13]
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
                                     return maybeMapFilterBank((function (param) {
                                                   return Audio$Gayer.connectFilterBank(partial_arg, param);
-                                                }), self[/* state */1][/* filterBank */11]);
+                                                }), self[/* state */1][/* filterBank */13]);
                                   })
                               ]);
-                  case 3 : 
+                  case 5 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */Caml_int32.mod_(action[0], width),
                                   /* xDelta */state[/* xDelta */1],
@@ -285,16 +324,18 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* outputGain */state[/* outputGain */3],
                                   /* filterInput */state[/* filterInput */4],
                                   /* visualInput */state[/* visualInput */5],
-                                  /* shouldClear */state[/* shouldClear */6],
-                                  /* channelToRead */state[/* channelToRead */7],
-                                  /* alpha */state[/* alpha */8],
-                                  /* compositeOperation */state[/* compositeOperation */9],
-                                  /* allowedPitchClasses */state[/* allowedPitchClasses */10],
-                                  /* filterBank */state[/* filterBank */11],
-                                  /* canvasRef */state[/* canvasRef */12],
-                                  /* timerId */state[/* timerId */13]
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
-                  case 4 : 
+                  case 6 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* xDelta */action[0],
@@ -302,14 +343,16 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* outputGain */state[/* outputGain */3],
                                   /* filterInput */state[/* filterInput */4],
                                   /* visualInput */state[/* visualInput */5],
-                                  /* shouldClear */state[/* shouldClear */6],
-                                  /* channelToRead */state[/* channelToRead */7],
-                                  /* alpha */state[/* alpha */8],
-                                  /* compositeOperation */state[/* compositeOperation */9],
-                                  /* allowedPitchClasses */state[/* allowedPitchClasses */10],
-                                  /* filterBank */state[/* filterBank */11],
-                                  /* canvasRef */state[/* canvasRef */12],
-                                  /* timerId */state[/* timerId */13]
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* shouldClear */state[/* shouldClear */8],
+                                  /* channelToRead */state[/* channelToRead */9],
+                                  /* alpha */state[/* alpha */10],
+                                  /* compositeOperation */state[/* compositeOperation */11],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */12],
+                                  /* filterBank */state[/* filterBank */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   
                 }
