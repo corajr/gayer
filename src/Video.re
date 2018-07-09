@@ -4,7 +4,7 @@ open UserMedia;
 let attachVideoStream = [%bs.raw
   stream => {|
   var video = document.getElementsByTagName("video")[0];
-  video.src = window.URL.createObjectURL(stream);
+  video.srcObject = stream;
   return video;
 |}
 ];

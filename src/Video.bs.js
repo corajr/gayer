@@ -4,7 +4,7 @@ import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 var attachVideoStream = function (stream){
   var video = document.getElementsByTagName("video")[0];
-  video.src = window.URL.createObjectURL(stream);
+  video.srcObject = stream;
   return video;
 };
 

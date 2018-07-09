@@ -2,6 +2,7 @@ open Audio;
 open Music;
 
 open Canvas;
+open UserMedia;
 open Video;
 
 type filterInput = audioNode;
@@ -15,7 +16,10 @@ type state = {
   outputGain: float,
   filterInput,
   visualInput,
+  shouldClear: bool,
   channelToRead: channel,
+  alpha: float,
+  compositeOperation,
   allowedPitchClasses: PitchSet.t,
   filterBank: option(filterBank),
   canvasRef: ref(option(Dom.element)),
@@ -57,24 +61,37 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
-let drawCanvas =
-    (canvasElement, width, height, xIndex, channelToRead, maybeVisualInput) => {
+let drawCanvas = (canvasElement, width, height, state) => {
+  if (state.shouldClear) {
+    clearCanvas(canvasElement, width, height);
+  };
   let ctx = getContext(canvasElement);
-  Ctx.setFillStyle(ctx, "black");
+  Ctx.setFillStyle(ctx, "white");
   Ctx.fillRect(ctx, 0, 0, width, height);
+  Ctx.setGlobalAlpha(ctx, state.alpha);
+  Ctx.setGlobalCompositeOperation(ctx, state.compositeOperation);
 
-  switch (maybeVisualInput) {
+  switch (state.visualInput) {
   | None => ()
   | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
   };
 
-  let slice = Ctx.getImageData(ctx, xIndex, 0, 1, height);
-  let values = imageDataToFloatArray(slice, channelToRead);
+  let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
+  let values = imageDataToFloatArray(slice, state.channelToRead);
 
   Ctx.setStrokeStyle(ctx, "white");
-  Ctx.line(ctx, (xIndex, 0), (xIndex, height));
+  Ctx.line(ctx, (state.xIndex, 0), (state.xIndex, height));
   values;
 };
+
+type domHighResTimeStamp;
+
+[@bs.val] external window : Dom.window = "window";
+
+[@bs.send]
+external requestAnimationFrame :
+  (Dom.window, domHighResTimeStamp => unit) => unit =
+  "";
 
 let make = (~width=640, ~height=120, _children) => {
   ...component,
@@ -85,7 +102,10 @@ let make = (~width=640, ~height=120, _children) => {
     outputGain: 0.05,
     filterInput: defaultNoise,
     visualInput: None,
-    channelToRead: A,
+    shouldClear: true,
+    alpha: 1.0,
+    compositeOperation: DestinationOver,
+    channelToRead: R,
     allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
     filterBank: None,
     canvasRef: ref(None),
@@ -137,14 +157,7 @@ let make = (~width=640, ~height=120, _children) => {
               self.state.canvasRef,
               canvas => {
                 let rawFilterValues =
-                  drawCanvas(
-                    canvas,
-                    width,
-                    height,
-                    self.state.xIndex,
-                    self.state.channelToRead,
-                    self.state.visualInput,
-                  );
+                  drawCanvas(canvas, width, height, self.state);
                 let filterValues =
                   filterByPitchSet(
                     ~pitchClasses=self.state.allowedPitchClasses,
@@ -169,25 +182,33 @@ let make = (~width=640, ~height=120, _children) => {
     let filterBank =
       defaultFilterBank(~ctx=defaultAudioCtx, ~n=height, ~q=defaultQ);
     connectFilterBank(self.state.filterInput, filterBank);
-    turnOnVideo()
-    |> Js.Promise.then_(video => {
-         self.send(SetVisualInput(video));
-         Js.Promise.resolve();
-       })
+
+    (
+      switch (getAudioVisualStream()) {
+      | None => ()
+      | Some(streamPromise) =>
+        streamPromise
+        |> Js.Promise.then_(stream => {
+             let audio = createMediaStreamSource(defaultAudioCtx, stream);
+             let video = attachVideoStream(stream);
+             self.send(SetFilterInput(audio));
+             self.send(SetVisualInput(Some(video)));
+             Js.Promise.resolve();
+           })
+        |> ignore
+      }
+    )
     |> ignore;
+
     self.send(SetFilterBank(filterBank));
     self.send(Clear);
+    let rec doSendTick = t => {
+      self.send(Tick);
+      requestAnimationFrame(window, doSendTick);
+    };
+
     self.state.timerId :=
-      Some(Js.Global.setInterval(() => self.send(Tick), 300));
-    getAudioSource(defaultAudioCtx)
-    |> Js.Promise.then_(maybeSource => {
-         switch (maybeSource) {
-         | None => ()
-         | Some(source) => self.send(SetFilterInput(source))
-         };
-         Js.Promise.resolve();
-       })
-    |> ignore;
+      Some(Js.Global.setInterval(() => self.send(Tick), 100));
   },
   didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput !== newSelf.state.filterInput) {
