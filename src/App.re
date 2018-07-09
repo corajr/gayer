@@ -25,7 +25,28 @@ type state = {
   allowedPitchClasses: PitchSet.t,
   filterBank: option(filterBank),
   canvasRef: ref(option(Dom.element)),
+  windowHeight: int,
   timerId: ref(option(Js.Global.intervalId)),
+};
+
+let defaultState: state = {
+  xIndex: 0,
+  xDelta: 1,
+  inputGain: 1.0,
+  outputGain: 0.1,
+  filterInput: defaultNoise,
+  visualInput: None,
+  micInput: None,
+  cameraInput: None,
+  shouldClear: true,
+  alpha: 1.0,
+  compositeOperation: SourceOver,
+  channelToRead: R,
+  allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
+  filterBank: None,
+  canvasRef: ref(None),
+  windowHeight: getWindowHeight(),
+  timerId: ref(None),
 };
 
 type action =
@@ -99,24 +120,7 @@ external requestAnimationFrame :
 
 let make = (~width=120, ~height=120, _children) => {
   ...component,
-  initialState: () => {
-    xIndex: 0,
-    xDelta: 1,
-    inputGain: 1.0,
-    outputGain: 0.1,
-    filterInput: defaultNoise,
-    visualInput: None,
-    micInput: None,
-    cameraInput: None,
-    shouldClear: true,
-    alpha: 1.0,
-    compositeOperation: SourceOver,
-    channelToRead: R,
-    allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
-    filterBank: None,
-    canvasRef: ref(None),
-    timerId: ref(None),
-  },
+  initialState: () => defaultState,
   reducer: (action, state) =>
     switch (action) {
     | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
@@ -148,15 +152,6 @@ let make = (~width=120, ~height=120, _children) => {
             )
         ),
       )
-    | Clear =>
-      ReasonReact.SideEffects(
-        (
-          self =>
-            maybeUpdateCanvas(self.state.canvasRef, canvas =>
-              clearCanvas(canvas, width, height)
-            )
-        ),
-      )
     | Tick =>
       ReasonReact.UpdateWithSideEffects(
         {...state, xIndex: (state.xIndex + state.xDelta) mod width},
@@ -183,6 +178,15 @@ let make = (~width=120, ~height=120, _children) => {
                   self.state.filterBank,
                 );
               },
+            )
+        ),
+      )
+    | Clear =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            maybeUpdateCanvas(self.state.canvasRef, canvas =>
+              clearCanvas(canvas, width, height)
             )
         ),
       )

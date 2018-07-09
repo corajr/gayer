@@ -198,6 +198,8 @@ module Ctx = {
   external getImageData : (ctx, dim, dim, dim, dim) => imageData = "";
 };
 
+external getCanvasAsSource : canvasElement => canvasImageSource = "%identity";
+
 let simpleDrawImage =
     (
       ~ctx: ctx,
@@ -241,3 +243,5 @@ let imageDataToFloatArray: (imageData, channel) => array(float) =
       float_of_int(rawData[offset + channelOffset]) /. 255.0
     );
   };
+
+let getWindowHeight = [%bs.raw () => {|return window.innerHeight|}];

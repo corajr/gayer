@@ -11,6 +11,49 @@ import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
+var defaultState_012 = /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        2,
+        /* :: */[
+          5,
+          /* :: */[
+            7,
+            /* :: */[
+              9,
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var defaultState_014 = /* canvasRef */[/* None */0];
+
+var defaultState_015 = /* windowHeight */Curry._1(Canvas$Gayer.getWindowHeight, /* () */0);
+
+var defaultState_016 = /* timerId */[/* None */0];
+
+var defaultState = /* record */[
+  /* xIndex */0,
+  /* xDelta */1,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* filterInput */Audio$Gayer.defaultNoise,
+  /* visualInput : None */0,
+  /* micInput : None */0,
+  /* cameraInput : None */0,
+  /* shouldClear */true,
+  /* channelToRead : R */0,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  defaultState_012,
+  /* filterBank : None */0,
+  defaultState_014,
+  defaultState_015,
+  defaultState_016
+];
+
 function setCanvasRef(theRef, param) {
   param[/* state */1][/* canvasRef */14][0] = (theRef == null) ? /* None */0 : [theRef];
   return /* () */0;
@@ -86,7 +129,7 @@ function make($staropt$star, $staropt$star$1, _) {
               }
               Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */15][0] = /* Some */[setInterval((function () {
+              self[/* state */1][/* timerId */16][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
                       }), 33)];
               return /* () */0;
@@ -129,39 +172,7 @@ function make($staropt$star, $staropt$star$1, _) {
                             }));
             }),
           /* initialState */(function () {
-              return /* record */[
-                      /* xIndex */0,
-                      /* xDelta */1,
-                      /* inputGain */1.0,
-                      /* outputGain */0.1,
-                      /* filterInput */Audio$Gayer.defaultNoise,
-                      /* visualInput : None */0,
-                      /* micInput : None */0,
-                      /* cameraInput : None */0,
-                      /* shouldClear */true,
-                      /* channelToRead : R */0,
-                      /* alpha */1.0,
-                      /* compositeOperation : SourceOver */0,
-                      /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/* of_list */25], /* :: */[
-                            0,
-                            /* :: */[
-                              2,
-                              /* :: */[
-                                5,
-                                /* :: */[
-                                  7,
-                                  /* :: */[
-                                    9,
-                                    /* [] */0
-                                  ]
-                                ]
-                              ]
-                            ]
-                          ]),
-                      /* filterBank : None */0,
-                      /* canvasRef */[/* None */0],
-                      /* timerId */[/* None */0]
-                    ];
+              return defaultState;
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
@@ -190,7 +201,8 @@ function make($staropt$star, $staropt$star$1, _) {
                               /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                               /* filterBank */state[/* filterBank */13],
                               /* canvasRef */state[/* canvasRef */14],
-                              /* timerId */state[/* timerId */15]
+                              /* windowHeight */state[/* windowHeight */15],
+                              /* timerId */state[/* timerId */16]
                             ],
                             (function (self) {
                                 return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
@@ -223,7 +235,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
@@ -249,7 +262,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 2 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -268,7 +282,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -287,7 +302,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -307,7 +323,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank : Some */[action[0]],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ],
                                 (function (self) {
                                     var partial_arg = self[/* state */1][/* filterInput */4];
@@ -333,7 +350,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 6 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -352,7 +370,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */12],
                                   /* filterBank */state[/* filterBank */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* windowHeight */state[/* windowHeight */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   
                 }
@@ -364,6 +383,7 @@ function make($staropt$star, $staropt$star$1, _) {
 }
 
 export {
+  defaultState ,
   setCanvasRef ,
   component ,
   maybeUpdateCanvas ,
@@ -373,4 +393,4 @@ export {
   make ,
   
 }
-/* component Not a pure module */
+/* defaultState Not a pure module */
