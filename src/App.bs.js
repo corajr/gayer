@@ -7,6 +7,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
 function setCanvasRef(theRef, param) {
@@ -39,10 +40,13 @@ function clearCanvas(canvasElement, width, height) {
   return /* () */0;
 }
 
-function drawCanvas(canvasElement, width, height, xIndex, channelToRead) {
+function drawCanvas(canvasElement, width, height, xIndex, channelToRead, maybeVisualInput) {
   var ctx = canvasElement.getContext("2d");
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, width, height);
+  if (maybeVisualInput) {
+    ctx.drawImage(maybeVisualInput[0], 0, 0, width, height);
+  }
   var slice = ctx.getImageData(xIndex, 0, 1, height);
   var values = Canvas$Gayer.imageDataToFloatArray(slice, channelToRead);
   ctx.strokeStyle = "white";
@@ -67,7 +71,11 @@ function make($staropt$star, $staropt$star$1, _) {
           /* didMount */(function (self) {
               var filterBank = Audio$Gayer.defaultFilterBank(/* Some */[Audio$Gayer.defaultAudioCtx], /* Some */[height], /* Some */[Audio$Gayer.defaultQ]);
               Audio$Gayer.connectFilterBank(self[/* state */1][/* filterInput */4], filterBank);
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(1, [filterBank]));
+              Video$Gayer.turnOnVideo(/* () */0).then((function (video) {
+                      Curry._1(self[/* send */3], /* SetVisualInput */Block.__(1, [video]));
+                      return Promise.resolve(/* () */0);
+                    }));
+              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(2, [filterBank]));
               Curry._1(self[/* send */3], /* Clear */0);
               self[/* state */1][/* timerId */10][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
@@ -124,7 +132,7 @@ function make($staropt$star, $staropt$star$1, _) {
                       /* inputGain */1.0,
                       /* outputGain */0.05,
                       /* filterInput */Audio$Gayer.defaultNoise,
-                      /* visualInput : Camera */0,
+                      /* visualInput : None */0,
                       /* channelToRead : A */3,
                       /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/* of_list */25], /* :: */[
                             0,
@@ -173,7 +181,7 @@ function make($staropt$star, $staropt$star$1, _) {
                             ],
                             (function (self) {
                                 return maybeUpdateCanvas(self[/* state */1][/* canvasRef */9], (function (canvas) {
-                                              var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1][/* xIndex */0], self[/* state */1][/* channelToRead */6]);
+                                              var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1][/* xIndex */0], self[/* state */1][/* channelToRead */6], self[/* state */1][/* visualInput */5]);
                                               var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* allowedPitchClasses */7], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
                                                             return Audio$Gayer.updateFilterBank(filterBank, filterValues, self[/* state */1][/* inputGain */2], self[/* state */1][/* outputGain */3]);
@@ -207,6 +215,20 @@ function make($staropt$star, $staropt$star$1, _) {
                                   })
                               ]);
                   case 1 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* xDelta */state[/* xDelta */1],
+                                  /* inputGain */state[/* inputGain */2],
+                                  /* outputGain */state[/* outputGain */3],
+                                  /* filterInput */state[/* filterInput */4],
+                                  /* visualInput */action[0],
+                                  /* channelToRead */state[/* channelToRead */6],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* canvasRef */state[/* canvasRef */9],
+                                  /* timerId */state[/* timerId */10]
+                                ]]);
+                  case 2 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* xIndex */state[/* xIndex */0],
@@ -228,7 +250,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                                 }), self[/* state */1][/* filterBank */8]);
                                   })
                               ]);
-                  case 2 : 
+                  case 3 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */Caml_int32.mod_(action[0], width),
                                   /* xDelta */state[/* xDelta */1],
@@ -242,7 +264,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* canvasRef */state[/* canvasRef */9],
                                   /* timerId */state[/* timerId */10]
                                 ]]);
-                  case 3 : 
+                  case 4 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* xDelta */action[0],

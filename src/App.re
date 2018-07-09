@@ -1,12 +1,12 @@
-open Canvas;
 open Audio;
 open Music;
 
+open Canvas;
+open Video;
+
 type filterInput = audioNode;
 
-type visualInput =
-  | Camera
-  | NoInput;
+type visualInput = option(canvasImageSource);
 
 type state = {
   xIndex: int,
@@ -26,6 +26,7 @@ type action =
   | Clear
   | Tick
   | SetFilterInput(audioNode)
+  | SetVisualInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
   | SetXIndex(int)
   | SetXDelta(int);
@@ -56,10 +57,16 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
-let drawCanvas = (canvasElement, width, height, xIndex, channelToRead) => {
+let drawCanvas =
+    (canvasElement, width, height, xIndex, channelToRead, maybeVisualInput) => {
   let ctx = getContext(canvasElement);
   Ctx.setFillStyle(ctx, "black");
   Ctx.fillRect(ctx, 0, 0, width, height);
+
+  switch (maybeVisualInput) {
+  | None => ()
+  | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+  };
 
   let slice = Ctx.getImageData(ctx, xIndex, 0, 1, height);
   let values = imageDataToFloatArray(slice, channelToRead);
@@ -77,7 +84,7 @@ let make = (~width=640, ~height=120, _children) => {
     inputGain: 1.0,
     outputGain: 0.05,
     filterInput: defaultNoise,
-    visualInput: Camera,
+    visualInput: None,
     channelToRead: A,
     allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
     filterBank: None,
@@ -88,6 +95,8 @@ let make = (~width=640, ~height=120, _children) => {
     switch (action) {
     | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
     | SetXDelta(delta) => ReasonReact.Update({...state, xDelta: delta})
+    | SetVisualInput(visualInput) =>
+      ReasonReact.Update({...state, visualInput})
     | SetFilterInput(filterInput) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput},
@@ -134,6 +143,7 @@ let make = (~width=640, ~height=120, _children) => {
                     height,
                     self.state.xIndex,
                     self.state.channelToRead,
+                    self.state.visualInput,
                   );
                 let filterValues =
                   filterByPitchSet(
@@ -159,6 +169,12 @@ let make = (~width=640, ~height=120, _children) => {
     let filterBank =
       defaultFilterBank(~ctx=defaultAudioCtx, ~n=height, ~q=defaultQ);
     connectFilterBank(self.state.filterInput, filterBank);
+    turnOnVideo()
+    |> Js.Promise.then_(video => {
+         self.send(SetVisualInput(video));
+         Js.Promise.resolve();
+       })
+    |> ignore;
     self.send(SetFilterBank(filterBank));
     self.send(Clear);
     self.state.timerId :=

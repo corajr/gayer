@@ -18,8 +18,18 @@ let _getStream: constraints => Js.Nullable.t(Js.Promise.t(mediaStream)) = [%bs.r
      |}
 ];
 
+let getAudioVisualStream: unit => option(Js.Promise.t(mediaStream)) =
+  () =>
+    Js.Nullable.toOption(_getStream(constraints(~audio=true, ~video=true)));
+
 let getAudioStream: unit => option(Js.Promise.t(mediaStream)) =
   () =>
     Js.Nullable.toOption(
       _getStream(constraints(~audio=true, ~video=false)),
+    );
+
+let getVideoStream: unit => option(Js.Promise.t(mediaStream)) =
+  () =>
+    Js.Nullable.toOption(
+      _getStream(constraints(~audio=false, ~video=true)),
     );

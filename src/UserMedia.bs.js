@@ -12,6 +12,13 @@ var _getStream = function (constraints){
      }
      };
 
+function getAudioVisualStream() {
+  return Js_primitive.null_undefined_to_opt(_getStream({
+                  audio: true,
+                  video: true
+                }));
+}
+
 function getAudioStream() {
   return Js_primitive.null_undefined_to_opt(_getStream({
                   audio: true,
@@ -19,9 +26,18 @@ function getAudioStream() {
                 }));
 }
 
+function getVideoStream() {
+  return Js_primitive.null_undefined_to_opt(_getStream({
+                  audio: false,
+                  video: true
+                }));
+}
+
 export {
   _getStream ,
+  getAudioVisualStream ,
   getAudioStream ,
+  getVideoStream ,
   
 }
 /* No side effect */
