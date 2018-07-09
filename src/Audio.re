@@ -344,9 +344,10 @@ let updateFilterBank =
   let currentTime = currentTime(filterBank.audioCtx);
   setValueAtTime(filterBank.input |. gain_, inputGain, currentTime);
   setValueAtTime(filterBank.output |. gain_, outputGain, currentTime);
-  for (i in 0 to Array.length(filterValues) - 1) {
+  let n = Array.length(filterValues);
+  for (i in 0 to n - 1) {
     setValueAtTime(
-      filterBank.gains[i] |. gain_,
+      filterBank.gains[n - i - 1] |. gain_,
       filterValues[i],
       currentTime,
     );

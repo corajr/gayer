@@ -215,7 +215,7 @@ let make = (~width=640, ~height=120, _children) => {
     self.send(Clear);
 
     self.state.timerId :=
-      Some(Js.Global.setInterval(() => self.send(Tick), 40));
+      Some(Js.Global.setInterval(() => self.send(Tick), 33));
   },
   didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput !== newSelf.state.filterInput) {

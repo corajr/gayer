@@ -175,8 +175,9 @@ function updateFilterBank(filterBank, filterValues, inputGain, outputGain) {
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
-  for(var i = 0 ,i_finish = filterValues.length - 1 | 0; i <= i_finish; ++i){
-    Caml_array.caml_array_get(filterBank[/* gains */2], i).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
+  var n = filterValues.length;
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    Caml_array.caml_array_get(filterBank[/* gains */2], (n - i | 0) - 1 | 0).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
   }
   return /* () */0;
 }
