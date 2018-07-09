@@ -88,7 +88,7 @@ function make($staropt$star, $staropt$star$1, _) {
               Curry._1(self[/* send */3], /* Clear */0);
               self[/* state */1][/* timerId */15][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
-                      }), 300)];
+                      }), 40)];
               return /* () */0;
             }),
           /* didUpdate */(function (param) {
