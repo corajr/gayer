@@ -248,6 +248,13 @@ let make = (~width=120, ~height=120, _children) => {
         ref=(self.handle(setCanvasRef))
         width=(Js.Int.toString(width))
         height=(Js.Int.toString(height))
+        style=(
+          ReactDOMRe.Style.make(
+            ~transform="scale(4)",
+            ~transformOrigin="top left",
+            (),
+          )
+        )
       />
     </div>,
 };

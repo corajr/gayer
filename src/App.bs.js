@@ -167,6 +167,10 @@ function make($staropt$star, $staropt$star$1, _) {
                             })
                         }, React.createElement("h1", undefined, "GAYER"), React.createElement("canvas", {
                               ref: Curry._1(self[/* handle */0], setCanvasRef),
+                              style: {
+                                transform: "scale(4)",
+                                transformOrigin: "top left"
+                              },
                               height: height.toString(),
                               width: width.toString()
                             }));
