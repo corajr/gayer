@@ -14,6 +14,7 @@ type state = {
   xDelta: int,
   inputGain: float,
   outputGain: float,
+  q: float,
   filterInput,
   visualInput,
   micInput: option(audioNode),
@@ -33,6 +34,7 @@ let defaultState: state = {
   xDelta: 1,
   inputGain: 1.0,
   outputGain: 0.1,
+  q: defaultQ,
   filterInput: defaultNoise,
   visualInput: None,
   micInput: None,
@@ -172,6 +174,7 @@ let make = (~width=120, ~height=120, _children) => {
                       ~filterValues,
                       ~inputGain=self.state.inputGain,
                       ~outputGain=self.state.outputGain,
+                      ~q=self.state.q,
                     ),
                   self.state.filterBank,
                 );

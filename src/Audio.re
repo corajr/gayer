@@ -340,6 +340,7 @@ let updateFilterBank =
       ~filterValues: array(float),
       ~inputGain: float,
       ~outputGain: float,
+      ~q=defaultQ,
     ) => {
   let currentTime = currentTime(filterBank.audioCtx);
   setValueAtTime(filterBank.input |. gain_, inputGain, currentTime);
@@ -351,5 +352,7 @@ let updateFilterBank =
       filterValues[i],
       currentTime,
     );
+
+    setValueAtTime(filterBank.filters[i] |. qualityFactor, q, currentTime);
   };
 };

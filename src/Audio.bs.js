@@ -171,13 +171,15 @@ function disconnectFilterBank(noise, filterBank) {
   return /* () */0;
 }
 
-function updateFilterBank(filterBank, filterValues, inputGain, outputGain) {
+function updateFilterBank(filterBank, filterValues, inputGain, outputGain, $staropt$star) {
+  var q = $staropt$star ? $staropt$star[0] : 34.127;
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
   var n = filterValues.length;
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     Caml_array.caml_array_get(filterBank[/* gains */2], (n - i | 0) - 1 | 0).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
+    Caml_array.caml_array_get(filterBank[/* filters */1], i).Q.setValueAtTime(q, currentTime);
   }
   return /* () */0;
 }
