@@ -30,7 +30,7 @@ let createShowCQTBar: cqtBarParams => t =
     );
 
 [@bs.send]
-external getInputArray : (t, int) => float32array = "get_input_array";
+external getInputArray : (t, int) => float32Array = "get_input_array";
 
 [@bs.send]
 external getOutputArray : t => uint8ClampedArray = "get_output_array";

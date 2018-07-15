@@ -57,6 +57,20 @@ var pinkNoise = function (audioCtx){
 
 var defaultNoise = pinkNoise(defaultAudioCtx);
 
+function makeAnalyser($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4) {
+  var audioContext = $staropt$star ? $staropt$star[0] : defaultAudioCtx;
+  var fftSize = $staropt$star$1 ? $staropt$star$1[0] : 2048;
+  var minDecibels = $staropt$star$2 ? $staropt$star$2[0] : -100.0;
+  var maxDecibels = $staropt$star$3 ? $staropt$star$3[0] : -30.0;
+  var smoothingTimeConstant = $staropt$star$4 ? $staropt$star$4[0] : 0.8;
+  var analyser = audioContext.createAnalyser();
+  analyser.fftSize = fftSize;
+  analyser.minDecibels = minDecibels;
+  analyser.maxDecibels = maxDecibels;
+  analyser.smoothingTimeConstant = smoothingTimeConstant;
+  return analyser;
+}
+
 function string_of_filterType(filterType) {
   switch (filterType.tag | 0) {
     case 0 : 
@@ -81,7 +95,7 @@ function string_of_filterType(filterType) {
 
 function makeFilter(audioCtx, filterType) {
   var filter = audioCtx.createBiquadFilter();
-  ((filter.type = 'bandpass'));
+  filter.type = string_of_filterType(filterType);
   var t = audioCtx.currentTime;
   var exit = 0;
   switch (filterType.tag | 0) {
@@ -171,8 +185,10 @@ function disconnectFilterBank(noise, filterBank) {
   return /* () */0;
 }
 
-function updateFilterBank(filterBank, filterValues, inputGain, outputGain, $staropt$star) {
-  var q = $staropt$star ? $staropt$star[0] : 34.127;
+function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, filterBank, filterValues) {
+  var inputGain = $staropt$star ? $staropt$star[0] : 1.0;
+  var outputGain = $staropt$star$1 ? $staropt$star$1[0] : 0.1;
+  var q = $staropt$star$2 ? $staropt$star$2[0] : 34.127;
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
@@ -199,6 +215,7 @@ export {
   makeCompressor ,
   pinkNoise ,
   defaultNoise ,
+  makeAnalyser ,
   string_of_filterType ,
   makeFilter ,
   makeFilterBank ,

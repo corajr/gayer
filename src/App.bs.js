@@ -222,7 +222,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                               var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                               var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* allowedPitchClasses */13], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
-                                                            return Audio$Gayer.updateFilterBank(filterBank, filterValues, self[/* state */1][/* inputGain */2], self[/* state */1][/* outputGain */3], /* Some */[self[/* state */1][/* q */4]]);
+                                                            return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* inputGain */2]], /* Some */[self[/* state */1][/* outputGain */3]], /* Some */[self[/* state */1][/* q */4]], filterBank, filterValues);
                                                           }), self[/* state */1][/* filterBank */14]);
                                             }));
                               })

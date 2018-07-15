@@ -48,6 +48,16 @@ type gainNode =
   };
 
 [@bs.deriving abstract]
+type analyser =
+  pri {
+    mutable fftSize: int,
+    frequencyBinCount: int,
+    mutable minDecibels: float,
+    mutable maxDecibels: float,
+    mutable smoothingTimeConstant: float,
+  };
+
+[@bs.deriving abstract]
 type compressor = {
   threshold: audioParam,
   knee: audioParam,
@@ -68,8 +78,10 @@ type audioNode =
   | BiquadFilter(biquadFilter)
   | Gain(gainNode)
   | Compressor(compressor)
+  | Analyser(analyser)
   | Node;
 
+external unwrapAnalyser : analyser => audioNode = "%identity";
 external unwrapFilter : biquadFilter => audioNode = "%identity";
 external unwrapGain : gainNode => audioNode = "%identity";
 external unwrapCompressor : compressor => audioNode = "%identity";
@@ -93,6 +105,7 @@ external getFrequencyResponse :
   (biquadFilter, float32array, float32array, float32array) => audioParam =
   "";
 
+[@bs.send] external createAnalyser : audioContext => analyser = "";
 [@bs.send] external createBiquadFilter : audioContext => biquadFilter = "";
 [@bs.send] external createGain : audioContext => gainNode = "";
 [@bs.send] external createDynamicsCompressor : audioContext => compressor = "";
@@ -182,6 +195,32 @@ let pinkNoise: audioContext => audioNode = [%bs.raw
 
 let defaultNoise = pinkNoise(defaultAudioCtx);
 
+[@bs.send]
+external getFloatFrequencyData : (analyser, array(float)) => unit = "";
+[@bs.send]
+external getByteFrequencyData : (analyser, array(int)) => unit = "";
+[@bs.send]
+external getFloatTimeDomainData : (analyser, array(float)) => unit = "";
+[@bs.send]
+external getByteTimeDomainData : (analyser, array(int)) => unit = "";
+
+let makeAnalyser =
+    (
+      ~audioContext: audioContext=defaultAudioCtx,
+      ~fftSize: int=2048,
+      ~minDecibels: float=(-100.0),
+      ~maxDecibels: float=(-30.0),
+      ~smoothingTimeConstant: float=0.8,
+    )
+    : analyser => {
+  let analyser = createAnalyser(audioContext);
+  fftSizeSet(analyser, fftSize);
+  minDecibelsSet(analyser, minDecibels);
+  maxDecibelsSet(analyser, maxDecibels);
+  smoothingTimeConstantSet(analyser, smoothingTimeConstant);
+  analyser;
+};
+
 let string_of_filterType = filterType =>
   switch (filterType) {
   | LowPass(_, _) => "lowpass"
@@ -198,9 +237,7 @@ let makeFilter =
     (~audioCtx: audioContext, ~filterType: filterType)
     : biquadFilter => {
   let filter = createBiquadFilter(audioCtx);
-  %bs.raw
-  "filter.type = 'bandpass'";
-  /* filter |. (type_ = string_of_filterType(filterType)); */
+  type_Set(filter, string_of_filterType(filterType));
 
   let t = currentTime(audioCtx);
 
@@ -336,11 +373,11 @@ let disconnectFilterBank = (noise, filterBank) => {
 
 let updateFilterBank =
     (
+      ~inputGain: float=1.0,
+      ~outputGain: float=0.1,
+      ~q=defaultQ,
       ~filterBank: filterBank,
       ~filterValues: array(float),
-      ~inputGain: float,
-      ~outputGain: float,
-      ~q=defaultQ,
     ) => {
   let currentTime = currentTime(filterBank.audioCtx);
   setValueAtTime(filterBank.input |. gain_, inputGain, currentTime);
