@@ -302,16 +302,30 @@ let make = (~width=120, ~height=120, _children) => {
       )>
       <div style=(ReactDOMRe.Style.make(~margin="10px", ()))>
         <h1> (ReasonReact.string("GAYER")) </h1>
+        <div>
+          (
+            ReasonReact.string(
+              "UI forthcoming; for now, please download and edit...",
+            )
+          )
+        </div>
         <a href="https://github.com/corajr/gayer">
           (ReasonReact.string("source"))
         </a>
         <div>
           (
             ReasonReact.string(
-              switch (Js.Json.stringifyAny(self.state.allowedPitchClasses)) {
-              | None => ""
-              | Some(s) => s
-              },
+              "Allowed pitch classes: "
+              ++ (
+                switch (
+                  Js.Json.stringifyAny(
+                    PitchSet.elements(self.state.allowedPitchClasses),
+                  )
+                ) {
+                | None => ""
+                | Some(s) => s
+                }
+              ),
             )
           )
         </div>

@@ -211,7 +211,7 @@ function make($staropt$star, $staropt$star$1, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
-              var match = JSON.stringify(self[/* state */1][/* allowedPitchClasses */13]);
+              var match = JSON.stringify(Curry._1(Music$Gayer.PitchSet[/* elements */19], self[/* state */1][/* allowedPitchClasses */13]));
               return React.createElement("div", {
                           style: {
                             display: "flex",
@@ -225,9 +225,11 @@ function make($staropt$star, $staropt$star$1, _) {
                               style: {
                                 margin: "10px"
                               }
-                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("a", {
+                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please download and edit..."), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source"), React.createElement("div", undefined, match !== undefined ? match : "")), React.createElement("canvas", {
+                                }, "source"), React.createElement("div", undefined, "Allowed pitch classes: " + (
+                                  match !== undefined ? match : ""
+                                ))), React.createElement("canvas", {
                               ref: Curry._1(self[/* handle */0], setCanvasRef),
                               style: {
                                 transform: "scale(4)",
