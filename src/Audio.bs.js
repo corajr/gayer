@@ -57,7 +57,7 @@ var pinkNoise = function (audioCtx){
 
 var defaultNoise = pinkNoise(defaultAudioCtx);
 
-function makeAnalyser($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4) {
+function makeAnalyser($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, _) {
   var audioContext = $staropt$star ? $staropt$star[0] : defaultAudioCtx;
   var fftSize = $staropt$star$1 ? $staropt$star$1[0] : 2048;
   var minDecibels = $staropt$star$2 ? $staropt$star$2[0] : -100.0;

@@ -3,6 +3,8 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
+import * as CQT$Gayer from "./CQT.bs.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -28,9 +30,9 @@ var defaultState_013 = /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/*
       ]
     ]);
 
-var defaultState_015 = /* canvasRef */[/* None */0];
+var defaultState_017 = /* canvasRef */[/* None */0];
 
-var defaultState_016 = /* timerId */[/* None */0];
+var defaultState_018 = /* timerId */[/* None */0];
 
 var defaultState = /* record */[
   /* xIndex */0,
@@ -48,12 +50,14 @@ var defaultState = /* record */[
   /* compositeOperation : SourceOver */0,
   defaultState_013,
   /* filterBank : None */0,
-  defaultState_015,
-  defaultState_016
+  /* analyser : None */0,
+  /* cqt : None */0,
+  defaultState_017,
+  defaultState_018
 ];
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */15][0] = (theRef == null) ? /* None */0 : [theRef];
+  param[/* state */1][/* canvasRef */17][0] = (theRef == null) ? /* None */0 : [theRef];
   return /* () */0;
 }
 
@@ -71,6 +75,34 @@ function maybeUpdateCanvas(maybeEl, f) {
 function maybeMapFilterBank(f, maybeFilterBank) {
   if (maybeFilterBank) {
     return Curry._1(f, maybeFilterBank[0]);
+  } else {
+    return /* () */0;
+  }
+}
+
+function connectInputs(state) {
+  var partial_arg = state[/* filterInput */5];
+  maybeMapFilterBank((function (param) {
+          return Audio$Gayer.connectFilterBank(partial_arg, param);
+        }), state[/* filterBank */14]);
+  var match = state[/* analyser */15];
+  if (match) {
+    state[/* filterInput */5].connect(match[0]);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
+function disconnectInputs(state) {
+  var partial_arg = state[/* filterInput */5];
+  maybeMapFilterBank((function (param) {
+          return Audio$Gayer.disconnectFilterBank(partial_arg, param);
+        }), state[/* filterBank */14]);
+  var match = state[/* analyser */15];
+  if (match) {
+    state[/* filterInput */5].disconnect(match[0]);
+    return /* () */0;
   } else {
     return /* () */0;
   }
@@ -112,7 +144,18 @@ function make($staropt$star, $staropt$star$1, _) {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               var filterBank = Audio$Gayer.defaultFilterBank(/* Some */[Audio$Gayer.defaultAudioCtx], /* Some */[height], /* Some */[Audio$Gayer.defaultQ]);
-              Audio$Gayer.connectFilterBank(self[/* state */1][/* filterInput */5], filterBank);
+              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
+              var cqt = CQT$Gayer.createShowCQTBar(/* record */[
+                    /* rate */Audio$Gayer.defaultAudioCtx.sampleRate,
+                    /* width */CQT$Gayer.defaultCqtBarParams[/* width */1],
+                    /* height */CQT$Gayer.defaultCqtBarParams[/* height */2],
+                    /* barVolume */CQT$Gayer.defaultCqtBarParams[/* barVolume */3],
+                    /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */4],
+                    /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */5]
+                  ]);
+              Curry._1(self[/* send */3], /* SetCQT */Block.__(6, [cqt]));
+              var analyser = Audio$Gayer.makeAnalyser(/* Some */[Audio$Gayer.defaultAudioCtx], /* Some */[cqt.fft_size], /* None */0, /* None */0, /* None */0, /* () */0);
+              Curry._1(self[/* send */3], /* SetAnalyser */Block.__(5, [analyser]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match) {
                 match[0].then((function (stream) {
@@ -125,9 +168,8 @@ function make($staropt$star, $staropt$star$1, _) {
                         return Promise.resolve(/* () */0);
                       }));
               }
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */16][0] = /* Some */[setInterval((function () {
+              self[/* state */1][/* timerId */18][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
                       }), 33)];
               return /* () */0;
@@ -135,30 +177,19 @@ function make($staropt$star, $staropt$star$1, _) {
           /* didUpdate */(function (param) {
               var newSelf = param[/* newSelf */1];
               var oldSelf = param[/* oldSelf */0];
-              if (oldSelf[/* state */1][/* filterInput */5] !== newSelf[/* state */1][/* filterInput */5]) {
-                var partial_arg = oldSelf[/* state */1][/* filterInput */5];
-                maybeMapFilterBank((function (param) {
-                        return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-                      }), oldSelf[/* state */1][/* filterBank */14]);
-              }
-              if (oldSelf[/* state */1][/* filterBank */14] !== newSelf[/* state */1][/* filterBank */14]) {
-                var partial_arg$1 = oldSelf[/* state */1][/* filterInput */5];
-                return maybeMapFilterBank((function (param) {
-                              return Audio$Gayer.disconnectFilterBank(partial_arg$1, param);
-                            }), oldSelf[/* state */1][/* filterBank */14]);
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */5], newSelf[/* state */1][/* filterInput */5]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */14], newSelf[/* state */1][/* filterBank */14])) {
+                return disconnectInputs(oldSelf[/* state */1]);
               } else {
                 return 0;
               }
             }),
           /* willUnmount */(function (self) {
-              var partial_arg = self[/* state */1][/* filterInput */5];
-              return maybeMapFilterBank((function (param) {
-                            return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-                          }), self[/* state */1][/* filterBank */14]);
+              return disconnectInputs(self[/* state */1]);
             }),
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
+              var match = JSON.stringify(self[/* state */1][/* allowedPitchClasses */13]);
               return React.createElement("div", {
                           style: {
                             display: "flex",
@@ -174,7 +205,7 @@ function make($staropt$star, $staropt$star$1, _) {
                               }
                             }, React.createElement("h1", undefined, "GAYER"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source")), React.createElement("canvas", {
+                                }, "source"), React.createElement("div", undefined, match !== undefined ? match : "")), React.createElement("canvas", {
                               ref: Curry._1(self[/* handle */0], setCanvasRef),
                               style: {
                                 transform: "scale(4)",
@@ -192,7 +223,7 @@ function make($staropt$star, $staropt$star$1, _) {
               if (typeof action === "number") {
                 if (action === 0) {
                   return /* SideEffects */Block.__(1, [(function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */15], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */17], (function (canvas) {
                                               return clearCanvas(canvas, width, height);
                                             }));
                               })]);
@@ -214,11 +245,13 @@ function make($staropt$star, $staropt$star$1, _) {
                               /* compositeOperation */state[/* compositeOperation */12],
                               /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                               /* filterBank */state[/* filterBank */14],
-                              /* canvasRef */state[/* canvasRef */15],
-                              /* timerId */state[/* timerId */16]
+                              /* analyser */state[/* analyser */15],
+                              /* cqt */state[/* cqt */16],
+                              /* canvasRef */state[/* canvasRef */17],
+                              /* timerId */state[/* timerId */18]
                             ],
                             (function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */15], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */17], (function (canvas) {
                                               var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                               var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* allowedPitchClasses */13], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
@@ -248,14 +281,13 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ],
                                 (function (self) {
-                                    var partial_arg = self[/* state */1][/* filterInput */5];
-                                    return maybeMapFilterBank((function (param) {
-                                                  return Audio$Gayer.connectFilterBank(partial_arg, param);
-                                                }), self[/* state */1][/* filterBank */14]);
+                                    return connectInputs(self[/* state */1]);
                                   })
                               ]);
                   case 1 : 
@@ -275,8 +307,10 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ]]);
                   case 2 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -295,8 +329,10 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ]]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -315,8 +351,10 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ]]);
                   case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -336,17 +374,60 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank : Some */[action[0]],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ],
                                 (function (self) {
-                                    var partial_arg = self[/* state */1][/* filterInput */5];
-                                    return maybeMapFilterBank((function (param) {
-                                                  return Audio$Gayer.connectFilterBank(partial_arg, param);
-                                                }), self[/* state */1][/* filterBank */14]);
+                                    return connectInputs(self[/* state */1]);
                                   })
                               ]);
                   case 5 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* xDelta */state[/* xDelta */1],
+                                  /* inputGain */state[/* inputGain */2],
+                                  /* outputGain */state[/* outputGain */3],
+                                  /* q */state[/* q */4],
+                                  /* filterInput */state[/* filterInput */5],
+                                  /* visualInput */state[/* visualInput */6],
+                                  /* micInput */state[/* micInput */7],
+                                  /* cameraInput */state[/* cameraInput */8],
+                                  /* shouldClear */state[/* shouldClear */9],
+                                  /* channelToRead */state[/* channelToRead */10],
+                                  /* alpha */state[/* alpha */11],
+                                  /* compositeOperation */state[/* compositeOperation */12],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */13],
+                                  /* filterBank */state[/* filterBank */14],
+                                  /* analyser : Some */[action[0]],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
+                                ]]);
+                  case 6 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* xDelta */state[/* xDelta */1],
+                                  /* inputGain */state[/* inputGain */2],
+                                  /* outputGain */state[/* outputGain */3],
+                                  /* q */state[/* q */4],
+                                  /* filterInput */state[/* filterInput */5],
+                                  /* visualInput */state[/* visualInput */6],
+                                  /* micInput */state[/* micInput */7],
+                                  /* cameraInput */state[/* cameraInput */8],
+                                  /* shouldClear */state[/* shouldClear */9],
+                                  /* channelToRead */state[/* channelToRead */10],
+                                  /* alpha */state[/* alpha */11],
+                                  /* compositeOperation */state[/* compositeOperation */12],
+                                  /* allowedPitchClasses */state[/* allowedPitchClasses */13],
+                                  /* filterBank */state[/* filterBank */14],
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt : Some */[action[0]],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
+                                ]]);
+                  case 7 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */Caml_int32.mod_(action[0], width),
                                   /* xDelta */state[/* xDelta */1],
@@ -363,10 +444,12 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ]]);
-                  case 6 : 
+                  case 8 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* xDelta */action[0],
@@ -383,8 +466,10 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* compositeOperation */state[/* compositeOperation */12],
                                   /* allowedPitchClasses */state[/* allowedPitchClasses */13],
                                   /* filterBank */state[/* filterBank */14],
-                                  /* canvasRef */state[/* canvasRef */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* analyser */state[/* analyser */15],
+                                  /* cqt */state[/* cqt */16],
+                                  /* canvasRef */state[/* canvasRef */17],
+                                  /* timerId */state[/* timerId */18]
                                 ]]);
                   
                 }
@@ -401,6 +486,8 @@ export {
   component ,
   maybeUpdateCanvas ,
   maybeMapFilterBank ,
+  connectInputs ,
+  disconnectInputs ,
   clearCanvas ,
   drawCanvas ,
   make ,

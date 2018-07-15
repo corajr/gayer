@@ -1,8 +1,12 @@
 open UserMedia;
 
 type audioTime = float; /* time in milliseconds */
+
 [@bs.deriving abstract]
-type audioContext = {currentTime: audioTime};
+type audioContext = {
+  currentTime: audioTime,
+  sampleRate: float,
+};
 
 let defaultAudioCtx: audioContext = [%bs.raw
   {|new (window.AudioContext || window.webkitAudioContext)()|}
@@ -15,7 +19,7 @@ type qFactor = float;
 type filterGain = float;
 type freqFunc = int => frequency;
 
-type float32array;
+type float32array = array(float);
 
 type filterTypeField;
 
@@ -129,6 +133,8 @@ external connectGainToCompressor : (gainNode, compressor) => unit = "connect";
 [@bs.send]
 external connectNodeToGain : (audioNode, gainNode) => unit = "connect";
 [@bs.send]
+external connectNodeToAnalyser : (audioNode, analyser) => unit = "connect";
+[@bs.send]
 external connectGainToNode : (gainNode, audioNode) => unit = "connect";
 [@bs.send]
 external connectCompressorToNode : (compressor, audioNode) => unit = "connect";
@@ -211,6 +217,7 @@ let makeAnalyser =
       ~minDecibels: float=(-100.0),
       ~maxDecibels: float=(-30.0),
       ~smoothingTimeConstant: float=0.8,
+      (),
     )
     : analyser => {
   let analyser = createAnalyser(audioContext);

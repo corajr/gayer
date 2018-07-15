@@ -1,6 +1,11 @@
 /* Wrapper for showcqtbar.js implementation by Muhammad Faiz. */
 
-type t;
+[@bs.deriving abstract]
+type t =
+  pri {
+    [@bs.as "fft_size"]
+    fftSize: int,
+  };
 
 type float32Array = array(float);
 type uint8ClampedArray = array(int);
@@ -12,6 +17,15 @@ type cqtBarParams = {
   barVolume: float,
   sonogramVolume: float,
   supersampling: bool,
+};
+
+let defaultCqtBarParams = {
+  rate: 44100.0,
+  width: 120,
+  height: 1,
+  barVolume: 10.0,
+  sonogramVolume: 18.0,
+  supersampling: false,
 };
 
 [@bs.new]

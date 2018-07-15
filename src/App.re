@@ -25,6 +25,8 @@ type state = {
   compositeOperation,
   allowedPitchClasses: PitchSet.t,
   filterBank: option(filterBank),
+  analyser: option(analyser),
+  cqt: option(CQT.t),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -45,6 +47,8 @@ let defaultState: state = {
   channelToRead: R,
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
   filterBank: None,
+  analyser: None,
+  cqt: None,
   canvasRef: ref(None),
   timerId: ref(None),
 };
@@ -57,6 +61,8 @@ type action =
   | SetMicInput(audioNode)
   | SetCameraInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
+  | SetAnalyser(analyser)
+  | SetCQT(CQT.t)
   | SetXIndex(int)
   | SetXDelta(int);
 
@@ -80,6 +86,32 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
     | None => ()
     | Some(filterBank) => f(filterBank)
     };
+
+let connectInputs: state => unit =
+  state => {
+    maybeMapFilterBank(
+      connectFilterBank(state.filterInput),
+      state.filterBank,
+    );
+
+    switch (state.analyser) {
+    | None => ()
+    | Some(analyser) => connectNodeToAnalyser(state.filterInput, analyser)
+    };
+  };
+
+let disconnectInputs: state => unit =
+  state => {
+    maybeMapFilterBank(
+      disconnectFilterBank(state.filterInput),
+      state.filterBank,
+    );
+
+    switch (state.analyser) {
+    | None => ()
+    | Some(analyser) => disconnect(state.filterInput, analyser)
+    };
+  };
 
 let clearCanvas = (canvasElement, width, height) => {
   let ctx = getContext(canvasElement);
@@ -133,24 +165,15 @@ let make = (~width=120, ~height=120, _children) => {
     | SetFilterInput(filterInput) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput},
-        (
-          self =>
-            maybeMapFilterBank(
-              connectFilterBank(self.state.filterInput),
-              self.state.filterBank,
-            )
-        ),
+        (self => connectInputs(self.state)),
       )
+    | SetCQT(cqt) => ReasonReact.Update({...state, cqt: Some(cqt)})
+    | SetAnalyser(analyser) =>
+      ReasonReact.Update({...state, analyser: Some(analyser)})
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterBank: Some(filterBank)},
-        (
-          self =>
-            maybeMapFilterBank(
-              connectFilterBank(self.state.filterInput),
-              self.state.filterBank,
-            )
-        ),
+        (self => connectInputs(self.state)),
       )
     | Tick =>
       ReasonReact.UpdateWithSideEffects(
@@ -195,7 +218,22 @@ let make = (~width=120, ~height=120, _children) => {
   didMount: self => {
     let filterBank =
       defaultFilterBank(~ctx=defaultAudioCtx, ~n=height, ~q=defaultQ);
-    connectFilterBank(self.state.filterInput, filterBank);
+    self.send(SetFilterBank(filterBank));
+
+    let cqt =
+      CQT.createShowCQTBar({
+        ...CQT.defaultCqtBarParams,
+        rate: defaultAudioCtx |. sampleRate,
+      });
+    self.send(SetCQT(cqt));
+
+    let analyser =
+      makeAnalyser(
+        ~audioContext=defaultAudioCtx,
+        ~fftSize=cqt |. CQT.fftSize,
+        (),
+      );
+    self.send(SetAnalyser(analyser));
 
     (
       switch (getAudioVisualStream()) {
@@ -216,32 +254,17 @@ let make = (~width=120, ~height=120, _children) => {
     )
     |> ignore;
 
-    self.send(SetFilterBank(filterBank));
     self.send(Clear);
 
     self.state.timerId :=
       Some(Js.Global.setInterval(() => self.send(Tick), 33));
   },
-  didUpdate: ({oldSelf, newSelf}) => {
-    if (oldSelf.state.filterInput !== newSelf.state.filterInput) {
-      maybeMapFilterBank(
-        disconnectFilterBank(oldSelf.state.filterInput),
-        oldSelf.state.filterBank,
-      );
-    };
-
-    if (oldSelf.state.filterBank !== newSelf.state.filterBank) {
-      maybeMapFilterBank(
-        disconnectFilterBank(oldSelf.state.filterInput),
-        oldSelf.state.filterBank,
-      );
-    };
-  },
-  willUnmount: self =>
-    maybeMapFilterBank(
-      disconnectFilterBank(self.state.filterInput),
-      self.state.filterBank,
-    ),
+  didUpdate: ({oldSelf, newSelf}) =>
+    if (oldSelf.state.filterInput != newSelf.state.filterInput
+        || oldSelf.state.filterBank != newSelf.state.filterBank) {
+      disconnectInputs(oldSelf.state);
+    },
+  willUnmount: self => disconnectInputs(self.state),
   render: self =>
     <div
       onClick=(_event => self.send(Tick))
@@ -258,6 +281,16 @@ let make = (~width=120, ~height=120, _children) => {
         <a href="https://github.com/corajr/gayer">
           (ReasonReact.string("source"))
         </a>
+        <div>
+          (
+            ReasonReact.string(
+              switch (Js.Json.stringifyAny(self.state.allowedPitchClasses)) {
+              | None => ""
+              | Some(s) => s
+              },
+            )
+          )
+        </div>
       </div>
       <canvas
         ref=(self.handle(setCanvasRef))
