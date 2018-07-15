@@ -46,7 +46,7 @@ var defaultState = /* record */[
   /* cameraInput : None */0,
   /* shouldClear */false,
   /* channelToRead : R */0,
-  /* alpha */0.2,
+  /* alpha */0.1,
   /* compositeOperation : Overlay */13,
   defaultState_013,
   /* filterBank : None */0,
