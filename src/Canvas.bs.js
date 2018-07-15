@@ -109,8 +109,7 @@ function simpleDrawImage(ctx, image, compositeOperation, alphaValue) {
   return /* () */0;
 }
 
-function mapImageData(imageData, f) {
-  var rawData = imageData.data;
+function mapRawData(rawData, f) {
   var n = rawData.length / 4 | 0;
   return $$Array.init(n, (function (i) {
                 var offset = (i << 2);
@@ -118,21 +117,49 @@ function mapImageData(imageData, f) {
               }));
 }
 
+function mapImageData(imageData, f) {
+  return mapRawData(imageData.data, f);
+}
+
+function rawDataToPixel(rawData, offset) {
+  return /* record */[
+          /* r */Caml_array.caml_array_get(rawData, offset + /* R */0 | 0) / 255.0,
+          /* g */Caml_array.caml_array_get(rawData, offset + /* G */1 | 0) / 255.0,
+          /* b */Caml_array.caml_array_get(rawData, offset + /* B */2 | 0) / 255.0,
+          /* a */Caml_array.caml_array_get(rawData, offset + /* A */3 | 0) / 255.0
+        ];
+}
+
 function imageDataToPixels(imageData) {
-  return mapImageData(imageData, (function (rawData, offset) {
-                return /* record */[
-                        /* r */Caml_array.caml_array_get(rawData, offset + /* R */0 | 0) / 255.0,
-                        /* g */Caml_array.caml_array_get(rawData, offset + /* G */1 | 0) / 255.0,
-                        /* b */Caml_array.caml_array_get(rawData, offset + /* B */2 | 0) / 255.0,
-                        /* a */Caml_array.caml_array_get(rawData, offset + /* A */3 | 0) / 255.0
-                      ];
-              }));
+  return mapRawData(imageData.data, rawDataToPixel);
+}
+
+function rawDataToFloatArray(channel) {
+  return (function (rawData, offset) {
+      return Caml_array.caml_array_get(rawData, offset + channel | 0) / 255.0;
+    });
 }
 
 function imageDataToFloatArray(imageData, channel) {
-  return mapImageData(imageData, (function (rawData, offset) {
-                return Caml_array.caml_array_get(rawData, offset + channel | 0) / 255.0;
-              }));
+  var f = rawDataToFloatArray(channel);
+  return mapRawData(imageData.data, f);
+}
+
+var makeUint8ClampedArray = function (len){return new Uint8ClampedArray(len)};
+
+function makeImageData(cqtLine) {
+  var len = cqtLine.length;
+  var n = len / 4 | 0;
+  var output = makeUint8ClampedArray(len);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var offset = (i << 2);
+    var cqtVal = Caml_array.caml_array_get(cqtLine, (((n - i | 0) - 1 | 0) << 2));
+    Caml_array.caml_array_set(output, offset + /* R */0 | 0, cqtVal);
+    Caml_array.caml_array_set(output, offset + /* G */1 | 0, cqtVal);
+    Caml_array.caml_array_set(output, offset + /* B */2 | 0, cqtVal);
+    Caml_array.caml_array_set(output, offset + /* A */3 | 0, 255);
+  }
+  return new ImageData(output, 1, n);
 }
 
 export {
@@ -140,9 +167,14 @@ export {
   string_of_compositeOperation ,
   Ctx ,
   simpleDrawImage ,
+  mapRawData ,
   mapImageData ,
+  rawDataToPixel ,
   imageDataToPixels ,
+  rawDataToFloatArray ,
   imageDataToFloatArray ,
+  makeUint8ClampedArray ,
+  makeImageData ,
   
 }
 /* No side effect */

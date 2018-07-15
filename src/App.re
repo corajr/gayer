@@ -41,9 +41,9 @@ let defaultState: state = {
   visualInput: None,
   micInput: None,
   cameraInput: None,
-  shouldClear: true,
+  shouldClear: false,
   alpha: 1.0,
-  compositeOperation: SourceOver,
+  compositeOperation: Overlay,
   channelToRead: R,
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
   filterBank: None,
@@ -118,6 +118,29 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
+let drawCQTBar = (canvasRenderingContext2D, width, height, state) =>
+  switch (state.cqt) {
+  | None => ()
+  | Some(cqt) =>
+    switch (state.analyser) {
+    | None => ()
+    | Some(analyser) =>
+      let audioData = CQT.getInputArray(cqt, 0);
+      getFloatTimeDomainData(analyser, audioData);
+      CQT.calc(cqt);
+      CQT.renderLine(cqt, 1);
+      let cqtLine = CQT.getOutputArray(cqt);
+      let outputImageData = makeImageData(~cqtLine);
+
+      Ctx.putImageData(
+        canvasRenderingContext2D,
+        outputImageData,
+        state.xIndex,
+        0,
+      );
+    }
+  };
+
 let drawCanvas = (canvasElement, width, height, state) => {
   if (state.shouldClear) {
     clearCanvas(canvasElement, width, height);
@@ -137,7 +160,8 @@ let drawCanvas = (canvasElement, width, height, state) => {
   Ctx.setGlobalAlpha(ctx, 1.0);
   Ctx.setGlobalCompositeOperation(ctx, SourceOver);
   Ctx.setFillStyle(ctx, "white");
-  Ctx.fillRect(ctx, state.xIndex, 0, 1, height);
+  /* Ctx.fillRect(ctx, state.xIndex, 0, 1, height); */
+  drawCQTBar(ctx, width, height, state);
   values;
 };
 

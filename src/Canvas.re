@@ -105,6 +105,9 @@ external getContext :
 
 external getCanvasImageSource : image => canvasImageSource = "%identity";
 
+[@bs.new]
+external createImageData : (array(int), int, int) => imageData = "ImageData";
+
 /* canvas api methods */
 module Ctx = {
   [@bs.get] external canvas : ctx => canvasElement = "";
@@ -196,6 +199,10 @@ module Ctx = {
   /* getImageData(sx, sy, sw, sh); */
   [@bs.send]
   external getImageData : (ctx, dim, dim, dim, dim) => imageData = "";
+
+  /* https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/putImageData */
+  /* putImageData(imageData, dx, dy); */
+  [@bs.send] external putImageData : (ctx, imageData, dim, dim) => unit = "";
 };
 
 external getCanvasAsSource : canvasElement => canvasImageSource = "%identity";
@@ -212,9 +219,8 @@ let simpleDrawImage =
   Ctx.drawImage(ctx, getCanvasImageSource(image), 0, 0);
 };
 
-let mapImageData: (imageData, (array(int), int) => 't) => array('t) =
-  (imageData, f) => {
-    let rawData = imageData |. data;
+let mapRawData: (array(int), (array(int), int) => 't) => array('t) =
+  (rawData, f) => {
     let n = Array.length(rawData) / 4;
     Array.init(
       n,
@@ -225,21 +231,47 @@ let mapImageData: (imageData, (array(int), int) => 't) => array('t) =
     );
   };
 
+let mapImageData: (imageData, (array(int), int) => 't) => array('t) =
+  (imageData, f) => mapRawData(imageData |. data, f);
+
+let rawDataToPixel = (rawData, offset) => {
+  r: float_of_int(rawData[offset + int_of_channel(R)]) /. 255.0,
+  g: float_of_int(rawData[offset + int_of_channel(G)]) /. 255.0,
+  b: float_of_int(rawData[offset + int_of_channel(B)]) /. 255.0,
+  a: float_of_int(rawData[offset + int_of_channel(A)]) /. 255.0,
+};
+
 let imageDataToPixels: imageData => array(pixel) =
-  imageData =>
-    mapImageData(imageData, (rawData, offset) =>
-      {
-        r: float_of_int(rawData[offset + int_of_channel(R)]) /. 255.0,
-        g: float_of_int(rawData[offset + int_of_channel(G)]) /. 255.0,
-        b: float_of_int(rawData[offset + int_of_channel(B)]) /. 255.0,
-        a: float_of_int(rawData[offset + int_of_channel(A)]) /. 255.0,
-      }
-    );
+  imageData => mapImageData(imageData, rawDataToPixel);
+
+let rawDataToFloatArray = channel => {
+  let channelOffset = int_of_channel(channel);
+  (rawData, offset) =>
+    float_of_int(rawData[offset + channelOffset]) /. 255.0;
+};
 
 let imageDataToFloatArray: (imageData, channel) => array(float) =
-  (imageData, channel) => {
-    let channelOffset = int_of_channel(channel);
-    mapImageData(imageData, (rawData, offset) =>
-      float_of_int(rawData[offset + channelOffset]) /. 255.0
-    );
+  (imageData, channel) =>
+    mapImageData(imageData, rawDataToFloatArray(channel));
+
+let makeUint8ClampedArray = [%bs.raw
+  len => {|return new Uint8ClampedArray(len)|}
+];
+
+let makeImageData = (~cqtLine: array(int)) => {
+  let len = Array.length(cqtLine);
+  let n = len / 4;
+  let output = makeUint8ClampedArray(len);
+
+  for (i in 0 to n - 1) {
+    let offset = i * 4;
+    let cqtVal = cqtLine[(n - i - 1) * 4];
+
+    output[offset + int_of_channel(R)] = cqtVal;
+    output[offset + int_of_channel(G)] = cqtVal;
+    output[offset + int_of_channel(B)] = cqtVal;
+    output[offset + int_of_channel(A)] = 255;
   };
+
+  createImageData(output, 1, n);
+};

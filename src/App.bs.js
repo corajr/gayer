@@ -44,10 +44,10 @@ var defaultState = /* record */[
   /* visualInput : None */0,
   /* micInput : None */0,
   /* cameraInput : None */0,
-  /* shouldClear */true,
+  /* shouldClear */false,
   /* channelToRead : R */0,
   /* alpha */1.0,
-  /* compositeOperation : SourceOver */0,
+  /* compositeOperation : Overlay */13,
   defaultState_013,
   /* filterBank : None */0,
   /* analyser : None */0,
@@ -114,6 +114,28 @@ function clearCanvas(canvasElement, width, height) {
   return /* () */0;
 }
 
+function drawCQTBar(canvasRenderingContext2D, _, _$1, state) {
+  var match = state[/* cqt */16];
+  if (match) {
+    var cqt = match[0];
+    var match$1 = state[/* analyser */15];
+    if (match$1) {
+      var audioData = cqt.get_input_array(0);
+      match$1[0].getFloatTimeDomainData(audioData);
+      cqt.calc();
+      cqt.render_line(1);
+      var cqtLine = cqt.get_output_array();
+      var outputImageData = Canvas$Gayer.makeImageData(cqtLine);
+      canvasRenderingContext2D.putImageData(outputImageData, state[/* xIndex */0], 0);
+      return /* () */0;
+    } else {
+      return /* () */0;
+    }
+  } else {
+    return /* () */0;
+  }
+}
+
 function drawCanvas(canvasElement, width, height, state) {
   if (state[/* shouldClear */9]) {
     clearCanvas(canvasElement, width, height);
@@ -130,7 +152,7 @@ function drawCanvas(canvasElement, width, height, state) {
   ctx.globalAlpha = 1.0;
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, /* SourceOver */0);
   ctx.fillStyle = "white";
-  ctx.fillRect(state[/* xIndex */0], 0, 1, height);
+  drawCQTBar(ctx, width, height, state);
   return values;
 }
 
@@ -489,6 +511,7 @@ export {
   connectInputs ,
   disconnectInputs ,
   clearCanvas ,
+  drawCQTBar ,
   drawCanvas ,
   make ,
   
