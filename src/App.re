@@ -42,7 +42,7 @@ let defaultState: state = {
   micInput: None,
   cameraInput: None,
   shouldClear: false,
-  alpha: 1.0,
+  alpha: 0.4,
   compositeOperation: Overlay,
   channelToRead: R,
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
