@@ -142,10 +142,14 @@ external connectCompressorToNode : (compressor, audioNode) => unit = "connect";
 [@bs.send] external disconnect : ('a, 'b) => unit = "disconnect";
 
 let midiNoteA440Hz = 69;
-let frequencyFromNoteNumber: int => float =
-  note =>
+
+let frequencyFromNoteNumber: (int, int) => float =
+  (offset, note) =>
     440.0
-    *. Js.Math.pow_float(2.0, float_of_int(note - midiNoteA440Hz) /. 12.0);
+    *. Js.Math.pow_float(
+         2.0,
+         float_of_int(note - midiNoteA440Hz + offset) /. 12.0,
+       );
 
 /* In principle, Q should be 1 / (2^(1/12) - 1) = 16.817 */
 /* but a higher Q sounds better. */
@@ -357,16 +361,6 @@ let defaultCompressor = {
   connectCompressorToNode(compressor, defaultSink(defaultAudioCtx));
   compressor;
 };
-
-let defaultFilterBank =
-    (~ctx=defaultAudioCtx, ~n=120, ~q=defaultQ)
-    : filterBank =>
-  makeFilterBank(
-    ~audioCtx=ctx,
-    ~filterN=n,
-    ~q,
-    ~freqFunc=frequencyFromNoteNumber,
-  );
 
 let connectFilterBank = (noise, filterBank) => {
   connectNodeToGain(noise, filterBank.input);

@@ -46,7 +46,7 @@ var defaultState = /* record */[
   /* cameraInput : None */0,
   /* shouldClear */false,
   /* channelToRead : R */0,
-  /* alpha */0.1,
+  /* alpha */0.5,
   /* compositeOperation : Overlay */13,
   defaultState_013,
   /* filterBank : None */0,
@@ -80,32 +80,46 @@ function maybeMapFilterBank(f, maybeFilterBank) {
   }
 }
 
-function connectInputs(state) {
-  var partial_arg = state[/* filterInput */5];
-  maybeMapFilterBank((function (param) {
-          return Audio$Gayer.connectFilterBank(partial_arg, param);
-        }), state[/* filterBank */14]);
+function maybeMapMic(f, state) {
   var match = state[/* analyser */15];
   if (match) {
-    state[/* filterInput */5].connect(match[0]);
-    return /* () */0;
+    var match$1 = state[/* micInput */7];
+    if (match$1) {
+      return Curry._2(f, match$1[0], match[0]);
+    } else {
+      return /* () */0;
+    }
   } else {
     return /* () */0;
   }
 }
 
+function connectMic(param) {
+  return maybeMapMic((function (prim, prim$1) {
+                prim.connect(prim$1);
+                return /* () */0;
+              }), param);
+}
+
+function disconnectMic(param) {
+  return maybeMapMic((function (prim, prim$1) {
+                prim.disconnect(prim$1);
+                return /* () */0;
+              }), param);
+}
+
+function connectInputs(state) {
+  var partial_arg = state[/* filterInput */5];
+  return maybeMapFilterBank((function (param) {
+                return Audio$Gayer.connectFilterBank(partial_arg, param);
+              }), state[/* filterBank */14]);
+}
+
 function disconnectInputs(state) {
   var partial_arg = state[/* filterInput */5];
-  maybeMapFilterBank((function (param) {
-          return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-        }), state[/* filterBank */14]);
-  var match = state[/* analyser */15];
-  if (match) {
-    state[/* filterInput */5].disconnect(match[0]);
-    return /* () */0;
-  } else {
-    return /* () */0;
-  }
+  return maybeMapFilterBank((function (param) {
+                return Audio$Gayer.disconnectFilterBank(partial_arg, param);
+              }), state[/* filterBank */14]);
 }
 
 function clearCanvas(canvasElement, width, height) {
@@ -141,6 +155,7 @@ function drawCanvas(canvasElement, width, height, state) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
+  drawCQTBar(ctx, width, height, state);
   ctx.globalAlpha = state[/* alpha */11];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, state[/* compositeOperation */12]);
   var match = state[/* visualInput */6];
@@ -148,12 +163,7 @@ function drawCanvas(canvasElement, width, height, state) {
     ctx.drawImage(match[0], 0, 0, width, height);
   }
   var slice = ctx.getImageData(state[/* xIndex */0], 0, 1, height);
-  var values = Canvas$Gayer.imageDataToFloatArray(slice, state[/* channelToRead */10]);
-  ctx.globalAlpha = 1.0;
-  Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, /* SourceOver */0);
-  ctx.fillStyle = "white";
-  drawCQTBar(ctx, width, height, state);
-  return values;
+  return Canvas$Gayer.imageDataToFloatArray(slice, state[/* channelToRead */10]);
 }
 
 function make($staropt$star, $staropt$star$1, _) {
@@ -165,7 +175,9 @@ function make($staropt$star, $staropt$star$1, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              var filterBank = Audio$Gayer.defaultFilterBank(/* Some */[Audio$Gayer.defaultAudioCtx], /* Some */[height], /* Some */[Audio$Gayer.defaultQ]);
+              var filterBank = Audio$Gayer.makeFilterBank(Audio$Gayer.defaultAudioCtx, height, Audio$Gayer.defaultQ, (function (param) {
+                      return Audio$Gayer.frequencyFromNoteNumber(15, param);
+                    }));
               Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               var cqt = CQT$Gayer.createShowCQTBar(/* record */[
                     /* rate */Audio$Gayer.defaultAudioCtx.sampleRate,
@@ -185,7 +197,6 @@ function make($staropt$star, $staropt$star$1, _) {
                         var video = Video$Gayer.attachVideoStream(stream);
                         Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
                         Curry._1(self[/* send */3], /* SetCameraInput */Block.__(3, [/* Some */[video]]));
-                        Curry._1(self[/* send */3], /* SetFilterInput */Block.__(0, [audio]));
                         Curry._1(self[/* send */3], /* SetVisualInput */Block.__(1, [/* Some */[video]]));
                         return Promise.resolve(/* () */0);
                       }));
@@ -206,7 +217,8 @@ function make($staropt$star, $staropt$star$1, _) {
               }
             }),
           /* willUnmount */(function (self) {
-              return disconnectInputs(self[/* state */1]);
+              disconnectInputs(self[/* state */1]);
+              return disconnectMic(self[/* state */1]);
             }),
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
@@ -337,7 +349,8 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* timerId */state[/* timerId */18]
                                 ]]);
                   case 2 : 
-                      return /* Update */Block.__(0, [/* record */[
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                /* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* xDelta */state[/* xDelta */1],
                                   /* inputGain */state[/* inputGain */2],
@@ -357,7 +370,11 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* cqt */state[/* cqt */16],
                                   /* canvasRef */state[/* canvasRef */17],
                                   /* timerId */state[/* timerId */18]
-                                ]]);
+                                ],
+                                (function (self) {
+                                    return connectMic(self[/* state */1]);
+                                  })
+                              ]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
@@ -510,6 +527,9 @@ export {
   component ,
   maybeUpdateCanvas ,
   maybeMapFilterBank ,
+  maybeMapMic ,
+  connectMic ,
+  disconnectMic ,
   connectInputs ,
   disconnectInputs ,
   clearCanvas ,

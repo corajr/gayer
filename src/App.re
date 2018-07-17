@@ -42,7 +42,7 @@ let defaultState: state = {
   micInput: None,
   cameraInput: None,
   shouldClear: false,
-  alpha: 0.1,
+  alpha: 0.5,
   compositeOperation: Overlay,
   channelToRead: R,
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
@@ -87,31 +87,34 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
     | Some(filterBank) => f(filterBank)
     };
 
+/* Some equivalent of mapA2? */
+let maybeMapMic: ((audioNode, analyser) => unit, state) => unit =
+  (f, state) =>
+    switch (state.analyser) {
+    | None => ()
+    | Some(analyser) =>
+      switch (state.micInput) {
+      | None => ()
+      | Some(micInput) => f(micInput, analyser)
+      }
+    };
+
+let connectMic: state => unit = maybeMapMic(connectNodeToAnalyser);
+let disconnectMic: state => unit = maybeMapMic(disconnect);
+
 let connectInputs: state => unit =
-  state => {
+  state =>
     maybeMapFilterBank(
       connectFilterBank(state.filterInput),
       state.filterBank,
     );
 
-    switch (state.analyser) {
-    | None => ()
-    | Some(analyser) => connectNodeToAnalyser(state.filterInput, analyser)
-    };
-  };
-
 let disconnectInputs: state => unit =
-  state => {
+  state =>
     maybeMapFilterBank(
       disconnectFilterBank(state.filterInput),
       state.filterBank,
     );
-
-    switch (state.analyser) {
-    | None => ()
-    | Some(analyser) => disconnect(state.filterInput, analyser)
-    };
-  };
 
 let clearCanvas = (canvasElement, width, height) => {
   let ctx = getContext(canvasElement);
@@ -146,6 +149,9 @@ let drawCanvas = (canvasElement, width, height, state) => {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
+
+  drawCQTBar(ctx, width, height, state);
+
   Ctx.setGlobalAlpha(ctx, state.alpha);
   Ctx.setGlobalCompositeOperation(ctx, state.compositeOperation);
 
@@ -154,14 +160,14 @@ let drawCanvas = (canvasElement, width, height, state) => {
   | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
   };
 
+  /* Ctx.setGlobalAlpha(ctx, 1.0); */
+  /* Ctx.setGlobalCompositeOperation(ctx, SourceOver); */
+  /* Ctx.setFillStyle(ctx, "white"); */
+  /* Ctx.fillRect(ctx, state.xIndex, 0, 1, height); */
+
   let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
   let values = imageDataToFloatArray(slice, state.channelToRead);
 
-  Ctx.setGlobalAlpha(ctx, 1.0);
-  Ctx.setGlobalCompositeOperation(ctx, SourceOver);
-  Ctx.setFillStyle(ctx, "white");
-  /* Ctx.fillRect(ctx, state.xIndex, 0, 1, height); */
-  drawCQTBar(ctx, width, height, state);
   values;
 };
 
@@ -181,7 +187,11 @@ let make = (~width=120, ~height=120, _children) => {
     switch (action) {
     | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
     | SetXDelta(delta) => ReasonReact.Update({...state, xDelta: delta})
-    | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
+    | SetMicInput(mic) =>
+      ReasonReact.UpdateWithSideEffects(
+        {...state, micInput: Some(mic)},
+        (self => connectMic(self.state)),
+      )
     | SetCameraInput(camera) =>
       ReasonReact.Update({...state, cameraInput: camera})
     | SetVisualInput(visualInput) =>
@@ -241,7 +251,12 @@ let make = (~width=120, ~height=120, _children) => {
     },
   didMount: self => {
     let filterBank =
-      defaultFilterBank(~ctx=defaultAudioCtx, ~n=height, ~q=defaultQ);
+      makeFilterBank(
+        ~audioCtx=defaultAudioCtx,
+        ~filterN=height,
+        ~q=defaultQ,
+        ~freqFunc=frequencyFromNoteNumber(15),
+      );
     self.send(SetFilterBank(filterBank));
 
     let cqt =
@@ -269,7 +284,7 @@ let make = (~width=120, ~height=120, _children) => {
              let video = attachVideoStream(stream);
              self.send(SetMicInput(audio));
              self.send(SetCameraInput(Some(video)));
-             self.send(SetFilterInput(audio));
+             /* self.send(SetFilterInput(audio)); */
              self.send(SetVisualInput(Some(video)));
              Js.Promise.resolve();
            })
@@ -288,7 +303,10 @@ let make = (~width=120, ~height=120, _children) => {
         || oldSelf.state.filterBank != newSelf.state.filterBank) {
       disconnectInputs(oldSelf.state);
     },
-  willUnmount: self => disconnectInputs(self.state),
+  willUnmount: self => {
+    disconnectInputs(self.state);
+    disconnectMic(self.state);
+  },
   render: self =>
     <div
       onClick=(_event => self.send(Tick))

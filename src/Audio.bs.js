@@ -8,8 +8,8 @@ import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 var defaultAudioCtx = (new (window.AudioContext || window.webkitAudioContext)());
 
-function frequencyFromNoteNumber(note) {
-  return 440.0 * Math.pow(2.0, (note - 69 | 0) / 12.0);
+function frequencyFromNoteNumber(offset, note) {
+  return 440.0 * Math.pow(2.0, ((note - 69 | 0) + offset | 0) / 12.0);
 }
 
 var defaultCompressorValues = /* record */[
@@ -166,13 +166,6 @@ var compressor = makeCompressor(defaultAudioCtx, defaultCompressorValues);
 
 compressor.connect(defaultAudioCtx.destination);
 
-function defaultFilterBank($staropt$star, $staropt$star$1, $staropt$star$2) {
-  var ctx = $staropt$star ? $staropt$star[0] : defaultAudioCtx;
-  var n = $staropt$star$1 ? $staropt$star$1[0] : 120;
-  var q = $staropt$star$2 ? $staropt$star$2[0] : 34.127;
-  return makeFilterBank(ctx, n, q, frequencyFromNoteNumber);
-}
-
 function connectFilterBank(noise, filterBank) {
   noise.connect(filterBank[/* input */0]);
   filterBank[/* output */3].connect(compressor);
@@ -221,7 +214,6 @@ export {
   makeFilterBank ,
   getAudioSource ,
   defaultCompressor ,
-  defaultFilterBank ,
   connectFilterBank ,
   disconnectFilterBank ,
   updateFilterBank ,
