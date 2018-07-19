@@ -16,6 +16,7 @@
   "author": "@cora_jr",
   "license": "GPL-3.0",
   "dependencies": {
+    "@jsiebern/bs-material-ui": "^0.3.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.4.0"
