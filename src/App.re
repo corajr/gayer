@@ -25,8 +25,7 @@ type state = {
   compositeOperation,
   allowedPitchClasses: PitchSet.t,
   filterBank: option(filterBank),
-  analyser: option(analyser),
-  cqt: option(CQT.t),
+  analysisCanvasRef: ref(option(Dom.element)),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -47,8 +46,7 @@ let defaultState: state = {
   channelToRead: R,
   allowedPitchClasses: PitchSet.of_list([0, 2, 5, 7, 9]),
   filterBank: None,
-  analyser: None,
-  cqt: None,
+  analysisCanvasRef: ref(None),
   canvasRef: ref(None),
   timerId: ref(None),
 };
@@ -61,13 +59,14 @@ type action =
   | SetMicInput(audioNode)
   | SetCameraInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
-  | SetAnalyser(analyser)
-  | SetCQT(CQT.t)
   | SetXIndex(int)
   | SetXDelta(int);
 
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
+
+let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
+  state.analysisCanvasRef := Js.Nullable.toOption(theRef);
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -86,21 +85,6 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
     | None => ()
     | Some(filterBank) => f(filterBank)
     };
-
-/* Some equivalent of mapA2? */
-let maybeMapMic: ((audioNode, analyser) => unit, state) => unit =
-  (f, state) =>
-    switch (state.analyser) {
-    | None => ()
-    | Some(analyser) =>
-      switch (state.micInput) {
-      | None => ()
-      | Some(micInput) => f(micInput, analyser)
-      }
-    };
-
-let connectMic: state => unit = maybeMapMic(connectNodeToAnalyser);
-let disconnectMic: state => unit = maybeMapMic(disconnect);
 
 let connectInputs: state => unit =
   state =>
@@ -121,36 +105,21 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
-let drawCQTBar = (canvasRenderingContext2D, width, height, state) =>
-  switch (state.cqt) {
-  | None => ()
-  | Some(cqt) =>
-    switch (state.analyser) {
-    | None => ()
-    | Some(analyser) =>
-      let audioData = CQT.getInputArray(cqt, 0);
-      getFloatTimeDomainData(analyser, audioData);
-      CQT.calc(cqt);
-      CQT.renderLine(cqt, 1);
-      let cqtLine = CQT.getOutputArray(cqt);
-      let outputImageData = makeImageData(~cqtLine);
-
-      Ctx.putImageData(
-        canvasRenderingContext2D,
-        outputImageData,
-        state.xIndex,
-        0,
-      );
-    }
-  };
-
 let drawCanvas = (canvasElement, width, height, state) => {
   if (state.shouldClear) {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
 
-  drawCQTBar(ctx, width, height, state);
+  switch (state.analysisCanvasRef^) {
+  | None => ()
+  | Some(analysisCanvas) =>
+    let canvasElt = getFromReact(analysisCanvas);
+    let canvasAsSource = getCanvasAsSource(canvasElt);
+    Ctx.setGlobalAlpha(ctx, 1.0);
+    Ctx.setGlobalCompositeOperation(ctx, SourceOver);
+    Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+  };
 
   Ctx.setGlobalAlpha(ctx, state.alpha);
   Ctx.setGlobalCompositeOperation(ctx, state.compositeOperation);
@@ -159,11 +128,6 @@ let drawCanvas = (canvasElement, width, height, state) => {
   | None => ()
   | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
   };
-
-  /* Ctx.setGlobalAlpha(ctx, 1.0); */
-  /* Ctx.setGlobalCompositeOperation(ctx, SourceOver); */
-  /* Ctx.setFillStyle(ctx, "white"); */
-  /* Ctx.fillRect(ctx, state.xIndex, 0, 1, height); */
 
   let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
   let values = imageDataToFloatArray(slice, state.channelToRead);
@@ -187,11 +151,7 @@ let make = (~width=120, ~height=120, _children) => {
     switch (action) {
     | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
     | SetXDelta(delta) => ReasonReact.Update({...state, xDelta: delta})
-    | SetMicInput(mic) =>
-      ReasonReact.UpdateWithSideEffects(
-        {...state, micInput: Some(mic)},
-        (self => connectMic(self.state)),
-      )
+    | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetCameraInput(camera) =>
       ReasonReact.Update({...state, cameraInput: camera})
     | SetVisualInput(visualInput) =>
@@ -201,9 +161,6 @@ let make = (~width=120, ~height=120, _children) => {
         {...state, filterInput},
         (self => connectInputs(self.state)),
       )
-    | SetCQT(cqt) => ReasonReact.Update({...state, cqt: Some(cqt)})
-    | SetAnalyser(analyser) =>
-      ReasonReact.Update({...state, analyser: Some(analyser)})
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterBank: Some(filterBank)},
@@ -259,21 +216,6 @@ let make = (~width=120, ~height=120, _children) => {
       );
     self.send(SetFilterBank(filterBank));
 
-    let cqt =
-      CQT.createShowCQTBar({
-        ...CQT.defaultCqtBarParams,
-        rate: defaultAudioCtx |. sampleRate,
-      });
-    self.send(SetCQT(cqt));
-
-    let analyser =
-      makeAnalyser(
-        ~audioContext=defaultAudioCtx,
-        ~fftSize=cqt |. CQT.fftSize,
-        (),
-      );
-    self.send(SetAnalyser(analyser));
-
     (
       switch (getAudioVisualStream()) {
       | None => ()
@@ -303,10 +245,7 @@ let make = (~width=120, ~height=120, _children) => {
         || oldSelf.state.filterBank != newSelf.state.filterBank) {
       disconnectInputs(oldSelf.state);
     },
-  willUnmount: self => {
-    disconnectInputs(self.state);
-    disconnectMic(self.state);
-  },
+  willUnmount: self => disconnectInputs(self.state),
   render: self =>
     <div
       onClick=(_event => self.send(Tick))
@@ -359,6 +298,12 @@ let make = (~width=120, ~height=120, _children) => {
             (),
           )
         )
+      />
+      <AnalysisCanvas
+        size=height
+        audioCtx=defaultAudioCtx
+        input=self.state.micInput
+        saveRef=(self.handle(setAnalysisCanvasRef))
       />
     </div>,
 };
