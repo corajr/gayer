@@ -20,9 +20,189 @@ function filterByPitchSet(pitchClasses, filterValues) {
               }), filterValues);
 }
 
+var majorChord = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        4,
+        /* :: */[
+          7,
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var minorChord = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        3,
+        /* :: */[
+          7,
+          /* [] */0
+        ]
+      ]
+    ]);
+
+var major7 = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        4,
+        /* :: */[
+          7,
+          /* :: */[
+            11,
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
+var minor7 = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        4,
+        /* :: */[
+          7,
+          /* :: */[
+            10,
+            /* [] */0
+          ]
+        ]
+      ]
+    ]);
+
+var cMajor = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        2,
+        /* :: */[
+          4,
+          /* :: */[
+            5,
+            /* :: */[
+              7,
+              /* :: */[
+                9,
+                /* :: */[
+                  11,
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var cMinor = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        2,
+        /* :: */[
+          3,
+          /* :: */[
+            5,
+            /* :: */[
+              7,
+              /* :: */[
+                8,
+                /* :: */[
+                  10,
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var pentatonic = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        2,
+        /* :: */[
+          5,
+          /* :: */[
+            7,
+            /* :: */[
+              9,
+              /* [] */0
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var wholetone = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        2,
+        /* :: */[
+          4,
+          /* :: */[
+            6,
+            /* :: */[
+              8,
+              /* :: */[
+                10,
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
+var allPitches = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      0,
+      /* :: */[
+        1,
+        /* :: */[
+          2,
+          /* :: */[
+            3,
+            /* :: */[
+              4,
+              /* :: */[
+                5,
+                /* :: */[
+                  6,
+                  /* :: */[
+                    7,
+                    /* :: */[
+                      8,
+                      /* :: */[
+                        9,
+                        /* :: */[
+                          10,
+                          /* :: */[
+                            11,
+                            /* [] */0
+                          ]
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 export {
   PitchSet ,
   filterByPitchSet ,
+  majorChord ,
+  minorChord ,
+  major7 ,
+  minor7 ,
+  cMajor ,
+  cMinor ,
+  pentatonic ,
+  wholetone ,
+  allPitches ,
   
 }
 /* PitchSet Not a pure module */

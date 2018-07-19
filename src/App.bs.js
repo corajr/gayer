@@ -13,23 +13,6 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 
-var defaultState_013 = /* allowedPitchClasses */Curry._1(Music$Gayer.PitchSet[/* of_list */25], /* :: */[
-      0,
-      /* :: */[
-        2,
-        /* :: */[
-          5,
-          /* :: */[
-            7,
-            /* :: */[
-              9,
-              /* [] */0
-            ]
-          ]
-        ]
-      ]
-    ]);
-
 var defaultState_015 = /* analysisCanvasRef */[/* None */0];
 
 var defaultState_016 = /* canvasRef */[/* None */0];
@@ -48,9 +31,9 @@ var defaultState = /* record */[
   /* cameraInput : None */0,
   /* shouldClear */false,
   /* channelToRead : R */0,
-  /* alpha */0.5,
+  /* alpha */0.25,
   /* compositeOperation : Overlay */13,
-  defaultState_013,
+  /* allowedPitchClasses */Music$Gayer.pentatonic,
   /* filterBank : None */0,
   defaultState_015,
   defaultState_016,
@@ -427,4 +410,4 @@ export {
   make ,
   
 }
-/* defaultState Not a pure module */
+/* component Not a pure module */
