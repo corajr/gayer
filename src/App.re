@@ -44,7 +44,7 @@ let defaultState: state = {
   alpha: 0.25,
   compositeOperation: Overlay,
   channelToRead: R,
-  allowedPitchClasses: pentatonic,
+  allowedPitchClasses: cMajor,
   filterBank: None,
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
@@ -238,7 +238,7 @@ let make = (~width=120, ~height=120, _children) => {
     self.send(Clear);
 
     self.state.timerId :=
-      Some(Js.Global.setInterval(() => self.send(Tick), 33));
+      Some(Js.Global.setInterval(() => self.send(Tick), 20));
   },
   didUpdate: ({oldSelf, newSelf}) =>
     if (oldSelf.state.filterInput != newSelf.state.filterInput

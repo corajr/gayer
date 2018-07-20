@@ -33,7 +33,7 @@ var defaultState = /* record */[
   /* channelToRead : R */0,
   /* alpha */0.25,
   /* compositeOperation : Overlay */13,
-  /* allowedPitchClasses */Music$Gayer.pentatonic,
+  /* allowedPitchClasses */Music$Gayer.cMajor,
   /* filterBank : None */0,
   defaultState_015,
   defaultState_016,
@@ -137,7 +137,7 @@ function make($staropt$star, $staropt$star$1, _) {
               Curry._1(self[/* send */3], /* Clear */0);
               self[/* state */1][/* timerId */17][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
-                      }), 33)];
+                      }), 20)];
               return /* () */0;
             }),
           /* didUpdate */(function (param) {
