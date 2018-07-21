@@ -26,6 +26,8 @@ var defaultParams = /* record */[
   /* channelToRead : R */0,
   /* alpha */0.25,
   /* compositeOperation : Overlay */13,
+  /* useVisual */true,
+  /* useAnalysis */true,
   /* allowedPitchClasses */Music$Gayer.cMajor
 ];
 
@@ -44,6 +46,8 @@ function params(json) {
           /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
                   return Json_decode.field("compositeOperation", Json_decode.string, param);
                 }), json),
+          /* useVisual */Json_decode.field("useVisual", Json_decode.bool, json),
+          /* useAnalysis */Json_decode.field("useAnalysis", Json_decode.bool, json),
           /* allowedPitchClasses */Json_decode.map(Music$Gayer.PitchSet[/* of_list */25], (function (param) {
                   return Json_decode.field("allowedPitchClasses", (function (param) {
                                 return Json_decode.list(Json_decode.$$int, param);
@@ -87,27 +91,39 @@ function params$1(r) {
                         ],
                         /* :: */[
                           /* tuple */[
-                            "alpha",
-                            r[/* alpha */7]
+                            "useVisual",
+                            r[/* useVisual */9]
                           ],
                           /* :: */[
                             /* tuple */[
-                              "compositeOperation",
-                              Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */8])
+                              "useAnalysis",
+                              r[/* useAnalysis */10]
                             ],
                             /* :: */[
                               /* tuple */[
-                                "channelToRead",
-                                Canvas$Gayer.int_of_channel(r[/* channelToRead */6])
+                                "alpha",
+                                r[/* alpha */7]
                               ],
                               /* :: */[
                                 /* tuple */[
-                                  "allowedPitchClasses",
-                                  Json_encode.list((function (prim) {
-                                          return prim;
-                                        }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[/* allowedPitchClasses */9]))
+                                  "compositeOperation",
+                                  Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */8])
                                 ],
-                                /* [] */0
+                                /* :: */[
+                                  /* tuple */[
+                                    "channelToRead",
+                                    Canvas$Gayer.int_of_channel(r[/* channelToRead */6])
+                                  ],
+                                  /* :: */[
+                                    /* tuple */[
+                                      "allowedPitchClasses",
+                                      Json_encode.list((function (prim) {
+                                              return prim;
+                                            }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[/* allowedPitchClasses */11]))
+                                    ],
+                                    /* [] */0
+                                  ]
+                                ]
                               ]
                             ]
                           ]
@@ -195,17 +211,23 @@ function drawCanvas(canvasElement, width, height, state) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
-  var match = state[/* analysisCanvasRef */7][0];
-  if (match) {
-    ctx.globalAlpha = 1.0;
-    Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, /* SourceOver */0);
-    ctx.drawImage(match[0], state[/* xIndex */0], 0);
+  if (state[/* params */3][/* useAnalysis */10]) {
+    var match = state[/* analysisCanvasRef */7][0];
+    if (match) {
+      ctx.globalAlpha = 1.0;
+      Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, /* SourceOver */0);
+      ctx.drawImage(match[0], state[/* xIndex */0], 0);
+    }
+    
   }
   ctx.globalAlpha = state[/* params */3][/* alpha */7];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, state[/* params */3][/* compositeOperation */8]);
-  var match$1 = state[/* visualInput */2];
-  if (match$1) {
-    ctx.drawImage(match$1[0], 0, 0, width, height);
+  if (state[/* params */3][/* useVisual */9]) {
+    var match$1 = state[/* visualInput */2];
+    if (match$1) {
+      ctx.drawImage(match$1[0], 0, 0, width, height);
+    }
+    
   }
   var slice = ctx.getImageData(state[/* xIndex */0], 0, 1, height);
   return Canvas$Gayer.imageDataToFloatArray(slice, state[/* params */3][/* channelToRead */6]);
@@ -339,7 +361,7 @@ function make($staropt$star, $staropt$star$1, _) {
                             (function (self) {
                                 return maybeUpdateCanvas(self[/* state */1][/* canvasRef */8], (function (canvas) {
                                               var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1]);
-                                              var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* params */3][/* allowedPitchClasses */9], rawFilterValues);
+                                              var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* params */3][/* allowedPitchClasses */11], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
                                                             var partial_arg = 16 + self[/* state */1][/* params */3][/* transpose */4] | 0;
                                                             return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */3][/* inputGain */1]], /* Some */[self[/* state */1][/* params */3][/* outputGain */2]], /* Some */[self[/* state */1][/* params */3][/* q */3]], /* Some */[(function (param) {

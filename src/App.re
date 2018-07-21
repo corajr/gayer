@@ -19,6 +19,8 @@ type params = {
   channelToRead: channel,
   alpha: float,
   compositeOperation,
+  useVisual: bool,
+  useAnalysis: bool,
   allowedPitchClasses: PitchSet.t,
 };
 
@@ -29,6 +31,8 @@ let defaultParams: params = {
   q: defaultQ,
   transpose: 0,
   shouldClear: false,
+  useVisual: true,
+  useAnalysis: true,
   alpha: 0.25,
   compositeOperation: Overlay,
   channelToRead: R,
@@ -44,6 +48,8 @@ module DecodeParams = {
       q: json |> field("q", float),
       transpose: json |> field("transpose", int),
       shouldClear: json |> field("shouldClear", bool),
+      useVisual: json |> field("useVisual", bool),
+      useAnalysis: json |> field("useAnalysis", bool),
       alpha: json |> field("alpha", float),
       compositeOperation:
         json
@@ -69,6 +75,8 @@ module EncodeParams = {
         ("q", float(r.q)),
         ("transpose", int(r.transpose)),
         ("shouldClear", bool(r.shouldClear)),
+        ("useVisual", bool(r.useVisual)),
+        ("useAnalysis", bool(r.useAnalysis)),
         ("alpha", float(r.alpha)),
         (
           "compositeOperation",
@@ -168,22 +176,26 @@ let drawCanvas = (canvasElement, width, height, state) => {
   };
   let ctx = getContext(canvasElement);
 
-  switch (state.analysisCanvasRef^) {
-  | None => ()
-  | Some(analysisCanvas) =>
-    let canvasElt = getFromReact(analysisCanvas);
-    let canvasAsSource = getCanvasAsSource(canvasElt);
-    Ctx.setGlobalAlpha(ctx, 1.0);
-    Ctx.setGlobalCompositeOperation(ctx, SourceOver);
-    Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+  if (state.params.useAnalysis) {
+    switch (state.analysisCanvasRef^) {
+    | None => ()
+    | Some(analysisCanvas) =>
+      let canvasElt = getFromReact(analysisCanvas);
+      let canvasAsSource = getCanvasAsSource(canvasElt);
+      Ctx.setGlobalAlpha(ctx, 1.0);
+      Ctx.setGlobalCompositeOperation(ctx, SourceOver);
+      Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+    };
   };
 
   Ctx.setGlobalAlpha(ctx, state.params.alpha);
   Ctx.setGlobalCompositeOperation(ctx, state.params.compositeOperation);
 
-  switch (state.visualInput) {
-  | None => ()
-  | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+  if (state.params.useVisual) {
+    switch (state.visualInput) {
+    | None => ()
+    | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+    };
   };
 
   let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
