@@ -258,6 +258,7 @@ function make($staropt$star, $staropt$star$1, _) {
               return React.createElement("div", {
                           style: {
                             display: "flex",
+                            minHeight: (height << 2).toString(),
                             flexDirection: "row",
                             justifyContent: "space-between"
                           },
@@ -266,23 +267,29 @@ function make($staropt$star, $staropt$star$1, _) {
                             })
                         }, React.createElement("div", {
                               style: {
-                                margin: "10px"
+                                margin: "10px",
+                                width: "50%"
                               }
-                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please download and edit defaultParams..."), React.createElement("a", {
+                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please download and edit defaultParams in App.re"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source"), React.createElement("div", {
-                                  style: {
-                                    width: "50%"
-                                  }
-                                }, "params:", React.createElement("br", undefined), JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2))), React.createElement("canvas", {
-                              ref: Curry._1(self[/* handle */0], setCanvasRef),
+                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2))), React.createElement("div", {
                               style: {
-                                transform: "scale(4)",
-                                transformOrigin: "top right"
-                              },
-                              height: height.toString(),
-                              width: width.toString()
-                            }), ReasonReact.element(/* None */0, /* None */0, AnalysisCanvas$Gayer.make(height, Audio$Gayer.defaultAudioCtx, self[/* state */1][/* micInput */4], Curry._1(self[/* handle */0], setAnalysisCanvasRef), /* array */[])));
+                                display: "flex",
+                                margin: "0",
+                                minHeight: (height << 2).toString(),
+                                width: "50%",
+                                alignItems: "flex-start",
+                                justifyContent: "flex-end"
+                              }
+                            }, React.createElement("canvas", {
+                                  ref: Curry._1(self[/* handle */0], setCanvasRef),
+                                  style: {
+                                    transform: "scale(4)",
+                                    transformOrigin: "top right"
+                                  },
+                                  height: height.toString(),
+                                  width: width.toString()
+                                }), ReasonReact.element(/* None */0, /* None */0, AnalysisCanvas$Gayer.make(height, Audio$Gayer.defaultAudioCtx, self[/* state */1][/* micInput */4], Curry._1(self[/* handle */0], setAnalysisCanvasRef), /* array */[]))));
             }),
           /* initialState */(function () {
               return defaultState;

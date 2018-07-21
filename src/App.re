@@ -310,24 +310,26 @@ let make = (~width=120, ~height=120, _children) => {
           ~display="flex",
           ~flexDirection="row",
           ~justifyContent="space-between",
+          ~minHeight=Js.Int.toString(height * 4),
           (),
         )
       )>
-      <div style=(ReactDOMRe.Style.make(~margin="10px", ()))>
+      <div style=(ReactDOMRe.Style.make(~margin="10px", ~width="50%", ()))>
         <h1> (ReasonReact.string("GAYER")) </h1>
         <div>
           (
             ReasonReact.string(
-              "UI forthcoming; for now, please download and edit defaultParams...",
+              "UI forthcoming; for now, please download and edit defaultParams in App.re",
             )
           )
         </div>
         <a href="https://github.com/corajr/gayer">
           (ReasonReact.string("source"))
         </a>
-        <div style=(ReactDOMRe.Style.make(~width="50%", ()))>
-          (ReasonReact.string("params:"))
-          <br />
+        <br />
+        (ReasonReact.string("params:"))
+        <br />
+        <div>
           (
             ReasonReact.string(
               Js.Json.stringifyWithSpace(
@@ -338,23 +340,36 @@ let make = (~width=120, ~height=120, _children) => {
           )
         </div>
       </div>
-      <canvas
-        ref=(self.handle(setCanvasRef))
-        width=(Js.Int.toString(width))
-        height=(Js.Int.toString(height))
+      <div
         style=(
           ReactDOMRe.Style.make(
-            ~transform="scale(4)",
-            ~transformOrigin="top right",
+            ~margin="0",
+            ~width="50%",
+            ~minHeight=Js.Int.toString(height * 4),
+            ~display="flex",
+            ~justifyContent="flex-end",
+            ~alignItems="flex-start",
             (),
           )
-        )
-      />
-      <AnalysisCanvas
-        size=height
-        audioCtx=defaultAudioCtx
-        input=self.state.micInput
-        saveRef=(self.handle(setAnalysisCanvasRef))
-      />
+        )>
+        <canvas
+          ref=(self.handle(setCanvasRef))
+          width=(Js.Int.toString(width))
+          height=(Js.Int.toString(height))
+          style=(
+            ReactDOMRe.Style.make(
+              ~transform="scale(4)",
+              ~transformOrigin="top right",
+              (),
+            )
+          )
+        />
+        <AnalysisCanvas
+          size=height
+          audioCtx=defaultAudioCtx
+          input=self.state.micInput
+          saveRef=(self.handle(setAnalysisCanvasRef))
+        />
+      </div>
     </div>,
 };
