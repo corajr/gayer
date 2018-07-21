@@ -19,6 +19,7 @@
   "namespace": true,
   "bs-dependencies": [
     "reason-react",
+    "@glennsl/bs-json",
     "@jsiebern/bs-material-ui"
   ],
   "refmt": 3

@@ -30,6 +30,15 @@ let int_of_channel = channel =>
   | A => 3
   };
 
+let channel_of_int = int =>
+  switch (int) {
+  | 0 => R
+  | 1 => G
+  | 2 => G
+  | 3 => A
+  | _ => R
+  };
+
 type pixel = {
   r: float,
   g: float,
@@ -95,6 +104,36 @@ let string_of_compositeOperation: compositeOperation => string =
   | Saturation => "saturation"
   | Color => "color"
   | Luminosity => "luminosity";
+
+let compositeOperation_of_string: string => compositeOperation =
+  fun
+  | "source-over" => SourceOver
+  | "source-in" => SourceIn
+  | "source-out" => SourceOut
+  | "source-atop" => SourceAtop
+  | "destination-over" => DestinationOver
+  | "destination-in" => DestinationIn
+  | "destination-out" => DestinationOut
+  | "destination-atop" => DestinationAtop
+  | "lighter" => Lighter
+  | "copy" => Copy
+  | "xor" => Xor
+  | "multiply" => Multiply
+  | "screen" => Screen
+  | "overlay" => Overlay
+  | "darken" => Darken
+  | "lighten" => Lighten
+  | "color-dodge" => ColorDodge
+  | "color-burn" => ColorBurn
+  | "hard-light" => HardLight
+  | "soft-light" => SoftLight
+  | "difference" => Difference
+  | "exclusion" => Exclusion
+  | "hue" => Hue
+  | "saturation" => Saturation
+  | "color" => Color
+  | "luminosity" => Luminosity
+  | _ => SourceOver;
 
 external getFromReact : Dom.element => canvasElement = "%identity";
 

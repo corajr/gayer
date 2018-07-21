@@ -9,21 +9,87 @@ type filterInput = audioNode;
 
 type visualInput = option(canvasImageSource);
 
-type state = {
-  xIndex: int,
+type params = {
   xDelta: int,
   inputGain: float,
   outputGain: float,
   q: float,
-  filterInput,
-  visualInput,
-  micInput: option(audioNode),
-  cameraInput: option(canvasImageSource),
+  transpose: int,
   shouldClear: bool,
   channelToRead: channel,
   alpha: float,
   compositeOperation,
   allowedPitchClasses: PitchSet.t,
+};
+
+let defaultParams: params = {
+  xDelta: 1,
+  inputGain: 1.0,
+  outputGain: 0.2,
+  q: defaultQ,
+  transpose: 0,
+  shouldClear: false,
+  alpha: 0.25,
+  compositeOperation: Overlay,
+  channelToRead: R,
+  allowedPitchClasses: cMajor,
+};
+
+module DecodeParams = {
+  let params = json =>
+    Json.Decode.{
+      xDelta: json |> field("xDelta", int),
+      inputGain: json |> field("inputGain", float),
+      outputGain: json |> field("outputGain", float),
+      q: json |> field("q", float),
+      transpose: json |> field("transpose", int),
+      shouldClear: json |> field("shouldClear", bool),
+      alpha: json |> field("alpha", float),
+      compositeOperation:
+        json
+        |> map(
+             compositeOperation_of_string,
+             field("compositeOperation", string),
+           ),
+      channelToRead:
+        json |> map(channel_of_int, field("channelToRead", int)),
+      allowedPitchClasses:
+        json
+        |> map(PitchSet.of_list, field("allowedPitchClasses", list(int))),
+    };
+};
+
+module EncodeParams = {
+  let params = r =>
+    Json.Encode.(
+      object_([
+        ("xDelta", int(r.xDelta)),
+        ("inputGain", float(r.inputGain)),
+        ("outputGain", float(r.outputGain)),
+        ("q", float(r.q)),
+        ("transpose", int(r.transpose)),
+        ("shouldClear", bool(r.shouldClear)),
+        ("alpha", float(r.alpha)),
+        (
+          "compositeOperation",
+          string(string_of_compositeOperation(r.compositeOperation)),
+        ),
+        ("channelToRead", int(int_of_channel(r.channelToRead))),
+        (
+          "allowedPitchClasses",
+          list(int, PitchSet.elements(r.allowedPitchClasses)),
+        ),
+      ])
+    );
+};
+
+type state = {
+  xIndex: int,
+  filterInput,
+  visualInput,
+  params,
+  micInput: option(audioNode),
+  cameraInput: option(canvasImageSource),
   filterBank: option(filterBank),
   analysisCanvasRef: ref(option(Dom.element)),
   canvasRef: ref(option(Dom.element)),
@@ -32,19 +98,11 @@ type state = {
 
 let defaultState: state = {
   xIndex: 0,
-  xDelta: 1,
-  inputGain: 1.0,
-  outputGain: 0.1,
-  q: defaultQ,
   filterInput: defaultNoise,
   visualInput: None,
   micInput: None,
   cameraInput: None,
-  shouldClear: false,
-  alpha: 0.25,
-  compositeOperation: Overlay,
-  channelToRead: R,
-  allowedPitchClasses: cMajor,
+  params: defaultParams,
   filterBank: None,
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
@@ -59,8 +117,7 @@ type action =
   | SetMicInput(audioNode)
   | SetCameraInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
-  | SetXIndex(int)
-  | SetXDelta(int);
+  | SetParams(params);
 
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
@@ -106,7 +163,7 @@ let clearCanvas = (canvasElement, width, height) => {
 };
 
 let drawCanvas = (canvasElement, width, height, state) => {
-  if (state.shouldClear) {
+  if (state.params.shouldClear) {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
@@ -121,8 +178,8 @@ let drawCanvas = (canvasElement, width, height, state) => {
     Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
   };
 
-  Ctx.setGlobalAlpha(ctx, state.alpha);
-  Ctx.setGlobalCompositeOperation(ctx, state.compositeOperation);
+  Ctx.setGlobalAlpha(ctx, state.params.alpha);
+  Ctx.setGlobalCompositeOperation(ctx, state.params.compositeOperation);
 
   switch (state.visualInput) {
   | None => ()
@@ -130,7 +187,7 @@ let drawCanvas = (canvasElement, width, height, state) => {
   };
 
   let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
-  let values = imageDataToFloatArray(slice, state.channelToRead);
+  let values = imageDataToFloatArray(slice, state.params.channelToRead);
 
   values;
 };
@@ -149,8 +206,7 @@ let make = (~width=120, ~height=120, _children) => {
   initialState: () => defaultState,
   reducer: (action, state) =>
     switch (action) {
-    | SetXIndex(idx) => ReasonReact.Update({...state, xIndex: idx mod width})
-    | SetXDelta(delta) => ReasonReact.Update({...state, xDelta: delta})
+    | SetParams(params) => ReasonReact.Update({...state, params})
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetCameraInput(camera) =>
       ReasonReact.Update({...state, cameraInput: camera})
@@ -168,7 +224,7 @@ let make = (~width=120, ~height=120, _children) => {
       )
     | Tick =>
       ReasonReact.UpdateWithSideEffects(
-        {...state, xIndex: (state.xIndex + state.xDelta) mod width},
+        {...state, xIndex: (state.xIndex + state.params.xDelta) mod width},
         (
           self =>
             maybeUpdateCanvas(
@@ -178,7 +234,7 @@ let make = (~width=120, ~height=120, _children) => {
                   drawCanvas(canvas, width, height, self.state);
                 let filterValues =
                   filterByPitchSet(
-                    ~pitchClasses=self.state.allowedPitchClasses,
+                    ~pitchClasses=self.state.params.allowedPitchClasses,
                     ~filterValues=rawFilterValues,
                   );
                 maybeMapFilterBank(
@@ -186,9 +242,9 @@ let make = (~width=120, ~height=120, _children) => {
                     updateFilterBank(
                       ~filterBank,
                       ~filterValues,
-                      ~inputGain=self.state.inputGain,
-                      ~outputGain=self.state.outputGain,
-                      ~q=self.state.q,
+                      ~inputGain=self.state.params.inputGain,
+                      ~outputGain=self.state.params.outputGain,
+                      ~q=self.state.params.q,
                     ),
                   self.state.filterBank,
                 );
@@ -212,7 +268,7 @@ let make = (~width=120, ~height=120, _children) => {
         ~audioCtx=defaultAudioCtx,
         ~filterN=height,
         ~q=defaultQ,
-        ~freqFunc=frequencyFromNoteNumber(15),
+        ~freqFunc=frequencyFromNoteNumber(16),
       );
     self.send(SetFilterBank(filterBank));
 
@@ -262,26 +318,21 @@ let make = (~width=120, ~height=120, _children) => {
         <div>
           (
             ReasonReact.string(
-              "UI forthcoming; for now, please download and edit...",
+              "UI forthcoming; for now, please download and edit defaultParams...",
             )
           )
         </div>
         <a href="https://github.com/corajr/gayer">
           (ReasonReact.string("source"))
         </a>
-        <div>
+        <div style=(ReactDOMRe.Style.make(~width="50%", ()))>
+          (ReasonReact.string("params:"))
+          <br />
           (
             ReasonReact.string(
-              "Allowed pitch classes: "
-              ++ (
-                switch (
-                  Js.Json.stringifyAny(
-                    PitchSet.elements(self.state.allowedPitchClasses),
-                  )
-                ) {
-                | None => ""
-                | Some(s) => s
-                }
+              Js.Json.stringifyWithSpace(
+                EncodeParams.params(self.state.params),
+                2,
               ),
             )
           )

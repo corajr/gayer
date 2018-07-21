@@ -8,6 +8,20 @@ function int_of_channel(channel) {
   return channel;
 }
 
+function channel_of_int($$int) {
+  if ($$int > 2 || $$int < 0) {
+    if ($$int !== 3) {
+      return /* R */0;
+    } else {
+      return /* A */3;
+    }
+  } else if ($$int !== 0) {
+    return /* G */1;
+  } else {
+    return /* R */0;
+  }
+}
+
 function string_of_compositeOperation(param) {
   switch (param) {
     case 0 : 
@@ -63,6 +77,65 @@ function string_of_compositeOperation(param) {
     case 25 : 
         return "luminosity";
     
+  }
+}
+
+function compositeOperation_of_string(param) {
+  switch (param) {
+    case "color" : 
+        return /* Color */24;
+    case "color-burn" : 
+        return /* ColorBurn */17;
+    case "color-dodge" : 
+        return /* ColorDodge */16;
+    case "copy" : 
+        return /* Copy */9;
+    case "darken" : 
+        return /* Darken */14;
+    case "destination-atop" : 
+        return /* DestinationAtop */7;
+    case "destination-in" : 
+        return /* DestinationIn */5;
+    case "destination-out" : 
+        return /* DestinationOut */6;
+    case "destination-over" : 
+        return /* DestinationOver */4;
+    case "difference" : 
+        return /* Difference */20;
+    case "exclusion" : 
+        return /* Exclusion */21;
+    case "hard-light" : 
+        return /* HardLight */18;
+    case "hue" : 
+        return /* Hue */22;
+    case "lighten" : 
+        return /* Lighten */15;
+    case "lighter" : 
+        return /* Lighter */8;
+    case "luminosity" : 
+        return /* Luminosity */25;
+    case "multiply" : 
+        return /* Multiply */11;
+    case "overlay" : 
+        return /* Overlay */13;
+    case "saturation" : 
+        return /* Saturation */23;
+    case "screen" : 
+        return /* Screen */12;
+    case "soft-light" : 
+        return /* SoftLight */19;
+    case "source-atop" : 
+        return /* SourceAtop */3;
+    case "source-in" : 
+        return /* SourceIn */1;
+    case "source-out" : 
+        return /* SourceOut */2;
+    case "source-over" : 
+        return /* SourceOver */0;
+    case "xor" : 
+        return /* Xor */10;
+    default:
+      return /* SourceOver */0;
   }
 }
 
@@ -164,7 +237,9 @@ function makeImageData(cqtLine) {
 
 export {
   int_of_channel ,
+  channel_of_int ,
   string_of_compositeOperation ,
+  compositeOperation_of_string ,
   Ctx ,
   simpleDrawImage ,
   mapRawData ,
