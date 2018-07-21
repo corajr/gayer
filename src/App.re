@@ -201,6 +201,8 @@ external requestAnimationFrame :
   (Dom.window, domHighResTimeStamp => unit) => unit =
   "";
 
+[@bs.val] external decodeURIComponent : string => string = "";
+
 let make = (~width=120, ~height=120, _children) => {
   ...component,
   initialState: () => defaultState,
@@ -299,6 +301,24 @@ let make = (~width=120, ~height=120, _children) => {
 
     self.state.timerId :=
       Some(Js.Global.setInterval(() => self.send(Tick), 20));
+
+    let watcherID =
+      ReasonReact.Router.watchUrl(url => {
+        let hash = decodeURIComponent(url.hash);
+
+        switch (Json.parse(hash)) {
+        | Some(x) =>
+          switch (Json.Decode.optional(DecodeParams.params, x)) {
+          | None => ()
+          | Some(params) => self.send(SetParams(params))
+          }
+        | None => ()
+        };
+      });
+    self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
+    let startingParams =
+      Js.Json.stringify(EncodeParams.params(self.state.params));
+    ReasonReact.Router.push("#" ++ startingParams);
   },
   didUpdate: ({oldSelf, newSelf}) =>
     if (oldSelf.state.filterInput != newSelf.state.filterInput
@@ -323,7 +343,7 @@ let make = (~width=120, ~height=120, _children) => {
         <div>
           (
             ReasonReact.string(
-              "UI forthcoming; for now, please download and edit defaultParams in App.re",
+              "UI forthcoming; for now, please edit params in URL",
             )
           )
         </div>
