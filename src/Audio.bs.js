@@ -178,10 +178,13 @@ function disconnectFilterBank(noise, filterBank) {
   return /* () */0;
 }
 
-function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, filterBank, filterValues) {
+function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, filterBank, filterValues) {
   var inputGain = $staropt$star ? $staropt$star[0] : 1.0;
   var outputGain = $staropt$star$1 ? $staropt$star$1[0] : 0.1;
   var q = $staropt$star$2 ? $staropt$star$2[0] : 34.127;
+  var freqFunc = $staropt$star$3 ? $staropt$star$3[0] : (function (param) {
+        return frequencyFromNoteNumber(16, param);
+      });
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
@@ -189,6 +192,7 @@ function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, filte
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     Caml_array.caml_array_get(filterBank[/* gains */2], (n - i | 0) - 1 | 0).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
     Caml_array.caml_array_get(filterBank[/* filters */1], i).Q.setValueAtTime(q, currentTime);
+    Caml_array.caml_array_get(filterBank[/* filters */1], i).frequency.setValueAtTime(Curry._1(freqFunc, i), currentTime);
   }
   return /* () */0;
 }

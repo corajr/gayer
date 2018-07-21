@@ -244,6 +244,10 @@ let make = (~width=120, ~height=120, _children) => {
                       ~filterValues,
                       ~inputGain=self.state.params.inputGain,
                       ~outputGain=self.state.params.outputGain,
+                      ~freqFunc=
+                        frequencyFromNoteNumber(
+                          16 + self.state.params.transpose,
+                        ),
                       ~q=self.state.params.q,
                     ),
                   self.state.filterBank,

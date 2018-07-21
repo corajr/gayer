@@ -322,7 +322,10 @@ function make($staropt$star, $staropt$star$1, _) {
                                               var rawFilterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                               var filterValues = Music$Gayer.filterByPitchSet(self[/* state */1][/* params */3][/* allowedPitchClasses */9], rawFilterValues);
                                               return maybeMapFilterBank((function (filterBank) {
-                                                            return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */3][/* inputGain */1]], /* Some */[self[/* state */1][/* params */3][/* outputGain */2]], /* Some */[self[/* state */1][/* params */3][/* q */3]], filterBank, filterValues);
+                                                            var partial_arg = 16 + self[/* state */1][/* params */3][/* transpose */4] | 0;
+                                                            return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */3][/* inputGain */1]], /* Some */[self[/* state */1][/* params */3][/* outputGain */2]], /* Some */[self[/* state */1][/* params */3][/* q */3]], /* Some */[(function (param) {
+                                                                            return Audio$Gayer.frequencyFromNoteNumber(partial_arg, param);
+                                                                          })], filterBank, filterValues);
                                                           }), self[/* state */1][/* filterBank */6]);
                                             }));
                               })

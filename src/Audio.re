@@ -377,6 +377,7 @@ let updateFilterBank =
       ~inputGain: float=1.0,
       ~outputGain: float=0.1,
       ~q=defaultQ,
+      ~freqFunc=frequencyFromNoteNumber(16),
       ~filterBank: filterBank,
       ~filterValues: array(float),
     ) => {
@@ -392,5 +393,10 @@ let updateFilterBank =
     );
 
     setValueAtTime(filterBank.filters[i] |. qualityFactor, q, currentTime);
+    setValueAtTime(
+      filterBank.filters[i] |. frequency,
+      freqFunc(i),
+      currentTime,
+    );
   };
 };
