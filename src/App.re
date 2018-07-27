@@ -9,6 +9,18 @@ type filterInput = audioNode;
 
 type visualInput = option(canvasImageSource);
 
+type layerContent =
+  | Webcam
+  | Analysis
+  | PitchClasses(PitchSet.t)
+  | Reader(channel);
+
+type layer = {
+  content: layerContent,
+  alpha: float,
+  compositeOperation,
+};
+
 type params = {
   xDelta: int,
   inputGain: float,
@@ -16,12 +28,7 @@ type params = {
   q: float,
   transpose: int,
   shouldClear: bool,
-  channelToRead: channel,
-  alpha: float,
-  compositeOperation,
-  useVisual: bool,
-  useAnalysis: bool,
-  allowedPitchClasses: PitchSet.t,
+  layers: list(layer),
 };
 
 let defaultParams: params = {
@@ -31,15 +38,55 @@ let defaultParams: params = {
   q: defaultQ,
   transpose: 0,
   shouldClear: false,
-  useVisual: true,
-  useAnalysis: true,
-  alpha: 0.25,
-  compositeOperation: Overlay,
-  channelToRead: R,
-  allowedPitchClasses: cMajor,
+  layers: [
+    {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
+    {content: Webcam, alpha: 0.25, compositeOperation: Overlay},
+    {
+      content: PitchClasses(cMajor),
+      alpha: 1.0,
+      compositeOperation: SourceOver,
+    },
+    {content: Reader(R), alpha: 0.0, compositeOperation: SourceOver},
+  ],
 };
 
 module DecodeParams = {
+  let layerByType = (type_, json) =>
+    Json.Decode.(
+      switch (type_) {
+      | "webcam" => Webcam
+      | "reader" =>
+        json
+        |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
+      | "analysis" => Analysis
+      | "pitchClasses" =>
+        json
+        |> map(
+             xs => PitchClasses(PitchSet.of_list(xs)),
+             field("pc", list(int)),
+           )
+      | _ =>
+        raise @@
+        DecodeError(
+          "Expected layer content, got " ++ Js.Json.stringify(json),
+        )
+      }
+    );
+  let layerContent = json =>
+    Json.Decode.(json |> (field("type", string) |> andThen(layerByType)));
+
+  let layer = json =>
+    Json.Decode.{
+      content: json |> field("content", layerContent),
+      alpha: json |> field("alpha", float),
+      compositeOperation:
+        json
+        |> map(
+             compositeOperation_of_string,
+             field("compositeOperation", string),
+           ),
+    };
+
   let params = json =>
     Json.Decode.{
       xDelta: json |> field("xDelta", int),
@@ -48,24 +95,40 @@ module DecodeParams = {
       q: json |> field("q", float),
       transpose: json |> field("transpose", int),
       shouldClear: json |> field("shouldClear", bool),
-      useVisual: json |> field("useVisual", bool),
-      useAnalysis: json |> field("useAnalysis", bool),
-      alpha: json |> field("alpha", float),
-      compositeOperation:
-        json
-        |> map(
-             compositeOperation_of_string,
-             field("compositeOperation", string),
-           ),
-      channelToRead:
-        json |> map(channel_of_int, field("channelToRead", int)),
-      allowedPitchClasses:
-        json
-        |> map(PitchSet.of_list, field("allowedPitchClasses", list(int))),
+      layers: json |> field("layers", list(layer)),
     };
 };
 
 module EncodeParams = {
+  let layerContent = r =>
+    Json.Encode.(
+      switch (r) {
+      | Webcam => object_([("type", string("webcam"))])
+      | Analysis => object_([("type", string("analysis"))])
+      | PitchClasses(classes) =>
+        object_([
+          ("type", string("pitchClasses")),
+          ("pc", list(int, PitchSet.elements(classes))),
+        ])
+      | Reader(channel) =>
+        object_([
+          ("type", string("reader")),
+          ("channel", int(int_of_channel(channel))),
+        ])
+      }
+    );
+
+  let layer = r =>
+    Json.Encode.(
+      object_([
+        ("content", layerContent(r.content)),
+        ("alpha", float(r.alpha)),
+        (
+          "compositeOperation",
+          string(string_of_compositeOperation(r.compositeOperation)),
+        ),
+      ])
+    );
   let params = r =>
     Json.Encode.(
       object_([
@@ -75,18 +138,7 @@ module EncodeParams = {
         ("q", float(r.q)),
         ("transpose", int(r.transpose)),
         ("shouldClear", bool(r.shouldClear)),
-        ("useVisual", bool(r.useVisual)),
-        ("useAnalysis", bool(r.useAnalysis)),
-        ("alpha", float(r.alpha)),
-        (
-          "compositeOperation",
-          string(string_of_compositeOperation(r.compositeOperation)),
-        ),
-        ("channelToRead", int(int_of_channel(r.channelToRead))),
-        (
-          "allowedPitchClasses",
-          list(int, PitchSet.elements(r.allowedPitchClasses)),
-        ),
+        ("layers", list(layer, r.layers)),
       ])
     );
 };
@@ -121,7 +173,6 @@ type action =
   | Clear
   | Tick
   | SetFilterInput(audioNode)
-  | SetVisualInput(option(canvasImageSource))
   | SetMicInput(audioNode)
   | SetCameraInput(option(canvasImageSource))
   | SetFilterBank(filterBank)
@@ -170,36 +221,75 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
+let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
+  (ctx, width, height, state, layer) => {
+    Ctx.setGlobalAlpha(ctx, layer.alpha);
+    Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
+
+    switch (layer.content) {
+    | Analysis =>
+      switch (state.analysisCanvasRef^) {
+      | None => ()
+      | Some(analysisCanvas) =>
+        let canvasElt = getFromReact(analysisCanvas);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+      };
+      None;
+    | Webcam =>
+      switch (state.cameraInput) {
+      | None => ()
+      | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+      };
+      None;
+    | PitchClasses(classes) =>
+      let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
+
+      Ctx.setFillStyle(ctx, "black");
+      for (i in 0 to height / 12) {
+        List.iter(
+          j => {
+            let y = i * 12 + j;
+            Ctx.fillRect(ctx, 0, y, width, 1);
+          },
+          classList,
+        );
+      };
+      None;
+    | Reader(channel) =>
+      let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
+      Ctx.setFillStyle(
+        ctx,
+        switch (channel) {
+        | R => "red"
+        | G => "green"
+        | B => "blue"
+        | A => "white"
+        },
+      );
+      Ctx.fillRect(ctx, state.xIndex, 0, 1, height);
+      Some(imageDataToFloatArray(slice, channel));
+    };
+  };
+
 let drawCanvas = (canvasElement, width, height, state) => {
   if (state.params.shouldClear) {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
 
-  if (state.params.useAnalysis) {
-    switch (state.analysisCanvasRef^) {
-    | None => ()
-    | Some(analysisCanvas) =>
-      let canvasElt = getFromReact(analysisCanvas);
-      let canvasAsSource = getCanvasAsSource(canvasElt);
-      Ctx.setGlobalAlpha(ctx, 1.0);
-      Ctx.setGlobalCompositeOperation(ctx, SourceOver);
-      Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
-    };
-  };
-
-  Ctx.setGlobalAlpha(ctx, state.params.alpha);
-  Ctx.setGlobalCompositeOperation(ctx, state.params.compositeOperation);
-
-  if (state.params.useVisual) {
-    switch (state.visualInput) {
-    | None => ()
-    | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-    };
-  };
-
-  let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
-  let values = imageDataToFloatArray(slice, state.params.channelToRead);
+  let values =
+    List.fold_left(
+      (values, layer) => {
+        let newMaybeValues = drawLayer(ctx, width, height, state, layer);
+        switch (newMaybeValues) {
+        | None => values
+        | Some(newValues) => newValues
+        };
+      },
+      Array.make(height, 0.0),
+      state.params.layers,
+    );
 
   values;
 };
@@ -224,8 +314,6 @@ let make = (~width=120, ~height=120, _children) => {
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetCameraInput(camera) =>
       ReasonReact.Update({...state, cameraInput: camera})
-    | SetVisualInput(visualInput) =>
-      ReasonReact.Update({...state, visualInput})
     | SetFilterInput(filterInput) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput},
@@ -244,13 +332,8 @@ let make = (~width=120, ~height=120, _children) => {
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
-                let rawFilterValues =
-                  drawCanvas(canvas, width, height, self.state);
                 let filterValues =
-                  filterByPitchSet(
-                    ~pitchClasses=self.state.params.allowedPitchClasses,
-                    ~filterValues=rawFilterValues,
-                  );
+                  drawCanvas(canvas, width, height, self.state);
                 maybeMapFilterBank(
                   filterBank =>
                     updateFilterBank(
@@ -301,7 +384,6 @@ let make = (~width=120, ~height=120, _children) => {
              self.send(SetMicInput(audio));
              self.send(SetCameraInput(Some(video)));
              /* self.send(SetFilterInput(audio)); */
-             self.send(SetVisualInput(Some(video)));
              Js.Promise.resolve();
            })
         |> ignore
