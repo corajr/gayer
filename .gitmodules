@@ -1,0 +1,3 @@
+[submodule "media"]
+	path = media
+	url = https://github.com/corajr/gayer-sample-media.git
