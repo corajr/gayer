@@ -246,11 +246,12 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
 
       Ctx.setFillStyle(ctx, "black");
-      for (i in 0 to height / 12) {
+      let binsPerSemitone = height / 120;
+      for (i in 0 to height / 10) {
         List.iter(
           j => {
-            let y = i * 12 + j;
-            Ctx.fillRect(ctx, 0, y, width, 1);
+            let y = (i * 12 + j) * binsPerSemitone;
+            Ctx.fillRect(ctx, 0, y, width, binsPerSemitone);
           },
           classList,
         );
@@ -342,7 +343,8 @@ let make = (~width=120, ~height=120, _children) => {
                       ~inputGain=self.state.params.inputGain,
                       ~outputGain=self.state.params.outputGain,
                       ~freqFunc=
-                        frequencyFromNoteNumber(
+                        yToFrequency(
+                          height / 120,
                           16 + self.state.params.transpose,
                         ),
                       ~q=self.state.params.q,
@@ -369,7 +371,8 @@ let make = (~width=120, ~height=120, _children) => {
         ~audioCtx=defaultAudioCtx,
         ~filterN=height,
         ~q=defaultQ,
-        ~freqFunc=frequencyFromNoteNumber(16),
+        ~freqFunc=
+          yToFrequency(height / 120, 16 + self.state.params.transpose),
       );
     self.send(SetFilterBank(filterBank));
 

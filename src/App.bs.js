@@ -362,11 +362,12 @@ function drawLayer(ctx, width, height, state, layer) {
   } else {
     var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
     ctx.fillStyle = "black";
-    for(var i = 0 ,i_finish = height / 12 | 0; i <= i_finish; ++i){
+    var binsPerSemitone = height / 120 | 0;
+    for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
       List.iter((function(i){
           return function (j) {
-            var y = Caml_int32.imul(i, 12) + j | 0;
-            ctx.fillRect(0, y, width, 1);
+            var y = Caml_int32.imul(Caml_int32.imul(i, 12) + j | 0, binsPerSemitone);
+            ctx.fillRect(0, y, width, binsPerSemitone);
             return /* () */0;
           }
           }(i)), classList);
@@ -399,9 +400,7 @@ function make($staropt$star, $staropt$star$1, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              var filterBank = Audio$Gayer.makeFilterBank(Audio$Gayer.defaultAudioCtx, height, Audio$Gayer.defaultQ, (function (param) {
-                      return Audio$Gayer.frequencyFromNoteNumber(16, param);
-                    }));
+              var filterBank = Audio$Gayer.makeFilterBank(Audio$Gayer.defaultAudioCtx, height, Audio$Gayer.defaultQ, Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */4] | 0));
               Curry._1(self[/* send */3], /* SetFilterBank */Block.__(3, [filterBank]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match) {
@@ -518,10 +517,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                 return maybeUpdateCanvas(self[/* state */1][/* canvasRef */8], (function (canvas) {
                                               var filterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                               return maybeMapFilterBank((function (filterBank) {
-                                                            var partial_arg = 16 + self[/* state */1][/* params */3][/* transpose */4] | 0;
-                                                            return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */3][/* inputGain */1]], /* Some */[self[/* state */1][/* params */3][/* outputGain */2]], /* Some */[self[/* state */1][/* params */3][/* q */3]], /* Some */[(function (param) {
-                                                                            return Audio$Gayer.frequencyFromNoteNumber(partial_arg, param);
-                                                                          })], filterBank, filterValues);
+                                                            return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */3][/* inputGain */1]], /* Some */[self[/* state */1][/* params */3][/* outputGain */2]], /* Some */[self[/* state */1][/* params */3][/* q */3]], /* Some */[Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */4] | 0)], filterBank, filterValues);
                                                           }), self[/* state */1][/* filterBank */6]);
                                             }));
                               })

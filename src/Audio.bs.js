@@ -8,8 +8,15 @@ import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 var defaultAudioCtx = (new (window.AudioContext || window.webkitAudioContext)());
 
-function frequencyFromNoteNumber(offset, note) {
-  return 440.0 * Math.pow(2.0, ((note - 69 | 0) + offset | 0) / 12.0);
+function yToFrequency(binsPerSemitone, offset) {
+  var fBinsPerSemitone = binsPerSemitone;
+  var bin440 = 69 * fBinsPerSemitone;
+  var offset$1 = offset * fBinsPerSemitone;
+  var octave = 12.0 * fBinsPerSemitone;
+  return (function (y) {
+      var note = y / fBinsPerSemitone;
+      return 440.0 * Math.pow(2.0, (note - bin440 + offset$1) / octave);
+    });
 }
 
 var defaultCompressorValues = /* record */[
@@ -182,9 +189,7 @@ function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, $star
   var inputGain = $staropt$star ? $staropt$star[0] : 1.0;
   var outputGain = $staropt$star$1 ? $staropt$star$1[0] : 0.1;
   var q = $staropt$star$2 ? $staropt$star$2[0] : 34.127;
-  var freqFunc = $staropt$star$3 ? $staropt$star$3[0] : (function (param) {
-        return frequencyFromNoteNumber(16, param);
-      });
+  var freqFunc = $staropt$star$3 ? $staropt$star$3[0] : yToFrequency(1, 16);
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
@@ -206,7 +211,7 @@ var defaultCompressor = compressor;
 export {
   defaultAudioCtx ,
   midiNoteA440Hz ,
-  frequencyFromNoteNumber ,
+  yToFrequency ,
   defaultQ ,
   defaultCompressorValues ,
   makeCompressor ,

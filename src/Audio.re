@@ -143,13 +143,19 @@ external connectCompressorToNode : (compressor, audioNode) => unit = "connect";
 
 let midiNoteA440Hz = 69;
 
-let frequencyFromNoteNumber: (int, int) => float =
-  (offset, note) =>
-    440.0
-    *. Js.Math.pow_float(
-         2.0,
-         float_of_int(note - midiNoteA440Hz + offset) /. 12.0,
-       );
+let yToFrequency: (int, int, int) => float =
+  (binsPerSemitone, offset) => {
+    let fBinsPerSemitone = float_of_int(binsPerSemitone);
+    let bin440 = float_of_int(midiNoteA440Hz) *. fBinsPerSemitone;
+    let offset = float_of_int(offset) *. fBinsPerSemitone;
+    let octave = 12.0 *. fBinsPerSemitone;
+
+    y => {
+      let note = float_of_int(y) /. fBinsPerSemitone;
+
+      440.0 *. Js.Math.pow_float(2.0, (note -. bin440 +. offset) /. octave);
+    };
+  };
 
 /* In principle, Q should be 1 / (2^(1/12) - 1) = 16.817 */
 /* but a higher Q sounds better. */
@@ -377,7 +383,7 @@ let updateFilterBank =
       ~inputGain: float=1.0,
       ~outputGain: float=0.1,
       ~q=defaultQ,
-      ~freqFunc=frequencyFromNoteNumber(16),
+      ~freqFunc=yToFrequency(1, 16),
       ~filterBank: filterBank,
       ~filterValues: array(float),
     ) => {
