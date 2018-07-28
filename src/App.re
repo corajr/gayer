@@ -44,7 +44,7 @@ let defaultParams: params = {
     {
       content: PitchClasses(cMajor),
       alpha: 1.0,
-      compositeOperation: SourceOver,
+      compositeOperation: DestinationOut,
     },
     {content: Reader(R), alpha: 0.0, compositeOperation: SourceOver},
   ],

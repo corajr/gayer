@@ -34,7 +34,7 @@ var defaultParams_006 = /* layers : :: */[
       /* record */[
         /* content : PitchClasses */Block.__(0, [Music$Gayer.cMajor]),
         /* alpha */1.0,
-        /* compositeOperation : SourceOver */0
+        /* compositeOperation : DestinationOut */6
       ],
       /* :: */[
         /* record */[
