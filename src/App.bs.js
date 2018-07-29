@@ -11,6 +11,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Video$Gayer from "./Video.bs.js";
@@ -68,59 +69,8 @@ var defaultParams = /* record */[
   defaultParams_006
 ];
 
-function layerByType(type_, json) {
-  switch (type_) {
-    case "analysis" : 
-        return /* Analysis */1;
-    case "image" : 
-        return Json_decode.map((function (s) {
-                      return /* Image */Block.__(0, [s]);
-                    }), (function (param) {
-                      return Json_decode.field("url", Json_decode.string, param);
-                    }), json);
-    case "pitchClasses" : 
-        return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(1, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
-                    }), (function (param) {
-                      return Json_decode.field("pc", (function (param) {
-                                    return Json_decode.list(Json_decode.$$int, param);
-                                  }), param);
-                    }), json);
-    case "reader" : 
-        return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(2, [i]);
-                    }), (function (param) {
-                      return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
-                                    return Json_decode.field("channel", Json_decode.$$int, param);
-                                  }), param);
-                    }), json);
-    case "webcam" : 
-        return /* Webcam */0;
-    default:
-      throw [
-            Json_decode.DecodeError,
-            "Expected layer content, got " + JSON.stringify(json)
-          ];
-  }
-}
-
-function layerContent(json) {
-  return Json_decode.andThen(layerByType, (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), json);
-}
-
-function layer(json) {
-  return /* record */[
-          /* content */Json_decode.field("content", layerContent, json),
-          /* alpha */Json_decode.field("alpha", Json_decode.$$float, json),
-          /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
-                  return Json_decode.field("compositeOperation", Json_decode.string, param);
-                }), json)
-        ];
-}
-
 function params(json) {
+  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
   return /* record */[
           /* xDelta */Json_decode.field("xDelta", Json_decode.$$int, json),
           /* inputGain */Json_decode.field("inputGain", Json_decode.$$float, json),
@@ -129,109 +79,12 @@ function params(json) {
           /* transpose */Json_decode.field("transpose", Json_decode.$$int, json),
           /* shouldClear */Json_decode.field("shouldClear", Json_decode.bool, json),
           /* layers */Json_decode.field("layers", (function (param) {
-                  return Json_decode.list(layer, param);
+                  return Json_decode.list(partial_arg, param);
                 }), json)
         ];
 }
 
-var DecodeParams = /* module */[
-  /* layerByType */layerByType,
-  /* layerContent */layerContent,
-  /* layer */layer,
-  /* params */params
-];
-
-function layerContent$1(r) {
-  if (typeof r === "number") {
-    if (r === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "webcam"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "analysis"
-                  ],
-                  /* [] */0
-                ]);
-    }
-  } else {
-    switch (r.tag | 0) {
-      case 0 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "image"
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "url",
-                          r[0]
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 1 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "pitchClasses"
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "pc",
-                          Json_encode.list((function (prim) {
-                                  return prim;
-                                }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[0]))
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 2 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "reader"
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "channel",
-                          Canvas$Gayer.int_of_channel(r[0])
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      
-    }
-  }
-}
-
-function layer$1(r) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "content",
-                layerContent$1(r[/* content */0])
-              ],
-              /* :: */[
-                /* tuple */[
-                  "alpha",
-                  r[/* alpha */1]
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "compositeOperation",
-                    Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
-                  ],
-                  /* [] */0
-                ]
-              ]
-            ]);
-}
+var DecodeParams = /* module */[/* params */params];
 
 function params$1(r) {
   return Json_encode.object_(/* :: */[
@@ -267,7 +120,7 @@ function params$1(r) {
                         /* :: */[
                           /* tuple */[
                             "layers",
-                            Json_encode.list(layer$1, r[/* layers */6])
+                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */6])
                           ],
                           /* [] */0
                         ]
@@ -279,11 +132,7 @@ function params$1(r) {
             ]);
 }
 
-var EncodeParams = /* module */[
-  /* layerContent */layerContent$1,
-  /* layer */layer$1,
-  /* params */params$1
-];
+var EncodeParams = /* module */[/* params */params$1];
 
 var defaultState_007 = /* analysisCanvasRef */[/* None */0];
 
@@ -544,7 +393,7 @@ function make($staropt$star, $staropt$star$1, _) {
                             }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please edit params in URL"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
                                 }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2)), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (x) {
-                                            var json = JSON.stringify(layer$1(x));
+                                            var json = JSON.stringify(Layer$Gayer.EncodeLayer[/* layer */1](x));
                                             var id = json.length;
                                             return /* record */[
                                                     /* id */id,

@@ -2,6 +2,7 @@ open Audio;
 open Music;
 
 open Canvas;
+open Layer;
 open UserMedia;
 open Video;
 
@@ -10,19 +11,6 @@ module RList = Rationale.RList;
 type filterInput = audioNode;
 
 type visualInput = option(canvasImageSource);
-
-type layerContent =
-  | Webcam
-  | Image(string)
-  | Analysis
-  | PitchClasses(PitchSet.t)
-  | Reader(channel);
-
-type layer = {
-  content: layerContent,
-  alpha: float,
-  compositeOperation,
-};
 
 type params = {
   xDelta: int,
@@ -59,43 +47,6 @@ let defaultParams: params = {
 };
 
 module DecodeParams = {
-  let layerByType = (type_, json) =>
-    Json.Decode.(
-      switch (type_) {
-      | "webcam" => Webcam
-      | "image" => json |> map(s => Image(s), field("url", string))
-      | "reader" =>
-        json
-        |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
-      | "analysis" => Analysis
-      | "pitchClasses" =>
-        json
-        |> map(
-             xs => PitchClasses(PitchSet.of_list(xs)),
-             field("pc", list(int)),
-           )
-      | _ =>
-        raise @@
-        DecodeError(
-          "Expected layer content, got " ++ Js.Json.stringify(json),
-        )
-      }
-    );
-  let layerContent = json =>
-    Json.Decode.(json |> (field("type", string) |> andThen(layerByType)));
-
-  let layer = json =>
-    Json.Decode.{
-      content: json |> field("content", layerContent),
-      alpha: json |> field("alpha", float),
-      compositeOperation:
-        json
-        |> map(
-             compositeOperation_of_string,
-             field("compositeOperation", string),
-           ),
-    };
-
   let params = json =>
     Json.Decode.{
       xDelta: json |> field("xDelta", int),
@@ -104,42 +55,11 @@ module DecodeParams = {
       q: json |> field("q", float),
       transpose: json |> field("transpose", int),
       shouldClear: json |> field("shouldClear", bool),
-      layers: json |> field("layers", list(layer)),
+      layers: json |> field("layers", list(DecodeLayer.layer)),
     };
 };
 
 module EncodeParams = {
-  let layerContent = r =>
-    Json.Encode.(
-      switch (r) {
-      | Webcam => object_([("type", string("webcam"))])
-      | Image(url) =>
-        object_([("type", string("image")), ("url", string(url))])
-      | Analysis => object_([("type", string("analysis"))])
-      | PitchClasses(classes) =>
-        object_([
-          ("type", string("pitchClasses")),
-          ("pc", list(int, PitchSet.elements(classes))),
-        ])
-      | Reader(channel) =>
-        object_([
-          ("type", string("reader")),
-          ("channel", int(int_of_channel(channel))),
-        ])
-      }
-    );
-
-  let layer = r =>
-    Json.Encode.(
-      object_([
-        ("content", layerContent(r.content)),
-        ("alpha", float(r.alpha)),
-        (
-          "compositeOperation",
-          string(string_of_compositeOperation(r.compositeOperation)),
-        ),
-      ])
-    );
   let params = r =>
     Json.Encode.(
       object_([
@@ -149,7 +69,7 @@ module EncodeParams = {
         ("q", float(r.q)),
         ("transpose", int(r.transpose)),
         ("shouldClear", bool(r.shouldClear)),
-        ("layers", list(layer, r.layers)),
+        ("layers", list(EncodeLayer.layer, r.layers)),
       ])
     );
 };
@@ -531,7 +451,7 @@ let make = (~width=120, ~height=120, _children) => {
           cards=(
             List.map(
               x => {
-                let json = Js.Json.stringify(EncodeParams.layer(x));
+                let json = Js.Json.stringify(EncodeLayer.layer(x));
                 let id = String.length(json);
                 {T.id, T.text: json};
               },
