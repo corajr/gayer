@@ -202,6 +202,18 @@ let drawCanvas = (canvasElement, width, height, state) => {
   values;
 };
 
+let wrapCoord: (int, int, int) => int =
+  (index, delta, size) => {
+    let newCoord = index + delta;
+    if (newCoord >= 0 && newCoord < size) {
+      newCoord;
+    } else if (newCoord >= 0) {
+      newCoord mod size;
+    } else {
+      size - abs(newCoord mod size);
+    };
+  };
+
 type domHighResTimeStamp;
 
 [@bs.val] external window : Dom.window = "window";
@@ -248,7 +260,10 @@ let make = (~width=120, ~height=120, _children) => {
       )
     | Tick =>
       ReasonReact.UpdateWithSideEffects(
-        {...state, xIndex: (state.xIndex + state.params.xDelta) mod width},
+        {
+          ...state,
+          xIndex: wrapCoord(state.xIndex, state.params.xDelta, width),
+        },
         (
           self =>
             maybeUpdateCanvas(
@@ -334,9 +349,14 @@ let make = (~width=120, ~height=120, _children) => {
         };
       });
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
-    let startingParams =
-      Js.Json.stringify(EncodeParams.params(self.state.params));
-    ReasonReact.Router.push("#" ++ startingParams);
+    let url = ReasonReact.Router.dangerouslyGetInitialUrl();
+    if (url.hash === "") {
+      let startingParams =
+        Js.Json.stringify(EncodeParams.params(self.state.params));
+      ReasonReact.Router.push("#" ++ startingParams);
+    } else {
+      ReasonReact.Router.push("#" ++ url.hash);
+    };
     maybeLoadImages(self.state);
   },
   didUpdate: ({oldSelf, newSelf}) => {

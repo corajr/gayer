@@ -8,6 +8,7 @@ import * as React from "react";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
+import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -202,6 +203,17 @@ function drawCanvas(canvasElement, width, height, state) {
               }), Caml_array.caml_make_vect(height, 0.0), state[/* params */3][/* layers */6]);
 }
 
+function wrapCoord(index, delta, size) {
+  var newCoord = index + delta | 0;
+  if (newCoord >= 0 && newCoord < size) {
+    return newCoord;
+  } else if (newCoord >= 0) {
+    return Caml_int32.mod_(newCoord, size);
+  } else {
+    return size - Pervasives.abs(Caml_int32.mod_(newCoord, size)) | 0;
+  }
+}
+
 function make($staropt$star, $staropt$star$1, _) {
   var width = $staropt$star ? $staropt$star[0] : 120;
   var height = $staropt$star$1 ? $staropt$star$1[0] : 120;
@@ -244,8 +256,13 @@ function make($staropt$star, $staropt$star$1, _) {
               Curry._1(self[/* onUnmount */4], (function () {
                       return ReasonReact.Router[/* unwatchUrl */2](watcherID);
                     }));
-              var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */3]));
-              ReasonReact.Router[/* push */0]("#" + startingParams);
+              var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
+              if (url[/* hash */1] === "") {
+                var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */3]));
+                ReasonReact.Router[/* push */0]("#" + startingParams);
+              } else {
+                ReasonReact.Router[/* push */0]("#" + url[/* hash */1]);
+              }
               return maybeLoadImages(self[/* state */1]);
             }),
           /* didUpdate */(function (param) {
@@ -322,7 +339,7 @@ function make($staropt$star, $staropt$star$1, _) {
                 } else {
                   return /* UpdateWithSideEffects */Block.__(2, [
                             /* record */[
-                              /* xIndex */Caml_int32.mod_(state[/* xIndex */0] + state[/* params */3][/* xDelta */0] | 0, width),
+                              /* xIndex */wrapCoord(state[/* xIndex */0], state[/* params */3][/* xDelta */0], width),
                               /* filterInput */state[/* filterInput */1],
                               /* visualInput */state[/* visualInput */2],
                               /* params */state[/* params */3],
@@ -471,6 +488,7 @@ export {
   pushParamsState ,
   drawLayer ,
   drawCanvas ,
+  wrapCoord ,
   make ,
   
 }
