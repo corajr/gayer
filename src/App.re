@@ -14,7 +14,8 @@ type filterInput = audioNode;
 type visualInput = option(canvasImageSource);
 
 type state = {
-  xIndex: int,
+  readPos: int,
+  writePos: int,
   filterInput,
   visualInput,
   params,
@@ -28,7 +29,8 @@ type state = {
 };
 
 let defaultState: state = {
-  xIndex: 0,
+  readPos: 0,
+  writePos: 0,
   filterInput: defaultNoise,
   visualInput: None,
   micInput: None,
@@ -134,7 +136,9 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       | Some(analysisCanvas) =>
         let canvasElt = getFromReact(analysisCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
-        Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+        let x =
+          wrapCoord(state.writePos + state.params.writePosOffset, 0, width);
+        Ctx.drawImage(ctx, canvasAsSource, x, 0);
       };
       None;
     | Image(url) =>
@@ -165,7 +169,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       };
       None;
     | Reader(channel) =>
-      let slice = Ctx.getImageData(ctx, state.xIndex, 0, 1, height);
+      let slice = Ctx.getImageData(ctx, state.readPos, 0, 1, height);
       Ctx.setFillStyle(
         ctx,
         switch (channel) {
@@ -175,7 +179,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         | A => "white"
         },
       );
-      Ctx.fillRect(ctx, state.xIndex, 0, 1, height);
+      Ctx.fillRect(ctx, state.readPos, 0, 1, height);
       Some(imageDataToFloatArray(slice, channel));
     };
   };
@@ -201,18 +205,6 @@ let drawCanvas = (canvasElement, width, height, state) => {
 
   values;
 };
-
-let wrapCoord: (int, int, int) => int =
-  (index, delta, size) => {
-    let newCoord = index + delta;
-    if (newCoord >= 0 && newCoord < size) {
-      newCoord;
-    } else if (newCoord >= 0) {
-      newCoord mod size;
-    } else {
-      size - abs(newCoord mod size);
-    };
-  };
 
 type domHighResTimeStamp;
 
@@ -262,7 +254,9 @@ let make = (~width=120, ~height=120, _children) => {
       ReasonReact.UpdateWithSideEffects(
         {
           ...state,
-          xIndex: wrapCoord(state.xIndex, state.params.xDelta, width),
+          readPos: wrapCoord(state.readPos, state.params.readPosDelta, width),
+          writePos:
+            wrapCoord(state.writePos, state.params.writePosDelta, width),
         },
         (
           self =>

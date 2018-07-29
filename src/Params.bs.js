@@ -12,7 +12,7 @@ import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Container$Gayer from "./DnD/Container.bs.js";
 
-var defaultParams_006 = /* layers : :: */[
+var defaultParams_008 = /* layers : :: */[
   /* record */[
     /* content : Analysis */1,
     /* alpha */1.0,
@@ -27,7 +27,7 @@ var defaultParams_006 = /* layers : :: */[
     /* :: */[
       /* record */[
         /* content : Image */Block.__(0, ["media/DeadFishSwimming.gif"]),
-        /* alpha */1.0,
+        /* alpha */0.0,
         /* compositeOperation : Multiply */11
       ],
       /* :: */[
@@ -50,19 +50,23 @@ var defaultParams_006 = /* layers : :: */[
 ];
 
 var defaultParams = /* record */[
-  /* xDelta */1,
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
   /* inputGain */1.0,
   /* outputGain */0.2,
   /* q */Audio$Gayer.defaultQ,
   /* transpose */0,
   /* shouldClear */false,
-  defaultParams_006
+  defaultParams_008
 ];
 
 function params(json) {
   var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
   return /* record */[
-          /* xDelta */Json_decode.field("xDelta", Json_decode.$$int, json),
+          /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
+          /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
+          /* writePosOffset */Json_decode.field("writePosOffset", Json_decode.$$int, json),
           /* inputGain */Json_decode.field("inputGain", Json_decode.$$float, json),
           /* outputGain */Json_decode.field("outputGain", Json_decode.$$float, json),
           /* q */Json_decode.field("q", Json_decode.$$float, json),
@@ -79,40 +83,52 @@ var DecodeParams = /* module */[/* params */params];
 function params$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "xDelta",
-                r[/* xDelta */0]
+                "readPosDelta",
+                r[/* readPosDelta */0]
               ],
               /* :: */[
                 /* tuple */[
-                  "inputGain",
-                  r[/* inputGain */1]
+                  "writePosDelta",
+                  r[/* writePosDelta */1]
                 ],
                 /* :: */[
                   /* tuple */[
-                    "outputGain",
-                    r[/* outputGain */2]
+                    "writePosOffset",
+                    r[/* writePosOffset */2]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "q",
-                      r[/* q */3]
+                      "inputGain",
+                      r[/* inputGain */3]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "transpose",
-                        r[/* transpose */4]
+                        "outputGain",
+                        r[/* outputGain */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "shouldClear",
-                          r[/* shouldClear */5]
+                          "q",
+                          r[/* q */5]
                         ],
                         /* :: */[
                           /* tuple */[
-                            "layers",
-                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */6])
+                            "transpose",
+                            r[/* transpose */6]
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "shouldClear",
+                              r[/* shouldClear */7]
+                            ],
+                            /* :: */[
+                              /* tuple */[
+                                "layers",
+                                Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */8])
+                              ],
+                              /* [] */0
+                            ]
+                          ]
                         ]
                       ]
                     ]
@@ -138,14 +154,14 @@ function make(params, onMoveCard, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = params[/* shouldClear */5];
-              return React.createElement("div", undefined, React.createElement("div", undefined, React.createElement("div", undefined, "xDelta: ", params[/* xDelta */0].toString()), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */1].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */2].toString()), React.createElement("div", undefined, "q: ", params[/* q */3].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */4].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (layer) {
+              var match = params[/* shouldClear */7];
+              return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (layer) {
                                         var id = Hashtbl.hash(layer);
                                         return /* record */[
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */6]), onMoveCard, /* array */[])));
+                                      }), params[/* layers */8]), onMoveCard, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */3].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */4].toString()), React.createElement("div", undefined, "q: ", params[/* q */5].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */6].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

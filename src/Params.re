@@ -4,7 +4,9 @@ open Layer;
 open Music;
 
 type params = {
-  xDelta: int,
+  readPosDelta: int,
+  writePosDelta: int,
+  writePosOffset: int,
   inputGain: float,
   outputGain: float,
   q: float,
@@ -14,7 +16,9 @@ type params = {
 };
 
 let defaultParams: params = {
-  xDelta: 1,
+  readPosDelta: 1,
+  writePosDelta: 1,
+  writePosOffset: 0,
   inputGain: 1.0,
   outputGain: 0.2,
   q: defaultQ,
@@ -25,7 +29,7 @@ let defaultParams: params = {
     {content: Webcam, alpha: 0.25, compositeOperation: Overlay},
     {
       content: Image("media/DeadFishSwimming.gif"),
-      alpha: 1.0,
+      alpha: 0.0,
       compositeOperation: Multiply,
     },
     {
@@ -40,7 +44,9 @@ let defaultParams: params = {
 module DecodeParams = {
   let params = json =>
     Json.Decode.{
-      xDelta: json |> field("xDelta", int),
+      readPosDelta: json |> field("readPosDelta", int),
+      writePosDelta: json |> field("writePosDelta", int),
+      writePosOffset: json |> field("writePosOffset", int),
       inputGain: json |> field("inputGain", float),
       outputGain: json |> field("outputGain", float),
       q: json |> field("q", float),
@@ -54,7 +60,9 @@ module EncodeParams = {
   let params = r =>
     Json.Encode.(
       object_([
-        ("xDelta", int(r.xDelta)),
+        ("readPosDelta", int(r.readPosDelta)),
+        ("writePosDelta", int(r.writePosDelta)),
+        ("writePosOffset", int(r.writePosOffset)),
         ("inputGain", float(r.inputGain)),
         ("outputGain", float(r.outputGain)),
         ("q", float(r.q)),
@@ -71,10 +79,30 @@ let make = (~params, ~onMoveCard, _children) => {
   ...component,
   render: self =>
     <div>
+      <Container
+        cards=(
+          List.map(
+            layer => {
+              let id = Hashtbl.hash(layer);
+              {T.id, T.layer};
+            },
+            params.layers,
+          )
+        )
+        onMoveCard
+      />
       <div>
         <div>
-          (ReasonReact.string("xDelta: "))
-          (ReasonReact.string(Js.Int.toString(params.xDelta)))
+          (ReasonReact.string("readPosDelta: "))
+          (ReasonReact.string(Js.Int.toString(params.readPosDelta)))
+        </div>
+        <div>
+          (ReasonReact.string("writePosDelta: "))
+          (ReasonReact.string(Js.Int.toString(params.writePosDelta)))
+        </div>
+        <div>
+          (ReasonReact.string("writePosOffset: "))
+          (ReasonReact.string(Js.Int.toString(params.writePosOffset)))
         </div>
         <div>
           (ReasonReact.string("inputGain: "))
@@ -97,17 +125,5 @@ let make = (~params, ~onMoveCard, _children) => {
           (ReasonReact.string(params.shouldClear ? "true" : "false"))
         </div>
       </div>
-      <Container
-        cards=(
-          List.map(
-            layer => {
-              let id = Hashtbl.hash(layer);
-              {T.id, T.layer};
-            },
-            params.layers,
-          )
-        )
-        onMoveCard
-      />
     </div>,
 };

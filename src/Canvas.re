@@ -333,3 +333,15 @@ let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs
 }
      |}
 ];
+
+let wrapCoord: (int, int, int) => int =
+  (index, delta, size) => {
+    let newCoord = index + delta;
+    if (newCoord >= 0 && newCoord < size) {
+      newCoord;
+    } else if (newCoord >= 0) {
+      newCoord mod size;
+    } else {
+      size - abs(newCoord mod size);
+    };
+  };

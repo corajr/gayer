@@ -3,6 +3,8 @@
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
+import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 
 function int_of_channel(channel) {
   return channel;
@@ -252,6 +254,17 @@ var loadImage = function (src,onLoad){
 }
      };
 
+function wrapCoord(index, delta, size) {
+  var newCoord = index + delta | 0;
+  if (newCoord >= 0 && newCoord < size) {
+    return newCoord;
+  } else if (newCoord >= 0) {
+    return Caml_int32.mod_(newCoord, size);
+  } else {
+    return size - Pervasives.abs(Caml_int32.mod_(newCoord, size)) | 0;
+  }
+}
+
 export {
   int_of_channel ,
   channel_of_int ,
@@ -268,6 +281,7 @@ export {
   makeUint8ClampedArray ,
   makeImageData ,
   loadImage ,
+  wrapCoord ,
   
 }
 /* No side effect */
