@@ -10,129 +10,17 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
+import * as Params$Gayer from "./Params.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as Container$Gayer from "./DnD/Container.bs.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
-
-var defaultParams_006 = /* layers : :: */[
-  /* record */[
-    /* content : Analysis */1,
-    /* alpha */1.0,
-    /* compositeOperation : SourceOver */0
-  ],
-  /* :: */[
-    /* record */[
-      /* content : Webcam */0,
-      /* alpha */0.25,
-      /* compositeOperation : Overlay */13
-    ],
-    /* :: */[
-      /* record */[
-        /* content : Image */Block.__(0, ["media/DeadFishSwimming.gif"]),
-        /* alpha */1.0,
-        /* compositeOperation : Multiply */11
-      ],
-      /* :: */[
-        /* record */[
-          /* content : PitchClasses */Block.__(1, [Music$Gayer.cMajor]),
-          /* alpha */1.0,
-          /* compositeOperation : DestinationOut */6
-        ],
-        /* :: */[
-          /* record */[
-            /* content : Reader */Block.__(2, [/* R */0]),
-            /* alpha */0.0,
-            /* compositeOperation : SourceOver */0
-          ],
-          /* [] */0
-        ]
-      ]
-    ]
-  ]
-];
-
-var defaultParams = /* record */[
-  /* xDelta */1,
-  /* inputGain */1.0,
-  /* outputGain */0.2,
-  /* q */Audio$Gayer.defaultQ,
-  /* transpose */0,
-  /* shouldClear */false,
-  defaultParams_006
-];
-
-function params(json) {
-  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
-  return /* record */[
-          /* xDelta */Json_decode.field("xDelta", Json_decode.$$int, json),
-          /* inputGain */Json_decode.field("inputGain", Json_decode.$$float, json),
-          /* outputGain */Json_decode.field("outputGain", Json_decode.$$float, json),
-          /* q */Json_decode.field("q", Json_decode.$$float, json),
-          /* transpose */Json_decode.field("transpose", Json_decode.$$int, json),
-          /* shouldClear */Json_decode.field("shouldClear", Json_decode.bool, json),
-          /* layers */Json_decode.field("layers", (function (param) {
-                  return Json_decode.list(partial_arg, param);
-                }), json)
-        ];
-}
-
-var DecodeParams = /* module */[/* params */params];
-
-function params$1(r) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "xDelta",
-                r[/* xDelta */0]
-              ],
-              /* :: */[
-                /* tuple */[
-                  "inputGain",
-                  r[/* inputGain */1]
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "outputGain",
-                    r[/* outputGain */2]
-                  ],
-                  /* :: */[
-                    /* tuple */[
-                      "q",
-                      r[/* q */3]
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "transpose",
-                        r[/* transpose */4]
-                      ],
-                      /* :: */[
-                        /* tuple */[
-                          "shouldClear",
-                          r[/* shouldClear */5]
-                        ],
-                        /* :: */[
-                          /* tuple */[
-                            "layers",
-                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */6])
-                          ],
-                          /* [] */0
-                        ]
-                      ]
-                    ]
-                  ]
-                ]
-              ]
-            ]);
-}
-
-var EncodeParams = /* module */[/* params */params$1];
 
 var defaultState_007 = /* analysisCanvasRef */[/* None */0];
 
@@ -146,7 +34,7 @@ var defaultState = /* record */[
   /* xIndex */0,
   /* filterInput */Audio$Gayer.defaultNoise,
   /* visualInput : None */0,
-  /* params */defaultParams,
+  /* params */Params$Gayer.defaultParams,
   /* micInput : None */0,
   /* cameraInput : None */0,
   /* filterBank : None */0,
@@ -340,7 +228,7 @@ function make($staropt$star, $staropt$star$1, _) {
                       var hash = decodeURIComponent(url[/* hash */1]);
                       var match = Json.parse(hash);
                       if (match) {
-                        var match$1 = Json_decode.optional(params, match[0]);
+                        var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */0], match[0]);
                         if (match$1) {
                           return Curry._1(self[/* send */3], /* SetParams */Block.__(5, [match$1[0]]));
                         } else {
@@ -353,7 +241,7 @@ function make($staropt$star, $staropt$star$1, _) {
               Curry._1(self[/* onUnmount */4], (function () {
                       return ReasonReact.Router[/* unwatchUrl */2](watcherID);
                     }));
-              var startingParams = JSON.stringify(params$1(self[/* state */1][/* params */3]));
+              var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */3]));
               ReasonReact.Router[/* push */0]("#" + startingParams);
               return maybeLoadImages(self[/* state */1]);
             }),
@@ -392,7 +280,7 @@ function make($staropt$star, $staropt$star$1, _) {
                               }
                             }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please edit params in URL"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2)), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (x) {
+                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */3]), null, 2)), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (x) {
                                             var json = JSON.stringify(Layer$Gayer.EncodeLayer[/* layer */1](x));
                                             var id = json.length;
                                             return /* record */[
@@ -582,9 +470,6 @@ var RList = 0;
 
 export {
   RList ,
-  defaultParams ,
-  DecodeParams ,
-  EncodeParams ,
   defaultState ,
   setCanvasRef ,
   setAnalysisCanvasRef ,
