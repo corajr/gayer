@@ -3,6 +3,7 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as T$Gayer from "./T.bs.js";
+import * as Layer$Gayer from "../Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as BsReactDnd__DragSource from "@ahrefs/bs-react-dnd/src/BsReactDnd__DragSource.js";
 import * as BsReactDnd__DropTarget from "@ahrefs/bs-react-dnd/src/BsReactDnd__DropTarget.js";
@@ -58,7 +59,7 @@ var DragSourceWrapper = BsReactDnd__DragSource.Make(/* module */[
 
 var component = ReasonReact.statelessComponent("Card");
 
-function make(id, text, moveCard, _) {
+function make(id, layer, moveCard, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -87,7 +88,7 @@ function make(id, text, moveCard, _) {
                                                                         padding: "0.5rem 1rem",
                                                                         opacity: match ? "0" : "1"
                                                                       }
-                                                                    }, text)));
+                                                                    }, ReasonReact.element(/* None */0, /* None */0, Layer$Gayer.make(layer, /* array */[])))));
                                                 })));
                               })));
             }),

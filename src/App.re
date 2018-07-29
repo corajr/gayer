@@ -364,40 +364,12 @@ let make = (~width=120, ~height=120, _children) => {
       )>
       <div style=(ReactDOMRe.Style.make(~margin="10px", ~width="50%", ()))>
         <h1> (ReasonReact.string("GAYER")) </h1>
-        <div>
-          (
-            ReasonReact.string(
-              "UI forthcoming; for now, please edit params in URL",
-            )
-          )
-        </div>
         <a href="https://github.com/corajr/gayer">
           (ReasonReact.string("source"))
         </a>
         <br />
-        (ReasonReact.string("params:"))
-        <br />
-        <div>
-          (
-            ReasonReact.string(
-              Js.Json.stringifyWithSpace(
-                EncodeParams.params(self.state.params),
-                2,
-              ),
-            )
-          )
-        </div>
-        <Container
-          cards=(
-            List.map(
-              x => {
-                let json = Js.Json.stringify(EncodeLayer.layer(x));
-                let id = String.length(json);
-                {T.id, T.text: json};
-              },
-              self.state.params.layers,
-            )
-          )
+        <Params
+          params=self.state.params
           onMoveCard=((i, j) => self.send(MoveLayer(i, j)))
         />
       </div>

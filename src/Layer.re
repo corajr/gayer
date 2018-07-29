@@ -86,3 +86,33 @@ module EncodeLayer = {
       ])
     );
 };
+
+let renderLayerContent = layerContent =>
+  switch (layerContent) {
+  | Webcam => ReasonReact.string("webcam")
+  | Image(url) => ReasonReact.string(url)
+  | Analysis => ReasonReact.string("analysis")
+  | PitchClasses(pc) => ReasonReact.string("pc")
+  | Reader(channel) => ReasonReact.string("reader")
+  };
+
+let component = ReasonReact.statelessComponent("Layer");
+
+let make = (~layer, _children) => {
+  ...component,
+  render: self =>
+    <div>
+      (renderLayerContent(layer.content))
+      <div>
+        (ReasonReact.string("Alpha: " ++ Js.Float.toString(layer.alpha)))
+      </div>
+      <div>
+        (
+          ReasonReact.string(
+            "Composite operation: "
+            ++ string_of_compositeOperation(layer.compositeOperation),
+          )
+        )
+      </div>
+    </div>,
+};

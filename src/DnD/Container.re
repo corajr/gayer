@@ -26,7 +26,7 @@ let make = (~cards, ~onMoveCard, _children) => {
                  <Card
                    key=(string_of_int(card.id))
                    id=card.id
-                   text=card.text
+                   layer=card.layer
                    moveCard=handleMoveCard
                  />
                )

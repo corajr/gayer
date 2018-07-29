@@ -2,9 +2,11 @@
 
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
+import * as React from "react";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
+import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
 function layerByType(type_, json) {
@@ -162,9 +164,56 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
+function renderLayerContent(layerContent) {
+  if (typeof layerContent === "number") {
+    if (layerContent === 0) {
+      return "webcam";
+    } else {
+      return "analysis";
+    }
+  } else {
+    switch (layerContent.tag | 0) {
+      case 0 : 
+          return layerContent[0];
+      case 1 : 
+          return "pc";
+      case 2 : 
+          return "reader";
+      
+    }
+  }
+}
+
+var component = ReasonReact.statelessComponent("Layer");
+
+function make(layer, _) {
+  return /* record */[
+          /* debugName */component[/* debugName */0],
+          /* reactClassInternal */component[/* reactClassInternal */1],
+          /* handedOffState */component[/* handedOffState */2],
+          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* didMount */component[/* didMount */4],
+          /* didUpdate */component[/* didUpdate */5],
+          /* willUnmount */component[/* willUnmount */6],
+          /* willUpdate */component[/* willUpdate */7],
+          /* shouldUpdate */component[/* shouldUpdate */8],
+          /* render */(function () {
+              return React.createElement("div", undefined, renderLayerContent(layer[/* content */0]), React.createElement("div", undefined, "Alpha: " + layer[/* alpha */1].toString()), React.createElement("div", undefined, "Composite operation: " + Canvas$Gayer.string_of_compositeOperation(layer[/* compositeOperation */2])));
+            }),
+          /* initialState */component[/* initialState */10],
+          /* retainedProps */component[/* retainedProps */11],
+          /* reducer */component[/* reducer */12],
+          /* subscriptions */component[/* subscriptions */13],
+          /* jsElementWrapped */component[/* jsElementWrapped */14]
+        ];
+}
+
 export {
   DecodeLayer ,
   EncodeLayer ,
+  renderLayerContent ,
+  component ,
+  make ,
   
 }
-/* Json_encode Not a pure module */
+/* component Not a pure module */

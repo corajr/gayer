@@ -42,7 +42,7 @@ function make(cards, onMoveCard, _) {
                                       width: "400"
                                     }
                                   }, $$Array.of_list(List.map((function (card) {
-                                              return ReasonReact.element(/* Some */[String(card[/* id */0])], /* None */0, Card$Gayer.make(card[/* id */0], card[/* text */1], handleMoveCard, /* array */[]));
+                                              return ReasonReact.element(/* Some */[String(card[/* id */0])], /* None */0, Card$Gayer.make(card[/* id */0], card[/* layer */1], handleMoveCard, /* array */[]));
                                             }), cards)))]));
             }),
           /* initialState */component[/* initialState */10],

@@ -10,14 +10,12 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Params$Gayer from "./Params.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
-import * as Container$Gayer from "./DnD/Container.bs.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
@@ -283,16 +281,9 @@ function make($staropt$star, $staropt$star$1, _) {
                                 margin: "10px",
                                 width: "50%"
                               }
-                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please edit params in URL"), React.createElement("a", {
+                            }, React.createElement("h1", undefined, "GAYER"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */3]), null, 2)), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (x) {
-                                            var json = JSON.stringify(Layer$Gayer.EncodeLayer[/* layer */1](x));
-                                            var id = json.length;
-                                            return /* record */[
-                                                    /* id */id,
-                                                    /* text */json
-                                                  ];
-                                          }), self[/* state */1][/* params */3][/* layers */6]), (function (i, j) {
+                                }, "source"), React.createElement("br", undefined), ReasonReact.element(/* None */0, /* None */0, Params$Gayer.make(self[/* state */1][/* params */3], (function (i, j) {
                                         return Curry._1(self[/* send */3], /* MoveLayer */Block.__(0, [
                                                       i,
                                                       j

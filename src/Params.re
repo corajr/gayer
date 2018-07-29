@@ -64,3 +64,50 @@ module EncodeParams = {
       ])
     );
 };
+
+let component = ReasonReact.statelessComponent("Params");
+
+let make = (~params, ~onMoveCard, _children) => {
+  ...component,
+  render: self =>
+    <div>
+      <div>
+        <div>
+          (ReasonReact.string("xDelta: "))
+          (ReasonReact.string(Js.Int.toString(params.xDelta)))
+        </div>
+        <div>
+          (ReasonReact.string("inputGain: "))
+          (ReasonReact.string(Js.Float.toString(params.inputGain)))
+        </div>
+        <div>
+          (ReasonReact.string("outputGain: "))
+          (ReasonReact.string(Js.Float.toString(params.outputGain)))
+        </div>
+        <div>
+          (ReasonReact.string("q: "))
+          (ReasonReact.string(Js.Float.toString(params.q)))
+        </div>
+        <div>
+          (ReasonReact.string("transpose: "))
+          (ReasonReact.string(Js.Int.toString(params.transpose)))
+        </div>
+        <div>
+          (ReasonReact.string("shouldClear: "))
+          (ReasonReact.string(params.shouldClear ? "true" : "false"))
+        </div>
+      </div>
+      <Container
+        cards=(
+          List.map(
+            layer => {
+              let id = Hashtbl.hash(layer);
+              {T.id, T.layer};
+            },
+            params.layers,
+          )
+        )
+        onMoveCard
+      />
+    </div>,
+};
