@@ -74,11 +74,17 @@ function setLayerRef(param, param$1) {
     } else {
       return /* () */0;
     }
-  } else if (!match.tag && !(theRef == null)) {
-    state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], match[0], theRef);
+  } else if (match.tag || (theRef == null)) {
     return /* () */0;
   } else {
-    return /* () */0;
+    var url = match[0];
+    var match$3 = Belt_MapString.get(state[/* loadedImages */10][0], url);
+    if (match$3) {
+      return /* () */0;
+    } else {
+      state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], url, theRef);
+      return /* () */0;
+    }
   }
 }
 

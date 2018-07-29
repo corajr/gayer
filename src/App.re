@@ -72,8 +72,12 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
     | _ => ()
     }
   | (Image(url), Some(aRef)) =>
-    let img = getElementAsImageSource(aRef);
-    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
+    switch (Belt.Map.String.get(state.loadedImages^, url)) {
+    | Some(_) => ()
+    | None =>
+      let img = getElementAsImageSource(aRef);
+      state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
+    }
   | _ => ()
   };
 };
