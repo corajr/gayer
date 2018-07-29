@@ -117,6 +117,11 @@ let maybeLoadImages: state => unit =
       state.params.layers,
     );
 
+let pushParamsState = newParams => {
+  let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
+  ReasonReact.Router.push("#" ++ newParamsJson);
+};
+
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
@@ -223,22 +228,18 @@ let make = (~width=120, ~height=120, _children) => {
         (self => connectInputs(self.state)),
       )
     | MoveLayer(dragIndex, hoverIndex) =>
-      ReasonReact.Update(
-        {
-          let layers = state.params.layers;
-          let layer = List.nth(layers, dragIndex);
-          let updatedLayers =
-            layers
-            |> RList.remove(dragIndex, 1)
-            |> RList.insert(hoverIndex, layer);
-          {
-            ...state,
-            params: {
-              ...state.params,
-              layers: updatedLayers,
-            },
-          };
-        },
+      ReasonReact.SideEffects(
+        (
+          _self => {
+            let layers = state.params.layers;
+            let layer = List.nth(layers, dragIndex);
+            let updatedLayers =
+              layers
+              |> RList.remove(dragIndex, 1)
+              |> RList.insert(hoverIndex, layer);
+            pushParamsState({...state.params, layers: updatedLayers});
+          }
+        ),
       )
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(

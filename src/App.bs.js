@@ -117,6 +117,11 @@ function maybeLoadImages(state) {
               }), state[/* params */3][/* layers */6]);
 }
 
+function pushParamsState(newParams) {
+  var newParamsJson = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](newParams));
+  return ReasonReact.Router[/* push */0]("#" + newParamsJson);
+}
+
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
@@ -351,32 +356,23 @@ function make($staropt$star, $staropt$star$1, _) {
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
+                      var hoverIndex = action[1];
                       var dragIndex = action[0];
-                      var layers = state[/* params */3][/* layers */6];
-                      var layer = List.nth(layers, dragIndex);
-                      var updatedLayers = RList$Rationale.insert(action[1], layer, RList$Rationale.remove(dragIndex, 1, layers));
-                      var init = state[/* params */3];
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* xIndex */state[/* xIndex */0],
-                                  /* filterInput */state[/* filterInput */1],
-                                  /* visualInput */state[/* visualInput */2],
-                                  /* params : record */[
-                                    /* xDelta */init[/* xDelta */0],
-                                    /* inputGain */init[/* inputGain */1],
-                                    /* outputGain */init[/* outputGain */2],
-                                    /* q */init[/* q */3],
-                                    /* transpose */init[/* transpose */4],
-                                    /* shouldClear */init[/* shouldClear */5],
-                                    /* layers */updatedLayers
-                                  ],
-                                  /* micInput */state[/* micInput */4],
-                                  /* cameraInput */state[/* cameraInput */5],
-                                  /* filterBank */state[/* filterBank */6],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */7],
-                                  /* loadedImages */state[/* loadedImages */8],
-                                  /* canvasRef */state[/* canvasRef */9],
-                                  /* timerId */state[/* timerId */10]
-                                ]]);
+                      return /* SideEffects */Block.__(1, [(function () {
+                                    var layers = state[/* params */3][/* layers */6];
+                                    var layer = List.nth(layers, dragIndex);
+                                    var updatedLayers = RList$Rationale.insert(hoverIndex, layer, RList$Rationale.remove(dragIndex, 1, layers));
+                                    var init = state[/* params */3];
+                                    return pushParamsState(/* record */[
+                                                /* xDelta */init[/* xDelta */0],
+                                                /* inputGain */init[/* inputGain */1],
+                                                /* outputGain */init[/* outputGain */2],
+                                                /* q */init[/* q */3],
+                                                /* transpose */init[/* transpose */4],
+                                                /* shouldClear */init[/* shouldClear */5],
+                                                /* layers */updatedLayers
+                                              ]);
+                                  })]);
                   case 1 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
@@ -481,6 +477,7 @@ export {
   clearCanvas ,
   maybeLoadImage ,
   maybeLoadImages ,
+  pushParamsState ,
   drawLayer ,
   drawCanvas ,
   make ,
