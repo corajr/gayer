@@ -11,6 +11,7 @@ type visualInput = option(canvasImageSource);
 
 type layerContent =
   | Webcam
+  | Image(string)
   | Analysis
   | PitchClasses(PitchSet.t)
   | Reader(channel);
@@ -42,6 +43,11 @@ let defaultParams: params = {
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
     {content: Webcam, alpha: 0.25, compositeOperation: Overlay},
     {
+      content: Image("media/DeadFishSwimming.gif"),
+      alpha: 1.0,
+      compositeOperation: Multiply,
+    },
+    {
       content: PitchClasses(cMajor),
       alpha: 1.0,
       compositeOperation: DestinationOut,
@@ -55,6 +61,7 @@ module DecodeParams = {
     Json.Decode.(
       switch (type_) {
       | "webcam" => Webcam
+      | "image" => json |> map(s => Image(s), field("url", string))
       | "reader" =>
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
@@ -104,6 +111,8 @@ module EncodeParams = {
     Json.Encode.(
       switch (r) {
       | Webcam => object_([("type", string("webcam"))])
+      | Image(url) =>
+        object_([("type", string("image")), ("url", string(url))])
       | Analysis => object_([("type", string("analysis"))])
       | PitchClasses(classes) =>
         object_([
@@ -152,6 +161,7 @@ type state = {
   cameraInput: option(canvasImageSource),
   filterBank: option(filterBank),
   analysisCanvasRef: ref(option(Dom.element)),
+  loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -164,6 +174,7 @@ let defaultState: state = {
   cameraInput: None,
   params: defaultParams,
   filterBank: None,
+  loadedImages: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
   timerId: ref(None),
@@ -221,6 +232,29 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
+let maybeLoadImage: (state, string) => unit =
+  (state, url) =>
+    switch (Belt.Map.String.get(state.loadedImages^, url)) {
+    | None =>
+      Js.Console.log(url);
+      loadImage(url, img =>
+        state.loadedImages :=
+          Belt.Map.String.set(state.loadedImages^, url, img)
+      );
+    | Some(_) => ()
+    };
+
+let maybeLoadImages: state => unit =
+  state =>
+    List.iter(
+      layer =>
+        switch (layer.content) {
+        | Image(url) => maybeLoadImage(state, url)
+        | _ => ()
+        },
+      state.params.layers,
+    );
+
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
@@ -234,6 +268,12 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         let canvasElt = getFromReact(analysisCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
         Ctx.drawImage(ctx, canvasAsSource, state.xIndex, 0);
+      };
+      None;
+    | Image(url) =>
+      switch (Belt.Map.String.get(state.loadedImages^, url)) {
+      | None => ()
+      | Some(img) => Ctx.drawImageDestRect(ctx, img, 0, 0, width, height)
       };
       None;
     | Webcam =>
@@ -416,12 +456,18 @@ let make = (~width=120, ~height=120, _children) => {
     let startingParams =
       Js.Json.stringify(EncodeParams.params(self.state.params));
     ReasonReact.Router.push("#" ++ startingParams);
+    maybeLoadImages(self.state);
   },
-  didUpdate: ({oldSelf, newSelf}) =>
+  didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput != newSelf.state.filterInput
         || oldSelf.state.filterBank != newSelf.state.filterBank) {
       disconnectInputs(oldSelf.state);
-    },
+    };
+
+    if (oldSelf.state.params.layers != newSelf.state.params.layers) {
+      maybeLoadImages(newSelf.state);
+    };
+  },
   willUnmount: self => disconnectInputs(self.state),
   render: self =>
     <div

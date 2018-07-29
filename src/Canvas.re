@@ -314,3 +314,22 @@ let makeImageData = (~cqtLine: array(int)) => {
 
   createImageData(output, 1, n);
 };
+
+let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs.raw
+  (src, onLoad) => {|
+     var img = new Image;
+
+     img.crossOrigin = "Anonymous";
+
+     img.onload = function() {
+       onLoad(img);
+     }
+
+     img.src = src;
+     // make sure the load event fires for cached images too
+     if ( img.complete || img.complete === undefined ) {
+     img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+     img.src = src;
+}
+     |}
+];
