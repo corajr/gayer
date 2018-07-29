@@ -71,6 +71,9 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
       state.cameraInput := Some(video);
     | _ => ()
     }
+  | (Image(url), Some(aRef)) =>
+    let img = getElementAsImageSource(aRef);
+    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
   | _ => ()
   };
 };
@@ -111,29 +114,6 @@ let clearCanvas = (canvasElement, width, height) => {
   let ctx = getContext(canvasElement);
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
-
-let maybeLoadImage: (state, string) => unit =
-  (state, url) =>
-    switch (Belt.Map.String.get(state.loadedImages^, url)) {
-    | None =>
-      Js.Console.log(url);
-      loadImage(url, img =>
-        state.loadedImages :=
-          Belt.Map.String.set(state.loadedImages^, url, img)
-      );
-    | Some(_) => ()
-    };
-
-let maybeLoadImages: state => unit =
-  state =>
-    List.iter(
-      layer =>
-        switch (layer.content) {
-        | Image(url) => maybeLoadImage(state, url)
-        | _ => ()
-        },
-      state.params.layers,
-    );
 
 let pushParamsState = newParams => {
   let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
@@ -368,7 +348,6 @@ let make = (~width=120, ~height=120, _children) => {
     } else {
       ReasonReact.Router.push("#" ++ url.hash);
     };
-    maybeLoadImages(self.state);
   },
   didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput != newSelf.state.filterInput
@@ -378,7 +357,7 @@ let make = (~width=120, ~height=120, _children) => {
 
     if (oldSelf.state.params.layers != newSelf.state.params.layers) {
       newSelf.state.cameraInput := None;
-      maybeLoadImages(newSelf.state);
+      newSelf.state.loadedImages := Belt.Map.String.empty;
     };
   },
   willUnmount: self => disconnectInputs(self.state),

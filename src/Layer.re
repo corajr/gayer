@@ -91,7 +91,7 @@ let renderLayerContent = (layerContent, setRef) =>
   switch (layerContent) {
   | Webcam =>
     <video ref=setRef autoPlay=true muted=true width="120" height="120" />
-  | Image(url) => ReasonReact.string(url)
+  | Image(url) => <img ref=setRef src=url width="120" height="120" />
   | Analysis => ReasonReact.string("analysis")
   | PitchClasses(pc) => ReasonReact.string("pc")
   | Reader(channel) => ReasonReact.string("reader")

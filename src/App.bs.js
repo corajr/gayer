@@ -60,16 +60,23 @@ function setLayerRef(param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
   var match = param[0][/* content */0];
-  if (typeof match === "number" && !(match !== 0 || (theRef == null))) {
-    var match$1 = state[/* mediaStream */5];
-    var match$2 = state[/* cameraInput */7][0];
-    if (match$1 && !match$2) {
-      var video = Video$Gayer.attachVideoStream(theRef, match$1[0]);
-      state[/* cameraInput */7][0] = /* Some */[video];
-      return /* () */0;
+  if (typeof match === "number") {
+    if (match === 0 && !(theRef == null)) {
+      var match$1 = state[/* mediaStream */5];
+      var match$2 = state[/* cameraInput */7][0];
+      if (match$1 && !match$2) {
+        var video = Video$Gayer.attachVideoStream(theRef, match$1[0]);
+        state[/* cameraInput */7][0] = /* Some */[video];
+        return /* () */0;
+      } else {
+        return /* () */0;
+      }
     } else {
       return /* () */0;
     }
+  } else if (!match.tag && !(theRef == null)) {
+    state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], match[0], theRef);
+    return /* () */0;
   } else {
     return /* () */0;
   }
@@ -112,30 +119,6 @@ function clearCanvas(canvasElement, width, height) {
   var ctx = canvasElement.getContext("2d");
   ctx.clearRect(0, 0, width, height);
   return /* () */0;
-}
-
-function maybeLoadImage(state, url) {
-  var match = Belt_MapString.get(state[/* loadedImages */10][0], url);
-  if (match) {
-    return /* () */0;
-  } else {
-    console.log(url);
-    return Canvas$Gayer.loadImage(url, (function (img) {
-                  state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], url, img);
-                  return /* () */0;
-                }));
-  }
-}
-
-function maybeLoadImages(state) {
-  return List.iter((function (layer) {
-                var match = layer[/* content */0];
-                if (typeof match === "number" || match.tag) {
-                  return /* () */0;
-                } else {
-                  return maybeLoadImage(state, match[0]);
-                }
-              }), state[/* params */4][/* layers */8]);
 }
 
 function pushParamsState(newParams) {
@@ -270,11 +253,10 @@ function make($staropt$star, $staropt$star$1, _) {
               var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
               if (url[/* hash */1] === "") {
                 var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */4]));
-                ReasonReact.Router[/* push */0]("#" + startingParams);
+                return ReasonReact.Router[/* push */0]("#" + startingParams);
               } else {
-                ReasonReact.Router[/* push */0]("#" + url[/* hash */1]);
+                return ReasonReact.Router[/* push */0]("#" + url[/* hash */1]);
               }
-              return maybeLoadImages(self[/* state */1]);
             }),
           /* didUpdate */(function (param) {
               var newSelf = param[/* newSelf */1];
@@ -284,7 +266,8 @@ function make($staropt$star, $staropt$star$1, _) {
               }
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* layers */8], newSelf[/* state */1][/* params */4][/* layers */8])) {
                 newSelf[/* state */1][/* cameraInput */7][0] = /* None */0;
-                return maybeLoadImages(newSelf[/* state */1]);
+                newSelf[/* state */1][/* loadedImages */10][0] = Belt_MapString.empty;
+                return /* () */0;
               } else {
                 return 0;
               }
@@ -515,8 +498,6 @@ export {
   connectInputs ,
   disconnectInputs ,
   clearCanvas ,
-  maybeLoadImage ,
-  maybeLoadImages ,
   pushParamsState ,
   drawLayer ,
   drawCanvas ,

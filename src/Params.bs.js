@@ -26,8 +26,8 @@ var defaultParams_008 = /* layers : :: */[
     ],
     /* :: */[
       /* record */[
-        /* content : Image */Block.__(0, ["media/DeadFishSwimming.gif"]),
-        /* alpha */0.0,
+        /* content : Image */Block.__(0, ["media/hilbert_curve.png"]),
+        /* alpha */1.0,
         /* compositeOperation : Multiply */11
       ],
       /* :: */[

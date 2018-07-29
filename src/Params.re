@@ -28,8 +28,8 @@ let defaultParams: params = {
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
     {content: Webcam, alpha: 0.25, compositeOperation: Overlay},
     {
-      content: Image("media/DeadFishSwimming.gif"),
-      alpha: 0.0,
+      content: Image("media/hilbert_curve.png"),
+      alpha: 1.0,
       compositeOperation: Multiply,
     },
     {

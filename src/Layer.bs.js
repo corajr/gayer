@@ -180,7 +180,12 @@ function renderLayerContent(layerContent, setRef) {
   } else {
     switch (layerContent.tag | 0) {
       case 0 : 
-          return layerContent[0];
+          return React.createElement("img", {
+                      ref: setRef,
+                      height: "120",
+                      src: layerContent[0],
+                      width: "120"
+                    });
       case 1 : 
           return "pc";
       case 2 : 

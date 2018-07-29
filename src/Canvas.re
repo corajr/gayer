@@ -246,6 +246,9 @@ module Ctx = {
 
 external getCanvasAsSource : canvasElement => canvasImageSource = "%identity";
 
+external getElementAsImageSource : Dom.element => canvasImageSource =
+  "%identity";
+
 let simpleDrawImage =
     (
       ~ctx: ctx,
