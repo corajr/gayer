@@ -19,8 +19,9 @@ type state = {
   filterInput,
   visualInput,
   params,
+  mediaStream: option(mediaStream),
   micInput: option(audioNode),
-  cameraInput: option(canvasImageSource),
+  cameraInput: ref(option(canvasImageSource)),
   filterBank: option(filterBank),
   analysisCanvasRef: ref(option(Dom.element)),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
@@ -33,8 +34,9 @@ let defaultState: state = {
   writePos: 0,
   filterInput: defaultNoise,
   visualInput: None,
+  mediaStream: None,
   micInput: None,
-  cameraInput: None,
+  cameraInput: ref(None),
   params: defaultParams,
   filterBank: None,
   loadedImages: ref(Belt.Map.String.empty),
@@ -49,7 +51,7 @@ type action =
   | MoveLayer(int, int)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
-  | SetCameraInput(option(canvasImageSource))
+  | SetMediaStream(mediaStream)
   | SetFilterBank(filterBank)
   | SetParams(params);
 
@@ -58,6 +60,20 @@ let setCanvasRef = (theRef, {ReasonReact.state}) =>
 
 let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
   state.analysisCanvasRef := Js.Nullable.toOption(theRef);
+
+let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
+  let maybeRef = Js.Nullable.toOption(theRef);
+  switch (layer.content, maybeRef) {
+  | (Webcam, Some(aRef)) =>
+    switch (state.mediaStream, state.cameraInput^) {
+    | (Some(stream), None) =>
+      let video = attachVideoStream(aRef, stream);
+      state.cameraInput := Some(video);
+    | _ => ()
+    }
+  | _ => ()
+  };
+};
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -148,7 +164,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       };
       None;
     | Webcam =>
-      switch (state.cameraInput) {
+      switch (state.cameraInput^) {
       | None => ()
       | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
       };
@@ -224,8 +240,8 @@ let make = (~width=120, ~height=120, _children) => {
     switch (action) {
     | SetParams(params) => ReasonReact.Update({...state, params})
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
-    | SetCameraInput(camera) =>
-      ReasonReact.Update({...state, cameraInput: camera})
+    | SetMediaStream(stream) =>
+      ReasonReact.Update({...state, mediaStream: Some(stream)})
     | SetFilterInput(filterInput) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput},
@@ -312,10 +328,11 @@ let make = (~width=120, ~height=120, _children) => {
       | Some(streamPromise) =>
         streamPromise
         |> Js.Promise.then_(stream => {
+             self.send(SetMediaStream(stream));
              let audio = createMediaStreamSource(defaultAudioCtx, stream);
-             let video = attachVideoStream(stream);
              self.send(SetMicInput(audio));
-             self.send(SetCameraInput(Some(video)));
+             /* let video = attachVideoStream(stream); */
+             /* self.send(SetCameraInput(Some(video))); */
              /* self.send(SetFilterInput(audio)); */
              Js.Promise.resolve();
            })
@@ -360,6 +377,7 @@ let make = (~width=120, ~height=120, _children) => {
     };
 
     if (oldSelf.state.params.layers != newSelf.state.params.layers) {
+      newSelf.state.cameraInput := None;
       maybeLoadImages(newSelf.state);
     };
   },
@@ -385,6 +403,9 @@ let make = (~width=120, ~height=120, _children) => {
         <Params
           params=self.state.params
           onMoveCard=((i, j) => self.send(MoveLayer(i, j)))
+          onSetRef=(
+            (layer, theRef) => self.handle(setLayerRef, (layer, theRef))
+          )
         />
       </div>
       <div

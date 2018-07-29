@@ -142,7 +142,7 @@ var EncodeParams = /* module */[/* params */params$1];
 
 var component = ReasonReact.statelessComponent("Params");
 
-function make(params, onMoveCard, _) {
+function make(params, onMoveCard, onSetRef, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -161,7 +161,7 @@ function make(params, onMoveCard, _) {
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */8]), onMoveCard, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */3].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */4].toString()), React.createElement("div", undefined, "q: ", params[/* q */5].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */6].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
+                                      }), params[/* layers */8]), onMoveCard, onSetRef, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */3].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */4].toString()), React.createElement("div", undefined, "q: ", params[/* q */5].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */6].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

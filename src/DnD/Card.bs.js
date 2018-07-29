@@ -59,7 +59,7 @@ var DragSourceWrapper = BsReactDnd__DragSource.Make(/* module */[
 
 var component = ReasonReact.statelessComponent("Card");
 
-function make(id, layer, moveCard, _) {
+function make(id, layer, moveCard, setRef, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -88,7 +88,7 @@ function make(id, layer, moveCard, _) {
                                                                         padding: "0.5rem 1rem",
                                                                         opacity: match ? "0" : "1"
                                                                       }
-                                                                    }, ReasonReact.element(/* None */0, /* None */0, Layer$Gayer.make(layer, /* array */[])))));
+                                                                    }, ReasonReact.element(/* None */0, /* None */0, Layer$Gayer.make(layer, /* Some */[setRef], /* array */[])))));
                                                 })));
                               })));
             }),

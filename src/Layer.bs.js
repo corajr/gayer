@@ -164,10 +164,16 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent) {
+function renderLayerContent(layerContent, setRef) {
   if (typeof layerContent === "number") {
     if (layerContent === 0) {
-      return "webcam";
+      return React.createElement("video", {
+                  ref: setRef,
+                  autoPlay: true,
+                  height: "120",
+                  muted: true,
+                  width: "120"
+                });
     } else {
       return "analysis";
     }
@@ -186,7 +192,10 @@ function renderLayerContent(layerContent) {
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, _) {
+function make(layer, $staropt$star, _) {
+  var setRef = $staropt$star ? $staropt$star[0] : (function () {
+        return /* () */0;
+      });
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -198,7 +207,7 @@ function make(layer, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", undefined, renderLayerContent(layer[/* content */0]), React.createElement("div", undefined, "Alpha: " + layer[/* alpha */1].toString()), React.createElement("div", undefined, "Composite operation: " + Canvas$Gayer.string_of_compositeOperation(layer[/* compositeOperation */2])));
+              return React.createElement("div", undefined, renderLayerContent(layer[/* content */0], setRef), React.createElement("div", undefined, "Alpha: " + layer[/* alpha */1].toString()), React.createElement("div", undefined, "Composite operation: " + Canvas$Gayer.string_of_compositeOperation(layer[/* compositeOperation */2])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

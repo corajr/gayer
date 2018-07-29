@@ -87,9 +87,10 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = layerContent =>
+let renderLayerContent = (layerContent, setRef) =>
   switch (layerContent) {
-  | Webcam => ReasonReact.string("webcam")
+  | Webcam =>
+    <video ref=setRef autoPlay=true muted=true width="120" height="120" />
   | Image(url) => ReasonReact.string(url)
   | Analysis => ReasonReact.string("analysis")
   | PitchClasses(pc) => ReasonReact.string("pc")
@@ -98,11 +99,11 @@ let renderLayerContent = layerContent =>
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make = (~layer, _children) => {
+let make = (~layer, ~setRef=_ => (), _children) => {
   ...component,
   render: self =>
     <div>
-      (renderLayerContent(layer.content))
+      (renderLayerContent(layer.content, setRef))
       <div>
         (ReasonReact.string("Alpha: " ++ Js.Float.toString(layer.alpha)))
       </div>

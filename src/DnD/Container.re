@@ -2,7 +2,7 @@ module RList = Rationale.RList;
 
 let component = ReasonReact.statelessComponent("Container");
 
-let make = (~cards, ~onMoveCard, _children) => {
+let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
   let handleMoveCard = (dragId, hoverId) => {
     let dragIndex =
       RList.findIndex((card: T.card) => card.id === dragId, cards);
@@ -28,6 +28,7 @@ let make = (~cards, ~onMoveCard, _children) => {
                    id=card.id
                    layer=card.layer
                    moveCard=handleMoveCard
+                   setRef=(theRef => onSetRef(card.layer, theRef))
                  />
                )
             |> Array.of_list

@@ -20,13 +20,15 @@ import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 
-var defaultState_008 = /* analysisCanvasRef */[/* None */0];
+var defaultState_007 = /* cameraInput */[/* None */0];
 
-var defaultState_009 = /* loadedImages */[Belt_MapString.empty];
+var defaultState_009 = /* analysisCanvasRef */[/* None */0];
 
-var defaultState_010 = /* canvasRef */[/* None */0];
+var defaultState_010 = /* loadedImages */[Belt_MapString.empty];
 
-var defaultState_011 = /* timerId */[/* None */0];
+var defaultState_011 = /* canvasRef */[/* None */0];
+
+var defaultState_012 = /* timerId */[/* None */0];
 
 var defaultState = /* record */[
   /* readPos */0,
@@ -34,23 +36,43 @@ var defaultState = /* record */[
   /* filterInput */Audio$Gayer.defaultNoise,
   /* visualInput : None */0,
   /* params */Params$Gayer.defaultParams,
+  /* mediaStream : None */0,
   /* micInput : None */0,
-  /* cameraInput : None */0,
+  defaultState_007,
   /* filterBank : None */0,
-  defaultState_008,
   defaultState_009,
   defaultState_010,
-  defaultState_011
+  defaultState_011,
+  defaultState_012
 ];
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */10][0] = (theRef == null) ? /* None */0 : [theRef];
+  param[/* state */1][/* canvasRef */11][0] = (theRef == null) ? /* None */0 : [theRef];
   return /* () */0;
 }
 
 function setAnalysisCanvasRef(theRef, param) {
-  param[/* state */1][/* analysisCanvasRef */8][0] = (theRef == null) ? /* None */0 : [theRef];
+  param[/* state */1][/* analysisCanvasRef */9][0] = (theRef == null) ? /* None */0 : [theRef];
   return /* () */0;
+}
+
+function setLayerRef(param, param$1) {
+  var state = param$1[/* state */1];
+  var theRef = param[1];
+  var match = param[0][/* content */0];
+  if (typeof match === "number" && !(match !== 0 || (theRef == null))) {
+    var match$1 = state[/* mediaStream */5];
+    var match$2 = state[/* cameraInput */7][0];
+    if (match$1 && !match$2) {
+      var video = Video$Gayer.attachVideoStream(theRef, match$1[0]);
+      state[/* cameraInput */7][0] = /* Some */[video];
+      return /* () */0;
+    } else {
+      return /* () */0;
+    }
+  } else {
+    return /* () */0;
+  }
 }
 
 var component = ReasonReact.reducerComponent("App");
@@ -76,14 +98,14 @@ function connectInputs(state) {
   var partial_arg = state[/* filterInput */2];
   return maybeMapFilterBank((function (param) {
                 return Audio$Gayer.connectFilterBank(partial_arg, param);
-              }), state[/* filterBank */7]);
+              }), state[/* filterBank */8]);
 }
 
 function disconnectInputs(state) {
   var partial_arg = state[/* filterInput */2];
   return maybeMapFilterBank((function (param) {
                 return Audio$Gayer.disconnectFilterBank(partial_arg, param);
-              }), state[/* filterBank */7]);
+              }), state[/* filterBank */8]);
 }
 
 function clearCanvas(canvasElement, width, height) {
@@ -93,13 +115,13 @@ function clearCanvas(canvasElement, width, height) {
 }
 
 function maybeLoadImage(state, url) {
-  var match = Belt_MapString.get(state[/* loadedImages */9][0], url);
+  var match = Belt_MapString.get(state[/* loadedImages */10][0], url);
   if (match) {
     return /* () */0;
   } else {
     console.log(url);
     return Canvas$Gayer.loadImage(url, (function (img) {
-                  state[/* loadedImages */9][0] = Belt_MapString.set(state[/* loadedImages */9][0], url, img);
+                  state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], url, img);
                   return /* () */0;
                 }));
   }
@@ -127,13 +149,13 @@ function drawLayer(ctx, width, height, state, layer) {
   var match = layer[/* content */0];
   if (typeof match === "number") {
     if (match === 0) {
-      var match$1 = state[/* cameraInput */6];
+      var match$1 = state[/* cameraInput */7][0];
       if (match$1) {
         ctx.drawImage(match$1[0], 0, 0, width, height);
       }
       return /* None */0;
     } else {
-      var match$2 = state[/* analysisCanvasRef */8][0];
+      var match$2 = state[/* analysisCanvasRef */9][0];
       if (match$2) {
         var x = Canvas$Gayer.wrapCoord(state[/* writePos */1] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
         ctx.drawImage(match$2[0], x, 0);
@@ -143,7 +165,7 @@ function drawLayer(ctx, width, height, state, layer) {
   } else {
     switch (match.tag | 0) {
       case 0 : 
-          var match$3 = Belt_MapString.get(state[/* loadedImages */9][0], match[0]);
+          var match$3 = Belt_MapString.get(state[/* loadedImages */10][0], match[0]);
           if (match$3) {
             ctx.drawImage(match$3[0], 0, 0, width, height);
           }
@@ -218,15 +240,14 @@ function make($staropt$star, $staropt$star$1, _) {
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match) {
                 match[0].then((function (stream) {
+                        Curry._1(self[/* send */3], /* SetMediaStream */Block.__(3, [stream]));
                         var audio = Audio$Gayer.defaultAudioCtx.createMediaStreamSource(stream);
-                        var video = Video$Gayer.attachVideoStream(stream);
                         Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
-                        Curry._1(self[/* send */3], /* SetCameraInput */Block.__(3, [/* Some */[video]]));
                         return Promise.resolve(/* () */0);
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */11][0] = /* Some */[setInterval((function () {
+              self[/* state */1][/* timerId */12][0] = /* Some */[setInterval((function () {
                         return Curry._1(self[/* send */3], /* Tick */1);
                       }), 20)];
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
@@ -258,10 +279,11 @@ function make($staropt$star, $staropt$star$1, _) {
           /* didUpdate */(function (param) {
               var newSelf = param[/* newSelf */1];
               var oldSelf = param[/* oldSelf */0];
-              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */2], newSelf[/* state */1][/* filterInput */2]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */7], newSelf[/* state */1][/* filterBank */7])) {
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */2], newSelf[/* state */1][/* filterInput */2]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */8], newSelf[/* state */1][/* filterBank */8])) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* layers */8], newSelf[/* state */1][/* params */4][/* layers */8])) {
+                newSelf[/* state */1][/* cameraInput */7][0] = /* None */0;
                 return maybeLoadImages(newSelf[/* state */1]);
               } else {
                 return 0;
@@ -295,6 +317,11 @@ function make($staropt$star, $staropt$star$1, _) {
                                                       i,
                                                       j
                                                     ]));
+                                      }), (function (layer, theRef) {
+                                        return Curry._2(self[/* handle */0], setLayerRef, /* tuple */[
+                                                    layer,
+                                                    theRef
+                                                  ]);
                                       }), /* array */[]))), React.createElement("div", {
                               style: {
                                 display: "flex",
@@ -312,7 +339,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   },
                                   height: height.toString(),
                                   width: width.toString()
-                                }), ReasonReact.element(/* None */0, /* None */0, AnalysisCanvas$Gayer.make(height, Audio$Gayer.defaultAudioCtx, self[/* state */1][/* micInput */5], Curry._1(self[/* handle */0], setAnalysisCanvasRef), /* array */[]))));
+                                }), ReasonReact.element(/* None */0, /* None */0, AnalysisCanvas$Gayer.make(height, Audio$Gayer.defaultAudioCtx, self[/* state */1][/* micInput */6], Curry._1(self[/* handle */0], setAnalysisCanvasRef), /* array */[]))));
             }),
           /* initialState */(function () {
               return defaultState;
@@ -322,7 +349,7 @@ function make($staropt$star, $staropt$star$1, _) {
               if (typeof action === "number") {
                 if (action === 0) {
                   return /* SideEffects */Block.__(1, [(function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */10], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */11], (function (canvas) {
                                               return clearCanvas(canvas, width, height);
                                             }));
                               })]);
@@ -334,20 +361,21 @@ function make($staropt$star, $staropt$star$1, _) {
                               /* filterInput */state[/* filterInput */2],
                               /* visualInput */state[/* visualInput */3],
                               /* params */state[/* params */4],
-                              /* micInput */state[/* micInput */5],
-                              /* cameraInput */state[/* cameraInput */6],
-                              /* filterBank */state[/* filterBank */7],
-                              /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                              /* loadedImages */state[/* loadedImages */9],
-                              /* canvasRef */state[/* canvasRef */10],
-                              /* timerId */state[/* timerId */11]
+                              /* mediaStream */state[/* mediaStream */5],
+                              /* micInput */state[/* micInput */6],
+                              /* cameraInput */state[/* cameraInput */7],
+                              /* filterBank */state[/* filterBank */8],
+                              /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                              /* loadedImages */state[/* loadedImages */10],
+                              /* canvasRef */state[/* canvasRef */11],
+                              /* timerId */state[/* timerId */12]
                             ],
                             (function (self) {
-                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */10], (function (canvas) {
+                                return maybeUpdateCanvas(self[/* state */1][/* canvasRef */11], (function (canvas) {
                                               var filterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                               return maybeMapFilterBank((function (filterBank) {
                                                             return Audio$Gayer.updateFilterBank(/* Some */[self[/* state */1][/* params */4][/* inputGain */3]], /* Some */[self[/* state */1][/* params */4][/* outputGain */4]], /* Some */[self[/* state */1][/* params */4][/* q */5]], /* Some */[Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */4][/* transpose */6] | 0)], filterBank, filterValues);
-                                                          }), self[/* state */1][/* filterBank */7]);
+                                                          }), self[/* state */1][/* filterBank */8]);
                                             }));
                               })
                           ]);
@@ -382,13 +410,14 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* filterInput */action[0],
                                   /* visualInput */state[/* visualInput */3],
                                   /* params */state[/* params */4],
-                                  /* micInput */state[/* micInput */5],
-                                  /* cameraInput */state[/* cameraInput */6],
-                                  /* filterBank */state[/* filterBank */7],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                                  /* loadedImages */state[/* loadedImages */9],
-                                  /* canvasRef */state[/* canvasRef */10],
-                                  /* timerId */state[/* timerId */11]
+                                  /* mediaStream */state[/* mediaStream */5],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                                  /* loadedImages */state[/* loadedImages */10],
+                                  /* canvasRef */state[/* canvasRef */11],
+                                  /* timerId */state[/* timerId */12]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -401,13 +430,14 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* filterInput */state[/* filterInput */2],
                                   /* visualInput */state[/* visualInput */3],
                                   /* params */state[/* params */4],
+                                  /* mediaStream */state[/* mediaStream */5],
                                   /* micInput : Some */[action[0]],
-                                  /* cameraInput */state[/* cameraInput */6],
-                                  /* filterBank */state[/* filterBank */7],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                                  /* loadedImages */state[/* loadedImages */9],
-                                  /* canvasRef */state[/* canvasRef */10],
-                                  /* timerId */state[/* timerId */11]
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                                  /* loadedImages */state[/* loadedImages */10],
+                                  /* canvasRef */state[/* canvasRef */11],
+                                  /* timerId */state[/* timerId */12]
                                 ]]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -416,13 +446,14 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* filterInput */state[/* filterInput */2],
                                   /* visualInput */state[/* visualInput */3],
                                   /* params */state[/* params */4],
-                                  /* micInput */state[/* micInput */5],
-                                  /* cameraInput */action[0],
-                                  /* filterBank */state[/* filterBank */7],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                                  /* loadedImages */state[/* loadedImages */9],
-                                  /* canvasRef */state[/* canvasRef */10],
-                                  /* timerId */state[/* timerId */11]
+                                  /* mediaStream : Some */[action[0]],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                                  /* loadedImages */state[/* loadedImages */10],
+                                  /* canvasRef */state[/* canvasRef */11],
+                                  /* timerId */state[/* timerId */12]
                                 ]]);
                   case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -432,13 +463,14 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* filterInput */state[/* filterInput */2],
                                   /* visualInput */state[/* visualInput */3],
                                   /* params */state[/* params */4],
-                                  /* micInput */state[/* micInput */5],
-                                  /* cameraInput */state[/* cameraInput */6],
+                                  /* mediaStream */state[/* mediaStream */5],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
                                   /* filterBank : Some */[action[0]],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                                  /* loadedImages */state[/* loadedImages */9],
-                                  /* canvasRef */state[/* canvasRef */10],
-                                  /* timerId */state[/* timerId */11]
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                                  /* loadedImages */state[/* loadedImages */10],
+                                  /* canvasRef */state[/* canvasRef */11],
+                                  /* timerId */state[/* timerId */12]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -451,13 +483,14 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* filterInput */state[/* filterInput */2],
                                   /* visualInput */state[/* visualInput */3],
                                   /* params */action[0],
-                                  /* micInput */state[/* micInput */5],
-                                  /* cameraInput */state[/* cameraInput */6],
-                                  /* filterBank */state[/* filterBank */7],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */8],
-                                  /* loadedImages */state[/* loadedImages */9],
-                                  /* canvasRef */state[/* canvasRef */10],
-                                  /* timerId */state[/* timerId */11]
+                                  /* mediaStream */state[/* mediaStream */5],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */9],
+                                  /* loadedImages */state[/* loadedImages */10],
+                                  /* canvasRef */state[/* canvasRef */11],
+                                  /* timerId */state[/* timerId */12]
                                 ]]);
                   
                 }
@@ -475,6 +508,7 @@ export {
   defaultState ,
   setCanvasRef ,
   setAnalysisCanvasRef ,
+  setLayerRef ,
   component ,
   maybeUpdateCanvas ,
   maybeMapFilterBank ,

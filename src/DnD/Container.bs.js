@@ -12,7 +12,7 @@ import * as BsReactDnd__DragDropContextProvider from "@ahrefs/bs-react-dnd/src/B
 
 var component = ReasonReact.statelessComponent("Container");
 
-function make(cards, onMoveCard, _) {
+function make(cards, onMoveCard, onSetRef, _) {
   var handleMoveCard = function (dragId, hoverId) {
     var dragIndex = RList$Rationale.findIndex((function (card) {
             return card[/* id */0] === dragId;
@@ -42,7 +42,9 @@ function make(cards, onMoveCard, _) {
                                       width: "400"
                                     }
                                   }, $$Array.of_list(List.map((function (card) {
-                                              return ReasonReact.element(/* Some */[String(card[/* id */0])], /* None */0, Card$Gayer.make(card[/* id */0], card[/* layer */1], handleMoveCard, /* array */[]));
+                                              return ReasonReact.element(/* Some */[String(card[/* id */0])], /* None */0, Card$Gayer.make(card[/* id */0], card[/* layer */1], handleMoveCard, (function (theRef) {
+                                                                return Curry._2(onSetRef, card[/* layer */1], theRef);
+                                                              }), /* array */[]));
                                             }), cards)))]));
             }),
           /* initialState */component[/* initialState */10],

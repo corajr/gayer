@@ -72,7 +72,7 @@ module DragSourceWrapper =
 
 let component = ReasonReact.statelessComponent("Card");
 
-let make = (~id, ~layer, ~moveCard, _children) => {
+let make = (~id, ~layer, ~moveCard, ~setRef, _children) => {
   ...component,
   render: _self =>
     /* need to be very carefull when passing `props` isn't annotated, this has to be the same as DragSourceSpec.props */
@@ -96,7 +96,7 @@ let make = (~id, ~layer, ~moveCard, _children) => {
                                 (),
                               )
                             )>
-                            <Layer layer />
+                            <Layer layer setRef />
                           </div>,
                         ),
                       )
