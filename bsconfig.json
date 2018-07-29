@@ -19,7 +19,9 @@
   "namespace": true,
   "bs-dependencies": [
     "reason-react",
+    "rationale",
     "@glennsl/bs-json",
+    "@ahrefs/bs-react-dnd",
     "@jsiebern/bs-material-ui"
   ],
   "refmt": 3

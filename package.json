@@ -16,8 +16,10 @@
   "author": "@cora_jr",
   "license": "GPL-3.0",
   "dependencies": {
+    "@ahrefs/bs-react-dnd": "^0.0.7",
     "@glennsl/bs-json": "^2.0.0",
     "@jsiebern/bs-material-ui": "^0.3.1",
+    "rationale": "^0.1.4",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.4.0"

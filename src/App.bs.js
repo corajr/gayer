@@ -16,6 +16,8 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as Container$Gayer from "./DnD/Container.bs.js";
+import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 
@@ -470,14 +472,14 @@ function make($staropt$star, $staropt$star$1, _) {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               var filterBank = Audio$Gayer.makeFilterBank(Audio$Gayer.defaultAudioCtx, height, Audio$Gayer.defaultQ, Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */4] | 0));
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(3, [filterBank]));
+              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match) {
                 match[0].then((function (stream) {
                         var audio = Audio$Gayer.defaultAudioCtx.createMediaStreamSource(stream);
                         var video = Video$Gayer.attachVideoStream(stream);
-                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(1, [audio]));
-                        Curry._1(self[/* send */3], /* SetCameraInput */Block.__(2, [/* Some */[video]]));
+                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
+                        Curry._1(self[/* send */3], /* SetCameraInput */Block.__(3, [/* Some */[video]]));
                         return Promise.resolve(/* () */0);
                       }));
               }
@@ -491,7 +493,7 @@ function make($staropt$star, $staropt$star$1, _) {
                       if (match) {
                         var match$1 = Json_decode.optional(params, match[0]);
                         if (match$1) {
-                          return Curry._1(self[/* send */3], /* SetParams */Block.__(4, [match$1[0]]));
+                          return Curry._1(self[/* send */3], /* SetParams */Block.__(5, [match$1[0]]));
                         } else {
                           return /* () */0;
                         }
@@ -541,7 +543,19 @@ function make($staropt$star, $staropt$star$1, _) {
                               }
                             }, React.createElement("h1", undefined, "GAYER"), React.createElement("div", undefined, "UI forthcoming; for now, please edit params in URL"), React.createElement("a", {
                                   href: "https://github.com/corajr/gayer"
-                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2))), React.createElement("div", {
+                                }, "source"), React.createElement("br", undefined), "params:", React.createElement("br", undefined), React.createElement("div", undefined, JSON.stringify(params$1(self[/* state */1][/* params */3]), null, 2)), ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (x) {
+                                            var json = JSON.stringify(layer$1(x));
+                                            var id = json.length;
+                                            return /* record */[
+                                                    /* id */id,
+                                                    /* text */json
+                                                  ];
+                                          }), self[/* state */1][/* params */3][/* layers */6]), (function (i, j) {
+                                        return Curry._1(self[/* send */3], /* MoveLayer */Block.__(0, [
+                                                      i,
+                                                      j
+                                                    ]));
+                                      }), /* array */[]))), React.createElement("div", {
                               style: {
                                 display: "flex",
                                 margin: "0",
@@ -600,6 +614,33 @@ function make($staropt$star, $staropt$star$1, _) {
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
+                      var dragIndex = action[0];
+                      var layers = state[/* params */3][/* layers */6];
+                      var layer = List.nth(layers, dragIndex);
+                      var updatedLayers = RList$Rationale.insert(action[1], layer, RList$Rationale.remove(dragIndex, 1, layers));
+                      var init = state[/* params */3];
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* xIndex */state[/* xIndex */0],
+                                  /* filterInput */state[/* filterInput */1],
+                                  /* visualInput */state[/* visualInput */2],
+                                  /* params : record */[
+                                    /* xDelta */init[/* xDelta */0],
+                                    /* inputGain */init[/* inputGain */1],
+                                    /* outputGain */init[/* outputGain */2],
+                                    /* q */init[/* q */3],
+                                    /* transpose */init[/* transpose */4],
+                                    /* shouldClear */init[/* shouldClear */5],
+                                    /* layers */updatedLayers
+                                  ],
+                                  /* micInput */state[/* micInput */4],
+                                  /* cameraInput */state[/* cameraInput */5],
+                                  /* filterBank */state[/* filterBank */6],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */7],
+                                  /* loadedImages */state[/* loadedImages */8],
+                                  /* canvasRef */state[/* canvasRef */9],
+                                  /* timerId */state[/* timerId */10]
+                                ]]);
+                  case 1 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* xIndex */state[/* xIndex */0],
@@ -618,7 +659,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
-                  case 1 : 
+                  case 2 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* filterInput */state[/* filterInput */1],
@@ -632,7 +673,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* canvasRef */state[/* canvasRef */9],
                                   /* timerId */state[/* timerId */10]
                                 ]]);
-                  case 2 : 
+                  case 3 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* filterInput */state[/* filterInput */1],
@@ -646,7 +687,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                   /* canvasRef */state[/* canvasRef */9],
                                   /* timerId */state[/* timerId */10]
                                 ]]);
-                  case 3 : 
+                  case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* xIndex */state[/* xIndex */0],
@@ -665,7 +706,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
-                  case 4 : 
+                  case 5 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* xIndex */state[/* xIndex */0],
                                   /* filterInput */state[/* filterInput */1],
@@ -688,7 +729,10 @@ function make($staropt$star, $staropt$star$1, _) {
         ];
 }
 
+var RList = 0;
+
 export {
+  RList ,
   defaultParams ,
   DecodeParams ,
   EncodeParams ,

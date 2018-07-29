@@ -5,6 +5,8 @@ open Canvas;
 open UserMedia;
 open Video;
 
+module RList = Rationale.RList;
+
 type filterInput = audioNode;
 
 type visualInput = option(canvasImageSource);
@@ -183,6 +185,7 @@ let defaultState: state = {
 type action =
   | Clear
   | Tick
+  | MoveLayer(int, int)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
   | SetCameraInput(option(canvasImageSource))
@@ -360,6 +363,24 @@ let make = (~width=120, ~height=120, _children) => {
         {...state, filterInput},
         (self => connectInputs(self.state)),
       )
+    | MoveLayer(dragIndex, hoverIndex) =>
+      ReasonReact.Update(
+        {
+          let layers = state.params.layers;
+          let layer = List.nth(layers, dragIndex);
+          let updatedLayers =
+            layers
+            |> RList.remove(dragIndex, 1)
+            |> RList.insert(hoverIndex, layer);
+          {
+            ...state,
+            params: {
+              ...state.params,
+              layers: updatedLayers,
+            },
+          };
+        },
+      )
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterBank: Some(filterBank)},
@@ -506,6 +527,19 @@ let make = (~width=120, ~height=120, _children) => {
             )
           )
         </div>
+        <Container
+          cards=(
+            List.map(
+              x => {
+                let json = Js.Json.stringify(EncodeParams.layer(x));
+                let id = String.length(json);
+                {T.id, T.text: json};
+              },
+              self.state.params.layers,
+            )
+          )
+          onMoveCard=((i, j) => self.send(MoveLayer(i, j)))
+        />
       </div>
       <div
         style=(
