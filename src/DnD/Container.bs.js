@@ -7,8 +7,11 @@ import * as React from "react";
 import * as Card$Gayer from "./Card.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as RList$Rationale from "rationale/src/RList.js";
-import * as ReactDndHtml5Backend from "react-dnd-html5-backend";
+import * as ReactDndMultiBackend from "react-dnd-multi-backend";
 import * as BsReactDnd__DragDropContextProvider from "@ahrefs/bs-react-dnd/src/BsReactDnd__DragDropContextProvider.js";
+import * as HTML5toTouch from "react-dnd-multi-backend/lib/HTML5toTouch";
+
+var backend = ReactDndMultiBackend.default(HTML5toTouch.default);
 
 var component = ReasonReact.statelessComponent("Container");
 
@@ -37,7 +40,7 @@ function make(cards, onMoveCard, onSetRef, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, BsReactDnd__DragDropContextProvider.make(ReactDndHtml5Backend, /* None */0, /* array */[React.createElement("div", {
+              return ReasonReact.element(/* None */0, /* None */0, BsReactDnd__DragDropContextProvider.make(backend, /* None */0, /* array */[React.createElement("div", {
                                     style: {
                                       width: "400"
                                     }
@@ -59,8 +62,9 @@ var RList = 0;
 
 export {
   RList ,
+  backend ,
   component ,
   make ,
   
 }
-/* component Not a pure module */
+/* backend Not a pure module */

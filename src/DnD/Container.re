@@ -1,5 +1,14 @@
 module RList = Rationale.RList;
 
+[@bs.module "react-dnd-multi-backend"]
+external multiBackend : BsReactDnd.Backend.t => BsReactDnd.Backend.t =
+  "default";
+
+[@bs.module "react-dnd-multi-backend/lib/HTML5toTouch"]
+external html5ToTouch : BsReactDnd.Backend.t = "default";
+
+let backend: BsReactDnd.Backend.t = multiBackend(html5ToTouch);
+
 let component = ReasonReact.statelessComponent("Container");
 
 let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
@@ -18,7 +27,7 @@ let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
   {
     ...component,
     render: self =>
-      <BsReactDnd.DragDropContextProvider backend=BsReactDnd.Backend.html5>
+      <BsReactDnd.DragDropContextProvider backend>
         <div style=(ReactDOMRe.Style.make(~width="400", ()))>
           (
             cards

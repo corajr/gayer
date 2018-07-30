@@ -21,6 +21,7 @@
     "@jsiebern/bs-material-ui": "^0.3.1",
     "rationale": "^0.1.4",
     "react": "^16.2.0",
+    "react-dnd-multi-backend": "^3.1.0",
     "react-dom": "^16.2.0",
     "reason-react": ">=0.4.0"
   },
