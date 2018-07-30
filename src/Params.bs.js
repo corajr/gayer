@@ -12,7 +12,7 @@ import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Container$Gayer from "./DnD/Container.bs.js";
 
-var defaultParams_008 = /* layers : :: */[
+var defaultParams_009 = /* layers : :: */[
   /* record */[
     /* content : Analysis */1,
     /* alpha */1.0,
@@ -22,12 +22,12 @@ var defaultParams_008 = /* layers : :: */[
     /* record */[
       /* content : Webcam */0,
       /* alpha */0.25,
-      /* compositeOperation : Overlay */13
+      /* compositeOperation : SourceOver */0
     ],
     /* :: */[
       /* record */[
         /* content : Image */Block.__(0, ["media/hilbert_curve.png"]),
-        /* alpha */1.0,
+        /* alpha */0.5,
         /* compositeOperation : Multiply */11
       ],
       /* :: */[
@@ -53,13 +53,26 @@ var defaultParams = /* record */[
   /* readPosDelta */1,
   /* writePosDelta */1,
   /* writePosOffset */0,
+  /* filterInputSetting : PinkNoise */0,
   /* inputGain */1.0,
   /* outputGain */0.2,
   /* q */Audio$Gayer.defaultQ,
   /* transpose */0,
   /* shouldClear */false,
-  defaultParams_008
+  defaultParams_009
 ];
+
+function filterInputSetting(json) {
+  var param = Json_decode.string(json);
+  switch (param) {
+    case "mic" : 
+        return /* Mic */1;
+    case "pink-noise" : 
+        return /* PinkNoise */0;
+    default:
+      return /* PinkNoise */0;
+  }
+}
 
 function params(json) {
   var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
@@ -67,6 +80,7 @@ function params(json) {
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
           /* writePosOffset */Json_decode.field("writePosOffset", Json_decode.$$int, json),
+          /* filterInputSetting */Json_decode.field("filterInputSetting", filterInputSetting, json),
           /* inputGain */Json_decode.field("inputGain", Json_decode.$$float, json),
           /* outputGain */Json_decode.field("outputGain", Json_decode.$$float, json),
           /* q */Json_decode.field("q", Json_decode.$$float, json),
@@ -78,7 +92,18 @@ function params(json) {
         ];
 }
 
-var DecodeParams = /* module */[/* params */params];
+var DecodeParams = /* module */[
+  /* filterInputSetting */filterInputSetting,
+  /* params */params
+];
+
+function filterInputSetting$1(r) {
+  if (r) {
+    return "mic";
+  } else {
+    return "pink-noise";
+  }
+}
 
 function params$1(r) {
   return Json_encode.object_(/* :: */[
@@ -98,35 +123,41 @@ function params$1(r) {
                   ],
                   /* :: */[
                     /* tuple */[
-                      "inputGain",
-                      r[/* inputGain */3]
+                      "filterInputSetting",
+                      r[/* filterInputSetting */3] ? "mic" : "pink-noise"
                     ],
                     /* :: */[
                       /* tuple */[
-                        "outputGain",
-                        r[/* outputGain */4]
+                        "inputGain",
+                        r[/* inputGain */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "q",
-                          r[/* q */5]
+                          "outputGain",
+                          r[/* outputGain */5]
                         ],
                         /* :: */[
                           /* tuple */[
-                            "transpose",
-                            r[/* transpose */6]
+                            "q",
+                            r[/* q */6]
                           ],
                           /* :: */[
                             /* tuple */[
-                              "shouldClear",
-                              r[/* shouldClear */7]
+                              "transpose",
+                              r[/* transpose */7]
                             ],
                             /* :: */[
                               /* tuple */[
-                                "layers",
-                                Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */8])
+                                "shouldClear",
+                                r[/* shouldClear */8]
                               ],
-                              /* [] */0
+                              /* :: */[
+                                /* tuple */[
+                                  "layers",
+                                  Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */9])
+                                ],
+                                /* [] */0
+                              ]
                             ]
                           ]
                         ]
@@ -138,7 +169,10 @@ function params$1(r) {
             ]);
 }
 
-var EncodeParams = /* module */[/* params */params$1];
+var EncodeParams = /* module */[
+  /* filterInputSetting */filterInputSetting$1,
+  /* params */params$1
+];
 
 var component = ReasonReact.statelessComponent("Params");
 
@@ -154,14 +188,14 @@ function make(params, onMoveCard, onSetRef, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var match = params[/* shouldClear */7];
+              var match = params[/* shouldClear */8];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (layer) {
                                         var id = Hashtbl.hash(layer);
                                         return /* record */[
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */8]), onMoveCard, onSetRef, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */3].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */4].toString()), React.createElement("div", undefined, "q: ", params[/* q */5].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */6].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
+                                      }), params[/* layers */9]), onMoveCard, onSetRef, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "filterInputSetting: ", JSON.stringify(params[/* filterInputSetting */3] ? "mic" : "pink-noise")), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */4].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */5].toString()), React.createElement("div", undefined, "q: ", params[/* q */6].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */7].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

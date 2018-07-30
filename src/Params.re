@@ -3,10 +3,15 @@ open Canvas;
 open Layer;
 open Music;
 
+type filterInputSetting =
+  | PinkNoise
+  | Mic;
+
 type params = {
   readPosDelta: int,
   writePosDelta: int,
   writePosOffset: int,
+  filterInputSetting,
   inputGain: float,
   outputGain: float,
   q: float,
@@ -19,6 +24,7 @@ let defaultParams: params = {
   readPosDelta: 1,
   writePosDelta: 1,
   writePosOffset: 0,
+  filterInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
   q: defaultQ,
@@ -26,10 +32,10 @@ let defaultParams: params = {
   shouldClear: false,
   layers: [
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
-    {content: Webcam, alpha: 0.25, compositeOperation: Overlay},
+    {content: Webcam, alpha: 0.25, compositeOperation: SourceOver},
     {
       content: Image("media/hilbert_curve.png"),
-      alpha: 1.0,
+      alpha: 0.5,
       compositeOperation: Multiply,
     },
     {
@@ -42,11 +48,24 @@ let defaultParams: params = {
 };
 
 module DecodeParams = {
+  let filterInputSetting = json =>
+    Json.Decode.(
+      json
+      |> string
+      |> (
+        fun
+        | "pink-noise" => PinkNoise
+        | "mic" => Mic
+        | _ => PinkNoise
+      )
+    );
   let params = json =>
     Json.Decode.{
       readPosDelta: json |> field("readPosDelta", int),
       writePosDelta: json |> field("writePosDelta", int),
       writePosOffset: json |> field("writePosOffset", int),
+      filterInputSetting:
+        json |> field("filterInputSetting", filterInputSetting),
       inputGain: json |> field("inputGain", float),
       outputGain: json |> field("outputGain", float),
       q: json |> field("q", float),
@@ -57,12 +76,20 @@ module DecodeParams = {
 };
 
 module EncodeParams = {
+  let filterInputSetting = r =>
+    Json.Encode.(
+      switch (r) {
+      | PinkNoise => string("pink-noise")
+      | Mic => string("mic")
+      }
+    );
   let params = r =>
     Json.Encode.(
       object_([
         ("readPosDelta", int(r.readPosDelta)),
         ("writePosDelta", int(r.writePosDelta)),
         ("writePosOffset", int(r.writePosOffset)),
+        ("filterInputSetting", filterInputSetting(r.filterInputSetting)),
         ("inputGain", float(r.inputGain)),
         ("outputGain", float(r.outputGain)),
         ("q", float(r.q)),
@@ -104,6 +131,16 @@ let make = (~params, ~onMoveCard, ~onSetRef, _children) => {
         <div>
           (ReasonReact.string("writePosOffset: "))
           (ReasonReact.string(Js.Int.toString(params.writePosOffset)))
+        </div>
+        <div>
+          (ReasonReact.string("filterInputSetting: "))
+          (
+            ReasonReact.string(
+              Js.Json.stringify(
+                EncodeParams.filterInputSetting(params.filterInputSetting),
+              ),
+            )
+          )
         </div>
         <div>
           (ReasonReact.string("inputGain: "))

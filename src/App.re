@@ -14,8 +14,8 @@ type filterInput = audioNode;
 type visualInput = option(canvasImageSource);
 
 type state = {
-  readPos: int,
-  writePos: int,
+  readPos: ref(int),
+  writePos: ref(int),
   filterInput,
   visualInput,
   params,
@@ -30,8 +30,8 @@ type state = {
 };
 
 let defaultState: state = {
-  readPos: 0,
-  writePos: 0,
+  readPos: ref(0),
+  writePos: ref(0),
   filterInput: defaultNoise,
   visualInput: None,
   mediaStream: None,
@@ -65,19 +65,15 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   switch (layer.content, maybeRef) {
   | (Webcam, Some(aRef)) =>
-    switch (state.mediaStream, state.cameraInput^) {
-    | (Some(stream), None) =>
+    switch (state.mediaStream) {
+    | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
       state.cameraInput := Some(video);
-    | _ => ()
+    | None => ()
     }
   | (Image(url), Some(aRef)) =>
-    switch (Belt.Map.String.get(state.loadedImages^, url)) {
-    | Some(_) => ()
-    | None =>
-      let img = getElementAsImageSource(aRef);
-      state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
-    }
+    let img = getElementAsImageSource(aRef);
+    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
   | _ => ()
   };
 };
@@ -137,7 +133,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         let canvasElt = getFromReact(analysisCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
         let x =
-          wrapCoord(state.writePos + state.params.writePosOffset, 0, width);
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
         Ctx.drawImage(ctx, canvasAsSource, x, 0);
       };
       None;
@@ -169,7 +165,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       };
       None;
     | Reader(channel) =>
-      let slice = Ctx.getImageData(ctx, state.readPos, 0, 1, height);
+      let slice = Ctx.getImageData(ctx, state.readPos^, 0, 1, height);
       Ctx.setFillStyle(
         ctx,
         switch (channel) {
@@ -179,7 +175,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         | A => "white"
         },
       );
-      Ctx.fillRect(ctx, state.readPos, 0, 1, height);
+      Ctx.fillRect(ctx, state.readPos^, 0, 1, height);
       Some(imageDataToFloatArray(slice, channel));
     };
   };
@@ -251,15 +247,14 @@ let make = (~width=120, ~height=120, _children) => {
         (self => connectInputs(self.state)),
       )
     | Tick =>
-      ReasonReact.UpdateWithSideEffects(
-        {
-          ...state,
-          readPos: wrapCoord(state.readPos, state.params.readPosDelta, width),
-          writePos:
-            wrapCoord(state.writePos, state.params.writePosDelta, width),
-        },
+      ReasonReact.SideEffects(
         (
-          self =>
+          self => {
+            self.state.readPos :=
+              wrapCoord(state.readPos^, state.params.readPosDelta, width);
+
+            self.state.writePos :=
+              wrapCoord(state.writePos^, state.params.writePosDelta, width);
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
@@ -282,7 +277,8 @@ let make = (~width=120, ~height=120, _children) => {
                   self.state.filterBank,
                 );
               },
-            )
+            );
+          }
         ),
       )
     | Clear =>
@@ -359,9 +355,16 @@ let make = (~width=120, ~height=120, _children) => {
       disconnectInputs(oldSelf.state);
     };
 
-    if (oldSelf.state.params.layers != newSelf.state.params.layers) {
-      newSelf.state.cameraInput := None;
-      newSelf.state.loadedImages := Belt.Map.String.empty;
+    if (oldSelf.state.params.filterInputSetting
+        != newSelf.state.params.filterInputSetting) {
+      switch (newSelf.state.params.filterInputSetting) {
+      | PinkNoise => newSelf.send(SetFilterInput(defaultNoise))
+      | Mic =>
+        switch (newSelf.state.micInput) {
+        | Some(mic) => newSelf.send(SetFilterInput(mic))
+        | None => ()
+        }
+      };
     };
   },
   willUnmount: self => disconnectInputs(self.state),
