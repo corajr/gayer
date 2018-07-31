@@ -23,6 +23,7 @@
     "react": "^16.2.0",
     "react-dnd-multi-backend": "^3.1.0",
     "react-dom": "^16.2.0",
+    "react-dragula": "^1.1.17",
     "reason-react": ">=0.4.0"
   },
   "devDependencies": {
