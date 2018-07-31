@@ -32,7 +32,12 @@ let defaultParams: params = {
   shouldClear: false,
   layers: [
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
-    {content: Webcam, alpha: 0.25, compositeOperation: SourceOver},
+    {
+      content: Webcam({slitscan: None}),
+      /* content: Webcam({slitscan: Some({x: 60})}), */
+      alpha: 0.25,
+      compositeOperation: SourceOver,
+    },
     {
       content: Image("media/hilbert_curve.png"),
       alpha: 0.5,

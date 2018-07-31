@@ -1,8 +1,33 @@
 open Canvas;
 open Music;
 
+type slitscanOptions = {x: int};
+
+type cameraOptions = {slitscan: option(slitscanOptions)};
+
+module DecodeCameraOptions = {
+  let slitscanOptions = json => Json.Decode.{x: json |> field("x", int)};
+  let cameraOptions = json =>
+    Json.Decode.{
+      slitscan: json |> optional(field("slitscan", slitscanOptions)),
+    };
+};
+
+module EncodeCameraOptions = {
+  let slitscanOptions = r => Json.Encode.(object_([("x", int(r.x))]));
+
+  let cameraOptions = r =>
+    Json.Encode.(
+      switch (r.slitscan) {
+      | None => object_([])
+      | Some(slitscan) =>
+        object_([("slitscan", slitscanOptions(slitscan))])
+      }
+    );
+};
+
 type layerContent =
-  | Webcam
+  | Webcam(cameraOptions)
   | Image(string)
   | Analysis
   | PitchClasses(PitchSet.t)
@@ -18,7 +43,8 @@ module DecodeLayer = {
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
-      | "webcam" => Webcam
+      | "webcam" =>
+        json |> map(s => Webcam(s), DecodeCameraOptions.cameraOptions)
       | "image" => json |> map(s => Image(s), field("url", string))
       | "reader" =>
         json
@@ -57,7 +83,11 @@ module EncodeLayer = {
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
-      | Webcam => object_([("type", string("webcam"))])
+      | Webcam(s) =>
+        object_([
+          ("type", string("webcam")),
+          ("options", EncodeCameraOptions.cameraOptions(s)),
+        ])
       | Image(url) =>
         object_([("type", string("image")), ("url", string(url))])
       | Analysis => object_([("type", string("analysis"))])
@@ -89,7 +119,7 @@ module EncodeLayer = {
 
 let renderLayerContent = (layerContent, setRef) =>
   switch (layerContent) {
-  | Webcam =>
+  | Webcam(_) =>
     <video ref=setRef autoPlay=true muted=true width="120" height="120" />
   | Image(url) => <img ref=setRef src=url width="120" height="120" />
   | Analysis => ReasonReact.string("analysis")

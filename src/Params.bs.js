@@ -14,31 +14,31 @@ import * as Container$Gayer from "./DnD/Container.bs.js";
 
 var defaultParams_009 = /* layers : :: */[
   /* record */[
-    /* content : Analysis */1,
+    /* content : Analysis */0,
     /* alpha */1.0,
     /* compositeOperation : SourceOver */0
   ],
   /* :: */[
     /* record */[
-      /* content : Webcam */0,
+      /* content : Webcam */Block.__(0, [/* record */[/* slitscan : None */0]]),
       /* alpha */0.25,
       /* compositeOperation : SourceOver */0
     ],
     /* :: */[
       /* record */[
-        /* content : Image */Block.__(0, ["media/hilbert_curve.png"]),
+        /* content : Image */Block.__(1, ["media/hilbert_curve.png"]),
         /* alpha */0.5,
         /* compositeOperation : Multiply */11
       ],
       /* :: */[
         /* record */[
-          /* content : PitchClasses */Block.__(1, [Music$Gayer.cMajor]),
+          /* content : PitchClasses */Block.__(2, [Music$Gayer.cMajor]),
           /* alpha */1.0,
           /* compositeOperation : DestinationOut */6
         ],
         /* :: */[
           /* record */[
-            /* content : Reader */Block.__(2, [/* R */0]),
+            /* content : Reader */Block.__(3, [/* R */0]),
             /* alpha */0.0,
             /* compositeOperation : SourceOver */0
           ],

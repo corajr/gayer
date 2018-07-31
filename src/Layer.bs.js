@@ -9,19 +9,64 @@ import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
+function slitscanOptions(json) {
+  return /* record */[/* x */Json_decode.field("x", Json_decode.$$int, json)];
+}
+
+function cameraOptions(json) {
+  return /* record */[/* slitscan */Json_decode.optional((function (param) {
+                  return Json_decode.field("slitscan", slitscanOptions, param);
+                }), json)];
+}
+
+var DecodeCameraOptions = /* module */[
+  /* slitscanOptions */slitscanOptions,
+  /* cameraOptions */cameraOptions
+];
+
+function slitscanOptions$1(r) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "x",
+                r[/* x */0]
+              ],
+              /* [] */0
+            ]);
+}
+
+function cameraOptions$1(r) {
+  var match = r[/* slitscan */0];
+  if (match) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "slitscan",
+                  slitscanOptions$1(match[0])
+                ],
+                /* [] */0
+              ]);
+  } else {
+    return Json_encode.object_(/* [] */0);
+  }
+}
+
+var EncodeCameraOptions = /* module */[
+  /* slitscanOptions */slitscanOptions$1,
+  /* cameraOptions */cameraOptions$1
+];
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
-        return /* Analysis */1;
+        return /* Analysis */0;
     case "image" : 
         return Json_decode.map((function (s) {
-                      return /* Image */Block.__(0, [s]);
+                      return /* Image */Block.__(1, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(1, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(2, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -29,14 +74,16 @@ function layerByType(type_, json) {
                     }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(2, [i]);
+                      return /* Reader */Block.__(3, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
                                   }), param);
                     }), json);
     case "webcam" : 
-        return /* Webcam */0;
+        return Json_decode.map((function (s) {
+                      return /* Webcam */Block.__(0, [s]);
+                    }), cameraOptions, json);
     default:
       throw [
             Json_decode.DecodeError,
@@ -69,26 +116,30 @@ var DecodeLayer = /* module */[
 
 function layerContent$1(r) {
   if (typeof r === "number") {
-    if (r === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "webcam"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "analysis"
-                  ],
-                  /* [] */0
-                ]);
-    }
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "analysis"
+                ],
+                /* [] */0
+              ]);
   } else {
     switch (r.tag | 0) {
       case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "webcam"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "options",
+                          cameraOptions$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -102,7 +153,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 1 : 
+      case 2 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -118,7 +169,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 2 : 
+      case 3 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -166,29 +217,27 @@ var EncodeLayer = /* module */[
 
 function renderLayerContent(layerContent, setRef) {
   if (typeof layerContent === "number") {
-    if (layerContent === 0) {
-      return React.createElement("video", {
-                  ref: setRef,
-                  autoPlay: true,
-                  height: "120",
-                  muted: true,
-                  width: "120"
-                });
-    } else {
-      return "analysis";
-    }
+    return "analysis";
   } else {
     switch (layerContent.tag | 0) {
       case 0 : 
+          return React.createElement("video", {
+                      ref: setRef,
+                      autoPlay: true,
+                      height: "120",
+                      muted: true,
+                      width: "120"
+                    });
+      case 1 : 
           return React.createElement("img", {
                       ref: setRef,
                       height: "120",
                       src: layerContent[0],
                       width: "120"
                     });
-      case 1 : 
-          return "pc";
       case 2 : 
+          return "pc";
+      case 3 : 
           return "reader";
       
     }
@@ -223,6 +272,8 @@ function make(layer, $staropt$star, _) {
 }
 
 export {
+  DecodeCameraOptions ,
+  EncodeCameraOptions ,
   DecodeLayer ,
   EncodeLayer ,
   renderLayerContent ,

@@ -65,23 +65,32 @@ function setLayerRef(param, param$1) {
   var theRef = param[1];
   var match = param[0][/* content */0];
   if (typeof match === "number") {
-    if (match === 0 && !(theRef == null)) {
-      var match$1 = state[/* mediaStream */5];
-      if (match$1) {
-        var video = Video$Gayer.attachVideoStream(theRef, match$1[0]);
-        state[/* cameraInput */7][0] = /* Some */[video];
-        return /* () */0;
-      } else {
-        return /* () */0;
-      }
-    } else {
-      return /* () */0;
-    }
-  } else if (!match.tag && !(theRef == null)) {
-    state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], match[0], theRef);
     return /* () */0;
   } else {
-    return /* () */0;
+    switch (match.tag | 0) {
+      case 0 : 
+          if (theRef == null) {
+            return /* () */0;
+          } else {
+            var match$1 = state[/* mediaStream */5];
+            if (match$1) {
+              var video = Video$Gayer.attachVideoStream(theRef, match$1[0]);
+              state[/* cameraInput */7][0] = /* Some */[video];
+              return /* () */0;
+            } else {
+              return /* () */0;
+            }
+          }
+      case 1 : 
+          if (theRef == null) {
+            return /* () */0;
+          } else {
+            state[/* loadedImages */10][0] = Belt_MapString.set(state[/* loadedImages */10][0], match[0], theRef);
+            return /* () */0;
+          }
+      default:
+        return /* () */0;
+    }
   }
 }
 
@@ -134,29 +143,33 @@ function drawLayer(ctx, width, height, state, layer) {
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
   var match = layer[/* content */0];
   if (typeof match === "number") {
-    if (match === 0) {
-      var match$1 = state[/* cameraInput */7][0];
-      if (match$1) {
-        ctx.drawImage(match$1[0], 0, 0, width, height);
-      }
-      return /* None */0;
-    } else {
-      var match$2 = state[/* analysisCanvasRef */9][0];
-      if (match$2) {
-        var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
-        ctx.drawImage(match$2[0], x, 0);
-      }
-      return /* None */0;
+    var match$1 = state[/* analysisCanvasRef */9][0];
+    if (match$1) {
+      var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
+      ctx.drawImage(match$1[0], x, 0);
     }
+    return /* None */0;
   } else {
     switch (match.tag | 0) {
       case 0 : 
+          var match$2 = state[/* cameraInput */7][0];
+          if (match$2) {
+            var input = match$2[0];
+            if (match[0][/* slitscan */0]) {
+              var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
+              ctx.drawImage(input, xToWrite, 0, 1, height);
+            } else {
+              ctx.drawImage(input, 0, 0, width, height);
+            }
+          }
+          return /* None */0;
+      case 1 : 
           var match$3 = Belt_MapString.get(state[/* loadedImages */10][0], match[0]);
           if (match$3) {
             ctx.drawImage(match$3[0], 0, 0, width, height);
           }
           return /* None */0;
-      case 1 : 
+      case 2 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
           ctx.fillStyle = "black";
           var binsPerSemitone = height / 120 | 0;
@@ -170,7 +183,7 @@ function drawLayer(ctx, width, height, state, layer) {
                 }(i)), classList);
           }
           return /* None */0;
-      case 2 : 
+      case 3 : 
           var channel = match[0];
           var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
           var tmp;

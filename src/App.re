@@ -64,7 +64,7 @@ let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
 let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   switch (layer.content, maybeRef) {
-  | (Webcam, Some(aRef)) =>
+  | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
@@ -143,10 +143,15 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       | Some(img) => Ctx.drawImageDestRect(ctx, img, 0, 0, width, height)
       };
       None;
-    | Webcam =>
-      switch (state.cameraInput^) {
-      | None => ()
-      | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+    | Webcam(opts) =>
+      switch (state.cameraInput^, opts) {
+      | (None, _) => ()
+      | (Some(input), {slitscan: None}) =>
+        Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+      | (Some(input), {slitscan: Some({x: xToRead})}) =>
+        let xToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        Ctx.drawImageDestRect(ctx, input, xToWrite, 0, 1, height);
       };
       None;
     | PitchClasses(classes) =>
