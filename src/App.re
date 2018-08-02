@@ -1,4 +1,5 @@
 open Audio;
+open Audio.AudioInput;
 open Music;
 
 open Canvas;
@@ -126,6 +127,10 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
 
     switch (layer.content) {
+    | Fill(s) =>
+      Ctx.setFillStyle(ctx, s);
+      Ctx.fillRect(ctx, 0, 0, width, height);
+      None;
     | Analysis =>
       switch (state.analysisCanvasRef^) {
       | None => ()
@@ -206,6 +211,14 @@ let drawCanvas = (canvasElement, width, height, state) => {
 
   values;
 };
+
+let getAnalysisInput: (state, audioInputSetting) => option(audioNode) =
+  (state, audioInput) =>
+    switch (audioInput) {
+    | AudioFile(s) => Some(defaultNoise)
+    | PinkNoise => Some(defaultNoise)
+    | Mic => state.micInput
+    };
 
 type domHighResTimeStamp;
 
@@ -360,9 +373,10 @@ let make = (~width=120, ~height=120, _children) => {
       disconnectInputs(oldSelf.state);
     };
 
-    if (oldSelf.state.params.filterInputSetting
-        != newSelf.state.params.filterInputSetting) {
-      switch (newSelf.state.params.filterInputSetting) {
+    if (oldSelf.state.params.audioInputSetting
+        != newSelf.state.params.audioInputSetting) {
+      switch (newSelf.state.params.audioInputSetting) {
+      | AudioFile(_) => () /* nothing yet */
       | PinkNoise => newSelf.send(SetFilterInput(defaultNoise))
       | Mic =>
         switch (newSelf.state.micInput) {

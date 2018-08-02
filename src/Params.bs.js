@@ -2,6 +2,7 @@
 
 import * as List from "bs-platform/lib/es6/list.js";
 import * as Block from "bs-platform/lib/es6/block.js";
+import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Hashtbl from "bs-platform/lib/es6/hashtbl.js";
 import * as Audio$Gayer from "./Audio.bs.js";
@@ -14,35 +15,42 @@ import * as Container$Gayer from "./DnD/Container.bs.js";
 
 var defaultParams_009 = /* layers : :: */[
   /* record */[
-    /* content : Analysis */0,
+    /* content : Fill */Block.__(0, ["rgba(255,255,255, 0.01)"]),
     /* alpha */1.0,
     /* compositeOperation : SourceOver */0
   ],
   /* :: */[
     /* record */[
-      /* content : Webcam */Block.__(0, [/* record */[/* slitscan : None */0]]),
-      /* alpha */0.25,
+      /* content : Analysis */0,
+      /* alpha */1.0,
       /* compositeOperation : SourceOver */0
     ],
     /* :: */[
       /* record */[
-        /* content : Image */Block.__(1, ["media/meaning_of_the_flag.png"]),
-        /* alpha */0.5,
-        /* compositeOperation : Multiply */11
+        /* content : Webcam */Block.__(1, [/* record */[/* slitscan : None */0]]),
+        /* alpha */0.25,
+        /* compositeOperation : Overlay */13
       ],
       /* :: */[
         /* record */[
-          /* content : PitchClasses */Block.__(2, [Music$Gayer.cMajor]),
+          /* content : Image */Block.__(2, ["media/meaning_of_the_flag.png"]),
           /* alpha */1.0,
-          /* compositeOperation : DestinationOut */6
+          /* compositeOperation : Multiply */11
         ],
         /* :: */[
           /* record */[
-            /* content : Reader */Block.__(3, [/* R */0]),
-            /* alpha */0.0,
-            /* compositeOperation : SourceOver */0
+            /* content : PitchClasses */Block.__(3, [Music$Gayer.cMajor]),
+            /* alpha */1.0,
+            /* compositeOperation : DestinationOut */6
           ],
-          /* [] */0
+          /* :: */[
+            /* record */[
+              /* content : Reader */Block.__(4, [/* R */0]),
+              /* alpha */0.0,
+              /* compositeOperation : SourceOver */0
+            ],
+            /* [] */0
+          ]
         ]
       ]
     ]
@@ -53,7 +61,7 @@ var defaultParams = /* record */[
   /* readPosDelta */1,
   /* writePosDelta */1,
   /* writePosOffset */0,
-  /* filterInputSetting : PinkNoise */0,
+  /* audioInputSetting : PinkNoise */0,
   /* inputGain */1.0,
   /* outputGain */0.2,
   /* q */Audio$Gayer.defaultQ,
@@ -62,25 +70,13 @@ var defaultParams = /* record */[
   defaultParams_009
 ];
 
-function filterInputSetting(json) {
-  var param = Json_decode.string(json);
-  switch (param) {
-    case "mic" : 
-        return /* Mic */1;
-    case "pink-noise" : 
-        return /* PinkNoise */0;
-    default:
-      return /* PinkNoise */0;
-  }
-}
-
 function params(json) {
   var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
   return /* record */[
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
           /* writePosOffset */Json_decode.field("writePosOffset", Json_decode.$$int, json),
-          /* filterInputSetting */Json_decode.field("filterInputSetting", filterInputSetting, json),
+          /* audioInputSetting */Json_decode.field("audioInputSetting", Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0], json),
           /* inputGain */Json_decode.field("inputGain", Json_decode.$$float, json),
           /* outputGain */Json_decode.field("outputGain", Json_decode.$$float, json),
           /* q */Json_decode.field("q", Json_decode.$$float, json),
@@ -92,18 +88,7 @@ function params(json) {
         ];
 }
 
-var DecodeParams = /* module */[
-  /* filterInputSetting */filterInputSetting,
-  /* params */params
-];
-
-function filterInputSetting$1(r) {
-  if (r) {
-    return "mic";
-  } else {
-    return "pink-noise";
-  }
-}
+var DecodeParams = /* module */[/* params */params];
 
 function params$1(r) {
   return Json_encode.object_(/* :: */[
@@ -123,8 +108,8 @@ function params$1(r) {
                   ],
                   /* :: */[
                     /* tuple */[
-                      "filterInputSetting",
-                      r[/* filterInputSetting */3] ? "mic" : "pink-noise"
+                      "audioInputSetting",
+                      Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[/* audioInputSetting */3])
                     ],
                     /* :: */[
                       /* tuple */[
@@ -169,10 +154,7 @@ function params$1(r) {
             ]);
 }
 
-var EncodeParams = /* module */[
-  /* filterInputSetting */filterInputSetting$1,
-  /* params */params$1
-];
+var EncodeParams = /* module */[/* params */params$1];
 
 var component = ReasonReact.statelessComponent("Params");
 
@@ -195,7 +177,7 @@ function make(params, onMoveCard, onSetRef, _) {
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */9]), onMoveCard, onSetRef, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "filterInputSetting: ", JSON.stringify(params[/* filterInputSetting */3] ? "mic" : "pink-noise")), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */4].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */5].toString()), React.createElement("div", undefined, "q: ", params[/* q */6].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */7].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
+                                      }), params[/* layers */9]), onMoveCard, onSetRef, /* array */[])), React.createElement("div", undefined, React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString()), React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()), React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString()), React.createElement("div", undefined, "audioInputSetting: ", JSON.stringify(Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], params[/* audioInputSetting */3]))), React.createElement("div", undefined, "inputGain: ", params[/* inputGain */4].toString()), React.createElement("div", undefined, "outputGain: ", params[/* outputGain */5].toString()), React.createElement("div", undefined, "q: ", params[/* q */6].toString()), React.createElement("div", undefined, "transpose: ", params[/* transpose */7].toString()), React.createElement("div", undefined, "shouldClear: ", match ? "true" : "false")));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

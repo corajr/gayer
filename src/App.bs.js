@@ -68,7 +68,7 @@ function setLayerRef(param, param$1) {
     return /* () */0;
   } else {
     switch (match.tag | 0) {
-      case 0 : 
+      case 1 : 
           if (theRef == null) {
             return /* () */0;
           } else {
@@ -81,7 +81,7 @@ function setLayerRef(param, param$1) {
               return /* () */0;
             }
           }
-      case 1 : 
+      case 2 : 
           if (theRef == null) {
             return /* () */0;
           } else {
@@ -134,7 +134,7 @@ function clearCanvas(canvasElement, width, height) {
 }
 
 function pushParamsState(newParams) {
-  var newParamsJson = JSON.stringify(Params$Gayer.EncodeParams[/* params */1](newParams));
+  var newParamsJson = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](newParams));
   return ReasonReact.Router[/* push */0]("#" + newParamsJson);
 }
 
@@ -152,6 +152,10 @@ function drawLayer(ctx, width, height, state, layer) {
   } else {
     switch (match.tag | 0) {
       case 0 : 
+          ctx.fillStyle = match[0];
+          ctx.fillRect(0, 0, width, height);
+          return /* None */0;
+      case 1 : 
           var match$2 = state[/* cameraInput */7][0];
           if (match$2) {
             var input = match$2[0];
@@ -163,13 +167,13 @@ function drawLayer(ctx, width, height, state, layer) {
             }
           }
           return /* None */0;
-      case 1 : 
+      case 2 : 
           var match$3 = Belt_MapString.get(state[/* loadedImages */10][0], match[0]);
           if (match$3) {
             ctx.drawImage(match$3[0], 0, 0, width, height);
           }
           return /* None */0;
-      case 2 : 
+      case 3 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
           ctx.fillStyle = "black";
           var binsPerSemitone = height / 120 | 0;
@@ -183,7 +187,7 @@ function drawLayer(ctx, width, height, state, layer) {
                 }(i)), classList);
           }
           return /* None */0;
-      case 3 : 
+      case 4 : 
           var channel = match[0];
           var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
           var tmp;
@@ -225,6 +229,18 @@ function drawCanvas(canvasElement, width, height, state) {
               }), Caml_array.caml_make_vect(height, 0.0), state[/* params */4][/* layers */9]);
 }
 
+function getAnalysisInput(state, audioInput) {
+  if (typeof audioInput === "number") {
+    if (audioInput !== 0) {
+      return state[/* micInput */6];
+    } else {
+      return /* Some */[Audio$Gayer.defaultNoise];
+    }
+  } else {
+    return /* Some */[Audio$Gayer.defaultNoise];
+  }
+}
+
 function make($staropt$star, $staropt$star$1, _) {
   var width = $staropt$star ? $staropt$star[0] : 120;
   var height = $staropt$star$1 ? $staropt$star$1[0] : 120;
@@ -253,7 +269,7 @@ function make($staropt$star, $staropt$star$1, _) {
                       var hash = decodeURIComponent(url[/* hash */1]);
                       var match = Json.parse(hash);
                       if (match) {
-                        var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */1], match[0]);
+                        var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */0], match[0]);
                         if (match$1) {
                           return Curry._1(self[/* send */3], /* SetParams */Block.__(5, [match$1[0]]));
                         } else {
@@ -268,7 +284,7 @@ function make($staropt$star, $staropt$star$1, _) {
                     }));
               var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
               if (url[/* hash */1] === "") {
-                var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */1](self[/* state */1][/* params */4]));
+                var startingParams = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](self[/* state */1][/* params */4]));
                 return ReasonReact.Router[/* push */0]("#" + startingParams);
               } else {
                 return ReasonReact.Router[/* push */0]("#" + url[/* hash */1]);
@@ -280,17 +296,21 @@ function make($staropt$star, $staropt$star$1, _) {
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */2], newSelf[/* state */1][/* filterInput */2]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */8], newSelf[/* state */1][/* filterBank */8])) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
-              if (oldSelf[/* state */1][/* params */4][/* filterInputSetting */3] !== newSelf[/* state */1][/* params */4][/* filterInputSetting */3]) {
-                var match = newSelf[/* state */1][/* params */4][/* filterInputSetting */3];
-                if (match) {
-                  var match$1 = newSelf[/* state */1][/* micInput */6];
-                  if (match$1) {
-                    return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [match$1[0]]));
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* audioInputSetting */3], newSelf[/* state */1][/* params */4][/* audioInputSetting */3])) {
+                var match = newSelf[/* state */1][/* params */4][/* audioInputSetting */3];
+                if (typeof match === "number") {
+                  if (match !== 0) {
+                    var match$1 = newSelf[/* state */1][/* micInput */6];
+                    if (match$1) {
+                      return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [match$1[0]]));
+                    } else {
+                      return /* () */0;
+                    }
                   } else {
-                    return /* () */0;
+                    return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [Audio$Gayer.defaultNoise]));
                   }
                 } else {
-                  return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [Audio$Gayer.defaultNoise]));
+                  return /* () */0;
                 }
               } else {
                 return 0;
@@ -386,7 +406,7 @@ function make($staropt$star, $staropt$star$1, _) {
                                                 /* readPosDelta */init[/* readPosDelta */0],
                                                 /* writePosDelta */init[/* writePosDelta */1],
                                                 /* writePosOffset */init[/* writePosOffset */2],
-                                                /* filterInputSetting */init[/* filterInputSetting */3],
+                                                /* audioInputSetting */init[/* audioInputSetting */3],
                                                 /* inputGain */init[/* inputGain */4],
                                                 /* outputGain */init[/* outputGain */5],
                                                 /* q */init[/* q */6],
@@ -511,6 +531,7 @@ export {
   pushParamsState ,
   drawLayer ,
   drawCanvas ,
+  getAnalysisInput ,
   make ,
   
 }

@@ -406,3 +406,37 @@ let updateFilterBank =
     );
   };
 };
+
+module AudioInput = {
+  type audioInputSetting =
+    | AudioFile(string)
+    | PinkNoise
+    | Mic;
+
+  module EncodeAudioInput = {
+    let audioInputSetting = r =>
+      Json.Encode.(
+        switch (r) {
+        | AudioFile(url) =>
+          object_([("type", string("file")), ("url", string(url))])
+        | PinkNoise => string("pink-noise")
+        | Mic => string("mic")
+        }
+      );
+  };
+
+  module DecodeAudioInput = {
+    let audioInputSetting = json =>
+      Json.Decode.(
+        json
+        |> field("type", string)
+        |> (
+          fun
+          | "pink-noise" => PinkNoise
+          | "mic" => Mic
+          | "file" =>
+            json |> map(url => AudioFile(url), field("url", string))
+        )
+      );
+  };
+};

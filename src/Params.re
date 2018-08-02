@@ -1,17 +1,14 @@
 open Audio;
+open Audio.AudioInput;
 open Canvas;
 open Layer;
 open Music;
-
-type filterInputSetting =
-  | PinkNoise
-  | Mic;
 
 type params = {
   readPosDelta: int,
   writePosDelta: int,
   writePosOffset: int,
-  filterInputSetting,
+  audioInputSetting,
   inputGain: float,
   outputGain: float,
   q: float,
@@ -24,23 +21,28 @@ let defaultParams: params = {
   readPosDelta: 1,
   writePosDelta: 1,
   writePosOffset: 0,
-  filterInputSetting: PinkNoise,
+  audioInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
   q: defaultQ,
   transpose: 0,
   shouldClear: false,
   layers: [
+    {
+      content: Fill("rgba(255,255,255, 0.01)"),
+      alpha: 1.0,
+      compositeOperation: SourceOver,
+    },
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
     {
       content: Webcam({slitscan: None}),
       /* content: Webcam({slitscan: Some({x: 60})}), */
       alpha: 0.25,
-      compositeOperation: SourceOver,
+      compositeOperation: Overlay,
     },
     {
       content: Image("media/meaning_of_the_flag.png"),
-      alpha: 0.5,
+      alpha: 1.0,
       compositeOperation: Multiply,
     },
     {
@@ -53,24 +55,15 @@ let defaultParams: params = {
 };
 
 module DecodeParams = {
-  let filterInputSetting = json =>
-    Json.Decode.(
-      json
-      |> string
-      |> (
-        fun
-        | "pink-noise" => PinkNoise
-        | "mic" => Mic
-        | _ => PinkNoise
-      )
-    );
+  open AudioInput.DecodeAudioInput;
+
   let params = json =>
     Json.Decode.{
       readPosDelta: json |> field("readPosDelta", int),
       writePosDelta: json |> field("writePosDelta", int),
       writePosOffset: json |> field("writePosOffset", int),
-      filterInputSetting:
-        json |> field("filterInputSetting", filterInputSetting),
+      audioInputSetting:
+        json |> field("audioInputSetting", audioInputSetting),
       inputGain: json |> field("inputGain", float),
       outputGain: json |> field("outputGain", float),
       q: json |> field("q", float),
@@ -81,20 +74,15 @@ module DecodeParams = {
 };
 
 module EncodeParams = {
-  let filterInputSetting = r =>
-    Json.Encode.(
-      switch (r) {
-      | PinkNoise => string("pink-noise")
-      | Mic => string("mic")
-      }
-    );
+  open AudioInput.EncodeAudioInput;
+
   let params = r =>
     Json.Encode.(
       object_([
         ("readPosDelta", int(r.readPosDelta)),
         ("writePosDelta", int(r.writePosDelta)),
         ("writePosOffset", int(r.writePosOffset)),
-        ("filterInputSetting", filterInputSetting(r.filterInputSetting)),
+        ("audioInputSetting", audioInputSetting(r.audioInputSetting)),
         ("inputGain", float(r.inputGain)),
         ("outputGain", float(r.outputGain)),
         ("q", float(r.q)),
@@ -138,11 +126,11 @@ let make = (~params, ~onMoveCard, ~onSetRef, _children) => {
           (ReasonReact.string(Js.Int.toString(params.writePosOffset)))
         </div>
         <div>
-          (ReasonReact.string("filterInputSetting: "))
+          (ReasonReact.string("audioInputSetting: "))
           (
             ReasonReact.string(
               Js.Json.stringify(
-                EncodeParams.filterInputSetting(params.filterInputSetting),
+                EncodeAudioInput.audioInputSetting(params.audioInputSetting),
               ),
             )
           )

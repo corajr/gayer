@@ -27,6 +27,7 @@ module EncodeCameraOptions = {
 };
 
 type layerContent =
+  | Fill(string)
   | Webcam(cameraOptions)
   | Image(string)
   | Analysis
@@ -50,6 +51,7 @@ module DecodeLayer = {
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
       | "analysis" => Analysis
+      | "fill" => json |> map(s => Fill(s), field("style", string))
       | "pitchClasses" =>
         json
         |> map(
@@ -96,6 +98,9 @@ module EncodeLayer = {
           ("type", string("pitchClasses")),
           ("pc", list(int, PitchSet.elements(classes))),
         ])
+      | Fill(style) =>
+        object_([("type", string("fill")), ("style", string(style))])
+
       | Reader(channel) =>
         object_([
           ("type", string("reader")),
@@ -124,6 +129,7 @@ let renderLayerContent = (layerContent, setRef) =>
   | Image(url) => <img ref=setRef src=url width="120" height="120" />
   | Analysis => ReasonReact.string("analysis")
   | PitchClasses(pc) => ReasonReact.string("pc")
+  | Fill(s) => ReasonReact.string("fill: " ++ s)
   | Reader(channel) => ReasonReact.string("reader")
   };
 

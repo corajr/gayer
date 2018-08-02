@@ -58,15 +58,21 @@ function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
         return /* Analysis */0;
+    case "fill" : 
+        return Json_decode.map((function (s) {
+                      return /* Fill */Block.__(0, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("style", Json_decode.string, param);
+                    }), json);
     case "image" : 
         return Json_decode.map((function (s) {
-                      return /* Image */Block.__(1, [s]);
+                      return /* Image */Block.__(2, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(2, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(3, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -74,7 +80,7 @@ function layerByType(type_, json) {
                     }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(3, [i]);
+                      return /* Reader */Block.__(4, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
@@ -82,7 +88,7 @@ function layerByType(type_, json) {
                     }), json);
     case "webcam" : 
         return Json_decode.map((function (s) {
-                      return /* Webcam */Block.__(0, [s]);
+                      return /* Webcam */Block.__(1, [s]);
                     }), cameraOptions, json);
     default:
       throw [
@@ -129,6 +135,20 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "fill"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "style",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "webcam"
                       ],
                       /* :: */[
@@ -139,7 +159,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 1 : 
+      case 2 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -153,7 +173,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 2 : 
+      case 3 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -169,7 +189,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 3 : 
+      case 4 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -221,6 +241,8 @@ function renderLayerContent(layerContent, setRef) {
   } else {
     switch (layerContent.tag | 0) {
       case 0 : 
+          return "fill: " + layerContent[0];
+      case 1 : 
           return React.createElement("video", {
                       ref: setRef,
                       autoPlay: true,
@@ -228,16 +250,16 @@ function renderLayerContent(layerContent, setRef) {
                       muted: true,
                       width: "120"
                     });
-      case 1 : 
+      case 2 : 
           return React.createElement("img", {
                       ref: setRef,
                       height: "120",
                       src: layerContent[0],
                       width: "120"
                     });
-      case 2 : 
-          return "pc";
       case 3 : 
+          return "pc";
+      case 4 : 
           return "reader";
       
     }

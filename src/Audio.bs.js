@@ -4,7 +4,10 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
+import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
+import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
 var defaultAudioCtx = (new (window.AudioContext || window.webkitAudioContext)());
 
@@ -202,6 +205,64 @@ function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, $star
   return /* () */0;
 }
 
+function audioInputSetting(r) {
+  if (typeof r === "number") {
+    if (r !== 0) {
+      return "mic";
+    } else {
+      return "pink-noise";
+    }
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "file"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "url",
+                    r[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  }
+}
+
+var EncodeAudioInput = /* module */[/* audioInputSetting */audioInputSetting];
+
+function audioInputSetting$1(json) {
+  var param = Json_decode.field("type", Json_decode.string, json);
+  switch (param) {
+    case "file" : 
+        return Json_decode.map((function (url) {
+                      return /* AudioFile */[url];
+                    }), (function (param) {
+                      return Json_decode.field("url", Json_decode.string, param);
+                    }), json);
+    case "mic" : 
+        return /* Mic */1;
+    case "pink-noise" : 
+        return /* PinkNoise */0;
+    default:
+      throw [
+            Caml_builtin_exceptions.match_failure,
+            [
+              "Audio.re",
+              433,
+              11
+            ]
+          ];
+  }
+}
+
+var DecodeAudioInput = /* module */[/* audioInputSetting */audioInputSetting$1];
+
+var AudioInput = /* module */[
+  /* EncodeAudioInput */EncodeAudioInput,
+  /* DecodeAudioInput */DecodeAudioInput
+];
+
 var midiNoteA440Hz = 69;
 
 var defaultQ = 34.127;
@@ -226,6 +287,7 @@ export {
   connectFilterBank ,
   disconnectFilterBank ,
   updateFilterBank ,
+  AudioInput ,
   
 }
 /* defaultAudioCtx Not a pure module */
