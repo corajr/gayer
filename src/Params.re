@@ -39,7 +39,7 @@ let defaultParams: params = {
       compositeOperation: SourceOver,
     },
     {
-      content: Image("media/hilbert_curve.png"),
+      content: Image("media/meaning_of_the_flag.png"),
       alpha: 0.5,
       compositeOperation: Multiply,
     },

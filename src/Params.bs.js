@@ -26,7 +26,7 @@ var defaultParams_009 = /* layers : :: */[
     ],
     /* :: */[
       /* record */[
-        /* content : Image */Block.__(1, ["media/hilbert_curve.png"]),
+        /* content : Image */Block.__(1, ["media/meaning_of_the_flag.png"]),
         /* alpha */0.5,
         /* compositeOperation : Multiply */11
       ],
