@@ -118,6 +118,7 @@ let clearCanvas = (canvasElement, width, height) => {
 
 let pushParamsState = newParams => {
   let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
+  Js.log("setting params");
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
@@ -230,6 +231,7 @@ external requestAnimationFrame :
   "";
 
 [@bs.val] external decodeURIComponent : string => string = "";
+[@bs.val] external encodeURIComponent : string => string = "";
 
 let make = (~width=120, ~height=120, _children) => {
   ...component,
@@ -245,16 +247,16 @@ let make = (~width=120, ~height=120, _children) => {
         {...state, filterInput},
         (self => connectInputs(self.state)),
       )
-    | MoveLayer(dragIndex, hoverIndex) =>
+    | MoveLayer(indexToMove, indexToInsertBefore) =>
       ReasonReact.SideEffects(
         (
           _self => {
             let layers = state.params.layers;
-            let layer = List.nth(layers, dragIndex);
+            let layer = List.nth(layers, indexToMove);
             let updatedLayers =
               layers
-              |> RList.remove(dragIndex, 1)
-              |> RList.insert(hoverIndex, layer);
+              |> RList.remove(indexToMove, 1)
+              |> RList.insert(indexToInsertBefore, layer);
             pushParamsState({...state.params, layers: updatedLayers});
           }
         ),
@@ -347,22 +349,23 @@ let make = (~width=120, ~height=120, _children) => {
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
         let hash = decodeURIComponent(url.hash);
+        Js.log("url changed");
 
         switch (Json.parse(hash)) {
         | Some(x) =>
           switch (Json.Decode.optional(DecodeParams.params, x)) {
-          | None => ()
-          | Some(params) => self.send(SetParams(params))
+          | None => Js.log("unable to decode params")
+          | Some(params) =>
+            Js.log("new params received, sending");
+            self.send(SetParams(params));
           }
-        | None => ()
+        | None => Js.log("Could not parse json")
         };
       });
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     if (url.hash === "") {
-      let startingParams =
-        Js.Json.stringify(EncodeParams.params(self.state.params));
-      ReasonReact.Router.push("#" ++ startingParams);
+      pushParamsState(self.state.params);
     } else {
       ReasonReact.Router.push("#" ++ url.hash);
     };

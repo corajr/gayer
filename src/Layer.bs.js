@@ -3,10 +3,10 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Json_decode from "@glennsl/bs-json/lib/es6/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/lib/es6/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
-import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
 function slitscanOptions(json) {

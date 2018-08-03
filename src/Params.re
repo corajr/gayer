@@ -103,7 +103,7 @@ let make = (~params, ~onMoveCard, ~onSetRef, _children) => {
         cards=(
           List.map(
             layer => {
-              let id = Hashtbl.hash(layer);
+              let id = "card" ++ string_of_int(Hashtbl.hash(layer));
               {T.id, T.layer};
             },
             params.layers,

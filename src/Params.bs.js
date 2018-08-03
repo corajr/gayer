@@ -6,11 +6,11 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Hashtbl from "bs-platform/lib/es6/hashtbl.js";
 import * as Audio$Gayer from "./Audio.bs.js";
-import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Json_decode from "@glennsl/bs-json/lib/es6/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/lib/es6/src/Json_encode.bs.js";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
-import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
 import * as Container$Gayer from "./DnD/Container.bs.js";
 
 var defaultParams_009 = /* layers : :: */[
@@ -172,7 +172,7 @@ function make(params, onMoveCard, onSetRef, _) {
           /* render */(function () {
               var match = params[/* shouldClear */8];
               return React.createElement("div", undefined, ReasonReact.element(/* None */0, /* None */0, Container$Gayer.make(List.map((function (layer) {
-                                        var id = Hashtbl.hash(layer);
+                                        var id = "card" + String(Hashtbl.hash(layer));
                                         return /* record */[
                                                 /* id */id,
                                                 /* layer */layer

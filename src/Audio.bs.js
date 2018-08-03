@@ -4,8 +4,8 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
-import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
-import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Json_decode from "@glennsl/bs-json/lib/es6/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/lib/es6/src/Json_encode.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 

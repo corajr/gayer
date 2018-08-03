@@ -7,10 +7,16 @@
   "reason": {
     "react-jsx": 2
   },
-  "sources": {
-    "dir" : "src",
-    "subdirs" : true
-  },
+  "sources": [
+    {
+      "dir" : "src",
+      "subdirs" : true
+    },
+    {
+      "dir": "__tests__",
+      "type": "dev"
+    }
+  ],
   "package-specs": [{
     "module": "es6",
     "in-source": true
@@ -24,5 +30,6 @@
     "@ahrefs/bs-react-dnd",
     "@jsiebern/bs-material-ui"
   ],
+  "bs-dev-dependencies": ["@glennsl/bs-jest"],
   "refmt": 3
 }

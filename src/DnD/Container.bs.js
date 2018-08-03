@@ -5,27 +5,76 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Card$Gayer from "./Card.bs.js";
-import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as RList$Rationale from "rationale/src/RList.js";
-import * as ReactDndMultiBackend from "react-dnd-multi-backend";
-import * as BsReactDnd__DragDropContextProvider from "@ahrefs/bs-react-dnd/src/BsReactDnd__DragDropContextProvider.js";
-import * as HTML5toTouch from "react-dnd-multi-backend/lib/HTML5toTouch";
+import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
+import * as Dragula$Gayer from "./Dragula.bs.js";
+import * as ReactDragula from "react-dragula";
+import * as RList$Rationale from "rationale/lib/es6/src/RList.js";
 
-var backend = ReactDndMultiBackend.default(HTML5toTouch.default);
+var defaultState_000 = /* dragContainerRef */[/* None */0];
 
-var component = ReasonReact.statelessComponent("Container");
+var defaultState_001 = /* dragulaRef */[/* None */0];
+
+var defaultState = /* record */[
+  defaultState_000,
+  defaultState_001
+];
+
+var component = ReasonReact.reducerComponent("Container");
 
 function make(cards, onMoveCard, onSetRef, _) {
-  var handleMoveCard = function (dragId, hoverId) {
-    var dragIndex = RList$Rationale.findIndex((function (card) {
-            return card[/* id */0] === dragId;
+  var handleMoveCard = function (idToMove, idToInsertBefore) {
+    var idList = List.map((function (card) {
+            return card[/* id */0];
           }), cards);
-    var hoverIndex = RList$Rationale.findIndex((function (card) {
-            return card[/* id */0] === hoverId;
-          }), cards);
-    if (dragIndex && hoverIndex) {
-      return Curry._2(onMoveCard, dragIndex[0], hoverIndex[0]);
+    var indexToMove = RList$Rationale.indexOf(idToMove, idList);
+    if (indexToMove) {
+      var indexToMove$1 = indexToMove[0];
+      var idListWithoutMovedItem = RList$Rationale.remove(indexToMove$1, 1, idList);
+      var indexToInsertBefore = idToInsertBefore ? RList$Rationale.indexOf(idToInsertBefore[0], idListWithoutMovedItem) : /* Some */[List.length(idListWithoutMovedItem)];
+      if (indexToInsertBefore) {
+        var indexToInsertBefore$1 = indexToInsertBefore[0];
+        console.log("moving " + (String(indexToMove$1) + (" to before " + String(indexToInsertBefore$1))));
+        return Curry._2(onMoveCard, indexToMove$1, indexToInsertBefore$1);
+      } else {
+        return /* () */0;
+      }
     } else {
+      return /* () */0;
+    }
+  };
+  var dropFn = function (el, _, _$1, sibling) {
+    if (el) {
+      var elt = el[0];
+      if (sibling) {
+        var eltId = elt.id;
+        var sibId = sibling[0].id;
+        return handleMoveCard(eltId, /* Some */[sibId]);
+      } else {
+        var eltId$1 = elt.id;
+        return handleMoveCard(eltId$1, /* None */0);
+      }
+    } else {
+      return /* () */0;
+    }
+  };
+  var dragulaDecorator = function (theRef, param) {
+    var state = param[/* state */1];
+    state[/* dragContainerRef */0][0] = (theRef == null) ? /* None */0 : [theRef];
+    var state$1 = state;
+    var onUnmount = param[/* onUnmount */4];
+    var match = state$1[/* dragulaRef */1][0];
+    var match$1 = state$1[/* dragContainerRef */0][0];
+    if (match || !match$1) {
+      return /* () */0;
+    } else {
+      var drake = ReactDragula(/* array */[match$1[0]], { });
+      console.log(drake);
+      Dragula$Gayer.onDrop(drake, dropFn);
+      Curry._1(onUnmount, (function () {
+              destroy(drake);
+              return /* () */0;
+            }));
+      state$1[/* dragulaRef */1][0] = /* Some */[drake];
       return /* () */0;
     }
   };
@@ -39,20 +88,22 @@ function make(cards, onMoveCard, onSetRef, _) {
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
-              return ReasonReact.element(/* None */0, /* None */0, BsReactDnd__DragDropContextProvider.make(backend, /* None */0, /* array */[React.createElement("div", {
-                                    style: {
-                                      width: "400"
-                                    }
-                                  }, $$Array.of_list(List.map((function (card) {
-                                              return ReasonReact.element(/* Some */[String(card[/* id */0])], /* None */0, Card$Gayer.make(card[/* id */0], card[/* layer */1], handleMoveCard, (function (theRef) {
-                                                                return Curry._2(onSetRef, card[/* layer */1], theRef);
-                                                              }), /* array */[]));
-                                            }), cards)))]));
+          /* render */(function (self) {
+              return React.createElement("div", {
+                          ref: Curry._1(self[/* handle */0], dragulaDecorator)
+                        }, $$Array.of_list(List.map((function (card) {
+                                    return ReasonReact.element(/* Some */[card[/* id */0]], /* None */0, Card$Gayer.make(card[/* id */0], card[/* layer */1], (function (theRef) {
+                                                      return Curry._2(onSetRef, card[/* layer */1], theRef);
+                                                    }), /* array */[]));
+                                  }), cards)));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return defaultState;
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (_, _$1) {
+              return /* NoUpdate */0;
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
@@ -62,9 +113,9 @@ var RList = 0;
 
 export {
   RList ,
-  backend ,
+  defaultState ,
   component ,
   make ,
   
 }
-/* backend Not a pure module */
+/* component Not a pure module */
