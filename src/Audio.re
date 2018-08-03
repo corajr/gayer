@@ -8,8 +8,8 @@ type audioContext = {
   sampleRate: float,
 };
 
-let defaultAudioCtx: audioContext = [%bs.raw
-  {|new (window.AudioContext || window.webkitAudioContext)()|}
+let makeDefaultAudioCtx: unit => audioContext = [%bs.raw
+  () => {|return new (window.AudioContext || window.webkitAudioContext)()|}
 ];
 
 type audioParam;
@@ -209,8 +209,6 @@ let pinkNoise: audioContext => audioNode = [%bs.raw
      |}
 ];
 
-let defaultNoise = pinkNoise(defaultAudioCtx);
-
 [@bs.send]
 external getFloatFrequencyData : (analyser, array(float)) => unit = "";
 [@bs.send]
@@ -222,7 +220,7 @@ external getByteTimeDomainData : (analyser, array(int)) => unit = "";
 
 let makeAnalyser =
     (
-      ~audioContext: audioContext=defaultAudioCtx,
+      ~audioContext: audioContext,
       ~fftSize: int=2048,
       ~minDecibels: float=(-100.0),
       ~maxDecibels: float=(-30.0),
@@ -358,24 +356,21 @@ let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
 
 [@bs.get] external defaultSink : audioContext => audioNode = "destination";
 
-let defaultCompressor = {
+let defaultCompressor = audioCtx => {
   let compressor =
-    makeCompressor(
-      ~audioCtx=defaultAudioCtx,
-      ~paramValues=defaultCompressorValues,
-    );
-  connectCompressorToNode(compressor, defaultSink(defaultAudioCtx));
+    makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
+  connectCompressorToNode(compressor, defaultSink(audioCtx));
   compressor;
 };
 
-let connectFilterBank = (noise, filterBank) => {
+let connectFilterBank = (noise, filterBank, compressor) => {
   connectNodeToGain(noise, filterBank.input);
-  connectGainToNode(filterBank.output, unwrapCompressor(defaultCompressor));
+  connectGainToNode(filterBank.output, unwrapCompressor(compressor));
 };
 
-let disconnectFilterBank = (noise, filterBank) => {
+let disconnectFilterBank = (noise, filterBank, compressor) => {
   disconnect(noise, filterBank.input);
-  disconnect(filterBank.output, defaultCompressor);
+  disconnect(filterBank.output, compressor);
 };
 
 let updateFilterBank =
@@ -419,8 +414,8 @@ module AudioInput = {
         switch (r) {
         | AudioFile(url) =>
           object_([("type", string("file")), ("url", string(url))])
-        | PinkNoise => string("pink-noise")
-        | Mic => string("mic")
+        | PinkNoise => object_([("type", string("pink-noise"))])
+        | Mic => object_([("type", string("mic"))])
         }
       );
   };

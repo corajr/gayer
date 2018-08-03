@@ -5,7 +5,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as CQT$Gayer from "./CQT.bs.js";
 import * as Audio$Gayer from "./Audio.bs.js";
-import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
+import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
 function drawCQTBar(canvasRenderingContext2D, state) {
@@ -75,7 +75,7 @@ function make(size, audioCtx, input, saveRef, _) {
                     /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */4],
                     /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */5]
                   ]);
-              var analyser = Audio$Gayer.makeAnalyser(/* Some */[audioCtx], /* Some */[cqt.fft_size], /* None */0, /* None */0, /* None */0, /* () */0);
+              var analyser = Audio$Gayer.makeAnalyser(audioCtx, /* Some */[cqt.fft_size], /* None */0, /* None */0, /* None */0, /* () */0);
               return /* record */[
                       /* analyser */analyser,
                       /* cqt */cqt,

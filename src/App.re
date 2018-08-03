@@ -17,13 +17,14 @@ type visualInput = option(canvasImageSource);
 type state = {
   readPos: ref(int),
   writePos: ref(int),
-  filterInput,
+  filterInput: option(audioNode),
   visualInput,
   params,
   mediaStream: option(mediaStream),
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
   filterBank: option(filterBank),
+  compressor: option(compressor),
   analysisCanvasRef: ref(option(Dom.element)),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   canvasRef: ref(option(Dom.element)),
@@ -33,13 +34,14 @@ type state = {
 let defaultState: state = {
   readPos: ref(0),
   writePos: ref(0),
-  filterInput: defaultNoise,
+  filterInput: None,
   visualInput: None,
   mediaStream: None,
   micInput: None,
   cameraInput: ref(None),
   params: defaultParams,
   filterBank: None,
+  compressor: None,
   loadedImages: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
@@ -99,17 +101,19 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
 
 let connectInputs: state => unit =
   state =>
-    maybeMapFilterBank(
-      connectFilterBank(state.filterInput),
-      state.filterBank,
-    );
+    switch (state.filterBank, state.filterInput, state.compressor) {
+    | (Some(filterBank), Some(filterInput), Some(compressor)) =>
+      connectFilterBank(filterInput, filterBank, compressor)
+    | _ => ()
+    };
 
 let disconnectInputs: state => unit =
   state =>
-    maybeMapFilterBank(
-      disconnectFilterBank(state.filterInput),
-      state.filterBank,
-    );
+    switch (state.filterBank, state.filterInput, state.compressor) {
+    | (Some(filterBank), Some(filterInput), Some(compressor)) =>
+      disconnectFilterBank(filterInput, filterBank, compressor)
+    | _ => ()
+    };
 
 let clearCanvas = (canvasElement, width, height) => {
   let ctx = getContext(canvasElement);
@@ -216,8 +220,8 @@ let drawCanvas = (canvasElement, width, height, state) => {
 let getAnalysisInput: (state, audioInputSetting) => option(audioNode) =
   (state, audioInput) =>
     switch (audioInput) {
-    | AudioFile(s) => Some(defaultNoise)
-    | PinkNoise => Some(defaultNoise)
+    | AudioFile(s) => None
+    | PinkNoise => None
     | Mic => state.micInput
     };
 
@@ -233,7 +237,8 @@ external requestAnimationFrame :
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
 
-let make = (~width=120, ~height=120, _children) => {
+let make =
+    (~width=120, ~height=120, ~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
   initialState: () => defaultState,
   reducer: (action, state) =>
@@ -244,7 +249,7 @@ let make = (~width=120, ~height=120, _children) => {
       ReasonReact.Update({...state, mediaStream: Some(stream)})
     | SetFilterInput(filterInput) =>
       ReasonReact.UpdateWithSideEffects(
-        {...state, filterInput},
+        {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
       )
     | MoveLayer(indexToMove, indexToInsertBefore) =>
@@ -314,7 +319,7 @@ let make = (~width=120, ~height=120, _children) => {
   didMount: self => {
     let filterBank =
       makeFilterBank(
-        ~audioCtx=defaultAudioCtx,
+        ~audioCtx,
         ~filterN=height,
         ~q=defaultQ,
         ~freqFunc=
@@ -329,7 +334,7 @@ let make = (~width=120, ~height=120, _children) => {
         streamPromise
         |> Js.Promise.then_(stream => {
              self.send(SetMediaStream(stream));
-             let audio = createMediaStreamSource(defaultAudioCtx, stream);
+             let audio = createMediaStreamSource(audioCtx, stream);
              self.send(SetMicInput(audio));
              /* let video = attachVideoStream(stream); */
              /* self.send(SetCameraInput(Some(video))); */
@@ -380,7 +385,7 @@ let make = (~width=120, ~height=120, _children) => {
         != newSelf.state.params.audioInputSetting) {
       switch (newSelf.state.params.audioInputSetting) {
       | AudioFile(_) => () /* nothing yet */
-      | PinkNoise => newSelf.send(SetFilterInput(defaultNoise))
+      | PinkNoise => newSelf.send(SetFilterInput(pinkNoise(audioCtx)))
       | Mic =>
         switch (newSelf.state.micInput) {
         | Some(mic) => newSelf.send(SetFilterInput(mic))
@@ -442,7 +447,7 @@ let make = (~width=120, ~height=120, _children) => {
         />
         <AnalysisCanvas
           size=height
-          audioCtx=defaultAudioCtx
+          audioCtx
           input=self.state.micInput
           saveRef=(self.handle(setAnalysisCanvasRef))
         />

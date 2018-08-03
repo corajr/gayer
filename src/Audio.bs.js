@@ -4,12 +4,12 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
-import * as Json_decode from "@glennsl/bs-json/lib/es6/src/Json_decode.bs.js";
-import * as Json_encode from "@glennsl/bs-json/lib/es6/src/Json_encode.bs.js";
+import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
-var defaultAudioCtx = (new (window.AudioContext || window.webkitAudioContext)());
+var makeDefaultAudioCtx = function (){return new (window.AudioContext || window.webkitAudioContext)()};
 
 function yToFrequency(binsPerSemitone, offset) {
   var fBinsPerSemitone = binsPerSemitone;
@@ -65,14 +65,11 @@ var pinkNoise = function (audioCtx){
      })();
      };
 
-var defaultNoise = pinkNoise(defaultAudioCtx);
-
-function makeAnalyser($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, _) {
-  var audioContext = $staropt$star ? $staropt$star[0] : defaultAudioCtx;
-  var fftSize = $staropt$star$1 ? $staropt$star$1[0] : 2048;
-  var minDecibels = $staropt$star$2 ? $staropt$star$2[0] : -100.0;
-  var maxDecibels = $staropt$star$3 ? $staropt$star$3[0] : -30.0;
-  var smoothingTimeConstant = $staropt$star$4 ? $staropt$star$4[0] : 0.8;
+function makeAnalyser(audioContext, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, _) {
+  var fftSize = $staropt$star ? $staropt$star[0] : 2048;
+  var minDecibels = $staropt$star$1 ? $staropt$star$1[0] : -100.0;
+  var maxDecibels = $staropt$star$2 ? $staropt$star$2[0] : -30.0;
+  var smoothingTimeConstant = $staropt$star$3 ? $staropt$star$3[0] : 0.8;
   var analyser = audioContext.createAnalyser();
   analyser.fftSize = fftSize;
   analyser.minDecibels = minDecibels;
@@ -172,17 +169,19 @@ function getAudioSource(ctx) {
   }
 }
 
-var compressor = makeCompressor(defaultAudioCtx, defaultCompressorValues);
+function defaultCompressor(audioCtx) {
+  var compressor = makeCompressor(audioCtx, defaultCompressorValues);
+  compressor.connect(audioCtx.destination);
+  return compressor;
+}
 
-compressor.connect(defaultAudioCtx.destination);
-
-function connectFilterBank(noise, filterBank) {
+function connectFilterBank(noise, filterBank, compressor) {
   noise.connect(filterBank[/* input */0]);
   filterBank[/* output */3].connect(compressor);
   return /* () */0;
 }
 
-function disconnectFilterBank(noise, filterBank) {
+function disconnectFilterBank(noise, filterBank, compressor) {
   noise.disconnect(filterBank[/* input */0]);
   filterBank[/* output */3].disconnect(compressor);
   return /* () */0;
@@ -208,9 +207,21 @@ function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, $star
 function audioInputSetting(r) {
   if (typeof r === "number") {
     if (r !== 0) {
-      return "mic";
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "mic"
+                  ],
+                  /* [] */0
+                ]);
     } else {
-      return "pink-noise";
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "pink-noise"
+                  ],
+                  /* [] */0
+                ]);
     }
   } else {
     return Json_encode.object_(/* :: */[
@@ -249,7 +260,7 @@ function audioInputSetting$1(json) {
             Caml_builtin_exceptions.match_failure,
             [
               "Audio.re",
-              433,
+              428,
               11
             ]
           ];
@@ -267,17 +278,14 @@ var midiNoteA440Hz = 69;
 
 var defaultQ = 34.127;
 
-var defaultCompressor = compressor;
-
 export {
-  defaultAudioCtx ,
+  makeDefaultAudioCtx ,
   midiNoteA440Hz ,
   yToFrequency ,
   defaultQ ,
   defaultCompressorValues ,
   makeCompressor ,
   pinkNoise ,
-  defaultNoise ,
   makeAnalyser ,
   string_of_filterType ,
   makeFilter ,
@@ -290,4 +298,4 @@ export {
   AudioInput ,
   
 }
-/* defaultAudioCtx Not a pure module */
+/* Json_encode Not a pure module */
