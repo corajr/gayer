@@ -23,6 +23,9 @@
   }],
   "suffix": ".bs.js",
   "namespace": true,
+  "warnings": {
+    "error": "+8"
+  },
   "bs-dependencies": [
     "reason-react",
     "rationale",

@@ -7,7 +7,6 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
-import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
 var makeDefaultAudioCtx = function (){return new (window.AudioContext || window.webkitAudioContext)()};
 
@@ -23,14 +22,15 @@ function yToFrequency(binsPerSemitone, offset) {
 }
 
 var defaultCompressorValues = /* record */[
-  /* threshold */-18.0,
-  /* knee */3.0,
-  /* ratio */10.0,
+  /* threshold */-12.0,
+  /* knee */0.0,
+  /* ratio */20.0,
   /* attack */0.01,
   /* release */0.05
 ];
 
-function makeCompressor(audioCtx, paramValues) {
+function makeCompressor(audioCtx, $staropt$star) {
+  var paramValues = $staropt$star ? $staropt$star[0] : defaultCompressorValues;
   var compressor = audioCtx.createDynamicsCompressor();
   var t = audioCtx.currentTime;
   compressor.threshold.setValueAtTime(paramValues[/* threshold */0], t);
@@ -169,12 +169,6 @@ function getAudioSource(ctx) {
   }
 }
 
-function defaultCompressor(audioCtx) {
-  var compressor = makeCompressor(audioCtx, defaultCompressorValues);
-  compressor.connect(audioCtx.destination);
-  return compressor;
-}
-
 function connectFilterBank(noise, filterBank, compressor) {
   noise.connect(filterBank[/* input */0]);
   filterBank[/* output */3].connect(compressor);
@@ -256,14 +250,7 @@ function audioInputSetting$1(json) {
     case "pink-noise" : 
         return /* PinkNoise */0;
     default:
-      throw [
-            Caml_builtin_exceptions.match_failure,
-            [
-              "Audio.re",
-              428,
-              11
-            ]
-          ];
+      return /* PinkNoise */0;
   }
 }
 
@@ -291,7 +278,6 @@ export {
   makeFilter ,
   makeFilterBank ,
   getAudioSource ,
-  defaultCompressor ,
   connectFilterBank ,
   disconnectFilterBank ,
   updateFilterBank ,

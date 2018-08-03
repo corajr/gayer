@@ -163,15 +163,18 @@ let yToFrequency: (int, int, int) => float =
 let defaultQ = 34.127;
 
 let defaultCompressorValues: compressorParamValues = {
-  threshold: (-18.0),
-  knee: 3.0,
-  ratio: 10.0,
+  threshold: (-12.0),
+  knee: 0.0,
+  ratio: 20.0,
   attack: 0.01,
   release: 0.05,
 };
 
 let makeCompressor =
-    (~audioCtx: audioContext, ~paramValues: compressorParamValues)
+    (
+      ~audioCtx: audioContext,
+      ~paramValues: compressorParamValues=defaultCompressorValues,
+    )
     : compressor => {
   let compressor = createDynamicsCompressor(audioCtx);
   let t = currentTime(audioCtx);
@@ -356,13 +359,6 @@ let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
 
 [@bs.get] external defaultSink : audioContext => audioNode = "destination";
 
-let defaultCompressor = audioCtx => {
-  let compressor =
-    makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
-  connectCompressorToNode(compressor, defaultSink(audioCtx));
-  compressor;
-};
-
 let connectFilterBank = (noise, filterBank, compressor) => {
   connectNodeToGain(noise, filterBank.input);
   connectGainToNode(filterBank.output, unwrapCompressor(compressor));
@@ -431,6 +427,7 @@ module AudioInput = {
           | "mic" => Mic
           | "file" =>
             json |> map(url => AudioFile(url), field("url", string))
+          | _ => PinkNoise
         )
       );
   };

@@ -23,16 +23,11 @@ let defaultParams: params = {
   writePosOffset: 0,
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
-  outputGain: 0.2,
+  outputGain: 0.1,
   q: defaultQ,
   transpose: 0,
-  shouldClear: false,
+  shouldClear: true,
   layers: [
-    {
-      content: Fill("rgba(255,255,255, 0.01)"),
-      alpha: 1.0,
-      compositeOperation: SourceOver,
-    },
     {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
     {
       content: Webcam({slitscan: None}),
@@ -40,8 +35,9 @@ let defaultParams: params = {
       alpha: 0.25,
       compositeOperation: Overlay,
     },
+    {content: Fill("white"), alpha: 0.0125, compositeOperation: SourceOver},
     {
-      content: Image("media/meaning_of_the_flag.png"),
+      content: Image("media/hilbert_curve.png"),
       alpha: 1.0,
       compositeOperation: Multiply,
     },

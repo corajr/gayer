@@ -45,9 +45,16 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
 
       {analyser, cqt, canvasRef: ref(None), timerId: ref(None)};
     },
-    didMount: self =>
-      self.state.timerId :=
-        Some(Js.Global.setInterval(() => self.send(Draw), 15)),
+    didMount: self => {
+      let timerId = Js.Global.setInterval(() => self.send(Draw), 20);
+      self.state.timerId := Some(timerId);
+      self.onUnmount(() =>
+        switch (self.state.timerId^) {
+        | None => ()
+        | Some(timerId) => Js.Global.clearInterval(timerId)
+        }
+      );
+    },
     didUpdate: ({oldSelf, newSelf}) =>
       switch (input) {
       | None => ()

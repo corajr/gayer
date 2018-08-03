@@ -32,10 +32,19 @@ function make(size, audioCtx, input, saveRef, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              self[/* state */1][/* timerId */3][0] = /* Some */[setInterval((function () {
-                        return Curry._1(self[/* send */3], /* Draw */0);
-                      }), 15)];
-              return /* () */0;
+              var timerId = setInterval((function () {
+                      return Curry._1(self[/* send */3], /* Draw */0);
+                    }), 20);
+              self[/* state */1][/* timerId */3][0] = /* Some */[timerId];
+              return Curry._1(self[/* onUnmount */4], (function () {
+                            var match = self[/* state */1][/* timerId */3][0];
+                            if (match) {
+                              clearInterval(match[0]);
+                              return /* () */0;
+                            } else {
+                              return /* () */0;
+                            }
+                          }));
             }),
           /* didUpdate */(function (param) {
               if (input) {

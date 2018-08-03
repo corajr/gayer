@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as Layer$Gayer from "../Layer.bs.js";
-import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
+import * as ReasonReact from "reason-react/src/ReasonReact.js";
 
 var component = ReasonReact.statelessComponent("Card");
 

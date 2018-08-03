@@ -15,25 +15,25 @@ import * as Container$Gayer from "./DnD/Container.bs.js";
 
 var defaultParams_009 = /* layers : :: */[
   /* record */[
-    /* content : Fill */Block.__(0, ["rgba(255,255,255, 0.01)"]),
+    /* content : Analysis */0,
     /* alpha */1.0,
     /* compositeOperation : SourceOver */0
   ],
   /* :: */[
     /* record */[
-      /* content : Analysis */0,
-      /* alpha */1.0,
-      /* compositeOperation : SourceOver */0
+      /* content : Webcam */Block.__(1, [/* record */[/* slitscan : None */0]]),
+      /* alpha */0.25,
+      /* compositeOperation : Overlay */13
     ],
     /* :: */[
       /* record */[
-        /* content : Webcam */Block.__(1, [/* record */[/* slitscan : None */0]]),
-        /* alpha */0.25,
-        /* compositeOperation : Overlay */13
+        /* content : Fill */Block.__(0, ["white"]),
+        /* alpha */0.0125,
+        /* compositeOperation : SourceOver */0
       ],
       /* :: */[
         /* record */[
-          /* content : Image */Block.__(2, ["media/meaning_of_the_flag.png"]),
+          /* content : Image */Block.__(2, ["media/hilbert_curve.png"]),
           /* alpha */1.0,
           /* compositeOperation : Multiply */11
         ],
@@ -63,10 +63,10 @@ var defaultParams = /* record */[
   /* writePosOffset */0,
   /* audioInputSetting : PinkNoise */0,
   /* inputGain */1.0,
-  /* outputGain */0.2,
+  /* outputGain */0.1,
   /* q */Audio$Gayer.defaultQ,
   /* transpose */0,
-  /* shouldClear */false,
+  /* shouldClear */true,
   defaultParams_009
 ];
 

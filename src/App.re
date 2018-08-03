@@ -51,7 +51,6 @@ let defaultState: state = {
 type action =
   | Clear
   | Tick
-  | MoveLayer(int, int)
   | SetLayers(list(layer))
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -253,20 +252,6 @@ let make =
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
       )
-    | MoveLayer(indexToMove, indexToInsertBefore) =>
-      ReasonReact.SideEffects(
-        (
-          _self => {
-            let layers = state.params.layers;
-            let layer = List.nth(layers, indexToMove);
-            let updatedLayers =
-              layers
-              |> RList.remove(indexToMove, 1)
-              |> RList.insert(indexToInsertBefore, layer);
-            pushParamsState({...state.params, layers: updatedLayers});
-          }
-        ),
-      )
     | SetLayers(layers) =>
       ReasonReact.SideEffects(
         (_self => pushParamsState({...state.params, layers})),
@@ -322,7 +307,9 @@ let make =
       )
     },
   didMount: self => {
-    let compressor = defaultCompressor(audioCtx);
+    let compressor =
+      makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
+    connectCompressorToNode(compressor, defaultSink(audioCtx));
     self.state.compressor := Some(compressor);
 
     let noise = pinkNoise(audioCtx);
