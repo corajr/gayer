@@ -12,46 +12,37 @@ let defaultState = {dragContainerRef: ref(None), dragulaRef: ref(None)};
 let component = ReasonReact.reducerComponent("Container");
 
 let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
-  let handleMoveCard = (idToMove, idToInsertBefore) => {
-    let idList = List.map((card: T.card) => card.id, cards);
-    let indexToMove = RList.indexOf(idToMove, idList);
-    switch (indexToMove) {
-    | None => ()
-    | Some(indexToMove) =>
-      let idListWithoutMovedItem = RList.remove(indexToMove, 1, idList);
-      let indexToInsertBefore =
-        switch (idToInsertBefore) {
-        | None => Some(List.length(idListWithoutMovedItem))
-        | Some(id) => RList.indexOf(id, idListWithoutMovedItem)
-        };
+  let handleCardsChange = ids => {
+    let idToLayer =
+      List.fold_left(
+        (acc, {T.id, T.layer}) => Belt.Map.String.set(acc, id, layer),
+        Belt.Map.String.empty,
+        cards,
+      );
 
-      switch (indexToInsertBefore) {
-      | None => ()
-      | Some(indexToInsertBefore) =>
-        Js.log(
-          "moving "
-          ++ string_of_int(indexToMove)
-          ++ " to before "
-          ++ string_of_int(indexToInsertBefore),
-        );
-        onMoveCard(indexToMove, indexToInsertBefore);
-      };
-    };
+    let newLayers =
+      Array.fold_left(
+        (acc, id) =>
+          switch (Belt.Map.String.get(idToLayer, id)) {
+          | None => acc
+          | Some(layer) => [layer, ...acc]
+          },
+        [],
+        ids,
+      );
+
+    onMoveCard(List.rev(newLayers));
   };
 
   let dropFn: dropFn =
     (~el, ~target, ~source, ~sibling) =>
-      switch (el, sibling) {
-      | (Some(elt), None) =>
-        /* moved to the end of the list */
-        let eltId = ReactDOMRe.domElementToObj(elt)##id;
-        handleMoveCard(eltId, None);
-      | (Some(elt), Some(sib)) =>
-        /* inserted before sib */
-        let eltId = ReactDOMRe.domElementToObj(elt)##id;
-        let sibId = ReactDOMRe.domElementToObj(sib)##id;
-        handleMoveCard(eltId, Some(sibId));
-      | _ => ()
+      switch (target) {
+      | None => ()
+      | Some(target) =>
+        let children: array(Dom.element) = ReactDOMRe.domElementToObj(target)##childNodes;
+        let childIds =
+          Array.map(elt => ReactDOMRe.domElementToObj(elt)##id, children);
+        handleCardsChange(childIds);
       };
 
   let connectDragula = (state, onUnmount) =>

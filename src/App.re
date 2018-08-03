@@ -24,7 +24,7 @@ type state = {
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
   filterBank: option(filterBank),
-  compressor: option(compressor),
+  compressor: ref(option(compressor)),
   analysisCanvasRef: ref(option(Dom.element)),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   canvasRef: ref(option(Dom.element)),
@@ -41,7 +41,7 @@ let defaultState: state = {
   cameraInput: ref(None),
   params: defaultParams,
   filterBank: None,
-  compressor: None,
+  compressor: ref(None),
   loadedImages: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
@@ -52,6 +52,7 @@ type action =
   | Clear
   | Tick
   | MoveLayer(int, int)
+  | SetLayers(list(layer))
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
@@ -101,18 +102,18 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
 
 let connectInputs: state => unit =
   state =>
-    switch (state.filterBank, state.filterInput, state.compressor) {
+    switch (state.filterBank, state.filterInput, state.compressor^) {
     | (Some(filterBank), Some(filterInput), Some(compressor)) =>
       connectFilterBank(filterInput, filterBank, compressor)
-    | _ => ()
+    | _ => Js.log("could not connect inputs")
     };
 
 let disconnectInputs: state => unit =
   state =>
-    switch (state.filterBank, state.filterInput, state.compressor) {
+    switch (state.filterBank, state.filterInput, state.compressor^) {
     | (Some(filterBank), Some(filterInput), Some(compressor)) =>
       disconnectFilterBank(filterInput, filterBank, compressor)
-    | _ => ()
+    | _ => Js.log("could not disconnect inputs")
     };
 
 let clearCanvas = (canvasElement, width, height) => {
@@ -122,7 +123,6 @@ let clearCanvas = (canvasElement, width, height) => {
 
 let pushParamsState = newParams => {
   let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
-  Js.log("setting params");
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
@@ -217,11 +217,12 @@ let drawCanvas = (canvasElement, width, height, state) => {
   values;
 };
 
-let getAnalysisInput: (state, audioInputSetting) => option(audioNode) =
-  (state, audioInput) =>
+let getAnalysisInput:
+  (audioContext, state, audioInputSetting) => option(audioNode) =
+  (audioCtx, state, audioInput) =>
     switch (audioInput) {
     | AudioFile(s) => None
-    | PinkNoise => None
+    | PinkNoise => Some(pinkNoise(audioCtx))
     | Mic => state.micInput
     };
 
@@ -265,6 +266,10 @@ let make =
             pushParamsState({...state.params, layers: updatedLayers});
           }
         ),
+      )
+    | SetLayers(layers) =>
+      ReasonReact.SideEffects(
+        (_self => pushParamsState({...state.params, layers})),
       )
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(
@@ -317,6 +322,12 @@ let make =
       )
     },
   didMount: self => {
+    let compressor = defaultCompressor(audioCtx);
+    self.state.compressor := Some(compressor);
+
+    let noise = pinkNoise(audioCtx);
+    self.send(SetFilterInput(noise));
+
     let filterBank =
       makeFilterBank(
         ~audioCtx,
@@ -354,15 +365,12 @@ let make =
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
         let hash = decodeURIComponent(url.hash);
-        Js.log("url changed");
 
         switch (Json.parse(hash)) {
         | Some(x) =>
           switch (Json.Decode.optional(DecodeParams.params, x)) {
           | None => Js.log("unable to decode params")
-          | Some(params) =>
-            Js.log("new params received, sending");
-            self.send(SetParams(params));
+          | Some(params) => self.send(SetParams(params))
           }
         | None => Js.log("Could not parse json")
         };
@@ -415,7 +423,7 @@ let make =
         <br />
         <Params
           params=self.state.params
-          onMoveCard=((i, j) => self.send(MoveLayer(i, j)))
+          onMoveCard=(layers => self.send(SetLayers(layers)))
           onSetRef=(
             (layer, theRef) => self.handle(setLayerRef, (layer, theRef))
           )

@@ -5,10 +5,10 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Card$Gayer from "./Card.bs.js";
-import * as ReasonReact from "reason-react/lib/es6/src/ReasonReact.js";
+import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Dragula$Gayer from "./Dragula.bs.js";
 import * as ReactDragula from "react-dragula";
-import * as RList$Rationale from "rationale/lib/es6/src/RList.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 
 var defaultState_000 = /* dragContainerRef */[/* None */0];
 
@@ -22,37 +22,27 @@ var defaultState = /* record */[
 var component = ReasonReact.reducerComponent("Container");
 
 function make(cards, onMoveCard, onSetRef, _) {
-  var handleMoveCard = function (idToMove, idToInsertBefore) {
-    var idList = List.map((function (card) {
-            return card[/* id */0];
-          }), cards);
-    var indexToMove = RList$Rationale.indexOf(idToMove, idList);
-    if (indexToMove) {
-      var indexToMove$1 = indexToMove[0];
-      var idListWithoutMovedItem = RList$Rationale.remove(indexToMove$1, 1, idList);
-      var indexToInsertBefore = idToInsertBefore ? RList$Rationale.indexOf(idToInsertBefore[0], idListWithoutMovedItem) : /* Some */[List.length(idListWithoutMovedItem)];
-      if (indexToInsertBefore) {
-        var indexToInsertBefore$1 = indexToInsertBefore[0];
-        console.log("moving " + (String(indexToMove$1) + (" to before " + String(indexToInsertBefore$1))));
-        return Curry._2(onMoveCard, indexToMove$1, indexToInsertBefore$1);
-      } else {
-        return /* () */0;
-      }
-    } else {
-      return /* () */0;
-    }
-  };
-  var dropFn = function (el, _, _$1, sibling) {
-    if (el) {
-      var elt = el[0];
-      if (sibling) {
-        var eltId = elt.id;
-        var sibId = sibling[0].id;
-        return handleMoveCard(eltId, /* Some */[sibId]);
-      } else {
-        var eltId$1 = elt.id;
-        return handleMoveCard(eltId$1, /* None */0);
-      }
+  var dropFn = function (_, target, _$1, _$2) {
+    if (target) {
+      var children = target[0].childNodes;
+      var ids = $$Array.map((function (elt) {
+              return elt.id;
+            }), children);
+      var idToLayer = List.fold_left((function (acc, param) {
+              return Belt_MapString.set(acc, param[/* id */0], param[/* layer */1]);
+            }), Belt_MapString.empty, cards);
+      var newLayers = $$Array.fold_left((function (acc, id) {
+              var match = Belt_MapString.get(idToLayer, id);
+              if (match) {
+                return /* :: */[
+                        match[0],
+                        acc
+                      ];
+              } else {
+                return acc;
+              }
+            }), /* [] */0, ids);
+      return Curry._1(onMoveCard, List.rev(newLayers));
     } else {
       return /* () */0;
     }
