@@ -10,6 +10,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Slider$Gayer from "./Slider.bs.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
+import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
 
@@ -287,10 +288,15 @@ function make(layer, changeLayer, $staropt$star, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                  ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], setRef)])),
-                                  ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, undefined, /* array */[
-                                            React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Alpha"])), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[layer[/* alpha */1].toString()])), ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, 1.0, 0.0, 0.1, layer[/* alpha */1], undefined, (function (_, value) {
+              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, {
+                                  display: "flex",
+                                  justifyContent: "space-between"
+                                }, /* array */[
+                                  ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], setRef)])),
+                                  ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
+                                            height: "100%"
+                                          }, /* array */[
+                                            React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Alpha"])), ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, 1.0, 0.0, 0.1, layer[/* alpha */1], undefined, (function (_, value) {
                                                             return Curry._2(changeLayer, layer, /* record */[
                                                                         /* content */layer[/* content */0],
                                                                         /* alpha */value,

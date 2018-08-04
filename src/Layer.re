@@ -140,16 +140,20 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
   render: self =>
     MaterialUi.(
       <div>
-        <MaterialUi.Card>
-          <CardContent>
+        <MaterialUi.Card
+          style=(
+            ReactDOMRe.Style.make(
+              ~display="flex",
+              ~justifyContent="space-between",
+              (),
+            )
+          )>
+          <CardMedia src="dummy">
             (renderLayerContent(layer.content, setRef))
-          </CardContent>
-          <CardContent>
+          </CardMedia>
+          <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
             <div>
               <Typography> (ReasonReact.string("Alpha")) </Typography>
-              <Typography>
-                (ReasonReact.string(Js.Float.toString(layer.alpha)))
-              </Typography>
               <Slider
                 min=0.0
                 max=1.0
@@ -159,7 +163,6 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
                   (_evt, value) =>
                     changeLayer(layer, {...layer, alpha: value})
                 )
-                /* vertical=true */
               />
             </div>
             <div>

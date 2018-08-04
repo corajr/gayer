@@ -33,8 +33,10 @@
     "reason-react",
     "rationale",
     "@glennsl/bs-json",
+    "bs-material-ui-icons",
     "@jsiebern/bs-material-ui"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
+  "ppx-flags": ["./node_modules/@jsiebern/bs-material-ui/ppx_withStyles"],
   "refmt": 3
 }
