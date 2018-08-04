@@ -5,6 +5,7 @@ open Music;
 open Canvas;
 open Layer;
 open Params;
+open Presets;
 open UserMedia;
 open Video;
 
@@ -41,7 +42,7 @@ let defaultState: state = {
   mediaStream: None,
   micInput: None,
   cameraInput: ref(None),
-  params: defaultParams,
+  params: snd(List.nth(presets, 0)),
   filterBank: None,
   compressor: ref(None),
   loadedImages: ref(Belt.Map.String.empty),
@@ -385,7 +386,7 @@ let make =
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     if (url.hash === "") {
-      pushParamsState(self.state.params);
+      pushParamsState(snd(List.nth(presets, 0)));
     } else {
       ReasonReact.Router.push("#" ++ url.hash);
     };
@@ -456,11 +457,20 @@ let make =
                     onClick=(_evt => self.send(TogglePresetDrawer))
                     onKeyDown=(_evt => self.send(TogglePresetDrawer))>
                     <List component=(`String("nav"))>
-                      <ListItem button=true component=(`String("a"))>
-                        <ListItemText>
-                          (ReasonReact.string("Preset 1"))
-                        </ListItemText>
-                      </ListItem>
+                      (
+                        ReasonReact.array(
+                          Array.of_list(presets)
+                          |> Array.map(((name, preset)) =>
+                               <ListItem
+                                 button=true
+                                 onClick=(_evt => pushParamsState(preset))>
+                                 <ListItemText>
+                                   (ReasonReact.string(name))
+                                 </ListItemText>
+                               </ListItem>
+                             ),
+                        )
+                      )
                     </List>
                   </div>
                 </Drawer>

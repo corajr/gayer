@@ -241,9 +241,9 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent, setRef) {
+function renderLayerContent(layerContent, _, setRef) {
   if (typeof layerContent === "number") {
-    return "analysis";
+    return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["analysis"])));
   } else {
     switch (layerContent.tag | 0) {
       case 0 : 
@@ -264,7 +264,7 @@ function renderLayerContent(layerContent, setRef) {
                       width: "120"
                     });
       case 3 : 
-          return "pc";
+          return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Filter pitches"])));
       case 4 : 
           return "reader";
       
@@ -289,30 +289,30 @@ function make(layer, changeLayer, $staropt$star, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, {
-                                  display: "flex",
-                                  justifyContent: "space-between"
-                                }, /* array */[
-                                  ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], setRef)])),
-                                  ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
-                                            height: "100%"
-                                          }, /* array */[
-                                            React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Alpha"])), ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, 1.0, 0.0, 0.1, layer[/* alpha */1], undefined, (function (_, value) {
-                                                            return Curry._2(changeLayer, layer, /* record */[
-                                                                        /* content */layer[/* content */0],
-                                                                        /* alpha */value,
-                                                                        /* compositeOperation */layer[/* compositeOperation */2]
-                                                                      ]);
-                                                          }), undefined, /* array */[]))),
-                                            React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
-                                                            return Curry._2(changeLayer, layer, /* record */[
-                                                                        /* content */layer[/* content */0],
-                                                                        /* alpha */layer[/* alpha */1],
-                                                                        /* compositeOperation */newOperation
-                                                                      ]);
-                                                          }), /* array */[])))
-                                          ]))
-                                ])));
+              return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, {
+                              display: "flex",
+                              justifyContent: "space-between"
+                            }, /* array */[
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], changeLayer, setRef)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
+                                        height: "100%"
+                                      }, /* array */[
+                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Alpha"])), ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, 1.0, 0.0, 0.1, layer[/* alpha */1], undefined, (function (_, value) {
+                                                        return Curry._2(changeLayer, layer, /* record */[
+                                                                    /* content */layer[/* content */0],
+                                                                    /* alpha */value,
+                                                                    /* compositeOperation */layer[/* compositeOperation */2]
+                                                                  ]);
+                                                      }), undefined, /* array */[]))),
+                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
+                                                        return Curry._2(changeLayer, layer, /* record */[
+                                                                    /* content */layer[/* content */0],
+                                                                    /* alpha */layer[/* alpha */1],
+                                                                    /* compositeOperation */newOperation
+                                                                  ]);
+                                                      }), /* array */[])))
+                                      ]))
+                            ]));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

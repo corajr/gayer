@@ -2,6 +2,7 @@
 
 import * as Json from "@glennsl/bs-json/src/Json.bs.js";
 import * as List from "bs-platform/lib/es6/list.js";
+import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
@@ -16,6 +17,7 @@ import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Params$Gayer from "./Params.bs.js";
+import * as Presets$Gayer from "./Presets.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_Grid from "@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js";
@@ -38,6 +40,8 @@ var defaultState_000 = /* readPos : record */[/* contents */0];
 
 var defaultState_001 = /* writePos : record */[/* contents */0];
 
+var defaultState_004 = /* params */List.nth(Presets$Gayer.presets, 0)[1];
+
 var defaultState_008 = /* cameraInput : record */[/* contents */undefined];
 
 var defaultState_010 = /* compressor : record */[/* contents */undefined];
@@ -55,7 +59,7 @@ var defaultState = /* record */[
   defaultState_001,
   /* filterInput */undefined,
   /* visualInput */undefined,
-  /* params */Params$Gayer.defaultParams,
+  defaultState_004,
   /* presetDrawerOpen */false,
   /* mediaStream */undefined,
   /* micInput */undefined,
@@ -351,7 +355,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                     }));
               var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
               if (url[/* hash */1] === "") {
-                return pushParamsState(self[/* state */1][/* params */4]);
+                return pushParamsState(List.nth(Presets$Gayer.presets, 0)[1]);
               } else {
                 return ReasonReact.Router[/* push */0]("#" + url[/* hash */1]);
               }
@@ -425,10 +429,12 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                             }, ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, /* `String */[
                                                                       -976970511,
                                                                       "nav"
-                                                                    ], undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, undefined, /* `String */[
-                                                                                -976970511,
-                                                                                "a"
-                                                                              ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Preset 1"]))]))])))
+                                                                    ], undefined, undefined, undefined, undefined, undefined, /* array */[$$Array.map((function (param) {
+                                                                              var preset = param[1];
+                                                                              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                                                                                return pushParamsState(preset);
+                                                                                              }), undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[param[0]]))]));
+                                                                            }), $$Array.of_list(Presets$Gayer.presets))])))
                                                       ]));
                                       }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* V24 */3, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, Params$Gayer.make(self[/* state */1][/* params */4], (function (layers) {
@@ -651,4 +657,4 @@ export {
   make ,
   
 }
-/* SizedDrawer Not a pure module */
+/* defaultState Not a pure module */

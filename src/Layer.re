@@ -122,16 +122,22 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (layerContent, setRef) =>
-  switch (layerContent) {
-  | Webcam(_) =>
-    <video ref=setRef autoPlay=true muted=true width="120" height="120" />
-  | Image(url) => <img ref=setRef src=url width="120" height="120" />
-  | Analysis => ReasonReact.string("analysis")
-  | PitchClasses(pc) => ReasonReact.string("pc")
-  | Fill(s) => ReasonReact.string("fill: " ++ s)
-  | Reader(channel) => ReasonReact.string("reader")
-  };
+let renderLayerContent = (layerContent, changeLayer, setRef) =>
+  MaterialUi.(
+    switch (layerContent) {
+    | Webcam(_) =>
+      <video ref=setRef autoPlay=true muted=true width="120" height="120" />
+    | Image(url) => <img ref=setRef src=url width="120" height="120" />
+    | Analysis =>
+      <div> <Typography> (ReasonReact.string("analysis")) </Typography> </div>
+    | PitchClasses(pc) =>
+      <div>
+        <Typography> (ReasonReact.string("Filter pitches")) </Typography>
+      </div>
+    | Fill(s) => ReasonReact.string("fill: " ++ s)
+    | Reader(channel) => ReasonReact.string("reader")
+    }
+  );
 
 let component = ReasonReact.statelessComponent("Layer");
 
@@ -139,46 +145,44 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
   ...component,
   render: self =>
     MaterialUi.(
-      <div>
-        <MaterialUi.Card
-          style=(
-            ReactDOMRe.Style.make(
-              ~display="flex",
-              ~justifyContent="space-between",
-              (),
-            )
-          )>
-          <CardMedia src="dummy">
-            (renderLayerContent(layer.content, setRef))
-          </CardMedia>
-          <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
-            <div>
-              <Typography> (ReasonReact.string("Alpha")) </Typography>
-              <Slider
-                min=0.0
-                max=1.0
-                step=0.1
-                value=layer.alpha
-                onChange=(
-                  (_evt, value) =>
-                    changeLayer(layer, {...layer, alpha: value})
-                )
-              />
-            </div>
-            <div>
-              <CompositeOperationSelect
-                compositeOperation=layer.compositeOperation
-                onChange=(
-                  newOperation =>
-                    changeLayer(
-                      layer,
-                      {...layer, compositeOperation: newOperation},
-                    )
-                )
-              />
-            </div>
-          </CardContent>
-        </MaterialUi.Card>
-      </div>
+      <MaterialUi.Card
+        style=(
+          ReactDOMRe.Style.make(
+            ~display="flex",
+            ~justifyContent="space-between",
+            (),
+          )
+        )>
+        <CardMedia src="dummy">
+          (renderLayerContent(layer.content, changeLayer, setRef))
+        </CardMedia>
+        <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
+          <div>
+            <Typography> (ReasonReact.string("Alpha")) </Typography>
+            <Slider
+              min=0.0
+              max=1.0
+              step=0.1
+              value=layer.alpha
+              onChange=(
+                (_evt, value) =>
+                  changeLayer(layer, {...layer, alpha: value})
+              )
+            />
+          </div>
+          <div>
+            <CompositeOperationSelect
+              compositeOperation=layer.compositeOperation
+              onChange=(
+                newOperation =>
+                  changeLayer(
+                    layer,
+                    {...layer, compositeOperation: newOperation},
+                  )
+              )
+            />
+          </div>
+        </CardContent>
+      </MaterialUi.Card>
     ),
 };
