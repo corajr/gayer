@@ -11,13 +11,12 @@ let analyzer = {
 
 let webcam = {
   content: Webcam({slitscan: None}),
-  /* content: Webcam({slitscan: Some({x: 60})}), */
   alpha: 1.0,
   compositeOperation: SourceOver,
 };
 
 let slitscan = {
-  content: Webcam({slitscan: Some({x: 60})}),
+  content: Webcam({slitscan: Some({x: 320})}),
   alpha: 1.0,
   compositeOperation: SourceOver,
 };
@@ -54,6 +53,7 @@ let allLayerTypes = [
   hubble,
   analyzer,
   webcam,
+  slitscan,
   fill(~alpha=0.0125, "white"),
   pitchFilter(cMajor),
   reader,
@@ -78,8 +78,20 @@ let feedback = {
   layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
 };
 
+let slitscanParams = {
+  ...defaultParams,
+  shouldClear: false,
+  layers: [
+    slitscan,
+    {...analyzer, alpha: 0.25},
+    pitchFilter(cMajor),
+    reader,
+  ],
+};
+
 let presets = [
   ("Default", defaultParams),
+  ("Slitscan", slitscanParams),
   ("Feedback (may be loud!)", feedback),
   ("Overstuffed", {...defaultParams, layers: allLayerTypes}),
   ("Empty", {...defaultParams, layers: []}),

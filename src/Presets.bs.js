@@ -16,6 +16,12 @@ var webcam = /* record */[
   /* compositeOperation : SourceOver */0
 ];
 
+var slitscan = /* record */[
+  /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
 var reader = /* record */[
   /* content : Reader */Block.__(4, [/* R */0]),
   /* alpha */0.0,
@@ -73,12 +79,15 @@ var allLayerTypes_001 = /* :: */[
   /* :: */[
     webcam,
     /* :: */[
-      fill(0.0125, "white"),
+      slitscan,
       /* :: */[
-        pitchFilter(Music$Gayer.cMajor),
+        fill(0.0125, "white"),
         /* :: */[
-          reader,
-          /* [] */0
+          pitchFilter(Music$Gayer.cMajor),
+          /* :: */[
+            reader,
+            /* [] */0
+          ]
         ]
       ]
     ]
@@ -134,6 +143,37 @@ var feedback = /* record */[
   feedback_009
 ];
 
+var slitscanParams_009 = /* layers : :: */[
+  slitscan,
+  /* :: */[
+    /* record */[
+      /* content : Analysis */0,
+      /* alpha */0.25,
+      /* compositeOperation : SourceOver */0
+    ],
+    /* :: */[
+      pitchFilter(Music$Gayer.cMajor),
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var slitscanParams = /* record */[
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
+  /* audioInputSetting : PinkNoise */0,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* q */Audio$Gayer.defaultQ,
+  /* transpose */0,
+  /* shouldClear */false,
+  slitscanParams_009
+];
+
 var presets_000 = /* tuple */[
   "Default",
   defaultParams
@@ -141,28 +181,17 @@ var presets_000 = /* tuple */[
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Feedback (may be loud!)",
-    feedback
+    "Slitscan",
+    slitscanParams
   ],
   /* :: */[
     /* tuple */[
-      "Overstuffed",
-      /* record */[
-        /* readPosDelta */1,
-        /* writePosDelta */1,
-        /* writePosOffset */0,
-        /* audioInputSetting : PinkNoise */0,
-        /* inputGain */1.0,
-        /* outputGain */0.1,
-        /* q */Audio$Gayer.defaultQ,
-        /* transpose */0,
-        /* shouldClear */true,
-        /* layers */allLayerTypes
-      ]
+      "Feedback (may be loud!)",
+      feedback
     ],
     /* :: */[
       /* tuple */[
-        "Empty",
+        "Overstuffed",
         /* record */[
           /* readPosDelta */1,
           /* writePosDelta */1,
@@ -173,10 +202,27 @@ var presets_001 = /* :: */[
           /* q */Audio$Gayer.defaultQ,
           /* transpose */0,
           /* shouldClear */true,
-          /* layers : [] */0
+          /* layers */allLayerTypes
         ]
       ],
-      /* [] */0
+      /* :: */[
+        /* tuple */[
+          "Empty",
+          /* record */[
+            /* readPosDelta */1,
+            /* writePosDelta */1,
+            /* writePosOffset */0,
+            /* audioInputSetting : PinkNoise */0,
+            /* inputGain */1.0,
+            /* outputGain */0.1,
+            /* q */Audio$Gayer.defaultQ,
+            /* transpose */0,
+            /* shouldClear */true,
+            /* layers : [] */0
+          ]
+        ],
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -184,12 +230,6 @@ var presets_001 = /* :: */[
 var presets = /* :: */[
   presets_000,
   presets_001
-];
-
-var slitscan = /* record */[
-  /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */60]]]),
-  /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
 ];
 
 export {
@@ -205,6 +245,7 @@ export {
   allLayerTypes ,
   defaultParams ,
   feedback ,
+  slitscanParams ,
   presets ,
   
 }

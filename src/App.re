@@ -169,14 +169,25 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       };
       None;
     | Webcam(opts) =>
-      switch (state.cameraInput^, opts) {
+      switch (state.cameraInput^, opts.slitscan) {
       | (None, _) => ()
-      | (Some(input), {slitscan: None}) =>
+      | (Some(input), None) =>
         Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-      | (Some(input), {slitscan: Some({x: xToRead})}) =>
+      | (Some(input), Some({x: xToRead})) =>
         let xToWrite =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, input, xToWrite, 0, 1, height);
+        Ctx.drawImageSourceRectDestRect(
+          ctx,
+          input,
+          xToRead,
+          0,
+          1,
+          480,
+          xToWrite,
+          0,
+          1,
+          height,
+        );
       };
       None;
     | PitchClasses(classes) =>

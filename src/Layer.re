@@ -14,15 +14,12 @@ module DecodeCameraOptions = {
 };
 
 module EncodeCameraOptions = {
-  let slitscanOptions = r => Json.Encode.(object_([("x", int(r.x))]));
+  let slitscanOptions: slitscanOptions => Js.Json.t =
+    r => Json.Encode.(object_([("x", int(r.x))]));
 
   let cameraOptions = r =>
     Json.Encode.(
-      switch (r.slitscan) {
-      | None => object_([])
-      | Some(slitscan) =>
-        object_([("slitscan", slitscanOptions(slitscan))])
-      }
+      object_([("slitscan", nullable(slitscanOptions, r.slitscan))])
     );
 };
 
@@ -45,7 +42,11 @@ module DecodeLayer = {
     Json.Decode.(
       switch (type_) {
       | "webcam" =>
-        json |> map(s => Webcam(s), DecodeCameraOptions.cameraOptions)
+        json
+        |> map(
+             s => Webcam(s),
+             field("options", DecodeCameraOptions.cameraOptions),
+           )
       | "image" => json |> map(s => Image(s), field("url", string))
       | "reader" =>
         json

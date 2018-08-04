@@ -4,6 +4,26 @@ import * as Jest from "@glennsl/bs-jest/src/jest.js";
 import * as Layer$Gayer from "../src/Layer.bs.js";
 import * as Presets$Gayer from "../src/Presets.bs.js";
 
+var slitscan = /* record */[/* x */60];
+
+var cameraOptExamples_000 = /* record */[/* slitscan */undefined];
+
+var cameraOptExamples_001 = /* :: */[
+  /* record */[/* slitscan */slitscan],
+  /* [] */0
+];
+
+var cameraOptExamples = /* :: */[
+  cameraOptExamples_000,
+  cameraOptExamples_001
+];
+
+describe("EncodeCameraOptions <=> DecodeCameraOptions", (function () {
+        return Jest.testAll("decode inverts encode", cameraOptExamples, (function (cameraOptions) {
+                      return Jest.Expect[/* toEqual */12](cameraOptions, Jest.Expect[/* expect */0](Layer$Gayer.DecodeCameraOptions[/* cameraOptions */1](Layer$Gayer.EncodeCameraOptions[/* cameraOptions */1](cameraOptions))));
+                    }));
+      }));
+
 describe("EncodeLayer <=> DecodeLayer", (function () {
         return Jest.testAll("decode inverts encode", Presets$Gayer.allLayerTypes, (function (layer) {
                       return Jest.Expect[/* toEqual */12](layer, Jest.Expect[/* expect */0](Layer$Gayer.DecodeLayer[/* layer */2](Layer$Gayer.EncodeLayer[/* layer */1](layer))));
@@ -11,6 +31,8 @@ describe("EncodeLayer <=> DecodeLayer", (function () {
       }));
 
 export {
+  slitscan ,
+  cameraOptExamples ,
   
 }
 /*  Not a pure module */

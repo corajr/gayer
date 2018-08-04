@@ -221,20 +221,21 @@ function drawLayer(ctx, width, height, state, layer) {
           return undefined;
       case 1 : 
           var match$2 = state[/* cameraInput */8][0];
+          var match$3 = match[0][/* slitscan */0];
           if (match$2 !== undefined) {
             var input = Js_primitive.valFromOption(match$2);
-            if (match[0][/* slitscan */0] !== undefined) {
+            if (match$3 !== undefined) {
               var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
-              ctx.drawImage(input, xToWrite, 0, 1, height);
+              ctx.drawImage(input, match$3[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
             } else {
               ctx.drawImage(input, 0, 0, width, height);
             }
           }
           return undefined;
       case 2 : 
-          var match$3 = Belt_MapString.get(state[/* loadedImages */12][0], match[0]);
-          if (match$3 !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(match$3), 0, 0, width, height);
+          var match$4 = Belt_MapString.get(state[/* loadedImages */12][0], match[0]);
+          if (match$4 !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(match$4), 0, 0, width, height);
           }
           return undefined;
       case 3 : 

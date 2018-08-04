@@ -41,18 +41,13 @@ function slitscanOptions$1(r) {
 }
 
 function cameraOptions$1(r) {
-  var match = r[/* slitscan */0];
-  if (match !== undefined) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "slitscan",
-                  slitscanOptions$1(match)
-                ],
-                /* [] */0
-              ]);
-  } else {
-    return Json_encode.object_(/* [] */0);
-  }
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "slitscan",
+                Json_encode.nullable(slitscanOptions$1, r[/* slitscan */0])
+              ],
+              /* [] */0
+            ]);
 }
 
 var EncodeCameraOptions = /* module */[
@@ -95,7 +90,9 @@ function layerByType(type_, json) {
     case "webcam" : 
         return Json_decode.map((function (s) {
                       return /* Webcam */Block.__(1, [s]);
-                    }), cameraOptions, json);
+                    }), (function (param) {
+                      return Json_decode.field("options", cameraOptions, param);
+                    }), json);
     default:
       throw [
             Json_decode.DecodeError,
