@@ -4,90 +4,80 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 
-var spacy_000 = /* record */[
-  /* content : Image */Block.__(2, ["media/hubble_ultra_deep_field.jpg"]),
+var analyzer = /* record */[
+  /* content : Analysis */0,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
+var webcam = /* record */[
+  /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
+var reader = /* record */[
+  /* content : Reader */Block.__(4, [/* R */0]),
+  /* alpha */0.0,
+  /* compositeOperation : SourceOver */0
+];
+
+function pitchFilter(pc) {
+  return /* record */[
+          /* content : PitchClasses */Block.__(3, [pc]),
+          /* alpha */1.0,
+          /* compositeOperation : DestinationOut */6
+        ];
+}
+
+function fill($staropt$star, fillStyle) {
+  var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
+  return /* record */[
+          /* content : Fill */Block.__(0, [fillStyle]),
+          /* alpha */alpha,
+          /* compositeOperation : SourceOver */0
+        ];
+}
+
+function img(url) {
+  return /* record */[
+          /* content : Image */Block.__(2, [url]),
+          /* alpha */1.0,
+          /* compositeOperation : SourceOver */0
+        ];
+}
+
+var hubble_000 = /* content : Image */Block.__(2, ["media/hubble_ultra_deep_field.jpg"]);
+
+var hubble = /* record */[
+  hubble_000,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0
 ];
 
 var spacy_001 = /* :: */[
-  /* record */[
-    /* content : Analysis */0,
-    /* alpha */0.5,
-    /* compositeOperation : SourceOver */0
-  ],
+  pitchFilter(Music$Gayer.cMajor),
   /* :: */[
-    /* record */[
-      /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
-      /* alpha */0.25,
-      /* compositeOperation : SourceOver */0
-    ],
-    /* :: */[
-      /* record */[
-        /* content : Fill */Block.__(0, ["white"]),
-        /* alpha */0.0125,
-        /* compositeOperation : SourceOver */0
-      ],
-      /* :: */[
-        /* record */[
-          /* content : PitchClasses */Block.__(3, [Music$Gayer.cMajor]),
-          /* alpha */1.0,
-          /* compositeOperation : DestinationOut */6
-        ],
-        /* :: */[
-          /* record */[
-            /* content : Reader */Block.__(4, [/* R */0]),
-            /* alpha */0.0,
-            /* compositeOperation : SourceOver */0
-          ],
-          /* [] */0
-        ]
-      ]
-    ]
+    reader,
+    /* [] */0
   ]
 ];
 
 var spacy = /* :: */[
-  spacy_000,
+  hubble,
   spacy_001
 ];
 
-var allLayerTypes_000 = /* record */[
-  /* content : Image */Block.__(2, ["media/hubble_ultra_deep_field.jpg"]),
-  /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
-];
-
 var allLayerTypes_001 = /* :: */[
-  /* record */[
-    /* content : Analysis */0,
-    /* alpha */0.5,
-    /* compositeOperation : SourceOver */0
-  ],
+  analyzer,
   /* :: */[
-    /* record */[
-      /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
-      /* alpha */0.25,
-      /* compositeOperation : SourceOver */0
-    ],
+    webcam,
     /* :: */[
-      /* record */[
-        /* content : Fill */Block.__(0, ["white"]),
-        /* alpha */0.0125,
-        /* compositeOperation : SourceOver */0
-      ],
+      fill(0.0125, "white"),
       /* :: */[
-        /* record */[
-          /* content : PitchClasses */Block.__(3, [Music$Gayer.cMajor]),
-          /* alpha */1.0,
-          /* compositeOperation : DestinationOut */6
-        ],
+        pitchFilter(Music$Gayer.cMajor),
         /* :: */[
-          /* record */[
-            /* content : Reader */Block.__(4, [/* R */0]),
-            /* alpha */0.0,
-            /* compositeOperation : SourceOver */0
-          ],
+          reader,
           /* [] */0
         ]
       ]
@@ -96,7 +86,7 @@ var allLayerTypes_001 = /* :: */[
 ];
 
 var allLayerTypes = /* :: */[
-  allLayerTypes_000,
+  hubble,
   allLayerTypes_001
 ];
 
@@ -113,6 +103,37 @@ var defaultParams = /* record */[
   /* layers */spacy
 ];
 
+var feedback_009 = /* layers : :: */[
+  webcam,
+  /* :: */[
+    /* record */[
+      /* content : Analysis */0,
+      /* alpha */0.5,
+      /* compositeOperation : SourceOver */0
+    ],
+    /* :: */[
+      pitchFilter(Music$Gayer.cMajor),
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var feedback = /* record */[
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
+  /* audioInputSetting : Mic */1,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* q */Audio$Gayer.defaultQ,
+  /* transpose */0,
+  /* shouldClear */true,
+  feedback_009
+];
+
 var presets_000 = /* tuple */[
   "Default",
   defaultParams
@@ -121,18 +142,7 @@ var presets_000 = /* tuple */[
 var presets_001 = /* :: */[
   /* tuple */[
     "Feedback (may be loud!)",
-    /* record */[
-      /* readPosDelta */1,
-      /* writePosDelta */1,
-      /* writePosOffset */0,
-      /* audioInputSetting : Mic */1,
-      /* inputGain */1.0,
-      /* outputGain */0.1,
-      /* q */Audio$Gayer.defaultQ,
-      /* transpose */0,
-      /* shouldClear */true,
-      /* layers */spacy
-    ]
+    feedback
   ],
   /* :: */[
     /* tuple */[
@@ -176,11 +186,26 @@ var presets = /* :: */[
   presets_001
 ];
 
+var slitscan = /* record */[
+  /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */60]]]),
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
 export {
+  analyzer ,
+  webcam ,
+  slitscan ,
+  reader ,
+  pitchFilter ,
+  fill ,
+  img ,
+  hubble ,
   spacy ,
   allLayerTypes ,
   defaultParams ,
+  feedback ,
   presets ,
   
 }
-/* Audio-Gayer Not a pure module */
+/* spacy Not a pure module */
