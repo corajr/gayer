@@ -13,6 +13,7 @@ import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.b
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
+import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
 function slitscanOptions(json) {
   return /* record */[/* x */Json_decode.field("x", Json_decode.$$int, json)];
@@ -303,7 +304,13 @@ function make(layer, changeLayer, $staropt$star, _) {
                                                                         /* compositeOperation */layer[/* compositeOperation */2]
                                                                       ]);
                                                           }), undefined, /* array */[]))),
-                                            React.createElement("div", undefined, "Composite operation: " + Canvas$Gayer.string_of_compositeOperation(layer[/* compositeOperation */2]))
+                                            React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
+                                                            return Curry._2(changeLayer, layer, /* record */[
+                                                                        /* content */layer[/* content */0],
+                                                                        /* alpha */layer[/* alpha */1],
+                                                                        /* compositeOperation */newOperation
+                                                                      ]);
+                                                          }), /* array */[])))
                                           ]))
                                 ])));
             }),

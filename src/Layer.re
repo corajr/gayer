@@ -166,12 +166,16 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
               />
             </div>
             <div>
-              (
-                ReasonReact.string(
-                  "Composite operation: "
-                  ++ string_of_compositeOperation(layer.compositeOperation),
+              <CompositeOperationSelect
+                compositeOperation=layer.compositeOperation
+                onChange=(
+                  newOperation =>
+                    changeLayer(
+                      layer,
+                      {...layer, compositeOperation: newOperation},
+                    )
                 )
-              )
+              />
             </div>
           </CardContent>
         </MaterialUi.Card>
