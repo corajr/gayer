@@ -135,21 +135,43 @@ let renderLayerContent = (layerContent, setRef) =>
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make = (~layer, ~setRef=_ => (), _children) => {
+let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
   ...component,
   render: self =>
-    <div>
-      (renderLayerContent(layer.content, setRef))
+    MaterialUi.(
       <div>
-        (ReasonReact.string("Alpha: " ++ Js.Float.toString(layer.alpha)))
+        <MaterialUi.Card>
+          <CardContent>
+            (renderLayerContent(layer.content, setRef))
+          </CardContent>
+          <CardContent>
+            <div>
+              <Typography> (ReasonReact.string("Alpha")) </Typography>
+              <Typography>
+                (ReasonReact.string(Js.Float.toString(layer.alpha)))
+              </Typography>
+              <Slider
+                min=0.0
+                max=1.0
+                step=0.1
+                value=layer.alpha
+                onChange=(
+                  (_evt, value) =>
+                    changeLayer(layer, {...layer, alpha: value})
+                )
+                /* vertical=true */
+              />
+            </div>
+            <div>
+              (
+                ReasonReact.string(
+                  "Composite operation: "
+                  ++ string_of_compositeOperation(layer.compositeOperation),
+                )
+              )
+            </div>
+          </CardContent>
+        </MaterialUi.Card>
       </div>
-      <div>
-        (
-          ReasonReact.string(
-            "Composite operation: "
-            ++ string_of_compositeOperation(layer.compositeOperation),
-          )
-        )
-      </div>
-    </div>,
+    ),
 };

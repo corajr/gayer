@@ -11,7 +11,7 @@ let defaultState = {dragContainerRef: ref(None), dragulaRef: ref(None)};
 
 let component = ReasonReact.reducerComponent("Container");
 
-let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
+let make = (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, _children) => {
   let handleCardsChange = ids => {
     let idToLayer =
       List.fold_left(
@@ -48,7 +48,19 @@ let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
   let connectDragula = (state, onUnmount) =>
     switch (state.dragulaRef^, state.dragContainerRef^) {
     | (None, Some(dragContainer)) =>
-      let drake = dragula([|dragContainer|], options());
+      let drake =
+        dragula(
+          [|dragContainer|],
+          options(
+            ~invalid=
+              (~el, ~handle) => {
+                let obj = ReactDOMRe.domElementToObj(handle);
+                obj##tagName === "BUTTON"
+                || obj##getAttribute("role") === "slider";
+              },
+            (),
+          ),
+        );
       Js.log(drake);
       onDrop(drake, dropFn);
       onUnmount(() => destroy(drake));
@@ -75,6 +87,7 @@ let make = (~cards, ~onMoveCard, ~onSetRef, _children) => {
                  key=card.id
                  id=card.id
                  layer=card.layer
+                 changeLayer=onChangeLayer
                  setRef=(theRef => onSetRef(card.layer, theRef))
                />
              )

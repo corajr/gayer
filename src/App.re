@@ -81,6 +81,12 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   };
 };
 
+let changeLayer = (oldLayer, newLayer, layers) =>
+  switch (RList.indexOf(oldLayer, layers)) {
+  | None => layers
+  | Some(index) => RList.update(newLayer, index, layers)
+  };
+
 let component = ReasonReact.reducerComponent("App");
 
 let maybeUpdateCanvas:
@@ -391,61 +397,58 @@ let make =
   },
   willUnmount: self => disconnectInputs(self.state),
   render: self =>
-    <div
-      onClick=(_event => self.send(Tick))
-      style=(
-        ReactDOMRe.Style.make(
-          ~display="flex",
-          ~flexDirection="row",
-          ~justifyContent="space-between",
-          ~minHeight=Js.Int.toString(height * 4),
-          (),
-        )
-      )>
-      <div style=(ReactDOMRe.Style.make(~margin="10px", ~width="50%", ()))>
-        <h1> (ReasonReact.string("GAYER")) </h1>
-        <a href="https://github.com/corajr/gayer">
-          (ReasonReact.string("source"))
-        </a>
-        <br />
-        <Params
-          params=self.state.params
-          onMoveCard=(layers => self.send(SetLayers(layers)))
-          onSetRef=(
-            (layer, theRef) => self.handle(setLayerRef, (layer, theRef))
-          )
-        />
+    MaterialUi.(
+      <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
+        <CssBaseline />
+        <Grid container=true spacing=Grid.V24>
+          <Grid item=true xs=Grid.V12>
+            <h1> (ReasonReact.string("GAYER")) </h1>
+            <a href="https://github.com/corajr/gayer">
+              (ReasonReact.string("source"))
+            </a>
+          </Grid>
+          <Grid item=true xs=Grid.V6>
+            <Params
+              params=self.state.params
+              onMoveCard=(layers => self.send(SetLayers(layers)))
+              onChangeLayer=(
+                (oldLayer, newLayer) =>
+                  self.send(
+                    SetLayers(
+                      changeLayer(
+                        oldLayer,
+                        newLayer,
+                        self.state.params.layers,
+                      ),
+                    ),
+                  )
+              )
+              onSetRef=(
+                (layer, theRef) => self.handle(setLayerRef, (layer, theRef))
+              )
+            />
+          </Grid>
+          <Grid item=true xs=Grid.V6>
+            <canvas
+              ref=(self.handle(setCanvasRef))
+              width=(Js.Int.toString(width))
+              height=(Js.Int.toString(height))
+              style=(
+                ReactDOMRe.Style.make(
+                  ~transform="scale(4)",
+                  ~transformOrigin="top left",
+                  (),
+                )
+              )
+            />
+            <AnalysisCanvas
+              size=height
+              audioCtx
+              input=self.state.micInput
+              saveRef=(self.handle(setAnalysisCanvasRef))
+            />
+          </Grid>
+        </Grid>
       </div>
-      <div
-        style=(
-          ReactDOMRe.Style.make(
-            ~margin="0",
-            ~width="50%",
-            ~minHeight=Js.Int.toString(height * 4),
-            ~display="flex",
-            ~justifyContent="flex-end",
-            ~alignItems="flex-start",
-            (),
-          )
-        )>
-        <canvas
-          ref=(self.handle(setCanvasRef))
-          width=(Js.Int.toString(width))
-          height=(Js.Int.toString(height))
-          style=(
-            ReactDOMRe.Style.make(
-              ~transform="scale(4)",
-              ~transformOrigin="top right",
-              (),
-            )
-          )
-        />
-        <AnalysisCanvas
-          size=height
-          audioCtx
-          input=self.state.micInput
-          saveRef=(self.handle(setAnalysisCanvasRef))
-        />
-      </div>
-    </div>,
+    ),
 };

@@ -20,6 +20,9 @@
   "package-specs": [{
     "module": "es6",
     "in-source": true
+  },
+  {
+    "module": "commonjs"
   }],
   "suffix": ".bs.js",
   "namespace": true,
@@ -30,7 +33,6 @@
     "reason-react",
     "rationale",
     "@glennsl/bs-json",
-    "@ahrefs/bs-react-dnd",
     "@jsiebern/bs-material-ui"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],

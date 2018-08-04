@@ -28,19 +28,19 @@ let defaultParams: params = {
   transpose: 0,
   shouldClear: true,
   layers: [
-    {content: Analysis, alpha: 1.0, compositeOperation: SourceOver},
+    {
+      content: Image("media/hubble_ultra_deep_field.jpg"),
+      alpha: 1.0,
+      compositeOperation: SourceOver,
+    },
+    {content: Analysis, alpha: 0.5, compositeOperation: SourceOver},
     {
       content: Webcam({slitscan: None}),
       /* content: Webcam({slitscan: Some({x: 60})}), */
       alpha: 0.25,
-      compositeOperation: Overlay,
+      compositeOperation: SourceOver,
     },
     {content: Fill("white"), alpha: 0.0125, compositeOperation: SourceOver},
-    {
-      content: Image("media/hilbert_curve.png"),
-      alpha: 1.0,
-      compositeOperation: Multiply,
-    },
     {
       content: PitchClasses(cMajor),
       alpha: 1.0,
@@ -91,7 +91,7 @@ module EncodeParams = {
 
 let component = ReasonReact.statelessComponent("Params");
 
-let make = (~params, ~onMoveCard, ~onSetRef, _children) => {
+let make = (~params, ~onMoveCard, ~onSetRef, ~onChangeLayer, _children) => {
   ...component,
   render: self =>
     <div>
@@ -107,6 +107,7 @@ let make = (~params, ~onMoveCard, ~onSetRef, _children) => {
         )
         onMoveCard
         onSetRef
+        onChangeLayer
       />
       <div>
         <div>
