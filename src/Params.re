@@ -59,7 +59,15 @@ module EncodeParams = {
 let component = ReasonReact.statelessComponent("Params");
 
 let make =
-    (~params, ~onMoveCard, ~onSetRef, ~onChangeLayer, ~onSetParams, _children) => {
+    (
+      ~params,
+      ~onMoveCard,
+      ~onSetRef,
+      ~onChangeLayer,
+      ~onSetParams,
+      ~getAudio,
+      _children,
+    ) => {
   ...component,
   render: self =>
     <div>
@@ -155,6 +163,7 @@ let make =
         onMoveCard
         onSetRef
         onChangeLayer
+        getAudio
       />
     </div>,
 };

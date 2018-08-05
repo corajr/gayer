@@ -11,7 +11,8 @@ let defaultState = {dragContainerRef: ref(None), dragulaRef: ref(None)};
 
 let component = ReasonReact.reducerComponent("Container");
 
-let make = (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, _children) => {
+let make =
+    (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, ~getAudio, _children) => {
   let handleCardsChange = ids => {
     let idToLayer =
       List.fold_left(
@@ -88,6 +89,7 @@ let make = (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, _children) => {
                  id=card.id
                  layer=card.layer
                  changeLayer=onChangeLayer
+                 getAudio
                  setRef=(theRef => onSetRef(card.layer, theRef))
                />
              )

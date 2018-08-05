@@ -6,7 +6,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 
 var component = ReasonReact.statelessComponent("Card");
 
-function make(id, layer, changeLayer, setRef, _) {
+function make(id, layer, changeLayer, getAudio, setRef, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -23,7 +23,7 @@ function make(id, layer, changeLayer, setRef, _) {
                           style: {
                             marginBottom: "16px"
                           }
-                        }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(layer, changeLayer, setRef, /* array */[])));
+                        }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(layer, changeLayer, setRef, getAudio, /* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

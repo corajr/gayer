@@ -33,6 +33,17 @@ function make(size, audioCtx, input, saveRef, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
+              if (input !== undefined) {
+                input.connect(self[/* state */1][/* analyser */0]);
+              }
+              Curry._1(self[/* onUnmount */4], (function () {
+                      if (input !== undefined) {
+                        input.disconnect(self[/* state */1][/* analyser */0]);
+                        return /* () */0;
+                      } else {
+                        return /* () */0;
+                      }
+                    }));
               var timerId = setInterval((function () {
                       return Curry._1(self[/* send */3], /* Draw */0);
                     }), 20);
@@ -47,22 +58,8 @@ function make(size, audioCtx, input, saveRef, _) {
                             }
                           }));
             }),
-          /* didUpdate */(function (param) {
-              if (input !== undefined) {
-                input.connect(param[/* newSelf */1][/* state */1][/* analyser */0]);
-                return /* () */0;
-              } else {
-                return /* () */0;
-              }
-            }),
-          /* willUnmount */(function (self) {
-              if (input !== undefined) {
-                input.disconnect(self[/* state */1][/* analyser */0]);
-                return /* () */0;
-              } else {
-                return /* () */0;
-              }
-            }),
+          /* didUpdate */component[/* didUpdate */5],
+          /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {

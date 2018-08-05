@@ -29,7 +29,6 @@ import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Draw
 import * as MaterialUi_Divider from "@jsiebern/bs-material-ui/src/MaterialUi_Divider.bs.js";
 import * as MaterialUi_Toolbar from "@jsiebern/bs-material-ui/src/MaterialUi_Toolbar.bs.js";
 import * as MaterialUi_ListItem from "@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js";
-import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_WithStyles from "@jsiebern/bs-material-ui/src/MaterialUi_WithStyles.bs.js";
@@ -50,9 +49,11 @@ var defaultState_011 = /* analysisCanvasRef : record */[/* contents */undefined]
 
 var defaultState_012 = /* loadedImages : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_013 = /* canvasRef : record */[/* contents */undefined];
+var defaultState_013 = /* loadedAudio : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_014 = /* timerId : record */[/* contents */undefined];
+var defaultState_014 = /* canvasRef : record */[/* contents */undefined];
+
+var defaultState_015 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -69,11 +70,12 @@ var defaultState = /* record */[
   defaultState_011,
   defaultState_012,
   defaultState_013,
-  defaultState_014
+  defaultState_014,
+  defaultState_015
 ];
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */13][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+  param[/* state */1][/* canvasRef */14][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
   return /* () */0;
 }
 
@@ -85,34 +87,38 @@ function setAnalysisCanvasRef(theRef, param) {
 function setLayerRef(param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
+  var maybeRef = (theRef == null) ? undefined : Js_primitive.some(theRef);
   var match = param[0][/* content */0];
-  if (typeof match === "number") {
-    return /* () */0;
-  } else {
-    switch (match.tag | 0) {
-      case 1 : 
-          if (theRef == null) {
+  switch (match.tag | 0) {
+    case 1 : 
+        if (theRef == null) {
+          return /* () */0;
+        } else {
+          var match$1 = state[/* mediaStream */6];
+          if (match$1 !== undefined) {
+            var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
+            state[/* cameraInput */8][0] = Js_primitive.some(video);
             return /* () */0;
           } else {
-            var match$1 = state[/* mediaStream */6];
-            if (match$1 !== undefined) {
-              var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
-              state[/* cameraInput */8][0] = Js_primitive.some(video);
-              return /* () */0;
-            } else {
-              return /* () */0;
-            }
-          }
-      case 2 : 
-          if (theRef == null) {
-            return /* () */0;
-          } else {
-            state[/* loadedImages */12][0] = Belt_MapString.set(state[/* loadedImages */12][0], match[0], theRef);
             return /* () */0;
           }
-      default:
-        return /* () */0;
-    }
+        }
+    case 2 : 
+        if (theRef == null) {
+          return /* () */0;
+        } else {
+          state[/* loadedImages */12][0] = Belt_MapString.set(state[/* loadedImages */12][0], match[0], theRef);
+          return /* () */0;
+        }
+    case 3 : 
+        if (theRef == null) {
+          return /* () */0;
+        } else {
+          state[/* analysisCanvasRef */11][0] = maybeRef;
+          return /* () */0;
+        }
+    default:
+      return /* () */0;
   }
 }
 
@@ -206,76 +212,74 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
   var match = layer[/* content */0];
-  if (typeof match === "number") {
-    var match$1 = state[/* analysisCanvasRef */11][0];
-    if (match$1 !== undefined) {
-      var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
-      ctx.drawImage(Js_primitive.valFromOption(match$1), x, 0);
-    }
-    return undefined;
-  } else {
-    switch (match.tag | 0) {
-      case 0 : 
-          ctx.fillStyle = match[0];
-          ctx.fillRect(0, 0, width, height);
-          return undefined;
-      case 1 : 
-          var match$2 = state[/* cameraInput */8][0];
-          var match$3 = match[0][/* slitscan */0];
+  switch (match.tag | 0) {
+    case 0 : 
+        ctx.fillStyle = match[0];
+        ctx.fillRect(0, 0, width, height);
+        return undefined;
+    case 1 : 
+        var match$1 = state[/* cameraInput */8][0];
+        var match$2 = match[0][/* slitscan */0];
+        if (match$1 !== undefined) {
+          var input = Js_primitive.valFromOption(match$1);
           if (match$2 !== undefined) {
-            var input = Js_primitive.valFromOption(match$2);
-            if (match$3 !== undefined) {
-              var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
-              ctx.drawImage(input, match$3[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
-            } else {
-              ctx.drawImage(input, 0, 0, width, height);
-            }
+            var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
+            ctx.drawImage(input, match$2[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
+          } else {
+            ctx.drawImage(input, 0, 0, width, height);
           }
-          return undefined;
-      case 2 : 
-          var match$4 = Belt_MapString.get(state[/* loadedImages */12][0], match[0]);
-          if (match$4 !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(match$4), 0, 0, width, height);
-          }
-          return undefined;
-      case 3 : 
-          var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
-          ctx.fillStyle = "black";
-          var binsPerSemitone = height / 120 | 0;
-          for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
-            List.iter((function(i){
-                return function (j) {
-                  var y = Caml_int32.imul(Caml_int32.imul(i, 12) + j | 0, binsPerSemitone);
-                  ctx.fillRect(0, y, width, binsPerSemitone);
-                  return /* () */0;
-                }
-                }(i)), classList);
-          }
-          return undefined;
-      case 4 : 
-          var channel = match[0];
-          var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
-          var tmp;
-          switch (channel) {
-            case 0 : 
-                tmp = "red";
-                break;
-            case 1 : 
-                tmp = "green";
-                break;
-            case 2 : 
-                tmp = "blue";
-                break;
-            case 3 : 
-                tmp = "white";
-                break;
-            
-          }
-          ctx.fillStyle = tmp;
-          ctx.fillRect(state[/* readPos */0][0], 0, 1, height);
-          return Canvas$Gayer.imageDataToFloatArray(slice, channel);
-      
-    }
+        }
+        return undefined;
+    case 2 : 
+        var match$3 = Belt_MapString.get(state[/* loadedImages */12][0], match[0]);
+        if (match$3 !== undefined) {
+          ctx.drawImage(Js_primitive.valFromOption(match$3), 0, 0, width, height);
+        }
+        return undefined;
+    case 3 : 
+        var match$4 = state[/* analysisCanvasRef */11][0];
+        if (match$4 !== undefined) {
+          var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */4][/* writePosOffset */2] | 0, 0, width);
+          ctx.drawImage(Js_primitive.valFromOption(match$4), x, 0);
+        }
+        return undefined;
+    case 4 : 
+        var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
+        ctx.fillStyle = "black";
+        var binsPerSemitone = height / 120 | 0;
+        for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
+          List.iter((function(i){
+              return function (j) {
+                var y = Caml_int32.imul(Caml_int32.imul(i, 12) + j | 0, binsPerSemitone);
+                ctx.fillRect(0, y, width, binsPerSemitone);
+                return /* () */0;
+              }
+              }(i)), classList);
+        }
+        return undefined;
+    case 5 : 
+        var channel = match[0];
+        var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
+        var tmp;
+        switch (channel) {
+          case 0 : 
+              tmp = "red";
+              break;
+          case 1 : 
+              tmp = "green";
+              break;
+          case 2 : 
+              tmp = "blue";
+              break;
+          case 3 : 
+              tmp = "white";
+              break;
+          
+        }
+        ctx.fillStyle = tmp;
+        ctx.fillRect(state[/* readPos */0][0], 0, 1, height);
+        return Canvas$Gayer.imageDataToFloatArray(slice, channel);
+    
   }
 }
 
@@ -297,12 +301,22 @@ function drawCanvas(canvasElement, width, height, state) {
 function getAnalysisInput(audioCtx, state, audioInput) {
   if (typeof audioInput === "number") {
     if (audioInput !== 0) {
-      return state[/* micInput */7];
+      return /* tuple */[
+              audioCtx,
+              state[/* micInput */7]
+            ];
     } else {
-      return Audio$Gayer.pinkNoise(audioCtx);
+      return /* tuple */[
+              audioCtx,
+              Audio$Gayer.pinkNoise(audioCtx)
+            ];
     }
+  } else {
+    return /* tuple */[
+            audioCtx,
+            undefined
+          ];
   }
-  
 }
 
 function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
@@ -332,7 +346,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */14][0] = Js_primitive.some(setInterval((function () {
+              self[/* state */1][/* timerId */15][0] = Js_primitive.some(setInterval((function () {
                           return Curry._1(self[/* send */3], /* Tick */1);
                         }), 20));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
@@ -393,6 +407,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
+              var partial_arg = self[/* state */1];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -432,9 +447,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                       "nav"
                                                                     ], undefined, undefined, undefined, undefined, undefined, /* array */[$$Array.map((function (param) {
                                                                               var preset = param[1];
-                                                                              return ReasonReact.element(undefined, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                                                              var name = param[0];
+                                                                              return ReasonReact.element(name, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                                                                 return pushParamsState(preset);
-                                                                                              }), undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[param[0]]))]));
+                                                                                              }), undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[name]))]));
                                                                             }), $$Array.of_list(Presets$Gayer.presets))])))
                                                       ]));
                                       }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* V24 */3, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
@@ -447,9 +463,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                       ]);
                                                           }), (function (oldLayer, newLayer) {
                                                             return Curry._1(self[/* send */3], /* SetLayers */Block.__(0, [changeLayer(oldLayer, newLayer, self[/* state */1][/* params */4][/* layers */9])]));
-                                                          }), pushParamsState, /* array */[]))])),
-                                      ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
-                                                React.createElement("canvas", {
+                                                          }), pushParamsState, (function (param) {
+                                                            return getAnalysisInput(audioCtx, partial_arg, param);
+                                                          }), /* array */[]))])),
+                                      ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[React.createElement("canvas", {
                                                       ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                       style: {
                                                         transform: "scale(4)",
@@ -457,9 +474,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                       },
                                                       height: height.toString(),
                                                       width: width.toString()
-                                                    }),
-                                                ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, audioCtx, self[/* state */1][/* micInput */7], Curry._1(self[/* handle */0], setAnalysisCanvasRef), /* array */[]))
-                                              ]))
+                                                    })]))
                                     ]))));
             }),
           /* initialState */(function () {
@@ -471,7 +486,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 switch (action) {
                   case 0 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */13], (function (canvas) {
+                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
                                                   return clearCanvas(canvas, width, height);
                                                 }));
                                   })]);
@@ -479,7 +494,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     self[/* state */1][/* readPos */0][0] = Canvas$Gayer.wrapCoord(state[/* readPos */0][0], state[/* params */4][/* readPosDelta */0], width);
                                     self[/* state */1][/* writePos */1][0] = Canvas$Gayer.wrapCoord(state[/* writePos */1][0], state[/* params */4][/* writePosDelta */1], width);
-                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */13], (function (canvas) {
+                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
                                                   var filterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                                   return maybeMapFilterBank((function (filterBank) {
                                                                 return Audio$Gayer.updateFilterBank(self[/* state */1][/* params */4][/* inputGain */4], self[/* state */1][/* params */4][/* outputGain */5], self[/* state */1][/* params */4][/* q */6], Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */4][/* transpose */7] | 0), filterBank, filterValues);
@@ -501,8 +516,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   
                 }
@@ -541,8 +557,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -563,8 +580,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 3 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -581,8 +599,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   case 4 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -600,8 +619,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -622,8 +642,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* compressor */state[/* compressor */10],
                                   /* analysisCanvasRef */state[/* analysisCanvasRef */11],
                                   /* loadedImages */state[/* loadedImages */12],
-                                  /* canvasRef */state[/* canvasRef */13],
-                                  /* timerId */state[/* timerId */14]
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* timerId */state[/* timerId */15]
                                 ]]);
                   
                 }

@@ -4,7 +4,7 @@ open Music;
 open Params;
 
 let analyzer = {
-  content: Analysis,
+  content: Analysis(Mic),
   alpha: 1.0,
   compositeOperation: SourceOver,
 };

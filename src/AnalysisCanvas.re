@@ -46,6 +46,18 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
       {analyser, cqt, canvasRef: ref(None), timerId: ref(None)};
     },
     didMount: self => {
+      switch (input) {
+      | None => ()
+      | Some(inputNode) =>
+        connectNodeToAnalyser(inputNode, self.state.analyser)
+      };
+      self.onUnmount(() =>
+        switch (input) {
+        | None => ()
+        | Some(inputNode) => disconnect(inputNode, self.state.analyser)
+        }
+      );
+
       let timerId = Js.Global.setInterval(() => self.send(Draw), 20);
       self.state.timerId := Some(timerId);
       self.onUnmount(() =>
@@ -55,12 +67,6 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
         }
       );
     },
-    didUpdate: ({oldSelf, newSelf}) =>
-      switch (input) {
-      | None => ()
-      | Some(inputNode) =>
-        connectNodeToAnalyser(inputNode, newSelf.state.analyser)
-      },
     reducer: (action, state) =>
       switch (action) {
       | Draw =>
@@ -77,11 +83,6 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
             ),
           )
         }
-      },
-    willUnmount: self =>
-      switch (input) {
-      | None => ()
-      | Some(inputNode) => disconnect(inputNode, self.state.analyser)
       },
     render: self =>
       <canvas

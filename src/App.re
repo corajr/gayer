@@ -29,6 +29,7 @@ type state = {
   compressor: ref(option(compressor)),
   analysisCanvasRef: ref(option(Dom.element)),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
+  loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -46,6 +47,7 @@ let defaultState: state = {
   filterBank: None,
   compressor: ref(None),
   loadedImages: ref(Belt.Map.String.empty),
+  loadedAudio: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
   timerId: ref(None),
@@ -71,6 +73,7 @@ let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
 let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   switch (layer.content, maybeRef) {
+  | (Analysis(_), Some(aRef)) => state.analysisCanvasRef := maybeRef
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -151,7 +154,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       Ctx.setFillStyle(ctx, s);
       Ctx.fillRect(ctx, 0, 0, width, height);
       None;
-    | Analysis =>
+    | Analysis(_) =>
       switch (state.analysisCanvasRef^) {
       | None => ()
       | Some(analysisCanvas) =>
@@ -244,12 +247,13 @@ let drawCanvas = (canvasElement, width, height, state) => {
 };
 
 let getAnalysisInput:
-  (audioContext, state, audioInputSetting) => option(audioNode) =
+  (audioContext, state, audioInputSetting) =>
+  (audioContext, option(audioNode)) =
   (audioCtx, state, audioInput) =>
     switch (audioInput) {
-    | AudioFile(s) => None
-    | PinkNoise => Some(pinkNoise(audioCtx))
-    | Mic => state.micInput
+    | AudioFile(s) => (audioCtx, None)
+    | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
+    | Mic => (audioCtx, state.micInput)
     };
 
 type domHighResTimeStamp;
@@ -438,101 +442,104 @@ let make =
           </Toolbar>
         </AppBar>
         <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
-          <SizedDrawer
-            render=(
-              classes =>
-                <Drawer
-                  variant=`Temporary
-                  open_=self.state.presetDrawerOpen
-                  classes=[Paper(classes.paper)]>
-                  <div
-                    style=(
-                      ReactDOMRe.Style.make(
-                        ~display="flex",
-                        ~alignItems="center",
-                        ~justifyContent="flex-end",
-                        ~padding="0 8px",
-                        (),
-                      )
-                    )>
-                    <IconButton
-                      onClick=(_evt => self.send(TogglePresetDrawer))
-                      color=`Inherit>
-                      <MaterialUIIcons.ChevronLeft />
-                    </IconButton>
-                  </div>
-                  <Divider />
-                  <div
-                    tabIndex=0
-                    role="button"
-                    onClick=(_evt => self.send(TogglePresetDrawer))
-                    onKeyDown=(_evt => self.send(TogglePresetDrawer))>
-                    <List component=(`String("nav"))>
-                      (
-                        ReasonReact.array(
-                          Array.of_list(presets)
-                          |> Array.map(((name, preset)) =>
-                               <ListItem
-                                 button=true
-                                 onClick=(_evt => pushParamsState(preset))>
-                                 <ListItemText>
-                                   (ReasonReact.string(name))
-                                 </ListItemText>
-                               </ListItem>
-                             ),
+
+            <SizedDrawer
+              render=(
+                classes =>
+                  <Drawer
+                    variant=`Temporary
+                    open_=self.state.presetDrawerOpen
+                    classes=[Paper(classes.paper)]>
+                    <div
+                      style=(
+                        ReactDOMRe.Style.make(
+                          ~display="flex",
+                          ~alignItems="center",
+                          ~justifyContent="flex-end",
+                          ~padding="0 8px",
+                          (),
                         )
-                      )
-                    </List>
-                  </div>
-                </Drawer>
-            )
-          />
-          <Grid container=true spacing=Grid.V24>
-            <Grid item=true xs=Grid.V6>
-              <Params
-                params=self.state.params
-                onMoveCard=(layers => self.send(SetLayers(layers)))
-                onChangeLayer=(
-                  (oldLayer, newLayer) =>
-                    self.send(
-                      SetLayers(
-                        changeLayer(
-                          oldLayer,
-                          newLayer,
-                          self.state.params.layers,
+                      )>
+                      <IconButton
+                        onClick=(_evt => self.send(TogglePresetDrawer))
+                        color=`Inherit>
+                        <MaterialUIIcons.ChevronLeft />
+                      </IconButton>
+                    </div>
+                    <Divider />
+                    <div
+                      tabIndex=0
+                      role="button"
+                      onClick=(_evt => self.send(TogglePresetDrawer))
+                      onKeyDown=(_evt => self.send(TogglePresetDrawer))>
+                      <List component=(`String("nav"))>
+                        (
+                          ReasonReact.array(
+                            Array.of_list(presets)
+                            |> Array.map(((name, preset)) =>
+                                 <ListItem
+                                   key=name
+                                   button=true
+                                   onClick=(_evt => pushParamsState(preset))>
+                                   <ListItemText>
+                                     (ReasonReact.string(name))
+                                   </ListItemText>
+                                 </ListItem>
+                               ),
+                          )
+                        )
+                      </List>
+                    </div>
+                  </Drawer>
+              )
+            />
+            <Grid container=true spacing=Grid.V24>
+              <Grid item=true xs=Grid.V6>
+                <Params
+                  params=self.state.params
+                  onMoveCard=(layers => self.send(SetLayers(layers)))
+                  onChangeLayer=(
+                    (oldLayer, newLayer) =>
+                      self.send(
+                        SetLayers(
+                          changeLayer(
+                            oldLayer,
+                            newLayer,
+                            self.state.params.layers,
+                          ),
                         ),
-                      ),
-                    )
-                )
-                onSetRef=(
-                  (layer, theRef) =>
-                    self.handle(setLayerRef, (layer, theRef))
-                )
-                onSetParams=(newParams => pushParamsState(newParams))
-              />
-            </Grid>
-            <Grid item=true xs=Grid.V6>
-              <canvas
-                ref=(self.handle(setCanvasRef))
-                width=(Js.Int.toString(width))
-                height=(Js.Int.toString(height))
-                style=(
-                  ReactDOMRe.Style.make(
-                    ~transform="scale(4)",
-                    ~transformOrigin="top left",
-                    (),
+                      )
                   )
-                )
-              />
-              <AnalysisCanvas
-                size=height
-                audioCtx
-                input=self.state.micInput
-                saveRef=(self.handle(setAnalysisCanvasRef))
-              />
+                  onSetRef=(
+                    (layer, theRef) =>
+                      self.handle(setLayerRef, (layer, theRef))
+                  )
+                  onSetParams=(newParams => pushParamsState(newParams))
+                  getAudio=(getAnalysisInput(audioCtx, self.state))
+                />
+              </Grid>
+              <Grid item=true xs=Grid.V6>
+                <canvas
+                  ref=(self.handle(setCanvasRef))
+                  width=(Js.Int.toString(width))
+                  height=(Js.Int.toString(height))
+                  style=(
+                    ReactDOMRe.Style.make(
+                      ~transform="scale(4)",
+                      ~transformOrigin="top left",
+                      (),
+                    )
+                  )
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
+          </div>
+          /* <AnalysisCanvas */
+          /*   size=height */
+          /*   audioCtx */
+          /*   input=self.state.micInput */
+          /*   saveRef=(self.handle(setAnalysisCanvasRef)) */
+          /* /> */
       </div>
     ),
 };

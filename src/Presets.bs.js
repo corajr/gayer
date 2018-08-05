@@ -5,7 +5,7 @@ import * as Audio$Gayer from "./Audio.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 
 var analyzer = /* record */[
-  /* content : Analysis */0,
+  /* content : Analysis */Block.__(3, [/* Mic */1]),
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0
 ];
@@ -23,14 +23,14 @@ var slitscan = /* record */[
 ];
 
 var reader = /* record */[
-  /* content : Reader */Block.__(4, [/* R */0]),
+  /* content : Reader */Block.__(5, [/* R */0]),
   /* alpha */0.0,
   /* compositeOperation : SourceOver */0
 ];
 
 function pitchFilter(pc) {
   return /* record */[
-          /* content : PitchClasses */Block.__(3, [pc]),
+          /* content : PitchClasses */Block.__(4, [pc]),
           /* alpha */1.0,
           /* compositeOperation : DestinationOut */6
         ];
@@ -116,7 +116,7 @@ var feedback_009 = /* layers : :: */[
   webcam,
   /* :: */[
     /* record */[
-      /* content : Analysis */0,
+      /* content : Analysis */Block.__(3, [/* Mic */1]),
       /* alpha */0.5,
       /* compositeOperation : SourceOver */0
     ],
@@ -147,7 +147,7 @@ var slitscanParams_009 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : Analysis */0,
+      /* content : Analysis */Block.__(3, [/* Mic */1]),
       /* alpha */0.25,
       /* compositeOperation : SourceOver */0
     ],

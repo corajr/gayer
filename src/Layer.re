@@ -1,3 +1,4 @@
+open Audio.AudioInput;
 open Canvas;
 open Music;
 
@@ -27,7 +28,7 @@ type layerContent =
   | Fill(string)
   | Webcam(cameraOptions)
   | Image(string)
-  | Analysis
+  | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | Reader(channel);
 
@@ -51,7 +52,13 @@ module DecodeLayer = {
       | "reader" =>
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
-      | "analysis" => Analysis
+      | "analysis" =>
+        json
+        |> map(
+             s => Analysis(s),
+             field("source", DecodeAudioInput.audioInputSetting),
+           )
+
       | "fill" => json |> map(s => Fill(s), field("style", string))
       | "pitchClasses" =>
         json
@@ -93,7 +100,12 @@ module EncodeLayer = {
         ])
       | Image(url) =>
         object_([("type", string("image")), ("url", string(url))])
-      | Analysis => object_([("type", string("analysis"))])
+      | Analysis(source) =>
+        object_([
+          ("type", string("analysis")),
+          ("source", EncodeAudioInput.audioInputSetting(source)),
+        ])
+
       | PitchClasses(classes) =>
         object_([
           ("type", string("pitchClasses")),
@@ -123,14 +135,28 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (layerContent, changeLayer, setRef) =>
+let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
   MaterialUi.(
     switch (layerContent) {
     | Webcam(_) =>
       <video ref=setRef autoPlay=true muted=true width="120" height="120" />
     | Image(url) => <img ref=setRef src=url width="120" height="120" />
-    | Analysis =>
-      <div> <Typography> (ReasonReact.string("analysis")) </Typography> </div>
+    | Analysis(source) =>
+      let (audioCtx, input) = getAudio(source);
+      <div>
+        <AnalysisCanvas size=120 audioCtx input saveRef=setRef />
+        <Typography>
+          (
+            ReasonReact.string(
+              "CQT: "
+              ++ Js.Json.stringify(
+                   EncodeAudioInput.audioInputSetting(source),
+                 ),
+            )
+          )
+        </Typography>
+      </div>;
+    | Fill(s) => ReasonReact.string("fill: " ++ s)
     | PitchClasses(pc) =>
       <div>
         <Typography> (ReasonReact.string("Filter pitches")) </Typography>
@@ -142,7 +168,7 @@ let renderLayerContent = (layerContent, changeLayer, setRef) =>
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
+let make = (~layer, ~changeLayer, ~setRef=_ => (), ~getAudio, _children) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -155,7 +181,7 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), _children) => {
           )
         )>
         <CardMedia src="dummy">
-          (renderLayerContent(layer.content, changeLayer, setRef))
+          (renderLayerContent(layer.content, changeLayer, getAudio, setRef))
         </CardMedia>
         <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
           <div>

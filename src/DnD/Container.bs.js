@@ -22,7 +22,7 @@ var defaultState = /* record */[
 
 var component = ReasonReact.reducerComponent("Container");
 
-function make(cards, onMoveCard, onChangeLayer, onSetRef, _) {
+function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
   var dropFn = function (_, target, _$1, _$2) {
     if (target !== undefined) {
       var children = Js_primitive.valFromOption(target).childNodes;
@@ -91,7 +91,7 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, _) {
               return React.createElement("div", {
                           ref: Curry._1(self[/* handle */0], dragulaDecorator)
                         }, $$Array.of_list(List.map((function (card) {
-                                    return ReasonReact.element(card[/* id */0], undefined, Card$Gayer.make(card[/* id */0], card[/* layer */1], onChangeLayer, (function (theRef) {
+                                    return ReasonReact.element(card[/* id */0], undefined, Card$Gayer.make(card[/* id */0], card[/* layer */1], onChangeLayer, getAudio, (function (theRef) {
                                                       return Curry._2(onSetRef, card[/* layer */1], theRef);
                                                     }), /* array */[]));
                                   }), cards)));

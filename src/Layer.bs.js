@@ -3,6 +3,7 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -10,6 +11,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Slider$Gayer from "./Slider.bs.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
+import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
@@ -58,7 +60,12 @@ var EncodeCameraOptions = /* module */[
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
-        return /* Analysis */0;
+        var partial_arg = Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0];
+        return Json_decode.map((function (s) {
+                      return /* Analysis */Block.__(3, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("source", partial_arg, param);
+                    }), json);
     case "fill" : 
         return Json_decode.map((function (s) {
                       return /* Fill */Block.__(0, [s]);
@@ -73,7 +80,7 @@ function layerByType(type_, json) {
                     }), json);
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(3, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(4, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -81,7 +88,7 @@ function layerByType(type_, json) {
                     }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(4, [i]);
+                      return /* Reader */Block.__(5, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
@@ -124,90 +131,94 @@ var DecodeLayer = /* module */[
 ];
 
 function layerContent$1(r) {
-  if (typeof r === "number") {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "analysis"
-                ],
-                /* [] */0
-              ]);
-  } else {
-    switch (r.tag | 0) {
-      case 0 : 
-          return Json_encode.object_(/* :: */[
+  switch (r.tag | 0) {
+    case 0 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "fill"
+                    ],
+                    /* :: */[
                       /* tuple */[
-                        "type",
-                        "fill"
+                        "style",
+                        r[0]
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "style",
-                          r[0]
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 1 : 
-          return Json_encode.object_(/* :: */[
+                      /* [] */0
+                    ]
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "webcam"
+                    ],
+                    /* :: */[
                       /* tuple */[
-                        "type",
-                        "webcam"
+                        "options",
+                        cameraOptions$1(r[0])
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "options",
-                          cameraOptions$1(r[0])
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 2 : 
-          return Json_encode.object_(/* :: */[
+                      /* [] */0
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "image"
+                    ],
+                    /* :: */[
                       /* tuple */[
-                        "type",
-                        "image"
+                        "url",
+                        r[0]
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "url",
-                          r[0]
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 3 : 
-          return Json_encode.object_(/* :: */[
+                      /* [] */0
+                    ]
+                  ]);
+    case 3 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "analysis"
+                    ],
+                    /* :: */[
                       /* tuple */[
-                        "type",
-                        "pitchClasses"
+                        "source",
+                        Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[0])
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "pc",
-                          Json_encode.list((function (prim) {
-                                  return prim;
-                                }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[0]))
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      case 4 : 
-          return Json_encode.object_(/* :: */[
+                      /* [] */0
+                    ]
+                  ]);
+    case 4 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "pitchClasses"
+                    ],
+                    /* :: */[
                       /* tuple */[
-                        "type",
-                        "reader"
+                        "pc",
+                        Json_encode.list((function (prim) {
+                                return prim;
+                              }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[0]))
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "channel",
-                          Canvas$Gayer.int_of_channel(r[0])
-                        ],
-                        /* [] */0
-                      ]
-                    ]);
-      
-    }
+                      /* [] */0
+                    ]
+                  ]);
+    case 5 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "reader"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "channel",
+                        Canvas$Gayer.int_of_channel(r[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    
   }
 }
 
@@ -238,40 +249,40 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent, _, setRef) {
-  if (typeof layerContent === "number") {
-    return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["analysis"])));
-  } else {
-    switch (layerContent.tag | 0) {
-      case 0 : 
-          return "fill: " + layerContent[0];
-      case 1 : 
-          return React.createElement("video", {
-                      ref: setRef,
-                      autoPlay: true,
-                      height: "120",
-                      muted: true,
-                      width: "120"
-                    });
-      case 2 : 
-          return React.createElement("img", {
-                      ref: setRef,
-                      height: "120",
-                      src: layerContent[0],
-                      width: "120"
-                    });
-      case 3 : 
-          return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Filter pitches"])));
-      case 4 : 
-          return "reader";
-      
-    }
+function renderLayerContent(layerContent, _, getAudio, setRef) {
+  switch (layerContent.tag | 0) {
+    case 0 : 
+        return "fill: " + layerContent[0];
+    case 1 : 
+        return React.createElement("video", {
+                    ref: setRef,
+                    autoPlay: true,
+                    height: "120",
+                    muted: true,
+                    width: "120"
+                  });
+    case 2 : 
+        return React.createElement("img", {
+                    ref: setRef,
+                    height: "120",
+                    src: layerContent[0],
+                    width: "120"
+                  });
+    case 3 : 
+        var source = layerContent[0];
+        var match = Curry._1(getAudio, source);
+        return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(120, match[0], match[1], setRef, /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["CQT: " + JSON.stringify(Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], source))])));
+    case 4 : 
+        return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Filter pitches"])));
+    case 5 : 
+        return "reader";
+    
   }
 }
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, changeLayer, $staropt$star, _) {
+function make(layer, changeLayer, $staropt$star, getAudio, _) {
   var setRef = $staropt$star !== undefined ? $staropt$star : (function () {
         return /* () */0;
       });
@@ -290,7 +301,7 @@ function make(layer, changeLayer, $staropt$star, _) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], changeLayer, setRef)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], changeLayer, getAudio, setRef)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
