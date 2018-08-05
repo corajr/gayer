@@ -159,6 +159,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
+    Ctx.setTransform(ctx, layer.transformMatrix);
 
     switch (layer.content) {
     | Fill(s) =>

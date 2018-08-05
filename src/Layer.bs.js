@@ -57,6 +57,47 @@ var EncodeCameraOptions = /* module */[
   /* cameraOptions */cameraOptions$1
 ];
 
+function transformMatrix(json) {
+  var match = Json_decode.list(Json_decode.$$float, json);
+  if (match) {
+    var match$1 = match[1];
+    if (match$1) {
+      var match$2 = match$1[1];
+      if (match$2) {
+        var match$3 = match$2[1];
+        if (match$3) {
+          var match$4 = match$3[1];
+          if (match$4) {
+            var match$5 = match$4[1];
+            if (match$5 && !match$5[1]) {
+              return /* record */[
+                      /* horizontalScaling */match[0],
+                      /* horizontalSkewing */match$1[0],
+                      /* verticalSkewing */match$2[0],
+                      /* verticalScaling */match$3[0],
+                      /* horizontalMoving */match$4[0],
+                      /* verticalMoving */match$5[0]
+                    ];
+            } else {
+              return Canvas$Gayer.defaultTransform;
+            }
+          } else {
+            return Canvas$Gayer.defaultTransform;
+          }
+        } else {
+          return Canvas$Gayer.defaultTransform;
+        }
+      } else {
+        return Canvas$Gayer.defaultTransform;
+      }
+    } else {
+      return Canvas$Gayer.defaultTransform;
+    }
+  } else {
+    return Canvas$Gayer.defaultTransform;
+  }
+}
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -120,15 +161,41 @@ function layer(json) {
           /* alpha */Json_decode.field("alpha", Json_decode.$$float, json),
           /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
                   return Json_decode.field("compositeOperation", Json_decode.string, param);
-                }), json)
+                }), json),
+          /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json)
         ];
 }
 
 var DecodeLayer = /* module */[
+  /* transformMatrix */transformMatrix,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
 ];
+
+function transformMatrix$1(param) {
+  return Json_encode.list((function (prim) {
+                return prim;
+              }), /* :: */[
+              param[/* horizontalScaling */0],
+              /* :: */[
+                param[/* horizontalSkewing */1],
+                /* :: */[
+                  param[/* verticalSkewing */2],
+                  /* :: */[
+                    param[/* verticalScaling */3],
+                    /* :: */[
+                      param[/* horizontalMoving */4],
+                      /* :: */[
+                        param[/* verticalMoving */5],
+                        /* [] */0
+                      ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
 
 function layerContent$1(r) {
   switch (r.tag | 0) {
@@ -238,13 +305,20 @@ function layer$1(r) {
                     "compositeOperation",
                     Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "transformMatrix",
+                      transformMatrix$1(r[/* transformMatrix */3])
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
 }
 
 var EncodeLayer = /* module */[
+  /* transformMatrix */transformMatrix$1,
   /* layerContent */layerContent$1,
   /* layer */layer$1
 ];
@@ -312,14 +386,16 @@ function make(layer, changeLayer, $staropt$star, getAudio, _) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],
                                                                     /* alpha */value,
-                                                                    /* compositeOperation */layer[/* compositeOperation */2]
+                                                                    /* compositeOperation */layer[/* compositeOperation */2],
+                                                                    /* transformMatrix */layer[/* transformMatrix */3]
                                                                   ]);
                                                       }), undefined, /* array */[]))),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],
                                                                     /* alpha */layer[/* alpha */1],
-                                                                    /* compositeOperation */newOperation
+                                                                    /* compositeOperation */newOperation,
+                                                                    /* transformMatrix */layer[/* transformMatrix */3]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))

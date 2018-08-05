@@ -36,9 +36,24 @@ type layer = {
   content: layerContent,
   alpha: float,
   compositeOperation,
+  transformMatrix,
 };
 
 module DecodeLayer = {
+  let transformMatrix = json =>
+    Json.Decode.(
+      switch (json |> list(float)) {
+      | [a, b, c, d, e, f] => {
+          horizontalScaling: a,
+          horizontalSkewing: b,
+          verticalSkewing: c,
+          verticalScaling: d,
+          horizontalMoving: e,
+          verticalMoving: f,
+        }
+      | _ => defaultTransform
+      }
+    );
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
@@ -86,10 +101,36 @@ module DecodeLayer = {
              compositeOperation_of_string,
              field("compositeOperation", string),
            ),
+      transformMatrix: json |> field("transformMatrix", transformMatrix),
     };
 };
 
 module EncodeLayer = {
+  let transformMatrix =
+      (
+        {
+          horizontalScaling,
+          horizontalSkewing,
+          verticalSkewing,
+          verticalScaling,
+          horizontalMoving,
+          verticalMoving,
+        },
+      ) =>
+    Json.Encode.(
+      list(
+        float,
+        [
+          horizontalScaling,
+          horizontalSkewing,
+          verticalSkewing,
+          verticalScaling,
+          horizontalMoving,
+          verticalMoving,
+        ],
+      )
+    );
+
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
@@ -131,6 +172,7 @@ module EncodeLayer = {
           "compositeOperation",
           string(string_of_compositeOperation(r.compositeOperation)),
         ),
+        ("transformMatrix", transformMatrix(r.transformMatrix)),
       ])
     );
 };

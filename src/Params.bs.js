@@ -23,7 +23,7 @@ import * as MaterialUi_ExpansionPanelDetails from "@jsiebern/bs-material-ui/src/
 import * as MaterialUi_ExpansionPanelSummary from "@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelSummary.bs.js";
 
 function params(json) {
-  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */2];
+  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */3];
   return /* record */[
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
@@ -91,7 +91,7 @@ function params$1(r) {
                               /* :: */[
                                 /* tuple */[
                                   "layers",
-                                  Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */1], r[/* layers */9])
+                                  Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */2], r[/* layers */9])
                                 ],
                                 /* [] */0
                               ]

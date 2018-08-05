@@ -222,6 +222,7 @@ function pushParamsState(newParams) {
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
+  Canvas$Gayer.Ctx[/* setTransform */1](ctx, layer[/* transformMatrix */3]);
   var match = layer[/* content */0];
   switch (match.tag | 0) {
     case 0 : 

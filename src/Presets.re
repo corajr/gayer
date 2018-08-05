@@ -3,54 +3,48 @@ open Layer;
 open Music;
 open Params;
 
-let analyzer = {
-  content: Analysis(Mic),
+let defaultTransform = Canvas.defaultTransform;
+
+let baseLayer = {
+  content: Fill("black"),
   alpha: 1.0,
   compositeOperation: SourceOver,
+  transformMatrix: defaultTransform,
 };
 
-let webcam = {
-  content: Webcam({slitscan: None}),
-  alpha: 1.0,
-  compositeOperation: SourceOver,
-};
+let analyzer = {...baseLayer, content: Analysis(Mic)};
 
-let slitscan = {
-  content: Webcam({slitscan: Some({x: 320})}),
-  alpha: 1.0,
-  compositeOperation: SourceOver,
-};
+let webcam = {...baseLayer, content: Webcam({slitscan: None})};
 
-let reader = {
-  content: Reader(R),
-  alpha: 0.0,
-  compositeOperation: SourceOver,
-};
+let slitscan = {...baseLayer, content: Webcam({slitscan: Some({x: 320})})};
+
+let reader = {...baseLayer, content: Reader(R), alpha: 0.0};
 
 let pitchFilter = pc => {
+  ...baseLayer,
   content: PitchClasses(pc),
-  alpha: 1.0,
   compositeOperation: DestinationOut,
 };
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
+  ...baseLayer,
   content: Fill(fillStyle),
-  alpha,
-  compositeOperation: SourceOver,
 };
 
-let img = url => {
-  content: Image(url),
-  alpha: 1.0,
-  compositeOperation: SourceOver,
-};
+let img = url => {...baseLayer, content: Image(url)};
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
 
 let spacy = [hubble, pitchFilter(cMajor), reader];
 
 let harmony = [
-  img("media/harmony.png"),
+  {
+    ...img("media/harmony.png"),
+    transformMatrix: {
+      ...defaultTransform,
+      verticalMoving: 48.0,
+    },
+  },
   {...analyzer, alpha: 0.1, compositeOperation: Overlay},
   {...slitscan, alpha: 0.1, compositeOperation: Overlay},
   pitchFilter(cMajor),
@@ -80,12 +74,7 @@ let defaultParams: params = {
   layers: spacy,
 };
 
-let harmonyParams = {
-  ...defaultParams,
-  layers: harmony,
-  transpose: (-48),
-  shouldClear: false,
-};
+let harmonyParams = {...defaultParams, layers: harmony, shouldClear: false};
 
 let harmonyIntensified = {
   ...harmonyParams,
@@ -110,9 +99,8 @@ let slitscanParams = {
 };
 
 let debussyFile = {
+  ...baseLayer,
   content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")),
-  alpha: 1.0,
-  compositeOperation: SourceOver,
 };
 
 let debussy = {

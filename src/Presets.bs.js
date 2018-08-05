@@ -3,45 +3,68 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
+import * as Canvas$Gayer from "./Canvas.bs.js";
+
+var baseLayer_000 = /* content : Fill */Block.__(0, ["black"]);
+
+var baseLayer = /* record */[
+  baseLayer_000,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
+];
+
+var analyzer_000 = /* content : Analysis */Block.__(3, [/* Mic */1]);
 
 var analyzer = /* record */[
-  /* content : Analysis */Block.__(3, [/* Mic */1]),
+  analyzer_000,
   /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
 ];
+
+var webcam_000 = /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]);
 
 var webcam = /* record */[
-  /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
+  webcam_000,
   /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
 ];
+
+var slitscan_000 = /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]);
 
 var slitscan = /* record */[
-  /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
+  slitscan_000,
   /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
 ];
 
+var reader_000 = /* content : Reader */Block.__(5, [/* R */0]);
+
 var reader = /* record */[
-  /* content : Reader */Block.__(5, [/* R */0]),
+  reader_000,
   /* alpha */0.0,
-  /* compositeOperation : SourceOver */0
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
 ];
 
 function pitchFilter(pc) {
   return /* record */[
           /* content : PitchClasses */Block.__(4, [pc]),
           /* alpha */1.0,
-          /* compositeOperation : DestinationOut */6
+          /* compositeOperation : DestinationOut */6,
+          /* transformMatrix */Canvas$Gayer.defaultTransform
         ];
 }
 
-function fill($staropt$star, fillStyle) {
-  var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
+function fill(_, fillStyle) {
   return /* record */[
           /* content : Fill */Block.__(0, [fillStyle]),
-          /* alpha */alpha,
-          /* compositeOperation : SourceOver */0
+          /* alpha */1.0,
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform
         ];
 }
 
@@ -49,17 +72,12 @@ function img(url) {
   return /* record */[
           /* content : Image */Block.__(2, [url]),
           /* alpha */1.0,
-          /* compositeOperation : SourceOver */0
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform
         ];
 }
 
-var hubble_000 = /* content : Image */Block.__(2, ["media/hubble_ultra_deep_field.jpg"]);
-
-var hubble = /* record */[
-  hubble_000,
-  /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
-];
+var hubble = img("media/hubble_ultra_deep_field.jpg");
 
 var spacy_001 = /* :: */[
   pitchFilter(Music$Gayer.cMajor),
@@ -74,23 +92,35 @@ var spacy = /* :: */[
   spacy_001
 ];
 
+var init = img("media/harmony.png");
+
 var harmony_000 = /* record */[
-  /* content : Image */Block.__(2, ["media/harmony.png"]),
-  /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
+  /* content */init[/* content */0],
+  /* alpha */init[/* alpha */1],
+  /* compositeOperation */init[/* compositeOperation */2],
+  /* transformMatrix : record */[
+    /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
+    /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
+    /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
+    /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
+    /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
+    /* verticalMoving */48.0
+  ]
 ];
 
 var harmony_001 = /* :: */[
   /* record */[
     /* content : Analysis */Block.__(3, [/* Mic */1]),
     /* alpha */0.1,
-    /* compositeOperation : Overlay */13
+    /* compositeOperation : Overlay */13,
+    /* transformMatrix */Canvas$Gayer.defaultTransform
   ],
   /* :: */[
     /* record */[
       /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
       /* alpha */0.1,
-      /* compositeOperation : Overlay */13
+      /* compositeOperation : Overlay */13,
+      /* transformMatrix */Canvas$Gayer.defaultTransform
     ],
     /* :: */[
       pitchFilter(Music$Gayer.cMajor),
@@ -153,17 +183,13 @@ var harmonyParams = /* record */[
   /* inputGain */1.0,
   /* outputGain */0.1,
   /* q */Audio$Gayer.defaultQ,
-  /* transpose */-48,
+  /* transpose */0,
   /* shouldClear */false,
   /* layers */harmony
 ];
 
 var harmonyIntensified_009 = /* layers : :: */[
-  /* record */[
-    /* content : Image */Block.__(2, ["media/harmony_intensified.png"]),
-    /* alpha */1.0,
-    /* compositeOperation : SourceOver */0
-  ],
+  img("media/harmony_intensified.png"),
   /* :: */[
     reader,
     /* [] */0
@@ -178,7 +204,7 @@ var harmonyIntensified = /* record */[
   /* inputGain */1.0,
   /* outputGain */0.1,
   /* q */Audio$Gayer.defaultQ,
-  /* transpose */-48,
+  /* transpose */0,
   /* shouldClear */false,
   harmonyIntensified_009
 ];
@@ -189,7 +215,8 @@ var feedback_009 = /* layers : :: */[
     /* record */[
       /* content : Analysis */Block.__(3, [/* Mic */1]),
       /* alpha */0.5,
-      /* compositeOperation : SourceOver */0
+      /* compositeOperation : SourceOver */0,
+      /* transformMatrix */Canvas$Gayer.defaultTransform
     ],
     /* :: */[
       pitchFilter(Music$Gayer.cMajor),
@@ -220,7 +247,8 @@ var slitscanParams_009 = /* layers : :: */[
     /* record */[
       /* content : Analysis */Block.__(3, [/* Mic */1]),
       /* alpha */0.25,
-      /* compositeOperation : SourceOver */0
+      /* compositeOperation : SourceOver */0,
+      /* transformMatrix */Canvas$Gayer.defaultTransform
     ],
     /* :: */[
       pitchFilter(Music$Gayer.cMajor),
@@ -245,10 +273,13 @@ var slitscanParams = /* record */[
   slitscanParams_009
 ];
 
+var debussyFile_000 = /* content : Analysis */Block.__(3, [/* AudioFile */["media/sade/is_it_a_crime.mp3"]]);
+
 var debussyFile = /* record */[
-  /* content : Analysis */Block.__(3, [/* AudioFile */["media/sade/is_it_a_crime.mp3"]]),
+  debussyFile_000,
   /* alpha */1.0,
-  /* compositeOperation : SourceOver */0
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform
 ];
 
 var debussy_009 = /* layers : :: */[
@@ -353,7 +384,11 @@ var presets = /* :: */[
   presets_001
 ];
 
+var defaultTransform = Canvas$Gayer.defaultTransform;
+
 export {
+  defaultTransform ,
+  baseLayer ,
   analyzer ,
   webcam ,
   slitscan ,
@@ -375,4 +410,4 @@ export {
   presets ,
   
 }
-/* spacy Not a pure module */
+/* hubble Not a pure module */

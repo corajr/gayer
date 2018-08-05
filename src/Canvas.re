@@ -135,6 +135,24 @@ let compositeOperation_of_string: string => compositeOperation =
   | "luminosity" => Luminosity
   | _ => SourceOver;
 
+type transformMatrix = {
+  horizontalScaling: float,
+  horizontalSkewing: float,
+  verticalSkewing: float,
+  verticalScaling: float,
+  horizontalMoving: float,
+  verticalMoving: float,
+};
+
+let defaultTransform: transformMatrix = {
+  horizontalScaling: 1.0,
+  horizontalSkewing: 0.0,
+  verticalSkewing: 0.0,
+  verticalScaling: 1.0,
+  horizontalMoving: 0.0,
+  verticalMoving: 0.0,
+};
+
 external getFromReact : Dom.element => canvasElement = "%identity";
 
 [@bs.send]
@@ -174,6 +192,33 @@ module Ctx = {
   [@bs.set] external setLineCap : (ctx, string) => unit = "lineCap";
 
   [@bs.set] external setFont : (ctx, string) => unit = "font";
+
+  [@bs.send]
+  external _setTransform :
+    (ctx, float, float, float, float, float, float) => unit =
+    "setTransform";
+
+  let setTransform: (ctx, transformMatrix) => unit =
+    (
+      ctx,
+      {
+        horizontalScaling,
+        horizontalSkewing,
+        verticalSkewing,
+        verticalScaling,
+        horizontalMoving,
+        verticalMoving,
+      },
+    ) =>
+      _setTransform(
+        ctx,
+        horizontalScaling,
+        horizontalSkewing,
+        verticalSkewing,
+        verticalScaling,
+        horizontalMoving,
+        verticalMoving,
+      );
 
   /* void ctx.drawImage(image, dx, dy); */
   [@bs.send]

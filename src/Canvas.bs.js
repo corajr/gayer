@@ -146,6 +146,11 @@ function setGlobalCompositeOperation(ctx, compositeOperation) {
   return /* () */0;
 }
 
+function setTransform(ctx, param) {
+  ctx.setTransform(param[/* horizontalScaling */0], param[/* horizontalSkewing */1], param[/* verticalSkewing */2], param[/* verticalScaling */3], param[/* horizontalMoving */4], param[/* verticalMoving */5]);
+  return /* () */0;
+}
+
 function circle(ctx, x, y, r) {
   ctx.ellipse(x, y, r, r, 0.0, 0.0, 2.0 * (Math.PI));
   return /* () */0;
@@ -171,6 +176,7 @@ function line(ctx, param, param$1) {
 
 var Ctx = /* module */[
   /* setGlobalCompositeOperation */setGlobalCompositeOperation,
+  /* setTransform */setTransform,
   /* circle */circle,
   /* moveToPos */moveToPos,
   /* lineToPos */lineToPos,
@@ -265,11 +271,21 @@ function wrapCoord(index, delta, size) {
   }
 }
 
+var defaultTransform = /* record */[
+  /* horizontalScaling */1.0,
+  /* horizontalSkewing */0.0,
+  /* verticalSkewing */0.0,
+  /* verticalScaling */1.0,
+  /* horizontalMoving */0.0,
+  /* verticalMoving */0.0
+];
+
 export {
   int_of_channel ,
   channel_of_int ,
   string_of_compositeOperation ,
   compositeOperation_of_string ,
+  defaultTransform ,
   Ctx ,
   simpleDrawImage ,
   mapRawData ,
