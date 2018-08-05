@@ -53,6 +53,8 @@ var defaultState_013 = /* loadedAudio : record */[/* contents */Belt_MapString.e
 
 var defaultState_014 = /* canvasRef : record */[/* contents */undefined];
 
+var defaultState_015 = /* scaleCanvas */4;
+
 var defaultState_016 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
@@ -71,7 +73,7 @@ var defaultState = /* record */[
   defaultState_012,
   defaultState_013,
   defaultState_014,
-  /* scaleCanvas */undefined,
+  defaultState_015,
   defaultState_016
 ];
 
@@ -220,7 +222,6 @@ function pushParamsState(newParams) {
 }
 
 function setLayers(params, newLayers) {
-  console.log("Changing layers to " + List.length(newLayers).toString());
   return pushParamsState(/* record */[
               /* readPosDelta */params[/* readPosDelta */0],
               /* writePosDelta */params[/* writePosDelta */1],

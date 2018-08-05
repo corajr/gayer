@@ -51,7 +51,7 @@ let defaultState: state = {
   loadedAudio: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
-  scaleCanvas: None,
+  scaleCanvas: Some(4),
   timerId: ref(None),
 };
 
@@ -154,10 +154,8 @@ let pushParamsState = newParams => {
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
-let setLayers = (params, newLayers) => {
-  Js.log("Changing layers to " ++ Js.Int.toString(List.length(newLayers)));
+let setLayers = (params, newLayers) =>
   pushParamsState({...params, layers: newLayers});
-};
 
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
