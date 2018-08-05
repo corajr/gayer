@@ -11,72 +11,29 @@ import * as Dragula$Gayer from "./Dragula.bs.js";
 import * as ReactDragula from "react-dragula";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as RList$Rationale from "rationale/src/RList.js";
-import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
-var defaultState_000 = /* dragContainerRef : record */[/* contents */undefined];
+var defaultState_000 = /* cards : record */[/* contents : [] */0];
 
-var defaultState_001 = /* dragulaRef : record */[/* contents */undefined];
+var defaultState_001 = /* dragContainerRef : record */[/* contents */undefined];
+
+var defaultState_002 = /* dragulaRef : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
-  defaultState_001
+  defaultState_001,
+  defaultState_002
 ];
 
 var component = ReasonReact.reducerComponent("Container");
 
 function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
-  var dropFn = function (el, _, _$1, sibling) {
-    if (el !== undefined) {
-      var elId = Js_primitive.valFromOption(el).id;
-      var ids = List.map((function (param) {
-              return param[/* id */0];
-            }), cards);
-      var match = RList$Rationale.indexOf(elId, ids);
-      var elIndex;
-      if (match !== undefined) {
-        elIndex = match;
-      } else {
-        throw Caml_builtin_exceptions.not_found;
-      }
-      var listMinusEl = RList$Rationale.remove(elIndex, 1, ids);
-      var siblingIndex;
-      if (sibling !== undefined) {
-        var sibId = Js_primitive.valFromOption(sibling).id;
-        siblingIndex = RList$Rationale.indexOf(sibId, listMinusEl);
-      } else {
-        siblingIndex = List.length(listMinusEl);
-      }
-      if (siblingIndex !== undefined) {
-        var ids$1 = RList$Rationale.insert(siblingIndex, elId, listMinusEl);
-        var idToLayer = List.fold_left((function (acc, param) {
-                return Belt_MapString.set(acc, param[/* id */0], param[/* layer */1]);
-              }), Belt_MapString.empty, cards);
-        var newLayers = List.fold_left((function (acc, id) {
-                var match = Belt_MapString.get(idToLayer, id);
-                if (match !== undefined) {
-                  return /* :: */[
-                          match,
-                          acc
-                        ];
-                } else {
-                  return acc;
-                }
-              }), /* [] */0, ids$1);
-        return Curry._1(onMoveCard, List.rev(newLayers));
-      } else {
-        throw Caml_builtin_exceptions.not_found;
-      }
-    } else {
-      return /* () */0;
-    }
-  };
   var dragulaDecorator = function (theRef, param) {
     var state = param[/* state */1];
-    state[/* dragContainerRef */0][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    state[/* dragContainerRef */1][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     var state$1 = state;
     var onUnmount = param[/* onUnmount */4];
-    var match = state$1[/* dragulaRef */1][0];
-    var match$1 = state$1[/* dragContainerRef */0][0];
+    var match = state$1[/* dragulaRef */2][0];
+    var match$1 = state$1[/* dragContainerRef */1][0];
     if (match !== undefined || match$1 === undefined) {
       return /* () */0;
     } else {
@@ -89,12 +46,58 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
                 }
               })
           });
-      Dragula$Gayer.onDrop(drake, dropFn);
+      Dragula$Gayer.onDrop(drake, (function (param, param$1, param$2, param$3) {
+              var state$2 = state$1;
+              var el = param;
+              var sibling = param$3;
+              var ids = List.map((function (param) {
+                      return param[/* id */0];
+                    }), state$2[/* cards */0][0]);
+              if (el !== undefined) {
+                var elId = Js_primitive.valFromOption(el).id;
+                var match = RList$Rationale.indexOf(elId, ids);
+                if (match !== undefined) {
+                  var listMinusEl = RList$Rationale.remove(match, 1, ids);
+                  var siblingIndex;
+                  if (sibling !== undefined) {
+                    var sibId = Js_primitive.valFromOption(sibling).id;
+                    siblingIndex = RList$Rationale.indexOf(sibId, listMinusEl);
+                  } else {
+                    siblingIndex = List.length(listMinusEl);
+                  }
+                  if (siblingIndex !== undefined) {
+                    var state$3 = state$2;
+                    var ids$1 = RList$Rationale.insert(siblingIndex, elId, listMinusEl);
+                    var idToLayer = List.fold_left((function (acc, param) {
+                            return Belt_MapString.set(acc, param[/* id */0], param[/* layer */1]);
+                          }), Belt_MapString.empty, state$3[/* cards */0][0]);
+                    var newLayers = List.fold_left((function (acc, id) {
+                            var match = Belt_MapString.get(idToLayer, id);
+                            if (match !== undefined) {
+                              return /* :: */[
+                                      match,
+                                      acc
+                                    ];
+                            } else {
+                              return acc;
+                            }
+                          }), /* [] */0, ids$1);
+                    return Curry._1(onMoveCard, List.rev(newLayers));
+                  } else {
+                    return /* () */0;
+                  }
+                } else {
+                  return /* () */0;
+                }
+              } else {
+                return /* () */0;
+              }
+            }));
       Curry._1(onUnmount, (function () {
               destroy(drake);
               return /* () */0;
             }));
-      state$1[/* dragulaRef */1][0] = Js_primitive.some(drake);
+      state$1[/* dragulaRef */2][0] = Js_primitive.some(drake);
       return /* () */0;
     }
   };
@@ -102,7 +105,10 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
-          /* willReceiveProps */component[/* willReceiveProps */3],
+          /* willReceiveProps */(function (self) {
+              self[/* state */1][/* cards */0][0] = cards;
+              return self[/* state */1];
+            }),
           /* didMount */component[/* didMount */4],
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],

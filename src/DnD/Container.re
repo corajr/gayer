@@ -3,22 +3,27 @@ module RList = Rationale.RList;
 open Dragula;
 
 type state = {
+  cards: ref(list(T.card)),
   dragContainerRef: ref(option(Dom.element)),
   dragulaRef: ref(option(drake)),
 };
 
-let defaultState = {dragContainerRef: ref(None), dragulaRef: ref(None)};
+let defaultState = {
+  cards: ref([]),
+  dragContainerRef: ref(None),
+  dragulaRef: ref(None),
+};
 
 let component = ReasonReact.reducerComponent("Container");
 
 let make =
     (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, ~getAudio, _children) => {
-  let handleCardsChange = ids => {
+  let handleCardsChange = (state, ids) => {
     let idToLayer =
       List.fold_left(
         (acc, {T.id, T.layer}) => Belt.Map.String.set(acc, id, layer),
         Belt.Map.String.empty,
-        cards,
+        state.cards^,
       );
 
     let newLayers =
@@ -35,32 +40,36 @@ let make =
     onMoveCard(List.rev(newLayers));
   };
 
-  let dropFn: dropFn =
-    (~el, ~target, ~source, ~sibling) =>
+  let makeDropFn: state => dropFn =
+    (state, ~el, ~target, ~source, ~sibling) => {
+      let ids = List.map(({T.id}) => id, state.cards^);
+
       switch (el) {
       | Some(el) =>
         let elId = ReactDOMRe.domElementToObj(el)##id;
-        let ids = List.map(({T.id}) => id, cards);
-        let elIndex =
-          switch (RList.indexOf(elId, ids)) {
-          | Some(i) => i
-          | None => raise(Not_found)
+        switch (RList.indexOf(elId, ids)) {
+        | Some(elIndex) =>
+          let listMinusEl = ids |> RList.remove(elIndex, 1);
+          let siblingIndex =
+            switch (sibling) {
+            | Some(sibling) =>
+              let sibId = ReactDOMRe.domElementToObj(sibling)##id;
+              RList.indexOf(sibId, listMinusEl);
+            | None => Some(List.length(listMinusEl))
+            };
+          switch (siblingIndex) {
+          | Some(siblingIndex) =>
+            handleCardsChange(
+              state,
+              RList.insert(siblingIndex, elId, listMinusEl),
+            )
+          | None => ()
           };
-        let listMinusEl = ids |> RList.remove(elIndex, 1);
-        let siblingIndex =
-          switch (sibling) {
-          | Some(sibling) =>
-            let sibId = ReactDOMRe.domElementToObj(sibling)##id;
-            RList.indexOf(sibId, listMinusEl);
-          | None => Some(List.length(listMinusEl))
-          };
-        switch (siblingIndex) {
-        | Some(siblingIndex) =>
-          handleCardsChange(RList.insert(siblingIndex, elId, listMinusEl))
-        | None => raise(Not_found)
+        | None => ()
         };
       | None => ()
       };
+    };
 
   let connectDragula = (state, onUnmount) =>
     switch (state.dragulaRef^, state.dragContainerRef^) {
@@ -78,7 +87,7 @@ let make =
             (),
           ),
         );
-      onDrop(drake, dropFn);
+      onDrop(drake, makeDropFn(state));
       onUnmount(() => destroy(drake));
       state.dragulaRef := Some(drake);
       ();
@@ -93,6 +102,10 @@ let make =
   {
     ...component,
     initialState: () => defaultState,
+    willReceiveProps: self => {
+      self.state.cards := cards;
+      self.state;
+    },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>
       <div ref=(self.handle(dragulaDecorator))>
