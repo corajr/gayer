@@ -13,13 +13,10 @@ module RList = Rationale.RList;
 
 type filterInput = audioNode;
 
-type visualInput = option(canvasImageSource);
-
 type state = {
   readPos: ref(int),
   writePos: ref(int),
   filterInput: option(audioNode),
-  visualInput,
   params,
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
@@ -28,6 +25,7 @@ type state = {
   filterBank: option(filterBank),
   compressor: ref(option(compressor)),
   analysisCanvasRef: ref(option(Dom.element)),
+  savedImages: list(string),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
@@ -40,18 +38,18 @@ let defaultState: state = {
   writePos: ref(0),
   presetDrawerOpen: false,
   filterInput: None,
-  visualInput: None,
   mediaStream: None,
   micInput: None,
   cameraInput: ref(None),
   params: snd(List.nth(presets, 0)),
   filterBank: None,
   compressor: ref(None),
+  savedImages: [],
   loadedImages: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
-  scaleCanvas: Some(4),
+  scaleCanvas: Some(2),
   timerId: ref(None),
 };
 
@@ -60,6 +58,8 @@ type action =
   | Tick
   | TogglePresetDrawer
   | LoadAudioFile(string)
+  | SaveImage
+  | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
@@ -302,6 +302,23 @@ let make =
   initialState: () => defaultState,
   reducer: (action, state) =>
     switch (action) {
+    | AddSavedImage(url) =>
+      ReasonReact.Update({
+        ...state,
+        savedImages: [url, ...state.savedImages],
+      })
+    | SaveImage =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            switch (state.canvasRef^) {
+            | None => ()
+            | Some(canvas) =>
+              let url = toDataURL(getFromReact(canvas));
+              self.send(AddSavedImage(url));
+            }
+        ),
+      )
     | TogglePresetDrawer =>
       ReasonReact.Update({
         ...state,
@@ -553,22 +570,64 @@ let make =
               />
             </Grid>
             <Grid item=true xs=Grid.V6>
-              <canvas
-                ref=(self.handle(setCanvasRef))
-                width=(Js.Int.toString(width))
-                height=(Js.Int.toString(height))
+              <div
                 style=(
-                  switch (self.state.scaleCanvas) {
-                  | None => ReactDOMRe.Style.make()
-                  | Some(i) =>
-                    ReactDOMRe.Style.make(
-                      ~transform="scale(" ++ Js.Int.toString(i) ++ ")",
-                      ~transformOrigin="top left",
-                      (),
-                    )
-                  }
+                  ReactDOMRe.Style.make(
+                    ~marginBottom="24px",
+                    ~minHeight=
+                      Js.Int.toString(
+                        switch (self.state.scaleCanvas) {
+                        | None => height
+                        | Some(i) => height * i
+                        },
+                      )
+                      ++ "px",
+                    (),
+                  )
+                )>
+                <canvas
+                  ref=(self.handle(setCanvasRef))
+                  onClick=(
+                    evt => {
+                      Js.log(evt);
+                      self.send(SaveImage);
+                    }
+                  )
+                  width=(Js.Int.toString(width))
+                  height=(Js.Int.toString(height))
+                  style=(
+                    switch (self.state.scaleCanvas) {
+                    | None => ReactDOMRe.Style.make()
+                    | Some(i) =>
+                      ReactDOMRe.Style.make(
+                        ~transform="scale(" ++ Js.Int.toString(i) ++ ")",
+                        ~transformOrigin="top left",
+                        (),
+                      )
+                    }
+                  )
+                />
+              </div>
+              <div>
+                <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
+                  <Button
+                    variant=`Contained onClick=(evt => self.send(SaveImage))>
+                    <MaterialUIIcons.PhotoCamera />
+                    (ReasonReact.string("Snapshot"))
+                  </Button>
+                </div>
+                (
+                  self.state.savedImages
+                  |> Array.of_list
+                  |> Array.map(url =>
+                       <img
+                         key=(Js.Int.toString(Hashtbl.hash(url)))
+                         src=url
+                       />
+                     )
+                  |> ReasonReact.array
                 )
-              />
+              </div>
             </Grid>
           </Grid>
         </div>

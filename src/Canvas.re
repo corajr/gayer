@@ -155,6 +155,8 @@ let defaultTransform: transformMatrix = {
 
 external getFromReact : Dom.element => canvasElement = "%identity";
 
+[@bs.send] external toDataURL : canvasElement => string = "";
+
 [@bs.send]
 external getContext :
   (canvasElement, [@bs.as "2d"] _) => canvasRenderingContext2D =
