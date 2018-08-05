@@ -136,35 +136,41 @@ module EncodeLayer = {
 };
 
 let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
-  switch (layerContent) {
-  | Webcam(_) =>
-    <video ref=setRef autoPlay=true muted=true width="120" height="120" />
-  | Image(url) => <img ref=setRef src=url width="120" height="120" />
-  | Analysis(source) =>
-    let (audioCtx, input) = getAudio(source);
+  <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div>
-      <AnalysisCanvas size=120 audioCtx input saveRef=setRef />
+      (
+        switch (layerContent) {
+        | Webcam(_) =>
+          <video
+            ref=setRef
+            autoPlay=true
+            muted=true
+            width="120"
+            height="120"
+          />
+        | Image(url) => <img ref=setRef src=url width="120" height="120" />
+        | Analysis(source) =>
+          let (audioCtx, input) = getAudio(source);
+          <AnalysisCanvas size=120 audioCtx input saveRef=setRef />;
+        | PitchClasses(_)
+        | Fill(_)
+        | Reader(_) => ReasonReact.null
+        }
+      )
+    </div>
+    <div>
       <MaterialUi.Typography>
         (
           ReasonReact.string(
-            "CQT: "
-            ++ Js.Json.stringify(EncodeAudioInput.audioInputSetting(source)),
+            Js.Json.stringifyWithSpace(
+              EncodeLayer.layerContent(layerContent),
+              2,
+            ),
           )
         )
       </MaterialUi.Typography>
-    </div>;
-  | Fill(s) => ReasonReact.string("fill: " ++ s)
-  | PitchClasses(pc) =>
-    let pitches = List.map(string_of_int, PitchSet.elements(pc));
-    let pitchStr = Rationale.RList.join(", ", pitches);
-    <div>
-      <MaterialUi.Typography>
-        (ReasonReact.string("Filter pitches: " ++ pitchStr))
-      </MaterialUi.Typography>
-    </div>;
-  | Fill(s) => ReasonReact.string("fill: " ++ s)
-  | Reader(channel) => ReasonReact.string("reader")
-  };
+    </div>
+  </div>;
 
 let component = ReasonReact.statelessComponent("Layer");
 
