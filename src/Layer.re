@@ -136,35 +136,35 @@ module EncodeLayer = {
 };
 
 let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
-  MaterialUi.(
-    switch (layerContent) {
-    | Webcam(_) =>
-      <video ref=setRef autoPlay=true muted=true width="120" height="120" />
-    | Image(url) => <img ref=setRef src=url width="120" height="120" />
-    | Analysis(source) =>
-      let (audioCtx, input) = getAudio(source);
-      <div>
-        <AnalysisCanvas size=120 audioCtx input saveRef=setRef />
-        <Typography>
-          (
-            ReasonReact.string(
-              "CQT: "
-              ++ Js.Json.stringify(
-                   EncodeAudioInput.audioInputSetting(source),
-                 ),
-            )
+  switch (layerContent) {
+  | Webcam(_) =>
+    <video ref=setRef autoPlay=true muted=true width="120" height="120" />
+  | Image(url) => <img ref=setRef src=url width="120" height="120" />
+  | Analysis(source) =>
+    let (audioCtx, input) = getAudio(source);
+    <div>
+      <AnalysisCanvas size=120 audioCtx input saveRef=setRef />
+      <MaterialUi.Typography>
+        (
+          ReasonReact.string(
+            "CQT: "
+            ++ Js.Json.stringify(EncodeAudioInput.audioInputSetting(source)),
           )
-        </Typography>
-      </div>;
-    | Fill(s) => ReasonReact.string("fill: " ++ s)
-    | PitchClasses(pc) =>
-      <div>
-        <Typography> (ReasonReact.string("Filter pitches")) </Typography>
-      </div>
-    | Fill(s) => ReasonReact.string("fill: " ++ s)
-    | Reader(channel) => ReasonReact.string("reader")
-    }
-  );
+        )
+      </MaterialUi.Typography>
+    </div>;
+  | Fill(s) => ReasonReact.string("fill: " ++ s)
+  | PitchClasses(pc) =>
+    let pitches = List.map(string_of_int, PitchSet.elements(pc));
+    let pitchStr = Rationale.RList.join(", ", pitches);
+    <div>
+      <MaterialUi.Typography>
+        (ReasonReact.string("Filter pitches: " ++ pitchStr))
+      </MaterialUi.Typography>
+    </div>;
+  | Fill(s) => ReasonReact.string("fill: " ++ s)
+  | Reader(channel) => ReasonReact.string("reader")
+  };
 
 let component = ReasonReact.statelessComponent("Layer");
 
