@@ -10,6 +10,8 @@ import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Dragula$Gayer from "./Dragula.bs.js";
 import * as ReactDragula from "react-dragula";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as RList$Rationale from "rationale/src/RList.js";
+import * as Caml_builtin_exceptions from "bs-platform/lib/es6/caml_builtin_exceptions.js";
 
 var defaultState_000 = /* dragContainerRef : record */[/* contents */undefined];
 
@@ -23,27 +25,47 @@ var defaultState = /* record */[
 var component = ReasonReact.reducerComponent("Container");
 
 function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
-  var dropFn = function (_, target, _$1, _$2) {
-    if (target !== undefined) {
-      var children = Js_primitive.valFromOption(target).childNodes;
-      var ids = $$Array.map((function (elt) {
-              return elt.id;
-            }), children);
-      var idToLayer = List.fold_left((function (acc, param) {
-              return Belt_MapString.set(acc, param[/* id */0], param[/* layer */1]);
-            }), Belt_MapString.empty, cards);
-      var newLayers = $$Array.fold_left((function (acc, id) {
-              var match = Belt_MapString.get(idToLayer, id);
-              if (match !== undefined) {
-                return /* :: */[
-                        match,
-                        acc
-                      ];
-              } else {
-                return acc;
-              }
-            }), /* [] */0, ids);
-      return Curry._1(onMoveCard, List.rev(newLayers));
+  var dropFn = function (el, _, _$1, sibling) {
+    if (el !== undefined) {
+      var elId = Js_primitive.valFromOption(el).id;
+      var ids = List.map((function (param) {
+              return param[/* id */0];
+            }), cards);
+      var match = RList$Rationale.indexOf(elId, ids);
+      var elIndex;
+      if (match !== undefined) {
+        elIndex = match;
+      } else {
+        throw Caml_builtin_exceptions.not_found;
+      }
+      var listMinusEl = RList$Rationale.remove(elIndex, 1, ids);
+      var siblingIndex;
+      if (sibling !== undefined) {
+        var sibId = Js_primitive.valFromOption(sibling).id;
+        siblingIndex = RList$Rationale.indexOf(sibId, listMinusEl);
+      } else {
+        siblingIndex = List.length(listMinusEl);
+      }
+      if (siblingIndex !== undefined) {
+        var ids$1 = RList$Rationale.insert(siblingIndex, elId, listMinusEl);
+        var idToLayer = List.fold_left((function (acc, param) {
+                return Belt_MapString.set(acc, param[/* id */0], param[/* layer */1]);
+              }), Belt_MapString.empty, cards);
+        var newLayers = List.fold_left((function (acc, id) {
+                var match = Belt_MapString.get(idToLayer, id);
+                if (match !== undefined) {
+                  return /* :: */[
+                          match,
+                          acc
+                        ];
+                } else {
+                  return acc;
+                }
+              }), /* [] */0, ids$1);
+        return Curry._1(onMoveCard, List.rev(newLayers));
+      } else {
+        throw Caml_builtin_exceptions.not_found;
+      }
     } else {
       return /* () */0;
     }
@@ -67,7 +89,6 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
                 }
               })
           });
-      console.log(drake);
       Dragula$Gayer.onDrop(drake, dropFn);
       Curry._1(onUnmount, (function () {
               destroy(drake);

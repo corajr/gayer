@@ -29,6 +29,7 @@ let pitchFilter = pc => {
 let fill = (~alpha: float=1.0, fillStyle: string) => {
   ...baseLayer,
   content: Fill(fillStyle),
+  alpha,
 };
 
 let img = url => {...baseLayer, content: Image(url)};
@@ -38,6 +39,7 @@ let hubble = img("media/hubble_ultra_deep_field.jpg");
 let spacy = [hubble, pitchFilter(cMajor), reader];
 
 let harmony = [
+  fill("black", ~alpha=0.1),
   {
     ...img("media/harmony.png"),
     transformMatrix: {

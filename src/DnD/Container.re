@@ -22,7 +22,7 @@ let make =
       );
 
     let newLayers =
-      Array.fold_left(
+      List.fold_left(
         (acc, id) =>
           switch (Belt.Map.String.get(idToLayer, id)) {
           | None => acc
@@ -37,13 +37,29 @@ let make =
 
   let dropFn: dropFn =
     (~el, ~target, ~source, ~sibling) =>
-      switch (target) {
+      switch (el) {
+      | Some(el) =>
+        let elId = ReactDOMRe.domElementToObj(el)##id;
+        let ids = List.map(({T.id}) => id, cards);
+        let elIndex =
+          switch (RList.indexOf(elId, ids)) {
+          | Some(i) => i
+          | None => raise(Not_found)
+          };
+        let listMinusEl = ids |> RList.remove(elIndex, 1);
+        let siblingIndex =
+          switch (sibling) {
+          | Some(sibling) =>
+            let sibId = ReactDOMRe.domElementToObj(sibling)##id;
+            RList.indexOf(sibId, listMinusEl);
+          | None => Some(List.length(listMinusEl))
+          };
+        switch (siblingIndex) {
+        | Some(siblingIndex) =>
+          handleCardsChange(RList.insert(siblingIndex, elId, listMinusEl))
+        | None => raise(Not_found)
+        };
       | None => ()
-      | Some(target) =>
-        let children: array(Dom.element) = ReactDOMRe.domElementToObj(target)##childNodes;
-        let childIds =
-          Array.map(elt => ReactDOMRe.domElementToObj(elt)##id, children);
-        handleCardsChange(childIds);
       };
 
   let connectDragula = (state, onUnmount) =>
@@ -62,7 +78,6 @@ let make =
             (),
           ),
         );
-      Js.log(drake);
       onDrop(drake, dropFn);
       onUnmount(() => destroy(drake));
       state.dragulaRef := Some(drake);

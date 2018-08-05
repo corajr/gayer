@@ -59,7 +59,6 @@ type action =
   | Clear
   | Tick
   | TogglePresetDrawer
-  | SetLayers(list(layer))
   | LoadAudioFile(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -153,6 +152,11 @@ let clearCanvas = (canvasElement, width, height) => {
 let pushParamsState = newParams => {
   let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
   ReasonReact.Router.push("#" ++ newParamsJson);
+};
+
+let setLayers = (params, newLayers) => {
+  Js.log("Changing layers to " ++ Js.Int.toString(List.length(newLayers)));
+  pushParamsState({...params, layers: newLayers});
 };
 
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
@@ -324,10 +328,6 @@ let make =
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
-      )
-    | SetLayers(layers) =>
-      ReasonReact.SideEffects(
-        (_self => pushParamsState({...state.params, layers})),
       )
     | SetFilterBank(filterBank) =>
       ReasonReact.UpdateWithSideEffects(
@@ -534,16 +534,15 @@ let make =
             <Grid item=true xs=Grid.V6>
               <Params
                 params=self.state.params
-                onMoveCard=(layers => self.send(SetLayers(layers)))
+                onMoveCard=(layers => setLayers(self.state.params, layers))
                 onChangeLayer=(
                   (oldLayer, newLayer) =>
-                    self.send(
-                      SetLayers(
-                        changeLayer(
-                          oldLayer,
-                          newLayer,
-                          self.state.params.layers,
-                        ),
+                    setLayers(
+                      self.state.params,
+                      changeLayer(
+                        oldLayer,
+                        newLayer,
+                        self.state.params.layers,
                       ),
                     )
                 )

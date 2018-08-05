@@ -59,10 +59,11 @@ function pitchFilter(pc) {
         ];
 }
 
-function fill(_, fillStyle) {
+function fill($staropt$star, fillStyle) {
+  var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
   return /* record */[
           /* content : Fill */Block.__(0, [fillStyle]),
-          /* alpha */1.0,
+          /* alpha */alpha,
           /* compositeOperation : SourceOver */0,
           /* transformMatrix */Canvas$Gayer.defaultTransform
         ];
@@ -94,39 +95,42 @@ var spacy = /* :: */[
 
 var init = img("media/harmony.png");
 
-var harmony_000 = /* record */[
-  /* content */init[/* content */0],
-  /* alpha */init[/* alpha */1],
-  /* compositeOperation */init[/* compositeOperation */2],
-  /* transformMatrix : record */[
-    /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
-    /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
-    /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
-    /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
-    /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
-    /* verticalMoving */48.0
-  ]
-];
+var harmony_000 = fill(0.1, "black");
 
 var harmony_001 = /* :: */[
   /* record */[
-    /* content : Analysis */Block.__(3, [/* Mic */1]),
-    /* alpha */0.1,
-    /* compositeOperation : Overlay */13,
-    /* transformMatrix */Canvas$Gayer.defaultTransform
+    /* content */init[/* content */0],
+    /* alpha */init[/* alpha */1],
+    /* compositeOperation */init[/* compositeOperation */2],
+    /* transformMatrix : record */[
+      /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
+      /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
+      /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
+      /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
+      /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
+      /* verticalMoving */48.0
+    ]
   ],
   /* :: */[
     /* record */[
-      /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
+      /* content : Analysis */Block.__(3, [/* Mic */1]),
       /* alpha */0.1,
       /* compositeOperation : Overlay */13,
       /* transformMatrix */Canvas$Gayer.defaultTransform
     ],
     /* :: */[
-      pitchFilter(Music$Gayer.cMajor),
+      /* record */[
+        /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
+        /* alpha */0.1,
+        /* compositeOperation : Overlay */13,
+        /* transformMatrix */Canvas$Gayer.defaultTransform
+      ],
       /* :: */[
-        reader,
-        /* [] */0
+        pitchFilter(Music$Gayer.cMajor),
+        /* :: */[
+          reader,
+          /* [] */0
+        ]
       ]
     ]
   ]
