@@ -174,6 +174,33 @@ var slitscanParams = /* record */[
   slitscanParams_009
 ];
 
+var debussyFile = /* record */[
+  /* content : Analysis */Block.__(3, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]),
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
+var debussy_009 = /* layers : :: */[
+  debussyFile,
+  /* :: */[
+    reader,
+    /* [] */0
+  ]
+];
+
+var debussy = /* record */[
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
+  /* audioInputSetting : PinkNoise */0,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* q */Audio$Gayer.defaultQ,
+  /* transpose */0,
+  /* shouldClear */false,
+  debussy_009
+];
+
 var presets_000 = /* tuple */[
   "Default",
   defaultParams
@@ -186,28 +213,17 @@ var presets_001 = /* :: */[
   ],
   /* :: */[
     /* tuple */[
-      "Feedback (may be loud!)",
-      feedback
+      "Debussy",
+      debussy
     ],
     /* :: */[
       /* tuple */[
-        "Overstuffed",
-        /* record */[
-          /* readPosDelta */1,
-          /* writePosDelta */1,
-          /* writePosOffset */0,
-          /* audioInputSetting : PinkNoise */0,
-          /* inputGain */1.0,
-          /* outputGain */0.1,
-          /* q */Audio$Gayer.defaultQ,
-          /* transpose */0,
-          /* shouldClear */true,
-          /* layers */allLayerTypes
-        ]
+        "Feedback (may be loud!)",
+        feedback
       ],
       /* :: */[
         /* tuple */[
-          "Empty",
+          "Overstuffed",
           /* record */[
             /* readPosDelta */1,
             /* writePosDelta */1,
@@ -218,10 +234,27 @@ var presets_001 = /* :: */[
             /* q */Audio$Gayer.defaultQ,
             /* transpose */0,
             /* shouldClear */true,
-            /* layers : [] */0
+            /* layers */allLayerTypes
           ]
         ],
-        /* [] */0
+        /* :: */[
+          /* tuple */[
+            "Empty",
+            /* record */[
+              /* readPosDelta */1,
+              /* writePosDelta */1,
+              /* writePosOffset */0,
+              /* audioInputSetting : PinkNoise */0,
+              /* inputGain */1.0,
+              /* outputGain */0.1,
+              /* q */Audio$Gayer.defaultQ,
+              /* transpose */0,
+              /* shouldClear */true,
+              /* layers : [] */0
+            ]
+          ],
+          /* [] */0
+        ]
       ]
     ]
   ]
@@ -246,6 +279,8 @@ export {
   defaultParams ,
   feedback ,
   slitscanParams ,
+  debussyFile ,
+  debussy ,
   presets ,
   
 }

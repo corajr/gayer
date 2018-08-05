@@ -58,6 +58,7 @@ type action =
   | Tick
   | TogglePresetDrawer
   | SetLayers(list(layer))
+  | LoadAudioFile(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
@@ -73,7 +74,15 @@ let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
 let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   switch (layer.content, maybeRef) {
-  | (Analysis(_), Some(aRef)) => state.analysisCanvasRef := maybeRef
+  | (Analysis(source), Some(_)) =>
+    state.analysisCanvasRef := maybeRef;
+    switch (source) {
+    | AudioFile(url) =>
+      if (! Belt.Map.String.has(state.loadedAudio^, url)) {
+        send(LoadAudioFile(url));
+      }
+    | _ => ()
+    };
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -251,7 +260,7 @@ let getAnalysisInput:
   (audioContext, option(audioNode)) =
   (audioCtx, state, audioInput) =>
     switch (audioInput) {
-    | AudioFile(s) => (audioCtx, None)
+    | AudioFile(s) => (audioCtx, Belt.Map.String.get(state.loadedAudio^, s))
     | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
     | Mic => (audioCtx, state.micInput)
     };
@@ -268,6 +277,20 @@ external requestAnimationFrame :
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
 
+let makeAudioElt: string => Dom.element = [%bs.raw
+  url => {|
+     var audio = document.createElement("audio");
+     audio.id = "audio-elt";
+     audio.src = url;
+     audio.loop = true;
+     audio.autoplay = true;
+     console.log(audio);
+
+     document.body.appendChild(audio);
+     return audio;
+     |}
+];
+
 let make =
     (~width=120, ~height=120, ~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
@@ -279,6 +302,17 @@ let make =
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
+    | LoadAudioFile(url) =>
+      ReasonReact.SideEffects(
+        (
+          _self => {
+            let elt = makeAudioElt(url);
+            let mediaElementSource = createMediaElementSource(audioCtx, elt);
+            state.loadedAudio :=
+              Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
+          }
+        ),
+      )
     | SetParams(params) => ReasonReact.Update({...state, params})
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetMediaStream(stream) =>
@@ -414,14 +448,15 @@ let make =
 
     if (oldSelf.state.params.audioInputSetting
         != newSelf.state.params.audioInputSetting) {
-      switch (newSelf.state.params.audioInputSetting) {
-      | AudioFile(_) => () /* nothing yet */
-      | PinkNoise => newSelf.send(SetFilterInput(pinkNoise(audioCtx)))
-      | Mic =>
-        switch (newSelf.state.micInput) {
-        | Some(mic) => newSelf.send(SetFilterInput(mic))
-        | None => ()
-        }
+      let (_, audio) =
+        getAnalysisInput(
+          audioCtx,
+          newSelf.state,
+          newSelf.state.params.audioInputSetting,
+        );
+      switch (audio) {
+      | None => ()
+      | Some(audio) => newSelf.send(SetFilterInput(audio))
       };
     };
   },
@@ -429,20 +464,21 @@ let make =
   render: self =>
     MaterialUi.(
       <div>
-        <CssBaseline />
-        <AppBar position=`Sticky>
-          <Toolbar>
-            <IconButton
-              color=`Inherit onClick=(_evt => self.send(TogglePresetDrawer))>
-              <MaterialUIIcons.Menu />
-            </IconButton>
-            <Typography variant=`Title color=`Inherit>
-              (ReasonReact.string("GAYER"))
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
 
+          <CssBaseline />
+          <AppBar position=`Sticky>
+            <Toolbar>
+              <IconButton
+                color=`Inherit
+                onClick=(_evt => self.send(TogglePresetDrawer))>
+                <MaterialUIIcons.Menu />
+              </IconButton>
+              <Typography variant=`Title color=`Inherit>
+                (ReasonReact.string("GAYER"))
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
             <SizedDrawer
               render=(
                 classes =>
@@ -534,12 +570,12 @@ let make =
               </Grid>
             </Grid>
           </div>
-          /* <AnalysisCanvas */
-          /*   size=height */
-          /*   audioCtx */
-          /*   input=self.state.micInput */
-          /*   saveRef=(self.handle(setAnalysisCanvasRef)) */
-          /* /> */
-      </div>
+        </div>
+        /* <AnalysisCanvas */
+        /*   size=height */
+        /*   audioCtx */
+        /*   input=self.state.micInput */
+        /*   saveRef=(self.handle(setAnalysisCanvasRef)) */
+        /* /> */
     ),
 };

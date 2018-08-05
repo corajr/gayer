@@ -89,9 +89,23 @@ let slitscanParams = {
   ],
 };
 
+let debussyFile = {
+  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
+  alpha: 1.0,
+  compositeOperation: SourceOver,
+};
+
+let debussy = {
+  ...defaultParams,
+  shouldClear: false,
+  audioInputSetting: PinkNoise,
+  layers: [debussyFile, reader],
+};
+
 let presets = [
   ("Default", defaultParams),
   ("Slitscan", slitscanParams),
+  ("Debussy", debussy),
   ("Feedback (may be loud!)", feedback),
   ("Overstuffed", {...defaultParams, layers: allLayerTypes}),
   ("Empty", {...defaultParams, layers: []}),

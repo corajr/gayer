@@ -117,6 +117,10 @@ external getFrequencyResponse :
 external createMediaStreamSource : (audioContext, mediaStream) => audioNode =
   "";
 
+[@bs.send]
+external createMediaElementSource : (audioContext, Dom.element) => audioNode =
+  "";
+
 [@bs.send] external setValueAtTime : (audioParam, float, float) => unit = "";
 
 [@bs.send]

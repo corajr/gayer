@@ -114,8 +114,18 @@ function setLayerRef(param, param$1) {
         if (theRef == null) {
           return /* () */0;
         } else {
+          var source = match[0];
           state[/* analysisCanvasRef */11][0] = maybeRef;
-          return /* () */0;
+          if (typeof source === "number") {
+            return /* () */0;
+          } else {
+            var url = source[0];
+            if (Belt_MapString.has(state[/* loadedAudio */13][0], url)) {
+              return 0;
+            } else {
+              return Curry._1(param$1[/* send */3], /* LoadAudioFile */Block.__(1, [url]));
+            }
+          }
         }
     default:
       return /* () */0;
@@ -314,10 +324,22 @@ function getAnalysisInput(audioCtx, state, audioInput) {
   } else {
     return /* tuple */[
             audioCtx,
-            undefined
+            Belt_MapString.get(state[/* loadedAudio */13][0], audioInput[0])
           ];
   }
 }
+
+var makeAudioElt = function (url){
+     var audio = document.createElement("audio");
+     audio.id = "audio-elt";
+     audio.src = url;
+     audio.loop = true;
+     audio.autoplay = true;
+     console.log(audio);
+
+     document.body.appendChild(audio);
+     return audio;
+     };
 
 function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
   var width = $staropt$star !== undefined ? $staropt$star : 120;
@@ -333,15 +355,15 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               compressor.connect(audioCtx.destination);
               self[/* state */1][/* compressor */10][0] = Js_primitive.some(compressor);
               var noise = Audio$Gayer.pinkNoise(audioCtx);
-              Curry._1(self[/* send */3], /* SetFilterInput */Block.__(1, [noise]));
+              Curry._1(self[/* send */3], /* SetFilterInput */Block.__(2, [noise]));
               var filterBank = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */4][/* transpose */7] | 0));
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(4, [filterBank]));
+              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(5, [filterBank]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match !== undefined) {
                 Js_primitive.valFromOption(match).then((function (stream) {
-                        Curry._1(self[/* send */3], /* SetMediaStream */Block.__(3, [stream]));
+                        Curry._1(self[/* send */3], /* SetMediaStream */Block.__(4, [stream]));
                         var audio = audioCtx.createMediaStreamSource(stream);
-                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
+                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(3, [audio]));
                         return Promise.resolve(/* () */0);
                       }));
               }
@@ -355,7 +377,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       if (match !== undefined) {
                         var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */0], Js_primitive.valFromOption(match));
                         if (match$1 !== undefined) {
-                          return Curry._1(self[/* send */3], /* SetParams */Block.__(5, [match$1]));
+                          return Curry._1(self[/* send */3], /* SetParams */Block.__(6, [match$1]));
                         } else {
                           console.log("unable to decode params");
                           return /* () */0;
@@ -382,18 +404,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* audioInputSetting */3], newSelf[/* state */1][/* params */4][/* audioInputSetting */3])) {
-                var match = newSelf[/* state */1][/* params */4][/* audioInputSetting */3];
-                if (typeof match === "number") {
-                  if (match !== 0) {
-                    var match$1 = newSelf[/* state */1][/* micInput */7];
-                    if (match$1 !== undefined) {
-                      return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [match$1]));
-                    } else {
-                      return /* () */0;
-                    }
-                  } else {
-                    return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [Audio$Gayer.pinkNoise(audioCtx)]));
-                  }
+                var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */4][/* audioInputSetting */3]);
+                var audio = match[1];
+                if (audio !== undefined) {
+                  return Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(2, [audio]));
                 } else {
                   return /* () */0;
                 }
@@ -542,6 +556,14 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                               ]);
                                   })]);
                   case 1 : 
+                      var url = action[0];
+                      return /* SideEffects */Block.__(1, [(function () {
+                                    var elt = makeAudioElt(url);
+                                    var mediaElementSource = audioCtx.createMediaElementSource(elt);
+                                    state[/* loadedAudio */13][0] = Belt_MapString.set(state[/* loadedAudio */13][0], url, mediaElementSource);
+                                    return /* () */0;
+                                  })]);
+                  case 2 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* readPos */state[/* readPos */0],
@@ -565,7 +587,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
-                  case 2 : 
+                  case 3 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* readPos */state[/* readPos */0],
                                   /* writePos */state[/* writePos */1],
@@ -584,7 +606,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* timerId */state[/* timerId */15]
                                 ]]);
-                  case 3 : 
+                  case 4 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* readPos */state[/* readPos */0],
                                   /* writePos */state[/* writePos */1],
@@ -603,7 +625,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* timerId */state[/* timerId */15]
                                 ]]);
-                  case 4 : 
+                  case 5 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
                                 /* record */[
                                   /* readPos */state[/* readPos */0],
@@ -627,7 +649,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
-                  case 5 : 
+                  case 6 : 
                       return /* Update */Block.__(0, [/* record */[
                                   /* readPos */state[/* readPos */0],
                                   /* writePos */state[/* writePos */1],
@@ -676,6 +698,7 @@ export {
   drawLayer ,
   drawCanvas ,
   getAnalysisInput ,
+  makeAudioElt ,
   make ,
   
 }
