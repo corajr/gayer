@@ -49,6 +49,14 @@ let hubble = img("media/hubble_ultra_deep_field.jpg");
 
 let spacy = [hubble, pitchFilter(cMajor), reader];
 
+let harmony = [
+  img("media/harmony.png"),
+  {...analyzer, alpha: 0.1, compositeOperation: Overlay},
+  {...slitscan, alpha: 0.1, compositeOperation: Overlay},
+  pitchFilter(cMajor),
+  reader,
+];
+
 let allLayerTypes = [
   hubble,
   analyzer,
@@ -72,6 +80,18 @@ let defaultParams: params = {
   layers: spacy,
 };
 
+let harmonyParams = {
+  ...defaultParams,
+  layers: harmony,
+  transpose: (-48),
+  shouldClear: false,
+};
+
+let harmonyIntensified = {
+  ...harmonyParams,
+  layers: [img("media/harmony_intensified.png"), reader],
+};
+
 let feedback = {
   ...defaultParams,
   audioInputSetting: Mic,
@@ -90,7 +110,7 @@ let slitscanParams = {
 };
 
 let debussyFile = {
-  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
+  content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")),
   alpha: 1.0,
   compositeOperation: SourceOver,
 };
@@ -103,10 +123,12 @@ let debussy = {
 };
 
 let presets = [
-  ("Default", defaultParams),
+  ("Harmony", harmonyParams),
+  /* ("Harmony (intensified)", harmonyIntensified), */
   ("Slitscan", slitscanParams),
   ("Debussy", debussy),
   ("Feedback (may be loud!)", feedback),
   ("Overstuffed", {...defaultParams, layers: allLayerTypes}),
+  ("Spacy", {...defaultParams, layers: spacy}),
   ("Empty", {...defaultParams, layers: []}),
 ];

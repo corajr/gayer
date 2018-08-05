@@ -53,7 +53,7 @@ var defaultState_013 = /* loadedAudio : record */[/* contents */Belt_MapString.e
 
 var defaultState_014 = /* canvasRef : record */[/* contents */undefined];
 
-var defaultState_015 = /* timerId : record */[/* contents */undefined];
+var defaultState_016 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -71,7 +71,8 @@ var defaultState = /* record */[
   defaultState_012,
   defaultState_013,
   defaultState_014,
-  defaultState_015
+  /* scaleCanvas */undefined,
+  defaultState_016
 ];
 
 function setCanvasRef(theRef, param) {
@@ -368,7 +369,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              self[/* state */1][/* timerId */15][0] = Js_primitive.some(setInterval((function () {
+              self[/* state */1][/* timerId */16][0] = Js_primitive.some(setInterval((function () {
                           return Curry._1(self[/* send */3], /* Tick */1);
                         }), 20));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
@@ -422,6 +423,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var partial_arg = self[/* state */1];
+              var match = self[/* state */1][/* scaleCanvas */15];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -482,10 +484,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                           }), /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[React.createElement("canvas", {
                                                       ref: Curry._1(self[/* handle */0], setCanvasRef),
-                                                      style: {
-                                                        transform: "scale(4)",
-                                                        transformOrigin: "top left"
-                                                      },
+                                                      style: match !== undefined ? ({
+                                                            transform: "scale(" + (match.toString() + ")"),
+                                                            transformOrigin: "top left"
+                                                          }) : { },
                                                       height: height.toString(),
                                                       width: width.toString()
                                                     })]))
@@ -532,7 +534,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   
                 }
@@ -581,7 +584,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -604,7 +608,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 4 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -623,7 +628,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   case 5 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -643,7 +649,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -666,7 +673,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedImages */state[/* loadedImages */12],
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
-                                  /* timerId */state[/* timerId */15]
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* timerId */state[/* timerId */16]
                                 ]]);
                   
                 }

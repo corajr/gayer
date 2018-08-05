@@ -74,6 +74,39 @@ var spacy = /* :: */[
   spacy_001
 ];
 
+var harmony_000 = /* record */[
+  /* content : Image */Block.__(2, ["media/harmony.png"]),
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0
+];
+
+var harmony_001 = /* :: */[
+  /* record */[
+    /* content : Analysis */Block.__(3, [/* Mic */1]),
+    /* alpha */0.1,
+    /* compositeOperation : Overlay */13
+  ],
+  /* :: */[
+    /* record */[
+      /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]),
+      /* alpha */0.1,
+      /* compositeOperation : Overlay */13
+    ],
+    /* :: */[
+      pitchFilter(Music$Gayer.cMajor),
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var harmony = /* :: */[
+  harmony_000,
+  harmony_001
+];
+
 var allLayerTypes_001 = /* :: */[
   analyzer,
   /* :: */[
@@ -110,6 +143,44 @@ var defaultParams = /* record */[
   /* transpose */0,
   /* shouldClear */true,
   /* layers */spacy
+];
+
+var harmonyParams = /* record */[
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
+  /* audioInputSetting : PinkNoise */0,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* q */Audio$Gayer.defaultQ,
+  /* transpose */-48,
+  /* shouldClear */false,
+  /* layers */harmony
+];
+
+var harmonyIntensified_009 = /* layers : :: */[
+  /* record */[
+    /* content : Image */Block.__(2, ["media/harmony_intensified.png"]),
+    /* alpha */1.0,
+    /* compositeOperation : SourceOver */0
+  ],
+  /* :: */[
+    reader,
+    /* [] */0
+  ]
+];
+
+var harmonyIntensified = /* record */[
+  /* readPosDelta */1,
+  /* writePosDelta */1,
+  /* writePosOffset */0,
+  /* audioInputSetting : PinkNoise */0,
+  /* inputGain */1.0,
+  /* outputGain */0.1,
+  /* q */Audio$Gayer.defaultQ,
+  /* transpose */-48,
+  /* shouldClear */false,
+  harmonyIntensified_009
 ];
 
 var feedback_009 = /* layers : :: */[
@@ -175,7 +246,7 @@ var slitscanParams = /* record */[
 ];
 
 var debussyFile = /* record */[
-  /* content : Analysis */Block.__(3, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]),
+  /* content : Analysis */Block.__(3, [/* AudioFile */["media/sade/is_it_a_crime.mp3"]]),
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0
 ];
@@ -202,8 +273,8 @@ var debussy = /* record */[
 ];
 
 var presets_000 = /* tuple */[
-  "Default",
-  defaultParams
+  "Harmony",
+  harmonyParams
 ];
 
 var presets_001 = /* :: */[
@@ -239,7 +310,7 @@ var presets_001 = /* :: */[
         ],
         /* :: */[
           /* tuple */[
-            "Empty",
+            "Spacy",
             /* record */[
               /* readPosDelta */1,
               /* writePosDelta */1,
@@ -250,10 +321,27 @@ var presets_001 = /* :: */[
               /* q */Audio$Gayer.defaultQ,
               /* transpose */0,
               /* shouldClear */true,
-              /* layers : [] */0
+              /* layers */spacy
             ]
           ],
-          /* [] */0
+          /* :: */[
+            /* tuple */[
+              "Empty",
+              /* record */[
+                /* readPosDelta */1,
+                /* writePosDelta */1,
+                /* writePosOffset */0,
+                /* audioInputSetting : PinkNoise */0,
+                /* inputGain */1.0,
+                /* outputGain */0.1,
+                /* q */Audio$Gayer.defaultQ,
+                /* transpose */0,
+                /* shouldClear */true,
+                /* layers : [] */0
+              ]
+            ],
+            /* [] */0
+          ]
         ]
       ]
     ]
@@ -275,8 +363,11 @@ export {
   img ,
   hubble ,
   spacy ,
+  harmony ,
   allLayerTypes ,
   defaultParams ,
+  harmonyParams ,
+  harmonyIntensified ,
   feedback ,
   slitscanParams ,
   debussyFile ,
