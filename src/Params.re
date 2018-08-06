@@ -25,7 +25,7 @@ let defaultParams: params = {
   millisPerTick: 25,
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
-  outputGain: 0.1,
+  outputGain: 0.2,
   q: defaultQ,
   transpose: 0,
   shouldClear: true,

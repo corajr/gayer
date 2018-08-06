@@ -29,7 +29,7 @@ var defaultParams = /* record */[
   /* millisPerTick */25,
   /* audioInputSetting : PinkNoise */0,
   /* inputGain */1.0,
-  /* outputGain */0.1,
+  /* outputGain */0.2,
   /* q */Audio$Gayer.defaultQ,
   /* transpose */0,
   /* shouldClear */true,

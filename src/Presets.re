@@ -94,8 +94,12 @@ let slitscanParams = {
 
 let isItACrime = {
   ...defaultParams,
+  outputGain: 0.2,
   millisPerTick: 33,
-  layers: [img("media/is_it_a_crime.png"), reader],
+  layers: [
+    img("media/is_it_a_crime.png"),
+    {...reader, content: Reader(A)},
+  ],
 };
 
 let tughra = {

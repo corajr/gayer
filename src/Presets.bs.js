@@ -351,8 +351,6 @@ var isItACrime_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioI
 
 var isItACrime_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
 
-var isItACrime_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
-
 var isItACrime_007 = /* q */Params$Gayer.defaultParams[/* q */7];
 
 var isItACrime_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
@@ -362,7 +360,12 @@ var isItACrime_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear 
 var isItACrime_010 = /* layers : :: */[
   img("media/is_it_a_crime.png"),
   /* :: */[
-    reader,
+    /* record */[
+      /* content : Reader */Block.__(5, [/* A */3]),
+      /* alpha */0.1,
+      /* compositeOperation : SourceOver */0,
+      /* transformMatrix */Canvas$Gayer.defaultTransform
+    ],
     /* [] */0
   ]
 ];
@@ -374,7 +377,7 @@ var isItACrime = /* record */[
   /* millisPerTick */33,
   isItACrime_004,
   isItACrime_005,
-  isItACrime_006,
+  /* outputGain */0.2,
   isItACrime_007,
   isItACrime_008,
   isItACrime_009,

@@ -209,14 +209,19 @@ function imageDataToPixels(imageData) {
   return mapRawData(imageData.data, rawDataToPixel);
 }
 
-function rawDataToFloatArray(channel) {
+function rawDataToFloatArray(channel, invert) {
   return (function (rawData, offset) {
-      return Caml_array.caml_array_get(rawData, offset + channel | 0) / 255.0;
+      var v = Caml_array.caml_array_get(rawData, offset + channel | 0) / 255.0;
+      if (invert) {
+        return 1.0 - v;
+      } else {
+        return v;
+      }
     });
 }
 
 function imageDataToFloatArray(imageData, channel) {
-  var f = rawDataToFloatArray(channel);
+  var f = rawDataToFloatArray(channel, channel === /* A */3);
   return mapRawData(imageData.data, f);
 }
 

@@ -333,15 +333,17 @@ let rawDataToPixel = (rawData, offset) => {
 let imageDataToPixels: imageData => array(pixel) =
   imageData => mapImageData(imageData, rawDataToPixel);
 
-let rawDataToFloatArray = channel => {
+let rawDataToFloatArray = (channel, invert) => {
   let channelOffset = int_of_channel(channel);
-  (rawData, offset) =>
-    float_of_int(rawData[offset + channelOffset]) /. 255.0;
+  (rawData, offset) => {
+    let v = float_of_int(rawData[offset + channelOffset]) /. 255.0;
+    invert ? 1.0 -. v : v;
+  };
 };
 
 let imageDataToFloatArray: (imageData, channel) => array(float) =
   (imageData, channel) =>
-    mapImageData(imageData, rawDataToFloatArray(channel));
+    mapImageData(imageData, rawDataToFloatArray(channel, channel === A));
 
 let makeUint8ClampedArray = [%bs.raw
   len => {|return new Uint8ClampedArray(len)|}
