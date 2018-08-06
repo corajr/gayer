@@ -270,6 +270,18 @@ let getAnalysisInput:
     | Mic => (audioCtx, state.micInput)
     };
 
+let setTimer = ({ReasonReact.send, ReasonReact.state}) => {
+  switch (state.timerId^) {
+  | None => ()
+  | Some(id) => Js.Global.clearInterval(id)
+  };
+
+  state.timerId :=
+    Some(
+      Js.Global.setInterval(() => send(Tick), state.params.millisPerTick),
+    );
+};
+
 type domHighResTimeStamp;
 
 [@bs.val] external window : Dom.window = "window";
@@ -422,9 +434,6 @@ let make =
              self.send(SetMediaStream(stream));
              let audio = createMediaStreamSource(audioCtx, stream);
              self.send(SetMicInput(audio));
-             /* let video = attachVideoStream(stream); */
-             /* self.send(SetCameraInput(Some(video))); */
-             /* self.send(SetFilterInput(audio)); */
              Js.Promise.resolve();
            })
         |> ignore
@@ -434,8 +443,7 @@ let make =
 
     self.send(Clear);
 
-    self.state.timerId :=
-      Some(Js.Global.setInterval(() => self.send(Tick), 20));
+    setTimer(self);
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
@@ -476,6 +484,11 @@ let make =
       | None => ()
       | Some(audio) => newSelf.send(SetFilterInput(audio))
       };
+    };
+
+    if (oldSelf.state.params.millisPerTick
+        != newSelf.state.params.millisPerTick) {
+      setTimer(newSelf);
     };
   },
   willUnmount: self => disconnectInputs(self.state),
@@ -587,12 +600,7 @@ let make =
                 )>
                 <canvas
                   ref=(self.handle(setCanvasRef))
-                  onClick=(
-                    evt => {
-                      Js.log(evt);
-                      self.send(SaveImage);
-                    }
-                  )
+                  onClick=(evt => Js.log(evt))
                   width=(Js.Int.toString(width))
                   height=(Js.Int.toString(height))
                   style=(

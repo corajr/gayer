@@ -34,7 +34,7 @@ let channel_of_int = int =>
   switch (int) {
   | 0 => R
   | 1 => G
-  | 2 => G
+  | 2 => B
   | 3 => A
   | _ => R
   };

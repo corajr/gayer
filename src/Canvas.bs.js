@@ -11,16 +11,10 @@ function int_of_channel(channel) {
 }
 
 function channel_of_int($$int) {
-  if ($$int > 2 || $$int < 0) {
-    if ($$int !== 3) {
-      return /* R */0;
-    } else {
-      return /* A */3;
-    }
-  } else if ($$int !== 0) {
-    return /* G */1;
-  } else {
+  if ($$int > 3 || $$int < 0) {
     return /* R */0;
+  } else {
+    return $$int;
   }
 }
 

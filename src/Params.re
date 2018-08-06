@@ -8,6 +8,7 @@ type params = {
   readPosDelta: int,
   writePosDelta: int,
   writePosOffset: int,
+  millisPerTick: int,
   audioInputSetting,
   inputGain: float,
   outputGain: float,
@@ -15,6 +16,20 @@ type params = {
   transpose: int,
   shouldClear: bool,
   layers: list(layer),
+};
+
+let defaultParams: params = {
+  readPosDelta: 1,
+  writePosDelta: 1,
+  writePosOffset: 0,
+  millisPerTick: 25,
+  audioInputSetting: PinkNoise,
+  inputGain: 1.0,
+  outputGain: 0.1,
+  q: defaultQ,
+  transpose: 0,
+  shouldClear: true,
+  layers: [],
 };
 
 module DecodeParams = {
@@ -25,6 +40,7 @@ module DecodeParams = {
       readPosDelta: json |> field("readPosDelta", int),
       writePosDelta: json |> field("writePosDelta", int),
       writePosOffset: json |> field("writePosOffset", int),
+      millisPerTick: json |> field("millisPerTick", int),
       audioInputSetting:
         json |> field("audioInputSetting", audioInputSetting),
       inputGain: json |> field("inputGain", float),
@@ -45,6 +61,7 @@ module EncodeParams = {
         ("readPosDelta", int(r.readPosDelta)),
         ("writePosDelta", int(r.writePosDelta)),
         ("writePosOffset", int(r.writePosOffset)),
+        ("millisPerTick", int(r.millisPerTick)),
         ("audioInputSetting", audioInputSetting(r.audioInputSetting)),
         ("inputGain", float(r.inputGain)),
         ("outputGain", float(r.outputGain)),
@@ -145,6 +162,10 @@ let make =
               <div>
                 (ReasonReact.string("transpose: "))
                 (ReasonReact.string(Js.Int.toString(params.transpose)))
+              </div>
+              <div>
+                (ReasonReact.string("millisPerTick: "))
+                (ReasonReact.string(Js.Int.toString(params.millisPerTick)))
               </div>
             </FormControl>
           </ExpansionPanelDetails>

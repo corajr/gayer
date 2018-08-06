@@ -18,7 +18,7 @@ let webcam = {...baseLayer, content: Webcam({slitscan: None})};
 
 let slitscan = {...baseLayer, content: Webcam({slitscan: Some({x: 320})})};
 
-let reader = {...baseLayer, content: Reader(R), alpha: 0.0};
+let reader = {...baseLayer, content: Reader(R), alpha: 0.1};
 
 let pitchFilter = pc => {
   ...baseLayer,
@@ -47,10 +47,10 @@ let harmony = [
       verticalMoving: 48.0,
     },
   },
-  {...analyzer, alpha: 0.1, compositeOperation: Overlay},
-  {...slitscan, alpha: 0.1, compositeOperation: Overlay},
+  {...analyzer, alpha: 0.25, compositeOperation: Overlay},
+  {...webcam, alpha: 0.25, compositeOperation: Overlay},
   pitchFilter(cMajor),
-  reader,
+  {...reader, alpha: 0.0},
 ];
 
 let allLayerTypes = [
@@ -63,20 +63,12 @@ let allLayerTypes = [
   reader,
 ];
 
-let defaultParams: params = {
-  readPosDelta: 1,
-  writePosDelta: 1,
-  writePosOffset: 0,
-  audioInputSetting: PinkNoise,
-  inputGain: 1.0,
-  outputGain: 0.1,
-  q: defaultQ,
-  transpose: 0,
-  shouldClear: true,
-  layers: spacy,
+let harmonyParams = {
+  ...defaultParams,
+  millisPerTick: 25,
+  layers: harmony,
+  shouldClear: false,
 };
-
-let harmonyParams = {...defaultParams, layers: harmony, shouldClear: false};
 
 let harmonyIntensified = {
   ...harmonyParams,
@@ -100,9 +92,24 @@ let slitscanParams = {
   ],
 };
 
+let isItACrime = {
+  ...defaultParams,
+  millisPerTick: 33,
+  layers: [img("media/is_it_a_crime.png"), reader],
+};
+
+let tughra = {
+  ...defaultParams,
+  millisPerTick: 33,
+  layers: [
+    img("media/suleiman.jpg"),
+    {...reader, content: Reader(R), alpha: 0.25},
+  ],
+};
+
 let debussyFile = {
   ...baseLayer,
-  content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")),
+  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
 };
 
 let debussy = {
@@ -113,12 +120,12 @@ let debussy = {
 };
 
 let presets = [
+  ("Spacy", {...defaultParams, layers: spacy}),
   ("Harmony", harmonyParams),
-  /* ("Harmony (intensified)", harmonyIntensified), */
+  ("Tughra of Suleiman", tughra),
+  ("Is it a crime?", isItACrime),
   ("Slitscan", slitscanParams),
   ("Debussy", debussy),
-  ("Feedback (may be loud!)", feedback),
-  ("Overstuffed", {...defaultParams, layers: allLayerTypes}),
-  ("Spacy", {...defaultParams, layers: spacy}),
+  ("Mic feedback (may be loud!)", feedback),
   ("Empty", {...defaultParams, layers: []}),
 ];
