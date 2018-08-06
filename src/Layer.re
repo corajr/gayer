@@ -37,6 +37,7 @@ type layer = {
   alpha: float,
   compositeOperation,
   transformMatrix,
+  filters: string,
 };
 
 module DecodeLayer = {
@@ -102,6 +103,7 @@ module DecodeLayer = {
              field("compositeOperation", string),
            ),
       transformMatrix: json |> field("transformMatrix", transformMatrix),
+      filters: json |> field("filters", string),
     };
 };
 
@@ -173,6 +175,7 @@ module EncodeLayer = {
           string(string_of_compositeOperation(r.compositeOperation)),
         ),
         ("transformMatrix", transformMatrix(r.transformMatrix)),
+        ("filters", string(r.filters)),
       ])
     );
 };

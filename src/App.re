@@ -66,6 +66,9 @@ type action =
   | SetFilterBank(filterBank)
   | SetParams(params);
 
+[@bs.val] external decodeURIComponent : string => string = "";
+[@bs.val] external encodeURIComponent : string => string = "";
+
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
 
@@ -150,7 +153,8 @@ let clearCanvas = (canvasElement, width, height) => {
 };
 
 let pushParamsState = newParams => {
-  let newParamsJson = Js.Json.stringify(EncodeParams.params(newParams));
+  let newParamsJson =
+    encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
@@ -162,6 +166,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
     Ctx.setGlobalAlpha(ctx, layer.alpha);
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
     Ctx.setTransform(ctx, layer.transformMatrix);
+    Ctx._setFilter(ctx, layer.filters);
 
     switch (layer.content) {
     | Fill(s) =>
@@ -290,9 +295,6 @@ type domHighResTimeStamp;
 external requestAnimationFrame :
   (Dom.window, domHighResTimeStamp => unit) => unit =
   "";
-
-[@bs.val] external decodeURIComponent : string => string = "";
-[@bs.val] external encodeURIComponent : string => string = "";
 
 let makeAudioElt: string => Dom.element = [%bs.raw
   url => {|

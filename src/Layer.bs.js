@@ -162,7 +162,8 @@ function layer(json) {
           /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
                   return Json_decode.field("compositeOperation", Json_decode.string, param);
                 }), json),
-          /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json)
+          /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json),
+          /* filters */Json_decode.field("filters", Json_decode.string, json)
         ];
 }
 
@@ -310,7 +311,13 @@ function layer$1(r) {
                       "transformMatrix",
                       transformMatrix$1(r[/* transformMatrix */3])
                     ],
-                    /* [] */0
+                    /* :: */[
+                      /* tuple */[
+                        "filters",
+                        r[/* filters */4]
+                      ],
+                      /* [] */0
+                    ]
                   ]
                 ]
               ]
@@ -387,7 +394,8 @@ function make(layer, changeLayer, $staropt$star, getAudio, _) {
                                                                     /* content */layer[/* content */0],
                                                                     /* alpha */value,
                                                                     /* compositeOperation */layer[/* compositeOperation */2],
-                                                                    /* transformMatrix */layer[/* transformMatrix */3]
+                                                                    /* transformMatrix */layer[/* transformMatrix */3],
+                                                                    /* filters */layer[/* filters */4]
                                                                   ]);
                                                       }), undefined, /* array */[]))),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
@@ -395,7 +403,8 @@ function make(layer, changeLayer, $staropt$star, getAudio, _) {
                                                                     /* content */layer[/* content */0],
                                                                     /* alpha */layer[/* alpha */1],
                                                                     /* compositeOperation */newOperation,
-                                                                    /* transformMatrix */layer[/* transformMatrix */3]
+                                                                    /* transformMatrix */layer[/* transformMatrix */3],
+                                                                    /* filters */layer[/* filters */4]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))

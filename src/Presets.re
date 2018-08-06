@@ -10,6 +10,7 @@ let baseLayer = {
   alpha: 1.0,
   compositeOperation: SourceOver,
   transformMatrix: defaultTransform,
+  filters: "none",
 };
 
 let analyzer = {...baseLayer, content: Analysis(Mic)};
@@ -81,6 +82,15 @@ let feedback = {
   layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
 };
 
+let whiteboardParams = {
+  ...defaultParams,
+  layers: [
+    {...webcam, filters: "contrast(300%) invert(100%)"},
+    pitchFilter(pentatonic),
+    reader,
+  ],
+};
+
 let slitscanParams = {
   ...defaultParams,
   shouldClear: false,
@@ -125,6 +135,7 @@ let debussy = {
 
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("Whiteboard", whiteboardParams),
   ("Harmony", harmonyParams),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),

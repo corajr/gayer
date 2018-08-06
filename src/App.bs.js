@@ -219,7 +219,7 @@ function clearCanvas(canvasElement, width, height) {
 }
 
 function pushParamsState(newParams) {
-  var newParamsJson = JSON.stringify(Params$Gayer.EncodeParams[/* params */0](newParams));
+  var newParamsJson = encodeURIComponent(JSON.stringify(Params$Gayer.EncodeParams[/* params */0](newParams)));
   return ReasonReact.Router[/* push */0]("#" + newParamsJson);
 }
 
@@ -243,6 +243,7 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
   Canvas$Gayer.Ctx[/* setTransform */2](ctx, layer[/* transformMatrix */3]);
+  ctx.filter = layer[/* filters */4];
   var match = layer[/* content */0];
   switch (match.tag | 0) {
     case 0 : 
