@@ -153,6 +153,50 @@ let defaultTransform: transformMatrix = {
   verticalMoving: 0.0,
 };
 
+/* Only supported in Chrome and Firefox. */
+
+type percentage = int;
+
+type length = string;
+type degree = string;
+type color = string;
+
+type filter =
+  | Url(string)
+  | Blur(length)
+  | Brightness(percentage)
+  | Contrast(percentage)
+  | DropShadow(length, length, length, color)
+  | Grayscale(percentage)
+  | HueRotate(degree)
+  | Invert(percentage)
+  | Opacity(percentage)
+  | Saturate(percentage)
+  | Sepia(percentage)
+  | NoFilter;
+
+let string_of_filter: filter => string =
+  fun
+  | Url(url) => "url(" ++ url ++ ")"
+  | Blur(length) => "blur(" ++ length ++ ")"
+  | Brightness(percentage) =>
+    "brightness(" ++ Js.Int.toString(percentage) ++ "%)"
+  | Contrast(percentage) =>
+    "contrast(" ++ Js.Int.toString(percentage) ++ "%)"
+  | DropShadow(offsetX, offsetY, blurRadius, color) =>
+    "drop-shadow("
+    ++ Rationale.RList.join(" ", [offsetX, offsetY, blurRadius, color])
+    ++ ")"
+  | Grayscale(percentage) =>
+    "grayscale(" ++ Js.Int.toString(percentage) ++ "%)"
+  | HueRotate(degree) => "hue-rotate(" ++ degree ++ ")"
+  | Invert(percentage) => "invert(" ++ Js.Int.toString(percentage) ++ "%)"
+  | Opacity(percentage) => "opacity(" ++ Js.Int.toString(percentage) ++ "%)"
+  | Saturate(percentage) =>
+    "saturate(" ++ Js.Int.toString(percentage) ++ "%)"
+  | Sepia(percentage) => "sepia(" ++ Js.Int.toString(percentage) ++ "%)"
+  | NoFilter => "none";
+
 external getFromReact : Dom.element => canvasElement = "%identity";
 
 [@bs.send] external toDataURL : canvasElement => string = "";
@@ -194,6 +238,15 @@ module Ctx = {
   [@bs.set] external setLineCap : (ctx, string) => unit = "lineCap";
 
   [@bs.set] external setFont : (ctx, string) => unit = "font";
+
+  [@bs.set] external _setFilter : (ctx, string) => unit = "filter";
+
+  let setFilter: (ctx, list(filter)) => unit =
+    (ctx, filters) =>
+      _setFilter(
+        ctx,
+        Rationale.RList.join(" ", List.map(string_of_filter, filters)),
+      );
 
   [@bs.send]
   external _setTransform :
