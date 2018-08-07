@@ -544,6 +544,51 @@ var debussy = /* record */[
   debussy_010
 ];
 
+var iChing_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+
+var iChing_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+
+var iChing_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+
+var iChing_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+
+var iChing_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+
+var iChing_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+
+var iChing_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+
+var iChing_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+
+var iChing_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+
+var iChing_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+
+var iChing_010 = /* layers : :: */[
+  img("media/king_wen.png"),
+  /* :: */[
+    pitchFilter(Music$Gayer.pentatonic),
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var iChing = /* record */[
+  iChing_000,
+  iChing_001,
+  iChing_002,
+  iChing_003,
+  iChing_004,
+  iChing_005,
+  iChing_006,
+  iChing_007,
+  iChing_008,
+  iChing_009,
+  iChing_010
+];
+
 var presets_000 = /* tuple */[
   "Spacy",
   /* record */[
@@ -563,57 +608,63 @@ var presets_000 = /* tuple */[
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Whiteboard",
-    whiteboardParams
+    "King Wen",
+    iChing
   ],
   /* :: */[
     /* tuple */[
-      "Harmony",
-      harmonyParams
+      "Whiteboard",
+      whiteboardParams
     ],
     /* :: */[
       /* tuple */[
-        "Tughra of Suleiman",
-        tughra
+        "Harmony",
+        harmonyParams
       ],
       /* :: */[
         /* tuple */[
-          "Is it a crime?",
-          isItACrime
+          "Tughra of Suleiman",
+          tughra
         ],
         /* :: */[
           /* tuple */[
-            "Slitscan",
-            slitscanParams
+            "Is it a crime?",
+            isItACrime
           ],
           /* :: */[
             /* tuple */[
-              "Debussy",
-              debussy
+              "Slitscan",
+              slitscanParams
             ],
             /* :: */[
               /* tuple */[
-                "Mic feedback (may be loud!)",
-                feedback
+                "Debussy",
+                debussy
               ],
               /* :: */[
                 /* tuple */[
-                  "Empty",
-                  /* record */[
-                    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-                    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2],
-                    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3],
-                    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4],
-                    /* inputGain */Params$Gayer.defaultParams[/* inputGain */5],
-                    /* outputGain */Params$Gayer.defaultParams[/* outputGain */6],
-                    /* q */Params$Gayer.defaultParams[/* q */7],
-                    /* transpose */Params$Gayer.defaultParams[/* transpose */8],
-                    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9],
-                    /* layers : [] */0
-                  ]
+                  "Mic feedback (may be loud!)",
+                  feedback
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "Empty",
+                    /* record */[
+                      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+                      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2],
+                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3],
+                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4],
+                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */5],
+                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */6],
+                      /* q */Params$Gayer.defaultParams[/* q */7],
+                      /* transpose */Params$Gayer.defaultParams[/* transpose */8],
+                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9],
+                      /* layers : [] */0
+                    ]
+                  ],
+                  /* [] */0
+                ]
               ]
             ]
           ]
@@ -653,6 +704,7 @@ export {
   tughra ,
   debussyFile ,
   debussy ,
+  iChing ,
   presets ,
   
 }

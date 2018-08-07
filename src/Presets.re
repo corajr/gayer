@@ -133,8 +133,14 @@ let debussy = {
   layers: [debussyFile, reader],
 };
 
+let iChing = {
+  ...defaultParams,
+  layers: [img("media/king_wen.png"), pitchFilter(pentatonic), reader],
+};
+
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("King Wen", iChing),
   ("Whiteboard", whiteboardParams),
   ("Harmony", harmonyParams),
   ("Tughra of Suleiman", tughra),

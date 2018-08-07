@@ -55,7 +55,7 @@ var defaultState_013 = /* loadedAudio : record */[/* contents */Belt_MapString.e
 
 var defaultState_014 = /* canvasRef : record */[/* contents */undefined];
 
-var defaultState_015 = /* scaleCanvas */2;
+var defaultState_015 = /* scaleCanvas */4;
 
 var defaultState_016 = /* timerId : record */[/* contents */undefined];
 
