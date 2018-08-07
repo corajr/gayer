@@ -48,8 +48,8 @@ let harmony = [
       verticalMoving: 48.0,
     },
   },
-  {...analyzer, alpha: 0.25, compositeOperation: Overlay},
-  {...webcam, alpha: 0.25, compositeOperation: Overlay},
+  /* {...analyzer, alpha: 0.25, compositeOperation: Overlay}, */
+  /* {...webcam, alpha: 0.25, compositeOperation: Overlay}, */
   pitchFilter(cMajor),
   {...reader, alpha: 0.0},
 ];

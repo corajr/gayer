@@ -121,34 +121,16 @@ var harmony_001 = /* :: */[
     /* filters */init[/* filters */4]
   ],
   /* :: */[
-    /* record */[
-      /* content : Analysis */Block.__(3, [/* Mic */1]),
-      /* alpha */0.25,
-      /* compositeOperation : Overlay */13,
-      /* transformMatrix */Canvas$Gayer.defaultTransform,
-      /* filters */"none"
-    ],
+    pitchFilter(Music$Gayer.cMajor),
     /* :: */[
       /* record */[
-        /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
-        /* alpha */0.25,
-        /* compositeOperation : Overlay */13,
+        /* content : Reader */Block.__(5, [/* R */0]),
+        /* alpha */0.0,
+        /* compositeOperation : SourceOver */0,
         /* transformMatrix */Canvas$Gayer.defaultTransform,
         /* filters */"none"
       ],
-      /* :: */[
-        pitchFilter(Music$Gayer.cMajor),
-        /* :: */[
-          /* record */[
-            /* content : Reader */Block.__(5, [/* R */0]),
-            /* alpha */0.0,
-            /* compositeOperation : SourceOver */0,
-            /* transformMatrix */Canvas$Gayer.defaultTransform,
-            /* filters */"none"
-          ],
-          /* [] */0
-        ]
-      ]
+      /* [] */0
     ]
   ]
 ];
