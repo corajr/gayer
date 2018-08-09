@@ -49,7 +49,7 @@ let defaultState: state = {
   loadedAudio: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
-  scaleCanvas: Some(4),
+  scaleCanvas: Some(2),
   timerId: ref(None),
 };
 

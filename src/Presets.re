@@ -40,14 +40,26 @@ let hubble = img("media/hubble_ultra_deep_field.jpg");
 let spacy = [hubble, pitchFilter(cMajor), reader];
 
 let harmony = [
-  fill("black", ~alpha=0.1),
+  /* fill("black", ~alpha=0.1), */
   {
     ...img("media/harmony.png"),
     transformMatrix: {
       ...defaultTransform,
       verticalMoving: 48.0,
     },
+    alpha: 1.0,
+    compositeOperation: SourceOver,
   },
+  {
+    ...img("media/harmony.png"),
+    transformMatrix: {
+      ...defaultTransform,
+      verticalMoving: 24.0,
+    },
+    alpha: 0.5,
+    compositeOperation: SourceOver,
+  },
+  {...img("media/harmony.png"), alpha: 0.25},
   /* {...analyzer, alpha: 0.25, compositeOperation: Overlay}, */
   /* {...webcam, alpha: 0.25, compositeOperation: Overlay}, */
   pitchFilter(cMajor),
@@ -68,7 +80,7 @@ let harmonyParams = {
   ...defaultParams,
   millisPerTick: 25,
   layers: harmony,
-  shouldClear: false,
+  /* shouldClear: false, */
 };
 
 let harmonyIntensified = {
@@ -135,14 +147,14 @@ let debussy = {
 
 let iChing = {
   ...defaultParams,
-  layers: [img("media/king_wen.png"), pitchFilter(pentatonic), reader],
+  layers: [img("media/king_wen.png"), pitchFilter(majorHexatonic), reader],
 };
 
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("King Wen", iChing),
-  ("Whiteboard", whiteboardParams),
   ("Harmony", harmonyParams),
+  ("Whiteboard", whiteboardParams),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
   ("Slitscan", slitscanParams),

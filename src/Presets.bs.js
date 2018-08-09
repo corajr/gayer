@@ -103,34 +103,60 @@ var spacy = /* :: */[
 
 var init = img("media/harmony.png");
 
-var harmony_000 = fill(0.1, "black");
+var init$1 = img("media/harmony.png");
+
+var init$2 = img("media/harmony.png");
+
+var harmony_000 = /* record */[
+  /* content */init[/* content */0],
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix : record */[
+    /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
+    /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
+    /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
+    /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
+    /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
+    /* verticalMoving */48.0
+  ],
+  /* filters */init[/* filters */4]
+];
 
 var harmony_001 = /* :: */[
   /* record */[
-    /* content */init[/* content */0],
-    /* alpha */init[/* alpha */1],
-    /* compositeOperation */init[/* compositeOperation */2],
+    /* content */init$1[/* content */0],
+    /* alpha */0.5,
+    /* compositeOperation : SourceOver */0,
     /* transformMatrix : record */[
       /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
       /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
       /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
       /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
       /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
-      /* verticalMoving */48.0
+      /* verticalMoving */24.0
     ],
-    /* filters */init[/* filters */4]
+    /* filters */init$1[/* filters */4]
   ],
   /* :: */[
-    pitchFilter(Music$Gayer.cMajor),
+    /* record */[
+      /* content */init$2[/* content */0],
+      /* alpha */0.25,
+      /* compositeOperation */init$2[/* compositeOperation */2],
+      /* transformMatrix */init$2[/* transformMatrix */3],
+      /* filters */init$2[/* filters */4]
+    ],
     /* :: */[
-      /* record */[
-        /* content : Reader */Block.__(5, [/* R */0]),
-        /* alpha */0.0,
-        /* compositeOperation : SourceOver */0,
-        /* transformMatrix */Canvas$Gayer.defaultTransform,
-        /* filters */"none"
-      ],
-      /* [] */0
+      pitchFilter(Music$Gayer.cMajor),
+      /* :: */[
+        /* record */[
+          /* content : Reader */Block.__(5, [/* R */0]),
+          /* alpha */0.0,
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform,
+          /* filters */"none"
+        ],
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -181,6 +207,8 @@ var harmonyParams_007 = /* q */Params$Gayer.defaultParams[/* q */7];
 
 var harmonyParams_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
 
+var harmonyParams_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+
 var harmonyParams = /* record */[
   harmonyParams_000,
   harmonyParams_001,
@@ -191,7 +219,7 @@ var harmonyParams = /* record */[
   harmonyParams_006,
   harmonyParams_007,
   harmonyParams_008,
-  /* shouldClear */false,
+  harmonyParams_009,
   /* layers */harmony
 ];
 
@@ -211,6 +239,8 @@ var harmonyIntensified_007 = harmonyParams_007;
 
 var harmonyIntensified_008 = harmonyParams_008;
 
+var harmonyIntensified_009 = harmonyParams_009;
+
 var harmonyIntensified_010 = /* layers : :: */[
   img("media/harmony_intensified.png"),
   /* :: */[
@@ -229,7 +259,7 @@ var harmonyIntensified = /* record */[
   harmonyIntensified_006,
   harmonyIntensified_007,
   harmonyIntensified_008,
-  /* shouldClear */false,
+  harmonyIntensified_009,
   harmonyIntensified_010
 ];
 
@@ -549,7 +579,7 @@ var iChing_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9]
 var iChing_010 = /* layers : :: */[
   img("media/king_wen.png"),
   /* :: */[
-    pitchFilter(Music$Gayer.pentatonic),
+    pitchFilter(Music$Gayer.majorHexatonic),
     /* :: */[
       reader,
       /* [] */0
@@ -595,13 +625,13 @@ var presets_001 = /* :: */[
   ],
   /* :: */[
     /* tuple */[
-      "Whiteboard",
-      whiteboardParams
+      "Harmony",
+      harmonyParams
     ],
     /* :: */[
       /* tuple */[
-        "Harmony",
-        harmonyParams
+        "Whiteboard",
+        whiteboardParams
       ],
       /* :: */[
         /* tuple */[

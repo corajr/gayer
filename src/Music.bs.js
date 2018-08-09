@@ -133,6 +133,26 @@ var pentatonic = Curry._1(PitchSet[/* of_list */25], /* :: */[
       ]
     ]);
 
+var majorHexatonic = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      1,
+      /* :: */[
+        3,
+        /* :: */[
+          5,
+          /* :: */[
+            6,
+            /* :: */[
+              8,
+              /* :: */[
+                10,
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 var wholetone = Curry._1(PitchSet[/* of_list */25], /* :: */[
       0,
       /* :: */[
@@ -201,6 +221,7 @@ export {
   cMajor ,
   cMinor ,
   pentatonic ,
+  majorHexatonic ,
   wholetone ,
   allPitches ,
   
