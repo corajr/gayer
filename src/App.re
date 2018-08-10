@@ -169,6 +169,9 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
     Ctx._setFilter(ctx, layer.filters);
 
     switch (layer.content) {
+    | Draw(cmds) =>
+      DrawCommand.drawCommands(ctx, cmds);
+      None;
     | Fill(s) =>
       Ctx.setFillStyle(ctx, s);
       Ctx.fillRect(ctx, 0, 0, width, height);

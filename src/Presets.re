@@ -1,4 +1,5 @@
 open Audio;
+open Canvas.DrawCommand;
 open Layer;
 open Music;
 open Params;
@@ -50,16 +51,6 @@ let harmony = [
     alpha: 1.0,
     compositeOperation: SourceOver,
   },
-  {
-    ...img("media/harmony.png"),
-    transformMatrix: {
-      ...defaultTransform,
-      verticalMoving: 24.0,
-    },
-    alpha: 0.5,
-    compositeOperation: SourceOver,
-  },
-  {...img("media/harmony.png"), alpha: 0.25},
   /* {...analyzer, alpha: 0.25, compositeOperation: Overlay}, */
   /* {...webcam, alpha: 0.25, compositeOperation: Overlay}, */
   pitchFilter(cMajor),
@@ -150,15 +141,28 @@ let iChing = {
   layers: [img("media/king_wen.png"), pitchFilter(majorHexatonic), reader],
 };
 
+let singleNote = {
+  ...defaultParams,
+  layers: [
+    {
+      ...baseLayer,
+      content:
+        Draw([SetFillStyle("red"), FillRect({x: 0, y: 60, w: 120, h: 1})]),
+    },
+    reader,
+  ],
+};
+
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("Single note", singleNote),
   ("King Wen", iChing),
   ("Harmony", harmonyParams),
   ("Whiteboard", whiteboardParams),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
   ("Slitscan", slitscanParams),
-  ("Debussy", debussy),
+  /* ("Debussy", debussy), */
   ("Mic feedback (may be loud!)", feedback),
   ("Empty", {...defaultParams, layers: []}),
 ];

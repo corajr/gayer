@@ -26,6 +26,7 @@ module EncodeCameraOptions = {
 
 type layerContent =
   | Fill(string)
+  | Draw(list(DrawCommand.command))
   | Webcam(cameraOptions)
   | Image(string)
   | Analysis(audioInputSetting)
@@ -76,6 +77,12 @@ module DecodeLayer = {
            )
 
       | "fill" => json |> map(s => Fill(s), field("style", string))
+      | "draw" =>
+        json
+        |> map(
+             xs => Draw(xs),
+             field("cmds", list(DrawCommand.DecodeDrawCommand.command)),
+           )
       | "pitchClasses" =>
         json
         |> map(
@@ -89,6 +96,7 @@ module DecodeLayer = {
         )
       }
     );
+
   let layerContent = json =>
     Json.Decode.(json |> (field("type", string) |> andThen(layerByType)));
 
@@ -157,6 +165,12 @@ module EncodeLayer = {
       | Fill(style) =>
         object_([("type", string("fill")), ("style", string(style))])
 
+      | Draw(cmds) =>
+        object_([
+          ("type", string("draw")),
+          ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
+        ])
+
       | Reader(channel) =>
         object_([
           ("type", string("reader")),
@@ -197,6 +211,7 @@ let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
           <AnalysisCanvas size=120 audioCtx input saveRef=setRef />;
+        | Draw(_)
         | PitchClasses(_)
         | Fill(_)
         | Reader(_) => ReasonReact.null

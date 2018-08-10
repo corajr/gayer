@@ -95,7 +95,7 @@ function setLayerRef(param, param$1) {
   var maybeRef = (theRef == null) ? undefined : Js_primitive.some(theRef);
   var match = param[0][/* content */0];
   switch (match.tag | 0) {
-    case 1 : 
+    case 2 : 
         if (theRef == null) {
           return /* () */0;
         } else {
@@ -108,14 +108,14 @@ function setLayerRef(param, param$1) {
             return /* () */0;
           }
         }
-    case 2 : 
+    case 3 : 
         if (theRef == null) {
           return /* () */0;
         } else {
           state[/* loadedImages */12][0] = Belt_MapString.set(state[/* loadedImages */12][0], match[0], theRef);
           return /* () */0;
         }
-    case 3 : 
+    case 4 : 
         if (theRef == null) {
           return /* () */0;
         } else {
@@ -251,6 +251,9 @@ function drawLayer(ctx, width, height, state, layer) {
         ctx.fillRect(0, 0, width, height);
         return undefined;
     case 1 : 
+        Canvas$Gayer.DrawCommand[/* drawCommands */3](ctx, match[0]);
+        return undefined;
+    case 2 : 
         var match$1 = state[/* cameraInput */7][0];
         var match$2 = match[0][/* slitscan */0];
         if (match$1 !== undefined) {
@@ -263,20 +266,20 @@ function drawLayer(ctx, width, height, state, layer) {
           }
         }
         return undefined;
-    case 2 : 
+    case 3 : 
         var match$3 = Belt_MapString.get(state[/* loadedImages */12][0], match[0]);
         if (match$3 !== undefined) {
           ctx.drawImage(Js_primitive.valFromOption(match$3), 0, 0, width, height);
         }
         return undefined;
-    case 3 : 
+    case 4 : 
         var match$4 = state[/* analysisCanvasRef */10][0];
         if (match$4 !== undefined) {
           var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */3][/* writePosOffset */2] | 0, 0, width);
           ctx.drawImage(Js_primitive.valFromOption(match$4), x, 0);
         }
         return undefined;
-    case 4 : 
+    case 5 : 
         var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
         ctx.fillStyle = "black";
         var binsPerSemitone = height / 120 | 0;
@@ -290,7 +293,7 @@ function drawLayer(ctx, width, height, state, layer) {
               }(i)), classList);
         }
         return undefined;
-    case 5 : 
+    case 6 : 
         var channel = match[0];
         var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
         var tmp;

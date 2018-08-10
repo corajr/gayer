@@ -48,6 +48,13 @@ type pixel = {
 
 type dim = int;
 
+type rect = {
+  x: dim,
+  y: dim,
+  w: dim,
+  h: dim,
+};
+
 type compositeOperation =
   | SourceOver
   | SourceIn
@@ -450,3 +457,71 @@ let wrapCoord: (int, int, int) => int =
       size - abs(newCoord mod size);
     };
   };
+
+module DrawCommand = {
+  type command =
+    | SetFillStyle(string)
+    | FillRect(rect);
+
+  module EncodeDrawCommand = {
+    let rect = r =>
+      Json.Encode.(
+        object_([
+          ("x", int(r.x)),
+          ("y", int(r.y)),
+          ("w", int(r.w)),
+          ("h", int(r.h)),
+        ])
+      );
+    let command =
+      Json.Encode.(
+        fun
+        | SetFillStyle(s) =>
+          object_([
+            ("type", string("SetFillStyle")),
+            ("style", string(s)),
+          ])
+        | FillRect(r) =>
+          object_([("type", string("FillRect")), ("rect", rect(r))])
+      );
+  };
+
+  module DecodeDrawCommand = {
+    let rect = json =>
+      Json.Decode.{
+        x: json |> field("x", int),
+        y: json |> field("y", int),
+        w: json |> field("w", int),
+        h: json |> field("h", int),
+      };
+
+    let commandByType: (string, Js.Json.t) => command =
+      (type_, json) =>
+        Json.Decode.(
+          switch (type_) {
+          | "SetFillStyle" =>
+            json |> map(s => SetFillStyle(s), field("style", string))
+          | "FillRect" => json |> map(r => FillRect(r), field("rect", rect))
+          | _ =>
+            raise @@
+            DecodeError(
+              "Expected layer content, got " ++ Js.Json.stringify(json),
+            )
+          }
+        );
+
+    let command: Js.Json.t => command =
+      json =>
+        json |> Json.Decode.(field("type", string) |> andThen(commandByType));
+  };
+
+  let drawCommand: (ctx, command) => unit =
+    (ctx, cmd) =>
+      switch (cmd) {
+      | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
+      | FillRect({x, y, w, h}) => Ctx.fillRect(ctx, x, y, w, h)
+      };
+
+  let drawCommands: (ctx, list(command)) => unit =
+    (ctx, cmds) => List.iter(drawCommand(ctx), cmds);
+};

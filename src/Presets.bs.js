@@ -15,7 +15,7 @@ var baseLayer = /* record */[
   /* filters */"none"
 ];
 
-var analyzer_000 = /* content : Analysis */Block.__(3, [/* Mic */1]);
+var analyzer_000 = /* content : Analysis */Block.__(4, [/* Mic */1]);
 
 var analyzer = /* record */[
   analyzer_000,
@@ -25,7 +25,7 @@ var analyzer = /* record */[
   /* filters */"none"
 ];
 
-var webcam_000 = /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]);
+var webcam_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]);
 
 var webcam = /* record */[
   webcam_000,
@@ -35,7 +35,7 @@ var webcam = /* record */[
   /* filters */"none"
 ];
 
-var slitscan_000 = /* content : Webcam */Block.__(1, [/* record */[/* slitscan *//* record */[/* x */320]]]);
+var slitscan_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* record */[/* x */320]]]);
 
 var slitscan = /* record */[
   slitscan_000,
@@ -45,7 +45,7 @@ var slitscan = /* record */[
   /* filters */"none"
 ];
 
-var reader_000 = /* content : Reader */Block.__(5, [/* R */0]);
+var reader_000 = /* content : Reader */Block.__(6, [/* R */0]);
 
 var reader = /* record */[
   reader_000,
@@ -57,7 +57,7 @@ var reader = /* record */[
 
 function pitchFilter(pc) {
   return /* record */[
-          /* content : PitchClasses */Block.__(4, [pc]),
+          /* content : PitchClasses */Block.__(5, [pc]),
           /* alpha */1.0,
           /* compositeOperation : DestinationOut */6,
           /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -78,7 +78,7 @@ function fill($staropt$star, fillStyle) {
 
 function img(url) {
   return /* record */[
-          /* content : Image */Block.__(2, [url]),
+          /* content : Image */Block.__(3, [url]),
           /* alpha */1.0,
           /* compositeOperation : SourceOver */0,
           /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -103,10 +103,6 @@ var spacy = /* :: */[
 
 var init = img("media/harmony.png");
 
-var init$1 = img("media/harmony.png");
-
-var init$2 = img("media/harmony.png");
-
 var harmony_000 = /* record */[
   /* content */init[/* content */0],
   /* alpha */1.0,
@@ -123,41 +119,16 @@ var harmony_000 = /* record */[
 ];
 
 var harmony_001 = /* :: */[
-  /* record */[
-    /* content */init$1[/* content */0],
-    /* alpha */0.5,
-    /* compositeOperation : SourceOver */0,
-    /* transformMatrix : record */[
-      /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
-      /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
-      /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
-      /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
-      /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
-      /* verticalMoving */24.0
-    ],
-    /* filters */init$1[/* filters */4]
-  ],
+  pitchFilter(Music$Gayer.cMajor),
   /* :: */[
     /* record */[
-      /* content */init$2[/* content */0],
-      /* alpha */0.25,
-      /* compositeOperation */init$2[/* compositeOperation */2],
-      /* transformMatrix */init$2[/* transformMatrix */3],
-      /* filters */init$2[/* filters */4]
+      /* content : Reader */Block.__(6, [/* R */0]),
+      /* alpha */0.0,
+      /* compositeOperation : SourceOver */0,
+      /* transformMatrix */Canvas$Gayer.defaultTransform,
+      /* filters */"none"
     ],
-    /* :: */[
-      pitchFilter(Music$Gayer.cMajor),
-      /* :: */[
-        /* record */[
-          /* content : Reader */Block.__(5, [/* R */0]),
-          /* alpha */0.0,
-          /* compositeOperation : SourceOver */0,
-          /* transformMatrix */Canvas$Gayer.defaultTransform,
-          /* filters */"none"
-        ],
-        /* [] */0
-      ]
-    ]
+    /* [] */0
   ]
 ];
 
@@ -285,7 +256,7 @@ var feedback_010 = /* layers : :: */[
   webcam,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(3, [/* Mic */1]),
+      /* content : Analysis */Block.__(4, [/* Mic */1]),
       /* alpha */0.5,
       /* compositeOperation : SourceOver */0,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -337,7 +308,7 @@ var whiteboardParams_009 = /* shouldClear */Params$Gayer.defaultParams[/* should
 
 var whiteboardParams_010 = /* layers : :: */[
   /* record */[
-    /* content : Webcam */Block.__(1, [/* record */[/* slitscan */undefined]]),
+    /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]),
     /* alpha */1.0,
     /* compositeOperation : SourceOver */0,
     /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -388,7 +359,7 @@ var slitscanParams_010 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(3, [/* Mic */1]),
+      /* content : Analysis */Block.__(4, [/* Mic */1]),
       /* alpha */0.25,
       /* compositeOperation : SourceOver */0,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -438,7 +409,7 @@ var isItACrime_010 = /* layers : :: */[
   img("media/is_it_a_crime.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(5, [/* A */3]),
+      /* content : Reader */Block.__(6, [/* A */3]),
       /* alpha */0.1,
       /* compositeOperation : SourceOver */0,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -484,7 +455,7 @@ var tughra_010 = /* layers : :: */[
   img("media/suleiman.jpg"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(5, [/* R */0]),
+      /* content : Reader */Block.__(6, [/* R */0]),
       /* alpha */0.25,
       /* compositeOperation : SourceOver */0,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
@@ -508,7 +479,7 @@ var tughra = /* record */[
   tughra_010
 ];
 
-var debussyFile_000 = /* content : Analysis */Block.__(3, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
+var debussyFile_000 = /* content : Analysis */Block.__(4, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
 
 var debussyFile = /* record */[
   debussyFile_000,
@@ -601,6 +572,65 @@ var iChing = /* record */[
   iChing_010
 ];
 
+var singleNote_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+
+var singleNote_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+
+var singleNote_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+
+var singleNote_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+
+var singleNote_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+
+var singleNote_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+
+var singleNote_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+
+var singleNote_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+
+var singleNote_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+
+var singleNote_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+
+var singleNote_010 = /* layers : :: */[
+  /* record */[
+    /* content : Draw */Block.__(1, [/* :: */[
+          /* SetFillStyle */Block.__(0, ["red"]),
+          /* :: */[
+            /* FillRect */Block.__(1, [/* record */[
+                  /* x */0,
+                  /* y */60,
+                  /* w */120,
+                  /* h */1
+                ]]),
+            /* [] */0
+          ]
+        ]]),
+    /* alpha */1.0,
+    /* compositeOperation : SourceOver */0,
+    /* transformMatrix */Canvas$Gayer.defaultTransform,
+    /* filters */"none"
+  ],
+  /* :: */[
+    reader,
+    /* [] */0
+  ]
+];
+
+var singleNote = /* record */[
+  singleNote_000,
+  singleNote_001,
+  singleNote_002,
+  singleNote_003,
+  singleNote_004,
+  singleNote_005,
+  singleNote_006,
+  singleNote_007,
+  singleNote_008,
+  singleNote_009,
+  singleNote_010
+];
+
 var presets_000 = /* tuple */[
   "Spacy",
   /* record */[
@@ -620,38 +650,38 @@ var presets_000 = /* tuple */[
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "King Wen",
-    iChing
+    "Single note",
+    singleNote
   ],
   /* :: */[
     /* tuple */[
-      "Harmony",
-      harmonyParams
+      "King Wen",
+      iChing
     ],
     /* :: */[
       /* tuple */[
-        "Whiteboard",
-        whiteboardParams
+        "Harmony",
+        harmonyParams
       ],
       /* :: */[
         /* tuple */[
-          "Tughra of Suleiman",
-          tughra
+          "Whiteboard",
+          whiteboardParams
         ],
         /* :: */[
           /* tuple */[
-            "Is it a crime?",
-            isItACrime
+            "Tughra of Suleiman",
+            tughra
           ],
           /* :: */[
             /* tuple */[
-              "Slitscan",
-              slitscanParams
+              "Is it a crime?",
+              isItACrime
             ],
             /* :: */[
               /* tuple */[
-                "Debussy",
-                debussy
+                "Slitscan",
+                slitscanParams
               ],
               /* :: */[
                 /* tuple */[
@@ -717,6 +747,7 @@ export {
   debussyFile ,
   debussy ,
   iChing ,
+  singleNote ,
   presets ,
   
 }

@@ -103,9 +103,19 @@ function layerByType(type_, json) {
     case "analysis" : 
         var partial_arg = Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0];
         return Json_decode.map((function (s) {
-                      return /* Analysis */Block.__(3, [s]);
+                      return /* Analysis */Block.__(4, [s]);
                     }), (function (param) {
                       return Json_decode.field("source", partial_arg, param);
+                    }), json);
+    case "draw" : 
+        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */1][/* command */2];
+        var partial_arg$2 = function (param) {
+          return Json_decode.list(partial_arg$1, param);
+        };
+        return Json_decode.map((function (xs) {
+                      return /* Draw */Block.__(1, [xs]);
+                    }), (function (param) {
+                      return Json_decode.field("cmds", partial_arg$2, param);
                     }), json);
     case "fill" : 
         return Json_decode.map((function (s) {
@@ -115,13 +125,13 @@ function layerByType(type_, json) {
                     }), json);
     case "image" : 
         return Json_decode.map((function (s) {
-                      return /* Image */Block.__(2, [s]);
+                      return /* Image */Block.__(3, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(4, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(5, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -129,7 +139,7 @@ function layerByType(type_, json) {
                     }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(5, [i]);
+                      return /* Reader */Block.__(6, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
@@ -137,7 +147,7 @@ function layerByType(type_, json) {
                     }), json);
     case "webcam" : 
         return Json_decode.map((function (s) {
-                      return /* Webcam */Block.__(1, [s]);
+                      return /* Webcam */Block.__(2, [s]);
                     }), (function (param) {
                       return Json_decode.field("options", cameraOptions, param);
                     }), json);
@@ -218,6 +228,20 @@ function layerContent$1(r) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "draw"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "cmds",
+                        Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */1], r[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "webcam"
                     ],
                     /* :: */[
@@ -228,7 +252,7 @@ function layerContent$1(r) {
                       /* [] */0
                     ]
                   ]);
-    case 2 : 
+    case 3 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -242,7 +266,7 @@ function layerContent$1(r) {
                       /* [] */0
                     ]
                   ]);
-    case 3 : 
+    case 4 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -256,7 +280,7 @@ function layerContent$1(r) {
                       /* [] */0
                     ]
                   ]);
-    case 4 : 
+    case 5 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -272,7 +296,7 @@ function layerContent$1(r) {
                       /* [] */0
                     ]
                   ]);
-    case 5 : 
+    case 6 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -333,7 +357,7 @@ var EncodeLayer = /* module */[
 function renderLayerContent(layerContent$2, _, getAudio, setRef) {
   var tmp;
   switch (layerContent$2.tag | 0) {
-    case 1 : 
+    case 2 : 
         tmp = React.createElement("video", {
               ref: setRef,
               autoPlay: true,
@@ -342,7 +366,7 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef) {
               width: "120"
             });
         break;
-    case 2 : 
+    case 3 : 
         tmp = React.createElement("img", {
               ref: setRef,
               height: "120",
@@ -350,7 +374,7 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef) {
               width: "120"
             });
         break;
-    case 3 : 
+    case 4 : 
         var match = Curry._1(getAudio, layerContent$2[0]);
         tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(120, match[0], match[1], setRef, /* array */[]));
         break;

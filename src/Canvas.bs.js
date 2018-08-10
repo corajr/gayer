@@ -2,10 +2,13 @@
 
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
+import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
+import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 
 function int_of_channel(channel) {
@@ -322,6 +325,138 @@ function wrapCoord(index, delta, size) {
   }
 }
 
+function rect(r) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "x",
+                r[/* x */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "y",
+                  r[/* y */1]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "w",
+                    r[/* w */2]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "h",
+                      r[/* h */3]
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function command(param) {
+  if (param.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "FillRect"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "rect",
+                    rect(param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "SetFillStyle"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "style",
+                    param[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  }
+}
+
+var EncodeDrawCommand = /* module */[
+  /* rect */rect,
+  /* command */command
+];
+
+function rect$1(json) {
+  return /* record */[
+          /* x */Json_decode.field("x", Json_decode.$$int, json),
+          /* y */Json_decode.field("y", Json_decode.$$int, json),
+          /* w */Json_decode.field("w", Json_decode.$$int, json),
+          /* h */Json_decode.field("h", Json_decode.$$int, json)
+        ];
+}
+
+function commandByType(type_, json) {
+  switch (type_) {
+    case "FillRect" : 
+        return Json_decode.map((function (r) {
+                      return /* FillRect */Block.__(1, [r]);
+                    }), (function (param) {
+                      return Json_decode.field("rect", rect$1, param);
+                    }), json);
+    case "SetFillStyle" : 
+        return Json_decode.map((function (s) {
+                      return /* SetFillStyle */Block.__(0, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("style", Json_decode.string, param);
+                    }), json);
+    default:
+      throw [
+            Json_decode.DecodeError,
+            "Expected layer content, got " + JSON.stringify(json)
+          ];
+  }
+}
+
+function command$1(json) {
+  return Json_decode.andThen(commandByType, (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
+}
+
+var DecodeDrawCommand = /* module */[
+  /* rect */rect$1,
+  /* commandByType */commandByType,
+  /* command */command$1
+];
+
+function drawCommand(ctx, cmd) {
+  if (cmd.tag) {
+    var match = cmd[0];
+    ctx.fillRect(match[/* x */0], match[/* y */1], match[/* w */2], match[/* h */3]);
+    return /* () */0;
+  } else {
+    ctx.fillStyle = cmd[0];
+    return /* () */0;
+  }
+}
+
+function drawCommands(ctx, cmds) {
+  return List.iter((function (param) {
+                return drawCommand(ctx, param);
+              }), cmds);
+}
+
+var DrawCommand = /* module */[
+  /* EncodeDrawCommand */EncodeDrawCommand,
+  /* DecodeDrawCommand */DecodeDrawCommand,
+  /* drawCommand */drawCommand,
+  /* drawCommands */drawCommands
+];
+
 var defaultTransform = /* record */[
   /* horizontalScaling */1.0,
   /* horizontalSkewing */0.0,
@@ -350,6 +485,7 @@ export {
   makeImageData ,
   loadImage ,
   wrapCoord ,
+  DrawCommand ,
   
 }
-/* RList-Rationale Not a pure module */
+/* Json_encode Not a pure module */
