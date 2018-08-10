@@ -325,6 +325,10 @@ function wrapCoord(index, delta, size) {
   }
 }
 
+function imgSource() {
+  return "self";
+}
+
 function rect(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -354,41 +358,69 @@ function rect(r) {
 }
 
 function command(param) {
-  if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "FillRect"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "rect",
-                    rect(param[0])
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "SetFillStyle"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "style",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
+  switch (param.tag | 0) {
+    case 0 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "SetFillStyle"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "style",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "FillRect"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "rect",
+                        rect(param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "DrawImage"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "src",
+                        "self"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "destRect",
+                          rect(param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    
   }
 }
 
 var EncodeDrawCommand = /* module */[
+  /* imgSource */imgSource,
   /* rect */rect,
   /* command */command
 ];
+
+function imgSource$1(json) {
+  Json_decode.string(json);
+  return /* Self */0;
+}
 
 function rect$1(json) {
   return /* record */[
@@ -401,6 +433,21 @@ function rect$1(json) {
 
 function commandByType(type_, json) {
   switch (type_) {
+    case "DrawImage" : 
+        return Json_decode.andThen((function (src) {
+                      return (function (param) {
+                          return Json_decode.map((function (rect_) {
+                                        return /* DrawImage */Block.__(2, [
+                                                  src,
+                                                  rect_
+                                                ]);
+                                      }), (function (param) {
+                                        return Json_decode.field("destRect", rect$1, param);
+                                      }), param);
+                        });
+                    }), (function (param) {
+                      return Json_decode.field("src", imgSource$1, param);
+                    }), json);
     case "FillRect" : 
         return Json_decode.map((function (r) {
                       return /* FillRect */Block.__(1, [r]);
@@ -428,19 +475,26 @@ function command$1(json) {
 }
 
 var DecodeDrawCommand = /* module */[
+  /* imgSource */imgSource$1,
   /* rect */rect$1,
   /* commandByType */commandByType,
   /* command */command$1
 ];
 
 function drawCommand(ctx, cmd) {
-  if (cmd.tag) {
-    var match = cmd[0];
-    ctx.fillRect(match[/* x */0], match[/* y */1], match[/* w */2], match[/* h */3]);
-    return /* () */0;
-  } else {
-    ctx.fillStyle = cmd[0];
-    return /* () */0;
+  switch (cmd.tag | 0) {
+    case 0 : 
+        ctx.fillStyle = cmd[0];
+        return /* () */0;
+    case 1 : 
+        var match = cmd[0];
+        ctx.fillRect(match[/* x */0], match[/* y */1], match[/* w */2], match[/* h */3]);
+        return /* () */0;
+    case 2 : 
+        var match$1 = cmd[1];
+        ctx.drawImage(ctx.canvas, match$1[/* x */0], match$1[/* y */1], match$1[/* w */2], match$1[/* h */3]);
+        return /* () */0;
+    
   }
 }
 

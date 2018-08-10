@@ -459,11 +459,17 @@ let wrapCoord: (int, int, int) => int =
   };
 
 module DrawCommand = {
+  type imgSource =
+    | Self;
+
   type command =
     | SetFillStyle(string)
-    | FillRect(rect);
+    | FillRect(rect)
+    | DrawImage(imgSource, rect);
 
   module EncodeDrawCommand = {
+    let imgSource = _r => Json.Encode.string("self");
+
     let rect = r =>
       Json.Encode.(
         object_([
@@ -473,6 +479,7 @@ module DrawCommand = {
           ("h", int(r.h)),
         ])
       );
+
     let command =
       Json.Encode.(
         fun
@@ -483,10 +490,23 @@ module DrawCommand = {
           ])
         | FillRect(r) =>
           object_([("type", string("FillRect")), ("rect", rect(r))])
+        | DrawImage(src, r) =>
+          object_([
+            ("type", string("DrawImage")),
+            ("src", imgSource(src)),
+            ("destRect", rect(r)),
+          ])
       );
   };
 
   module DecodeDrawCommand = {
+    let imgSource = json =>
+      Json.Decode.(
+        switch (string(json)) {
+        | _ => Self
+        }
+      );
+
     let rect = json =>
       Json.Decode.{
         x: json |> field("x", int),
@@ -501,6 +521,17 @@ module DrawCommand = {
           switch (type_) {
           | "SetFillStyle" =>
             json |> map(s => SetFillStyle(s), field("style", string))
+          | "DrawImage" =>
+            json
+            |> (
+              field("src", imgSource)
+              |> andThen(src =>
+                   map(
+                     rect_ => DrawImage(src, rect_),
+                     field("destRect", rect),
+                   )
+                 )
+            )
           | "FillRect" => json |> map(r => FillRect(r), field("rect", rect))
           | _ =>
             raise @@
@@ -520,6 +551,18 @@ module DrawCommand = {
       switch (cmd) {
       | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
       | FillRect({x, y, w, h}) => Ctx.fillRect(ctx, x, y, w, h)
+      | DrawImage(src, {x, y, w, h}) =>
+        switch (src) {
+        | Self =>
+          Ctx.drawImageDestRect(
+            ctx,
+            getCanvasAsSource(Ctx.canvas(ctx)),
+            x,
+            y,
+            w,
+            h,
+          )
+        }
       };
 
   let drawCommands: (ctx, list(command)) => unit =

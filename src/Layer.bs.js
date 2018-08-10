@@ -108,7 +108,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("source", partial_arg, param);
                     }), json);
     case "draw" : 
-        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */1][/* command */2];
+        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */1][/* command */3];
         var partial_arg$2 = function (param) {
           return Json_decode.list(partial_arg$1, param);
         };
@@ -233,7 +233,7 @@ function layerContent$1(r) {
                     /* :: */[
                       /* tuple */[
                         "cmds",
-                        Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */1], r[0])
+                        Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */2], r[0])
                       ],
                       /* [] */0
                     ]

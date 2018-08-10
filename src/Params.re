@@ -7,6 +7,7 @@ open Music;
 type params = {
   readPosDelta: int,
   writePosDelta: int,
+  readPosOffset: int,
   writePosOffset: int,
   millisPerTick: int,
   audioInputSetting,
@@ -21,6 +22,7 @@ type params = {
 let defaultParams: params = {
   readPosDelta: 1,
   writePosDelta: 1,
+  readPosOffset: 0,
   writePosOffset: 0,
   millisPerTick: 25,
   audioInputSetting: PinkNoise,
@@ -40,6 +42,7 @@ module DecodeParams = {
       readPosDelta: json |> field("readPosDelta", int),
       writePosDelta: json |> field("writePosDelta", int),
       writePosOffset: json |> field("writePosOffset", int),
+      readPosOffset: json |> field("readPosOffset", int),
       millisPerTick: json |> field("millisPerTick", int),
       audioInputSetting:
         json |> field("audioInputSetting", audioInputSetting),
@@ -60,6 +63,7 @@ module EncodeParams = {
       object_([
         ("readPosDelta", int(r.readPosDelta)),
         ("writePosDelta", int(r.writePosDelta)),
+        ("readPosOffset", int(r.readPosOffset)),
         ("writePosOffset", int(r.writePosOffset)),
         ("millisPerTick", int(r.millisPerTick)),
         ("audioInputSetting", audioInputSetting(r.audioInputSetting)),

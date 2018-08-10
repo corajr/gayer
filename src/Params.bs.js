@@ -25,6 +25,7 @@ import * as MaterialUi_ExpansionPanelSummary from "@jsiebern/bs-material-ui/src/
 var defaultParams = /* record */[
   /* readPosDelta */1,
   /* writePosDelta */1,
+  /* readPosOffset */0,
   /* writePosOffset */0,
   /* millisPerTick */25,
   /* audioInputSetting : PinkNoise */0,
@@ -41,6 +42,7 @@ function params(json) {
   return /* record */[
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
+          /* readPosOffset */Json_decode.field("readPosOffset", Json_decode.$$int, json),
           /* writePosOffset */Json_decode.field("writePosOffset", Json_decode.$$int, json),
           /* millisPerTick */Json_decode.field("millisPerTick", Json_decode.$$int, json),
           /* audioInputSetting */Json_decode.field("audioInputSetting", Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0], json),
@@ -70,50 +72,56 @@ function params$1(r) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "writePosOffset",
-                    r[/* writePosOffset */2]
+                    "readPosOffset",
+                    r[/* readPosOffset */2]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "millisPerTick",
-                      r[/* millisPerTick */3]
+                      "writePosOffset",
+                      r[/* writePosOffset */3]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "audioInputSetting",
-                        Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[/* audioInputSetting */4])
+                        "millisPerTick",
+                        r[/* millisPerTick */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "inputGain",
-                          r[/* inputGain */5]
+                          "audioInputSetting",
+                          Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[/* audioInputSetting */5])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "outputGain",
-                            r[/* outputGain */6]
+                            "inputGain",
+                            r[/* inputGain */6]
                           ],
                           /* :: */[
                             /* tuple */[
-                              "q",
-                              r[/* q */7]
+                              "outputGain",
+                              r[/* outputGain */7]
                             ],
                             /* :: */[
                               /* tuple */[
-                                "transpose",
-                                r[/* transpose */8]
+                                "q",
+                                r[/* q */8]
                               ],
                               /* :: */[
                                 /* tuple */[
-                                  "shouldClear",
-                                  r[/* shouldClear */9]
+                                  "transpose",
+                                  r[/* transpose */9]
                                 ],
                                 /* :: */[
                                   /* tuple */[
-                                    "layers",
-                                    Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */2], r[/* layers */10])
+                                    "shouldClear",
+                                    r[/* shouldClear */10]
                                   ],
-                                  /* [] */0
+                                  /* :: */[
+                                    /* tuple */[
+                                      "layers",
+                                      Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */2], r[/* layers */11])
+                                    ],
+                                    /* [] */0
+                                  ]
                                 ]
                               ]
                             ]
@@ -158,25 +166,26 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                               ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Graphics"])),
                                                       ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
                                                                                       737456202,
-                                                                                      params[/* shouldClear */9]
+                                                                                      params[/* shouldClear */10]
                                                                                     ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
                                                                                         return Curry._1(onSetParams, /* record */[
                                                                                                     /* readPosDelta */params[/* readPosDelta */0],
                                                                                                     /* writePosDelta */params[/* writePosDelta */1],
-                                                                                                    /* writePosOffset */params[/* writePosOffset */2],
-                                                                                                    /* millisPerTick */params[/* millisPerTick */3],
-                                                                                                    /* audioInputSetting */params[/* audioInputSetting */4],
-                                                                                                    /* inputGain */params[/* inputGain */5],
-                                                                                                    /* outputGain */params[/* outputGain */6],
-                                                                                                    /* q */params[/* q */7],
-                                                                                                    /* transpose */params[/* transpose */8],
+                                                                                                    /* readPosOffset */params[/* readPosOffset */2],
+                                                                                                    /* writePosOffset */params[/* writePosOffset */3],
+                                                                                                    /* millisPerTick */params[/* millisPerTick */4],
+                                                                                                    /* audioInputSetting */params[/* audioInputSetting */5],
+                                                                                                    /* inputGain */params[/* inputGain */6],
+                                                                                                    /* outputGain */params[/* outputGain */7],
+                                                                                                    /* q */params[/* q */8],
+                                                                                                    /* transpose */params[/* transpose */9],
                                                                                                     /* shouldClear */value,
-                                                                                                    /* layers */params[/* layers */10]
+                                                                                                    /* layers */params[/* layers */11]
                                                                                                   ]);
                                                                                       }), undefined, "shouldClear", undefined, undefined, /* array */[]))), undefined, undefined, "Clear between frames", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
                                                       ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[React.createElement("div", undefined, "readPosDelta: ", params[/* readPosDelta */0].toString())])),
                                                       React.createElement("div", undefined, "writePosDelta: ", params[/* writePosDelta */1].toString()),
-                                                      React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */2].toString())
+                                                      React.createElement("div", undefined, "writePosOffset: ", params[/* writePosOffset */3].toString())
                                                     ])),
                                             ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
                                                       -976970511,
@@ -186,12 +195,12 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                                 -976970511,
                                                                 "legend"
                                                               ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Audio"])),
-                                                      React.createElement("div", undefined, "audioInputSetting: ", JSON.stringify(Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], params[/* audioInputSetting */4]))),
-                                                      React.createElement("div", undefined, "inputGain: ", params[/* inputGain */5].toString()),
-                                                      React.createElement("div", undefined, "outputGain: ", params[/* outputGain */6].toString()),
-                                                      React.createElement("div", undefined, "q: ", params[/* q */7].toString()),
-                                                      React.createElement("div", undefined, "transpose: ", params[/* transpose */8].toString()),
-                                                      React.createElement("div", undefined, "millisPerTick: ", params[/* millisPerTick */3].toString())
+                                                      React.createElement("div", undefined, "audioInputSetting: ", JSON.stringify(Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], params[/* audioInputSetting */5]))),
+                                                      React.createElement("div", undefined, "inputGain: ", params[/* inputGain */6].toString()),
+                                                      React.createElement("div", undefined, "outputGain: ", params[/* outputGain */7].toString()),
+                                                      React.createElement("div", undefined, "q: ", params[/* q */8].toString()),
+                                                      React.createElement("div", undefined, "transpose: ", params[/* transpose */9].toString()),
+                                                      React.createElement("div", undefined, "millisPerTick: ", params[/* millisPerTick */4].toString())
                                                     ]))
                                           ]))
                                 ])), ReasonReact.element(undefined, undefined, Container$Gayer.make(List.map((function (layer) {
@@ -200,7 +209,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */10]), onMoveCard, onChangeLayer, onSetRef, getAudio, /* array */[])));
+                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, getAudio, /* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

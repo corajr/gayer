@@ -231,7 +231,9 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       };
       None;
     | Reader(channel) =>
-      let slice = Ctx.getImageData(ctx, state.readPos^, 0, 1, height);
+      let xToRead =
+        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
       Ctx.setFillStyle(
         ctx,
         switch (channel) {
@@ -241,7 +243,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         | A => "white"
         },
       );
-      Ctx.fillRect(ctx, state.readPos^, 0, 1, height);
+      Ctx.fillRect(ctx, xToRead, 0, 1, height);
       Some(imageDataToFloatArray(slice, channel));
     };
   };

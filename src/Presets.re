@@ -34,6 +34,12 @@ let fill = (~alpha: float=1.0, fillStyle: string) => {
   alpha,
 };
 
+let draw = (~alpha: float=1.0, cmds: list(command)) => {
+  ...baseLayer,
+  content: Draw(cmds),
+  alpha,
+};
+
 let img = url => {...baseLayer, content: Image(url)};
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -50,9 +56,17 @@ let harmony = [
     },
     alpha: 1.0,
     compositeOperation: SourceOver,
+    filters: "blur(2px)",
   },
-  /* {...analyzer, alpha: 0.25, compositeOperation: Overlay}, */
-  /* {...webcam, alpha: 0.25, compositeOperation: Overlay}, */
+  {
+    ...
+      draw([
+        DrawImage(Self, {x: 0, y: (-24), w: 120, h: 120}),
+        DrawImage(Self, {x: 0, y: (-48), w: 120, h: 120}),
+      ]),
+    compositeOperation: Difference,
+    alpha: 0.5,
+  },
   pitchFilter(cMajor),
   {...reader, alpha: 0.0},
 ];
@@ -153,14 +167,35 @@ let singleNote = {
   ],
 };
 
+let historyLayer = {
+  ...baseLayer,
+  content: Draw([DrawImage(Self, {x: (-1), y: 0, w: 120, h: 120})]),
+};
+
+let history = {
+  ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: 119,
+  writePosOffset: 119,
+  shouldClear: false,
+  layers: [
+    analyzer,
+    historyLayer,
+    pitchFilter(majorHexatonic),
+    {...reader, alpha: 0.0},
+  ],
+};
+
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
-  ("King Wen", iChing),
-  ("Harmony", harmonyParams),
-  ("Whiteboard", whiteboardParams),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
+  /* ("Harmony", harmonyParams), */
+  ("History", history),
+  ("King Wen", iChing),
+  ("Whiteboard", whiteboardParams),
   ("Slitscan", slitscanParams),
   /* ("Debussy", debussy), */
   ("Mic feedback (may be loud!)", feedback),

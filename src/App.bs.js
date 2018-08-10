@@ -227,14 +227,15 @@ function setLayers(params, newLayers) {
   return pushParamsState(/* record */[
               /* readPosDelta */params[/* readPosDelta */0],
               /* writePosDelta */params[/* writePosDelta */1],
-              /* writePosOffset */params[/* writePosOffset */2],
-              /* millisPerTick */params[/* millisPerTick */3],
-              /* audioInputSetting */params[/* audioInputSetting */4],
-              /* inputGain */params[/* inputGain */5],
-              /* outputGain */params[/* outputGain */6],
-              /* q */params[/* q */7],
-              /* transpose */params[/* transpose */8],
-              /* shouldClear */params[/* shouldClear */9],
+              /* readPosOffset */params[/* readPosOffset */2],
+              /* writePosOffset */params[/* writePosOffset */3],
+              /* millisPerTick */params[/* millisPerTick */4],
+              /* audioInputSetting */params[/* audioInputSetting */5],
+              /* inputGain */params[/* inputGain */6],
+              /* outputGain */params[/* outputGain */7],
+              /* q */params[/* q */8],
+              /* transpose */params[/* transpose */9],
+              /* shouldClear */params[/* shouldClear */10],
               /* layers */newLayers
             ]);
 }
@@ -259,7 +260,7 @@ function drawLayer(ctx, width, height, state, layer) {
         if (match$1 !== undefined) {
           var input = Js_primitive.valFromOption(match$1);
           if (match$2 !== undefined) {
-            var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */3][/* writePosOffset */2] | 0, 0, width);
+            var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */3][/* writePosOffset */3] | 0, 0, width);
             ctx.drawImage(input, match$2[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
           } else {
             ctx.drawImage(input, 0, 0, width, height);
@@ -275,7 +276,7 @@ function drawLayer(ctx, width, height, state, layer) {
     case 4 : 
         var match$4 = state[/* analysisCanvasRef */10][0];
         if (match$4 !== undefined) {
-          var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */3][/* writePosOffset */2] | 0, 0, width);
+          var x = Canvas$Gayer.wrapCoord(state[/* writePos */1][0] + state[/* params */3][/* writePosOffset */3] | 0, 0, width);
           ctx.drawImage(Js_primitive.valFromOption(match$4), x, 0);
         }
         return undefined;
@@ -295,7 +296,8 @@ function drawLayer(ctx, width, height, state, layer) {
         return undefined;
     case 6 : 
         var channel = match[0];
-        var slice = ctx.getImageData(state[/* readPos */0][0], 0, 1, height);
+        var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */0][0] + state[/* params */3][/* readPosOffset */2] | 0, 0, width);
+        var slice = ctx.getImageData(xToRead, 0, 1, height);
         var tmp;
         switch (channel) {
           case 0 : 
@@ -313,14 +315,14 @@ function drawLayer(ctx, width, height, state, layer) {
           
         }
         ctx.fillStyle = tmp;
-        ctx.fillRect(state[/* readPos */0][0], 0, 1, height);
+        ctx.fillRect(xToRead, 0, 1, height);
         return Canvas$Gayer.imageDataToFloatArray(slice, channel);
     
   }
 }
 
 function drawCanvas(canvasElement, width, height, state) {
-  if (state[/* params */3][/* shouldClear */9]) {
+  if (state[/* params */3][/* shouldClear */10]) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
@@ -331,7 +333,7 @@ function drawCanvas(canvasElement, width, height, state) {
                 } else {
                   return values;
                 }
-              }), Caml_array.caml_make_vect(height, 0.0), state[/* params */3][/* layers */10]);
+              }), Caml_array.caml_make_vect(height, 0.0), state[/* params */3][/* layers */11]);
 }
 
 function getAnalysisInput(audioCtx, state, audioInput) {
@@ -364,7 +366,7 @@ function setTimer(param) {
   }
   state[/* timerId */16][0] = Js_primitive.some(setInterval((function () {
               return Curry._1(send, /* Tick */1);
-            }), state[/* params */3][/* millisPerTick */3]));
+            }), state[/* params */3][/* millisPerTick */4]));
   return /* () */0;
 }
 
@@ -395,7 +397,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               self[/* state */1][/* compressor */9][0] = Js_primitive.some(compressor);
               var noise = Audio$Gayer.pinkNoise(audioCtx);
               Curry._1(self[/* send */3], /* SetFilterInput */Block.__(2, [noise]));
-              var filterBank = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */8] | 0));
+              var filterBank = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */9] | 0));
               Curry._1(self[/* send */3], /* SetFilterBank */Block.__(5, [filterBank]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match !== undefined) {
@@ -440,15 +442,15 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */2], newSelf[/* state */1][/* filterInput */2]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */8], newSelf[/* state */1][/* filterBank */8])) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
-              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */3][/* audioInputSetting */4], newSelf[/* state */1][/* params */3][/* audioInputSetting */4])) {
-                var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */3][/* audioInputSetting */4]);
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */3][/* audioInputSetting */5], newSelf[/* state */1][/* params */3][/* audioInputSetting */5])) {
+                var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */3][/* audioInputSetting */5]);
                 var audio = match[1];
                 if (audio !== undefined) {
                   Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(2, [audio]));
                 }
                 
               }
-              if (oldSelf[/* state */1][/* params */3][/* millisPerTick */3] !== newSelf[/* state */1][/* params */3][/* millisPerTick */3]) {
+              if (oldSelf[/* state */1][/* params */3][/* millisPerTick */4] !== newSelf[/* state */1][/* params */3][/* millisPerTick */4]) {
                 return setTimer(newSelf);
               } else {
                 return 0;
@@ -517,7 +519,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                         theRef
                                                                       ]);
                                                           }), (function (oldLayer, newLayer) {
-                                                            return setLayers(self[/* state */1][/* params */3], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */3][/* layers */10]));
+                                                            return setLayers(self[/* state */1][/* params */3], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */3][/* layers */11]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
                                                           }), /* array */[]))])),
@@ -580,7 +582,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     return maybeUpdateCanvas(self[/* state */1][/* canvasRef */14], (function (canvas) {
                                                   var filterValues = drawCanvas(canvas, width, height, self[/* state */1]);
                                                   return maybeMapFilterBank((function (filterBank) {
-                                                                return Audio$Gayer.updateFilterBank(self[/* state */1][/* params */3][/* inputGain */5], self[/* state */1][/* params */3][/* outputGain */6], self[/* state */1][/* params */3][/* q */7], Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */8] | 0), filterBank, filterValues);
+                                                                return Audio$Gayer.updateFilterBank(self[/* state */1][/* params */3][/* inputGain */6], self[/* state */1][/* params */3][/* outputGain */7], self[/* state */1][/* params */3][/* q */8], Audio$Gayer.yToFrequency(height / 120 | 0, 16 + self[/* state */1][/* params */3][/* transpose */9] | 0), filterBank, filterValues);
                                                               }), self[/* state */1][/* filterBank */8]);
                                                 }));
                                   })]);

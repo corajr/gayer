@@ -76,6 +76,17 @@ function fill($staropt$star, fillStyle) {
         ];
 }
 
+function draw($staropt$star, cmds) {
+  var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
+  return /* record */[
+          /* content : Draw */Block.__(1, [cmds]),
+          /* alpha */alpha,
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform,
+          /* filters */"none"
+        ];
+}
+
 function img(url) {
   return /* record */[
           /* content : Image */Block.__(3, [url]),
@@ -103,6 +114,30 @@ var spacy = /* :: */[
 
 var init = img("media/harmony.png");
 
+var init$1 = draw(undefined, /* :: */[
+      /* DrawImage */Block.__(2, [
+          /* Self */0,
+          /* record */[
+            /* x */0,
+            /* y */-24,
+            /* w */120,
+            /* h */120
+          ]
+        ]),
+      /* :: */[
+        /* DrawImage */Block.__(2, [
+            /* Self */0,
+            /* record */[
+              /* x */0,
+              /* y */-48,
+              /* w */120,
+              /* h */120
+            ]
+          ]),
+        /* [] */0
+      ]
+    ]);
+
 var harmony_000 = /* record */[
   /* content */init[/* content */0],
   /* alpha */1.0,
@@ -115,20 +150,29 @@ var harmony_000 = /* record */[
     /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
     /* verticalMoving */48.0
   ],
-  /* filters */init[/* filters */4]
+  /* filters */"blur(2px)"
 ];
 
 var harmony_001 = /* :: */[
-  pitchFilter(Music$Gayer.cMajor),
+  /* record */[
+    /* content */init$1[/* content */0],
+    /* alpha */0.5,
+    /* compositeOperation : Difference */20,
+    /* transformMatrix */init$1[/* transformMatrix */3],
+    /* filters */init$1[/* filters */4]
+  ],
   /* :: */[
-    /* record */[
-      /* content : Reader */Block.__(6, [/* R */0]),
-      /* alpha */0.0,
-      /* compositeOperation : SourceOver */0,
-      /* transformMatrix */Canvas$Gayer.defaultTransform,
-      /* filters */"none"
-    ],
-    /* [] */0
+    pitchFilter(Music$Gayer.cMajor),
+    /* :: */[
+      /* record */[
+        /* content : Reader */Block.__(6, [/* R */0]),
+        /* alpha */0.0,
+        /* compositeOperation : SourceOver */0,
+        /* transformMatrix */Canvas$Gayer.defaultTransform,
+        /* filters */"none"
+      ],
+      /* [] */0
+    ]
   ]
 ];
 
@@ -166,31 +210,34 @@ var harmonyParams_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosD
 
 var harmonyParams_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var harmonyParams_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var harmonyParams_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var harmonyParams_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var harmonyParams_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var harmonyParams_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var harmonyParams_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var harmonyParams_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var harmonyParams_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var harmonyParams_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var harmonyParams_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var harmonyParams_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var harmonyParams_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var harmonyParams_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var harmonyParams_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var harmonyParams_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
 
 var harmonyParams = /* record */[
   harmonyParams_000,
   harmonyParams_001,
   harmonyParams_002,
+  harmonyParams_003,
   /* millisPerTick */25,
-  harmonyParams_004,
   harmonyParams_005,
   harmonyParams_006,
   harmonyParams_007,
   harmonyParams_008,
   harmonyParams_009,
+  harmonyParams_010,
   /* layers */harmony
 ];
 
@@ -200,7 +247,7 @@ var harmonyIntensified_001 = harmonyParams_001;
 
 var harmonyIntensified_002 = harmonyParams_002;
 
-var harmonyIntensified_004 = harmonyParams_004;
+var harmonyIntensified_003 = harmonyParams_003;
 
 var harmonyIntensified_005 = harmonyParams_005;
 
@@ -212,7 +259,9 @@ var harmonyIntensified_008 = harmonyParams_008;
 
 var harmonyIntensified_009 = harmonyParams_009;
 
-var harmonyIntensified_010 = /* layers : :: */[
+var harmonyIntensified_010 = harmonyParams_010;
+
+var harmonyIntensified_011 = /* layers : :: */[
   img("media/harmony_intensified.png"),
   /* :: */[
     reader,
@@ -224,35 +273,38 @@ var harmonyIntensified = /* record */[
   harmonyIntensified_000,
   harmonyIntensified_001,
   harmonyIntensified_002,
+  harmonyIntensified_003,
   /* millisPerTick */25,
-  harmonyIntensified_004,
   harmonyIntensified_005,
   harmonyIntensified_006,
   harmonyIntensified_007,
   harmonyIntensified_008,
   harmonyIntensified_009,
-  harmonyIntensified_010
+  harmonyIntensified_010,
+  harmonyIntensified_011
 ];
 
 var feedback_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var feedback_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var feedback_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var feedback_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var feedback_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var feedback_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var feedback_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var feedback_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var feedback_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var feedback_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var feedback_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var feedback_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var feedback_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var feedback_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var feedback_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var feedback_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var feedback_010 = /* layers : :: */[
+var feedback_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var feedback_011 = /* layers : :: */[
   webcam,
   /* :: */[
     /* record */[
@@ -277,36 +329,39 @@ var feedback = /* record */[
   feedback_001,
   feedback_002,
   feedback_003,
+  feedback_004,
   /* audioInputSetting : Mic */1,
-  feedback_005,
   feedback_006,
   feedback_007,
   feedback_008,
   feedback_009,
-  feedback_010
+  feedback_010,
+  feedback_011
 ];
 
 var whiteboardParams_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var whiteboardParams_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var whiteboardParams_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var whiteboardParams_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var whiteboardParams_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var whiteboardParams_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var whiteboardParams_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var whiteboardParams_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var whiteboardParams_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var whiteboardParams_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var whiteboardParams_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var whiteboardParams_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var whiteboardParams_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var whiteboardParams_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var whiteboardParams_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var whiteboardParams_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var whiteboardParams_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var whiteboardParams_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var whiteboardParams_010 = /* layers : :: */[
+var whiteboardParams_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var whiteboardParams_011 = /* layers : :: */[
   /* record */[
     /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]),
     /* alpha */1.0,
@@ -334,28 +389,31 @@ var whiteboardParams = /* record */[
   whiteboardParams_007,
   whiteboardParams_008,
   whiteboardParams_009,
-  whiteboardParams_010
+  whiteboardParams_010,
+  whiteboardParams_011
 ];
 
 var slitscanParams_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var slitscanParams_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var slitscanParams_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var slitscanParams_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var slitscanParams_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var slitscanParams_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var slitscanParams_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var slitscanParams_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var slitscanParams_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var slitscanParams_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var slitscanParams_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var slitscanParams_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var slitscanParams_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var slitscanParams_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var slitscanParams_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var slitscanParams_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var slitscanParams_010 = /* layers : :: */[
+var slitscanParams_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var slitscanParams_011 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
@@ -385,27 +443,30 @@ var slitscanParams = /* record */[
   slitscanParams_006,
   slitscanParams_007,
   slitscanParams_008,
+  slitscanParams_009,
   /* shouldClear */false,
-  slitscanParams_010
+  slitscanParams_011
 ];
 
 var isItACrime_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var isItACrime_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var isItACrime_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var isItACrime_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var isItACrime_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var isItACrime_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var isItACrime_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var isItACrime_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var isItACrime_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var isItACrime_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var isItACrime_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var isItACrime_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var isItACrime_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var isItACrime_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var isItACrime_010 = /* layers : :: */[
+var isItACrime_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var isItACrime_011 = /* layers : :: */[
   img("media/is_it_a_crime.png"),
   /* :: */[
     /* record */[
@@ -423,35 +484,38 @@ var isItACrime = /* record */[
   isItACrime_000,
   isItACrime_001,
   isItACrime_002,
+  isItACrime_003,
   /* millisPerTick */33,
-  isItACrime_004,
   isItACrime_005,
+  isItACrime_006,
   /* outputGain */0.2,
-  isItACrime_007,
   isItACrime_008,
   isItACrime_009,
-  isItACrime_010
+  isItACrime_010,
+  isItACrime_011
 ];
 
 var tughra_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var tughra_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var tughra_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var tughra_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var tughra_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var tughra_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var tughra_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var tughra_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var tughra_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var tughra_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var tughra_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var tughra_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var tughra_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var tughra_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var tughra_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var tughra_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var tughra_010 = /* layers : :: */[
+var tughra_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var tughra_011 = /* layers : :: */[
   img("media/suleiman.jpg"),
   /* :: */[
     /* record */[
@@ -469,14 +533,15 @@ var tughra = /* record */[
   tughra_000,
   tughra_001,
   tughra_002,
+  tughra_003,
   /* millisPerTick */33,
-  tughra_004,
   tughra_005,
   tughra_006,
   tughra_007,
   tughra_008,
   tughra_009,
-  tughra_010
+  tughra_010,
+  tughra_011
 ];
 
 var debussyFile_000 = /* content : Analysis */Block.__(4, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
@@ -493,19 +558,21 @@ var debussy_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta *
 
 var debussy_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var debussy_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var debussy_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var debussy_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var debussy_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var debussy_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var debussy_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var debussy_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var debussy_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var debussy_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var debussy_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var debussy_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var debussy_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var debussy_010 = /* layers : :: */[
+var debussy_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var debussy_011 = /* layers : :: */[
   debussyFile,
   /* :: */[
     reader,
@@ -518,36 +585,39 @@ var debussy = /* record */[
   debussy_001,
   debussy_002,
   debussy_003,
+  debussy_004,
   /* audioInputSetting : PinkNoise */0,
-  debussy_005,
   debussy_006,
   debussy_007,
   debussy_008,
+  debussy_009,
   /* shouldClear */false,
-  debussy_010
+  debussy_011
 ];
 
 var iChing_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var iChing_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var iChing_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var iChing_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var iChing_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var iChing_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var iChing_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var iChing_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var iChing_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var iChing_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var iChing_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var iChing_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var iChing_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var iChing_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var iChing_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var iChing_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var iChing_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var iChing_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var iChing_010 = /* layers : :: */[
+var iChing_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var iChing_011 = /* layers : :: */[
   img("media/king_wen.png"),
   /* :: */[
     pitchFilter(Music$Gayer.majorHexatonic),
@@ -569,30 +639,33 @@ var iChing = /* record */[
   iChing_007,
   iChing_008,
   iChing_009,
-  iChing_010
+  iChing_010,
+  iChing_011
 ];
 
 var singleNote_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var singleNote_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
 
-var singleNote_002 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2];
+var singleNote_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
 
-var singleNote_003 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3];
+var singleNote_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
-var singleNote_004 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4];
+var singleNote_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
-var singleNote_005 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */5];
+var singleNote_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
-var singleNote_006 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */6];
+var singleNote_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
-var singleNote_007 = /* q */Params$Gayer.defaultParams[/* q */7];
+var singleNote_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
 
-var singleNote_008 = /* transpose */Params$Gayer.defaultParams[/* transpose */8];
+var singleNote_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
-var singleNote_009 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9];
+var singleNote_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var singleNote_010 = /* layers : :: */[
+var singleNote_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var singleNote_011 = /* layers : :: */[
   /* record */[
     /* content : Draw */Block.__(1, [/* :: */[
           /* SetFillStyle */Block.__(0, ["red"]),
@@ -628,7 +701,76 @@ var singleNote = /* record */[
   singleNote_007,
   singleNote_008,
   singleNote_009,
-  singleNote_010
+  singleNote_010,
+  singleNote_011
+];
+
+var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImage */Block.__(2, [
+          /* Self */0,
+          /* record */[
+            /* x */-1,
+            /* y */0,
+            /* w */120,
+            /* h */120
+          ]
+        ]),
+      /* [] */0
+    ]]);
+
+var historyLayer = /* record */[
+  historyLayer_000,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
+var history_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var history_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var history_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var history_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var history_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var history_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var history_011 = /* layers : :: */[
+  analyzer,
+  /* :: */[
+    historyLayer,
+    /* :: */[
+      pitchFilter(Music$Gayer.majorHexatonic),
+      /* :: */[
+        /* record */[
+          /* content : Reader */Block.__(6, [/* R */0]),
+          /* alpha */0.0,
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform,
+          /* filters */"none"
+        ],
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var history = /* record */[
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  /* readPosOffset */119,
+  /* writePosOffset */119,
+  history_004,
+  history_005,
+  history_006,
+  history_007,
+  history_008,
+  history_009,
+  /* shouldClear */false,
+  history_011
 ];
 
 var presets_000 = /* tuple */[
@@ -636,14 +778,15 @@ var presets_000 = /* tuple */[
   /* record */[
     /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
     /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */5],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */6],
-    /* q */Params$Gayer.defaultParams[/* q */7],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */8],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+    /* q */Params$Gayer.defaultParams[/* q */8],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
     /* layers */spacy
   ]
 ];
@@ -655,28 +798,28 @@ var presets_001 = /* :: */[
   ],
   /* :: */[
     /* tuple */[
-      "King Wen",
-      iChing
+      "Tughra of Suleiman",
+      tughra
     ],
     /* :: */[
       /* tuple */[
-        "Harmony",
-        harmonyParams
+        "Is it a crime?",
+        isItACrime
       ],
       /* :: */[
         /* tuple */[
-          "Whiteboard",
-          whiteboardParams
+          "History",
+          history
         ],
         /* :: */[
           /* tuple */[
-            "Tughra of Suleiman",
-            tughra
+            "King Wen",
+            iChing
           ],
           /* :: */[
             /* tuple */[
-              "Is it a crime?",
-              isItACrime
+              "Whiteboard",
+              whiteboardParams
             ],
             /* :: */[
               /* tuple */[
@@ -694,14 +837,15 @@ var presets_001 = /* :: */[
                     /* record */[
                       /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
                       /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */2],
-                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */3],
-                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */4],
-                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */5],
-                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */6],
-                      /* q */Params$Gayer.defaultParams[/* q */7],
-                      /* transpose */Params$Gayer.defaultParams[/* transpose */8],
-                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */9],
+                      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+                      /* q */Params$Gayer.defaultParams[/* q */8],
+                      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
                       /* layers : [] */0
                     ]
                   ],
@@ -732,6 +876,7 @@ export {
   reader ,
   pitchFilter ,
   fill ,
+  draw ,
   img ,
   hubble ,
   spacy ,
@@ -748,6 +893,8 @@ export {
   debussy ,
   iChing ,
   singleNote ,
+  historyLayer ,
+  history ,
   presets ,
   
 }
