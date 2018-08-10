@@ -172,6 +172,11 @@ let historyLayer = {
   content: Draw([DrawImage(Self, {x: (-1), y: 0, w: 120, h: 120})]),
 };
 
+let drosteLayer = {
+  ...baseLayer,
+  content: Draw([DrawImage(Self, {x: 1, y: 1, w: 119, h: 119})]),
+};
+
 let history = {
   ...defaultParams,
   readPosDelta: 0,
@@ -187,8 +192,24 @@ let history = {
   ],
 };
 
+let droste = {
+  ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: 2,
+  writePosOffset: 0,
+  shouldClear: false,
+  layers: [
+    analyzer,
+    drosteLayer,
+    pitchFilter(majorHexatonic),
+    {...reader, alpha: 0.0},
+  ],
+};
+
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("Droste", droste),
   ("Single note", singleNote),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),

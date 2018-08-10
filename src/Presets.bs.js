@@ -726,6 +726,27 @@ var historyLayer = /* record */[
   /* filters */"none"
 ];
 
+var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImage */Block.__(2, [
+          /* Self */0,
+          /* record */[
+            /* x */1,
+            /* y */1,
+            /* w */119,
+            /* h */119
+          ]
+        ]),
+      /* [] */0
+    ]]);
+
+var drosteLayer = /* record */[
+  drosteLayer_000,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
 var history_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
 var history_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
@@ -773,6 +794,53 @@ var history = /* record */[
   history_011
 ];
 
+var droste_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var droste_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var droste_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var droste_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var droste_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var droste_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var droste_011 = /* layers : :: */[
+  analyzer,
+  /* :: */[
+    drosteLayer,
+    /* :: */[
+      pitchFilter(Music$Gayer.majorHexatonic),
+      /* :: */[
+        /* record */[
+          /* content : Reader */Block.__(6, [/* R */0]),
+          /* alpha */0.0,
+          /* compositeOperation : SourceOver */0,
+          /* transformMatrix */Canvas$Gayer.defaultTransform,
+          /* filters */"none"
+        ],
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var droste = /* record */[
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  /* readPosOffset */2,
+  /* writePosOffset */0,
+  droste_004,
+  droste_005,
+  droste_006,
+  droste_007,
+  droste_008,
+  droste_009,
+  /* shouldClear */false,
+  droste_011
+];
+
 var presets_000 = /* tuple */[
   "Spacy",
   /* record */[
@@ -793,63 +861,69 @@ var presets_000 = /* tuple */[
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Single note",
-    singleNote
+    "Droste",
+    droste
   ],
   /* :: */[
     /* tuple */[
-      "Tughra of Suleiman",
-      tughra
+      "Single note",
+      singleNote
     ],
     /* :: */[
       /* tuple */[
-        "Is it a crime?",
-        isItACrime
+        "Tughra of Suleiman",
+        tughra
       ],
       /* :: */[
         /* tuple */[
-          "History",
-          history
+          "Is it a crime?",
+          isItACrime
         ],
         /* :: */[
           /* tuple */[
-            "King Wen",
-            iChing
+            "History",
+            history
           ],
           /* :: */[
             /* tuple */[
-              "Whiteboard",
-              whiteboardParams
+              "King Wen",
+              iChing
             ],
             /* :: */[
               /* tuple */[
-                "Slitscan",
-                slitscanParams
+                "Whiteboard",
+                whiteboardParams
               ],
               /* :: */[
                 /* tuple */[
-                  "Mic feedback (may be loud!)",
-                  feedback
+                  "Slitscan",
+                  slitscanParams
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Empty",
-                    /* record */[
-                      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-                      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-                      /* q */Params$Gayer.defaultParams[/* q */8],
-                      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-                      /* layers : [] */0
-                    ]
+                    "Mic feedback (may be loud!)",
+                    feedback
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "Empty",
+                      /* record */[
+                        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+                        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+                        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+                        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+                        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+                        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+                        /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+                        /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+                        /* q */Params$Gayer.defaultParams[/* q */8],
+                        /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+                        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+                        /* layers : [] */0
+                      ]
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]
@@ -894,7 +968,9 @@ export {
   iChing ,
   singleNote ,
   historyLayer ,
+  drosteLayer ,
   history ,
+  droste ,
   presets ,
   
 }

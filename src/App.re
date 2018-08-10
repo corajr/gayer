@@ -493,6 +493,17 @@ let make =
       };
     };
 
+    /* If we change the read or write position offsets, immediately reset the read or write head to that position. */
+    if (oldSelf.state.params.readPosOffset
+        != newSelf.state.params.readPosOffset) {
+      newSelf.state.readPos := newSelf.state.params.readPosOffset;
+    };
+
+    if (oldSelf.state.params.writePosOffset
+        != newSelf.state.params.writePosOffset) {
+      newSelf.state.writePos := newSelf.state.params.writePosOffset;
+    };
+
     if (oldSelf.state.params.millisPerTick
         != newSelf.state.params.millisPerTick) {
       setTimer(newSelf);

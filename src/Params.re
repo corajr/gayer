@@ -120,57 +120,83 @@ let make =
                   label=(ReasonReact.string("Clear between frames"))
                 />
               </FormGroup>
-              <FormGroup row=true>
-                <div>
-                  (ReasonReact.string("readPosDelta: "))
-                  (ReasonReact.string(Js.Int.toString(params.readPosDelta)))
-                </div>
-              </FormGroup>
-              <div>
-                (ReasonReact.string("writePosDelta: "))
-                (ReasonReact.string(Js.Int.toString(params.writePosDelta)))
-              </div>
-              <div>
-                (ReasonReact.string("writePosOffset: "))
-                (ReasonReact.string(Js.Int.toString(params.writePosOffset)))
-              </div>
+              <IntSlider
+                label="Read position offset"
+                value=params.readPosOffset
+                updater=(
+                  readPosOffset => onSetParams({...params, readPosOffset})
+                )
+              />
+              <IntSlider
+                label="Write position offset"
+                value=params.writePosOffset
+                updater=(
+                  writePosOffset => onSetParams({...params, writePosOffset})
+                )
+              />
+              <IntSlider
+                label="Read position delta"
+                value=params.readPosDelta
+                updater=(
+                  readPosDelta => onSetParams({...params, readPosDelta})
+                )
+                min=(-119)
+                max=119
+              />
+              <IntSlider
+                label="Write position delta"
+                value=params.writePosDelta
+                updater=(
+                  writePosDelta => onSetParams({...params, writePosDelta})
+                )
+                min=(-119)
+                max=119
+              />
             </FormControl>
             <FormControl component=(`String("fieldset"))>
               <FormLabel component=(`String("legend"))>
                 (ReasonReact.string("Audio"))
               </FormLabel>
-              <div>
-                (ReasonReact.string("audioInputSetting: "))
-                (
-                  ReasonReact.string(
-                    Js.Json.stringify(
-                      EncodeAudioInput.audioInputSetting(
-                        params.audioInputSetting,
-                      ),
-                    ),
-                  )
+              <AudioInputSelect
+                audioInputSetting=params.audioInputSetting
+                onChangeSetting=(
+                  audioInputSetting =>
+                    onSetParams({...params, audioInputSetting})
                 )
-              </div>
-              <div>
-                (ReasonReact.string("inputGain: "))
-                (ReasonReact.string(Js.Float.toString(params.inputGain)))
-              </div>
-              <div>
-                (ReasonReact.string("outputGain: "))
-                (ReasonReact.string(Js.Float.toString(params.outputGain)))
-              </div>
-              <div>
-                (ReasonReact.string("q: "))
-                (ReasonReact.string(Js.Float.toString(params.q)))
-              </div>
-              <div>
-                (ReasonReact.string("transpose: "))
-                (ReasonReact.string(Js.Int.toString(params.transpose)))
-              </div>
-              <div>
-                (ReasonReact.string("millisPerTick: "))
-                (ReasonReact.string(Js.Int.toString(params.millisPerTick)))
-              </div>
+              />
+              <FloatSlider
+                label="Input gain"
+                value=params.inputGain
+                updater=(inputGain => onSetParams({...params, inputGain}))
+              />
+              <FloatSlider
+                label="Output gain"
+                value=params.outputGain
+                updater=(outputGain => onSetParams({...params, outputGain}))
+              />
+              <FloatSlider
+                label="Q"
+                value=params.q
+                updater=(q => onSetParams({...params, q}))
+                min=1.0
+                max=200.0
+              />
+              <IntSlider
+                label="Transpose"
+                value=params.transpose
+                updater=(transpose => onSetParams({...params, transpose}))
+                min=(-119)
+                max=119
+              />
+              <IntSlider
+                label="Milliseconds per tick"
+                value=params.millisPerTick
+                updater=(
+                  millisPerTick => onSetParams({...params, millisPerTick})
+                )
+                min=10
+                max=100
+              />
             </FormControl>
           </ExpansionPanelDetails>
         </ExpansionPanel>

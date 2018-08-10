@@ -450,6 +450,12 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 }
                 
               }
+              if (oldSelf[/* state */1][/* params */3][/* readPosOffset */2] !== newSelf[/* state */1][/* params */3][/* readPosOffset */2]) {
+                newSelf[/* state */1][/* readPos */0][0] = newSelf[/* state */1][/* params */3][/* readPosOffset */2];
+              }
+              if (oldSelf[/* state */1][/* params */3][/* writePosOffset */3] !== newSelf[/* state */1][/* params */3][/* writePosOffset */3]) {
+                newSelf[/* state */1][/* writePos */1][0] = newSelf[/* state */1][/* params */3][/* writePosOffset */3];
+              }
               if (oldSelf[/* state */1][/* params */3][/* millisPerTick */4] !== newSelf[/* state */1][/* params */3][/* millisPerTick */4]) {
                 return setTimer(newSelf);
               } else {
