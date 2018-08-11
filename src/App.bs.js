@@ -7,6 +7,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Hashtbl from "bs-platform/lib/es6/hashtbl.js";
+import * as Fscreen from "fscreen";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
@@ -57,7 +58,7 @@ var defaultState_014 = /* canvasRef : record */[/* contents */undefined];
 
 var defaultState_015 = /* scaleCanvas */2;
 
-var defaultState_016 = /* timerId : record */[/* contents */undefined];
+var defaultState_017 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -76,7 +77,8 @@ var defaultState = /* record */[
   defaultState_013,
   defaultState_014,
   defaultState_015,
-  defaultState_016
+  /* fullscreenCanvas */false,
+  defaultState_017
 ];
 
 function setCanvasRef(theRef, param) {
@@ -360,11 +362,11 @@ function getAnalysisInput(audioCtx, state, audioInput) {
 function setTimer(param) {
   var send = param[/* send */3];
   var state = param[/* state */1];
-  var match = state[/* timerId */16][0];
+  var match = state[/* timerId */17][0];
   if (match !== undefined) {
     clearInterval(Js_primitive.valFromOption(match));
   }
-  state[/* timerId */16][0] = Js_primitive.some(setInterval((function () {
+  state[/* timerId */17][0] = Js_primitive.some(setInterval((function () {
               return Curry._1(send, /* Tick */1);
             }), state[/* params */3][/* millisPerTick */4]));
   return /* () */0;
@@ -457,7 +459,21 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 newSelf[/* state */1][/* writePos */1][0] = newSelf[/* state */1][/* params */3][/* writePosOffset */3];
               }
               if (oldSelf[/* state */1][/* params */3][/* millisPerTick */4] !== newSelf[/* state */1][/* params */3][/* millisPerTick */4]) {
-                return setTimer(newSelf);
+                setTimer(newSelf);
+              }
+              if (oldSelf[/* state */1][/* fullscreenCanvas */16] !== newSelf[/* state */1][/* fullscreenCanvas */16]) {
+                if (newSelf[/* state */1][/* fullscreenCanvas */16]) {
+                  var match$1 = newSelf[/* state */1][/* canvasRef */14][0];
+                  if (match$1 !== undefined) {
+                    Fscreen.requestFullscreen(Js_primitive.valFromOption(match$1));
+                    return /* () */0;
+                  } else {
+                    return /* () */0;
+                  }
+                } else {
+                  exitFullscreen(Fscreen);
+                  return /* () */0;
+                }
               } else {
                 return 0;
               }
@@ -471,6 +487,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var partial_arg = self[/* state */1];
               var match = self[/* state */1][/* scaleCanvas */15];
               var match$1 = self[/* state */1][/* scaleCanvas */15];
+              var match$2 = self[/* state */1][/* fullscreenCanvas */16];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -559,6 +576,11 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                   }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MaterialUIIcons.PhotoCamera[/* make */0](/* array */[])),
                                                                   "Snapshot"
+                                                                ])), ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                                                    return Curry._1(self[/* send */3], /* ToggleFullscreen */4);
+                                                                  }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                  match$2 ? ReasonReact.element(undefined, undefined, MaterialUIIcons.FullscreenExit[/* make */0](/* array */[])) : ReasonReact.element(undefined, undefined, MaterialUIIcons.Fullscreen[/* make */0](/* array */[])),
+                                                                  "Fullscreen"
                                                                 ]))), $$Array.map((function (url) {
                                                             return React.createElement("img", {
                                                                         key: Hashtbl.hash(url).toString(),
@@ -610,7 +632,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ]]);
                   case 3 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
@@ -622,6 +645,27 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                       return /* () */0;
                                     }
                                   })]);
+                  case 4 : 
+                      return /* Update */Block.__(0, [/* record */[
+                                  /* readPos */state[/* readPos */0],
+                                  /* writePos */state[/* writePos */1],
+                                  /* filterInput */state[/* filterInput */2],
+                                  /* params */state[/* params */3],
+                                  /* presetDrawerOpen */state[/* presetDrawerOpen */4],
+                                  /* mediaStream */state[/* mediaStream */5],
+                                  /* micInput */state[/* micInput */6],
+                                  /* cameraInput */state[/* cameraInput */7],
+                                  /* filterBank */state[/* filterBank */8],
+                                  /* compressor */state[/* compressor */9],
+                                  /* analysisCanvasRef */state[/* analysisCanvasRef */10],
+                                  /* savedImages */state[/* savedImages */11],
+                                  /* loadedImages */state[/* loadedImages */12],
+                                  /* loadedAudio */state[/* loadedAudio */13],
+                                  /* canvasRef */state[/* canvasRef */14],
+                                  /* scaleCanvas */state[/* scaleCanvas */15],
+                                  /* fullscreenCanvas */!state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
+                                ]]);
                   
                 }
               } else {
@@ -655,7 +699,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ]]);
                   case 2 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -676,7 +721,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -700,7 +746,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ]]);
                   case 4 : 
                       return /* Update */Block.__(0, [/* record */[
@@ -720,7 +767,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ]]);
                   case 5 : 
                       return /* UpdateWithSideEffects */Block.__(2, [
@@ -741,7 +789,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ],
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
@@ -765,7 +814,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   /* loadedAudio */state[/* loadedAudio */13],
                                   /* canvasRef */state[/* canvasRef */14],
                                   /* scaleCanvas */state[/* scaleCanvas */15],
-                                  /* timerId */state[/* timerId */16]
+                                  /* fullscreenCanvas */state[/* fullscreenCanvas */16],
+                                  /* timerId */state[/* timerId */17]
                                 ]]);
                   
                 }

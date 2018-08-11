@@ -3,6 +3,7 @@ open Audio.AudioInput;
 open Music;
 
 open Canvas;
+open Fscreen;
 open Layer;
 open Params;
 open Presets;
@@ -30,6 +31,7 @@ type state = {
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
   scaleCanvas: option(int),
+  fullscreenCanvas: bool,
   timerId: ref(option(Js.Global.intervalId)),
 };
 
@@ -50,6 +52,7 @@ let defaultState: state = {
   analysisCanvasRef: ref(None),
   canvasRef: ref(None),
   scaleCanvas: Some(2),
+  fullscreenCanvas: false,
   timerId: ref(None),
 };
 
@@ -59,6 +62,7 @@ type action =
   | TogglePresetDrawer
   | LoadAudioFile(string)
   | SaveImage
+  | ToggleFullscreen
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -343,6 +347,11 @@ let make =
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
+    | ToggleFullscreen =>
+      ReasonReact.Update({
+        ...state,
+        fullscreenCanvas: ! state.fullscreenCanvas,
+      })
     | LoadAudioFile(url) =>
       ReasonReact.SideEffects(
         (
@@ -508,6 +517,16 @@ let make =
         != newSelf.state.params.millisPerTick) {
       setTimer(newSelf);
     };
+    if (oldSelf.state.fullscreenCanvas != newSelf.state.fullscreenCanvas) {
+      if (newSelf.state.fullscreenCanvas) {
+        switch (newSelf.state.canvasRef^) {
+        | Some(canvas) => requestFullscreen(fscreen, canvas)
+        | None => ()
+        };
+      } else {
+        exitFullscreen(fscreen);
+      };
+    };
   },
   willUnmount: self => disconnectInputs(self.state),
   render: self =>
@@ -640,6 +659,16 @@ let make =
                     variant=`Contained onClick=(evt => self.send(SaveImage))>
                     <MaterialUIIcons.PhotoCamera />
                     (ReasonReact.string("Snapshot"))
+                  </Button>
+                  <Button
+                    variant=`Contained
+                    onClick=(evt => self.send(ToggleFullscreen))>
+                    (
+                      self.state.fullscreenCanvas ?
+                        <MaterialUIIcons.FullscreenExit /> :
+                        <MaterialUIIcons.Fullscreen />
+                    )
+                    (ReasonReact.string("Fullscreen"))
                   </Button>
                 </div>
                 (
