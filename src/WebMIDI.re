@@ -1,6 +1,6 @@
 type t;
 
-[@bs.module] external webMIDI : t = "WebMidi";
+[@bs.module] external webmidi : t = "";
 
 let onWebMidiStart: t => unit = [%bs.raw
   webMIDIre => {|
@@ -15,7 +15,7 @@ WebMidi.enable(function () {
     var input = WebMidi.getInputByName("My Awesome Keyboard");
     // OR...
     // input = WebMidi.getInputById("1809568182");
-    // input = WebMidi.inputs[0];
+    input = WebMidi.inputs[0];
 
     // Listen for a 'note on' message on all channels
     input.addListener('noteon', 'all',

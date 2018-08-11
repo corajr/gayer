@@ -175,6 +175,7 @@ let historyLayer = {
 let drosteLayer = {
   ...baseLayer,
   content: Draw([DrawImage(Self, {x: 1, y: 1, w: 119, h: 119})]),
+  filters: "hue-rotate(30deg)",
 };
 
 let history = {

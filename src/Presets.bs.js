@@ -744,7 +744,7 @@ var drosteLayer = /* record */[
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
   /* transformMatrix */Canvas$Gayer.defaultTransform,
-  /* filters */"none"
+  /* filters */"hue-rotate(30deg)"
 ];
 
 var history_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
