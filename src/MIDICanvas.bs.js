@@ -7,6 +7,7 @@ import * as React from "react";
 import * as Webmidi from "webmidi";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as MIDI$Gayer from "./MIDI.bs.js";
+import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
@@ -17,6 +18,10 @@ function defaultState() {
           /* canvasRef : record */[/* contents */undefined],
           /* midiState : record */[/* contents */MIDI$Gayer.defaultState]
         ];
+}
+
+function oneRainbow(noteNumber) {
+  return "hsl(" + (Pervasives.string_of_float(noteNumber * (300.0 / 127.0)) + "deg,100%,50%)");
 }
 
 function drawMidiNotes(canvasRenderingContext2D, state) {
@@ -93,6 +98,7 @@ function make(saveRef, _) {
 
 export {
   defaultState ,
+  oneRainbow ,
   drawMidiNotes ,
   component ,
   make ,

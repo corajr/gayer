@@ -15,6 +15,14 @@ let defaultState = () => {
   midiState: ref(MIDI.defaultState),
 };
 
+type noteNumberToColorMapping = noteNumber => color;
+
+let oneRainbow: noteNumberToColorMapping =
+  noteNumber =>
+    "hsl("
+    ++ string_of_float(float_of_int(noteNumber) *. (300.0 /. 127.0))
+    ++ "deg,100%,50%)";
+
 let drawMidiNotes = (canvasRenderingContext2D, state) => {
   let outputImageData =
     makeImageDataFromFloats(state.midiState^.notesOn, 1, 128);

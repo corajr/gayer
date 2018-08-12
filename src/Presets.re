@@ -179,8 +179,9 @@ let historyLayer = {
 
 let drosteLayer = {
   ...baseLayer,
-  content: Draw([DrawImage(Self, {x: 1, y: 1, w: 119, h: 119})]),
-  filters: "hue-rotate(30deg)",
+  content: Draw([DrawImage(Self, {x: 1, y: 0, w: 119, h: 120})]),
+  filters:
+    "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
 
 let history = {
@@ -221,7 +222,11 @@ let midi = {
   layers: [midiKeyboard, reader],
 };
 
+let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
+
 let presets = [
+  ("MIDI (w/ Droste)", midiDroste),
+  ("MIDI", midi),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Droste", droste),
   ("Single note", singleNote),
@@ -231,7 +236,6 @@ let presets = [
   ("History", history),
   ("King Wen", iChing),
   ("Whiteboard", whiteboardParams),
-  ("MIDI", midi),
   ("Slitscan", slitscanParams),
   /* ("Debussy", debussy), */
   ("Mic feedback (may be loud!)", feedback),
