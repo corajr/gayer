@@ -4,6 +4,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Params$Gayer from "./Params.bs.js";
+import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 
 var baseLayer_000 = /* content : Fill */Block.__(0, ["black"]);
 
@@ -731,9 +732,9 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
           /* Self */0,
           /* record */[
             /* x */1,
-            /* y */0,
+            /* y */1,
             /* w */119,
-            /* h */120
+            /* h */119
           ]
         ]),
       /* [] */0
@@ -851,6 +852,16 @@ var midiKeyboard = /* record */[
   /* filters */"none"
 ];
 
+var midiColors_000 = /* content : Draw */Block.__(1, [MIDICanvas$Gayer.makeNoteColors(MIDICanvas$Gayer.oneRainbow)]);
+
+var midiColors = /* record */[
+  midiColors_000,
+  /* alpha */1.0,
+  /* compositeOperation : Multiply */11,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
 var midi_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var midi_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
@@ -933,52 +944,52 @@ var midiDroste = /* record */[
 ];
 
 var presets_000 = /* tuple */[
-  "MIDI (w/ Droste)",
-  midiDroste
+  "Spacy",
+  /* record */[
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+    /* q */Params$Gayer.defaultParams[/* q */8],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+    /* layers */spacy
+  ]
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "MIDI",
-    midi
+    "Droste",
+    droste
   ],
   /* :: */[
     /* tuple */[
-      "Spacy",
-      /* record */[
-        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-        /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-        /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-        /* q */Params$Gayer.defaultParams[/* q */8],
-        /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-        /* layers */spacy
-      ]
+      "Single note",
+      singleNote
     ],
     /* :: */[
       /* tuple */[
-        "Droste",
-        droste
+        "Tughra of Suleiman",
+        tughra
       ],
       /* :: */[
         /* tuple */[
-          "Single note",
-          singleNote
+          "Is it a crime?",
+          isItACrime
         ],
         /* :: */[
           /* tuple */[
-            "Tughra of Suleiman",
-            tughra
+            "MIDI (w/ Droste)",
+            midiDroste
           ],
           /* :: */[
             /* tuple */[
-              "Is it a crime?",
-              isItACrime
+              "MIDI",
+              midi
             ],
             /* :: */[
               /* tuple */[
@@ -1075,6 +1086,7 @@ export {
   history ,
   droste ,
   midiKeyboard ,
+  midiColors ,
   midi ,
   midiDroste ,
   presets ,

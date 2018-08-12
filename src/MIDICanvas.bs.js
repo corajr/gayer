@@ -24,6 +24,25 @@ function oneRainbow(noteNumber) {
   return "hsl(" + (Pervasives.string_of_float(noteNumber * (300.0 / 127.0)) + "deg,100%,50%)");
 }
 
+function makeNoteColors(getFillStyleForNumber) {
+  var noteDrawCommands = /* [] */0;
+  for(var i = 127; i >= 0; --i){
+    noteDrawCommands = /* :: */[
+      /* FillRect */Block.__(1, [/* record */[
+            /* x */0,
+            /* y */i,
+            /* w */1,
+            /* h */1
+          ]]),
+      /* :: */[
+        /* SetFillStyle */Block.__(0, [Curry._1(getFillStyleForNumber, i)]),
+        noteDrawCommands
+      ]
+    ];
+  }
+  return noteDrawCommands;
+}
+
 function drawMidiNotes(canvasRenderingContext2D, state) {
   var outputImageData = Canvas$Gayer.makeImageDataFromFloats(state[/* midiState */1][0][/* notesOn */0], 1, 128);
   canvasRenderingContext2D.putImageData(outputImageData, 0, 0);
@@ -99,6 +118,7 @@ function make(saveRef, _) {
 export {
   defaultState ,
   oneRainbow ,
+  makeNoteColors ,
   drawMidiNotes ,
   component ,
   make ,

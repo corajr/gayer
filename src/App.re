@@ -517,7 +517,13 @@ let make =
     };
 
     /* If we change the read or write position offsets, immediately reset the read or write head to the starting position. */
-    if (oldSelf.state.params.layers != newSelf.state.params.layers) {
+    if (oldSelf.state.params.layers != newSelf.state.params.layers
+        ||
+        oldSelf.state.params.readPosOffset != newSelf.state.params.
+                                                readPosOffset
+        ||
+        oldSelf.state.params.writePosOffset != newSelf.state.params.
+                                                 readPosOffset) {
       newSelf.state.readPos := newSelf.state.params.readPosOffset;
       newSelf.state.writePos := newSelf.state.params.writePosOffset;
     };

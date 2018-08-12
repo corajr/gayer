@@ -23,6 +23,21 @@ let oneRainbow: noteNumberToColorMapping =
     ++ string_of_float(float_of_int(noteNumber) *. (300.0 /. 127.0))
     ++ "deg,100%,50%)";
 
+let makeNoteColors: noteNumberToColorMapping => list(DrawCommand.command) =
+  getFillStyleForNumber => {
+    open DrawCommand;
+    let noteDrawCommands = ref([]);
+    for (i in 127 downto 0) {
+      noteDrawCommands :=
+        [
+          FillRect({x: 0, y: i, w: 1, h: 1}),
+          SetFillStyle(getFillStyleForNumber(i)),
+          ...noteDrawCommands^,
+        ];
+    };
+    noteDrawCommands^;
+  };
+
 let drawMidiNotes = (canvasRenderingContext2D, state) => {
   let outputImageData =
     makeImageDataFromFloats(state.midiState^.notesOn, 1, 128);

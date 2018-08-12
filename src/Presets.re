@@ -179,7 +179,7 @@ let historyLayer = {
 
 let drosteLayer = {
   ...baseLayer,
-  content: Draw([DrawImage(Self, {x: 1, y: 0, w: 119, h: 120})]),
+  content: Draw([DrawImage(Self, {x: 1, y: 1, w: 119, h: 119})]),
   filters:
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
@@ -216,6 +216,13 @@ let droste = {
 
 let midiKeyboard = {...baseLayer, content: MIDIKeyboard};
 
+/* TODO: think of a more elegant way to do this */
+let midiColors = {
+  ...baseLayer,
+  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
+  compositeOperation: Multiply,
+};
+
 let midi = {
   ...defaultParams,
   shouldClear: false,
@@ -225,13 +232,13 @@ let midi = {
 let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
 
 let presets = [
-  ("MIDI (w/ Droste)", midiDroste),
-  ("MIDI", midi),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Droste", droste),
   ("Single note", singleNote),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
+  ("MIDI (w/ Droste)", midiDroste),
+  ("MIDI", midi),
   /* ("Harmony", harmonyParams), */
   ("History", history),
   ("King Wen", iChing),
