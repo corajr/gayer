@@ -519,6 +519,8 @@ var tughra_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset 
 
 var tughra_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
 
+var tughra_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
 var tughra_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
 
 var tughra_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
@@ -544,7 +546,7 @@ var tughra = /* record */[
   tughra_001,
   tughra_002,
   tughra_003,
-  /* millisPerTick */33,
+  tughra_004,
   tughra_005,
   tughra_006,
   tughra_007,

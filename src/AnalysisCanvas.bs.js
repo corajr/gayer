@@ -10,11 +10,13 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 
 function drawCQTBar(canvasRenderingContext2D, state) {
-  var audioData = state[/* cqt */1].get_input_array(0);
-  state[/* analyser */0].getFloatTimeDomainData(audioData);
-  state[/* cqt */1].calc();
-  state[/* cqt */1].render_line(1);
-  var cqtLine = state[/* cqt */1].get_output_array();
+  var audioDataL = state[/* cqt */4].get_input_array(0);
+  var audioDataR = state[/* cqt */4].get_input_array(1);
+  state[/* analyserL */0].getFloatTimeDomainData(audioDataL);
+  state[/* analyserR */1].getFloatTimeDomainData(audioDataR);
+  state[/* cqt */4].calc();
+  state[/* cqt */4].render_line(1);
+  var cqtLine = state[/* cqt */4].get_output_array();
   var outputImageData = Canvas$Gayer.makeImageData(cqtLine);
   canvasRenderingContext2D.putImageData(outputImageData, 0, 0);
   return /* () */0;
@@ -25,7 +27,7 @@ var component = ReasonReact.reducerComponent("AnalysisCanvas");
 function make(size, audioCtx, input, saveRef, saveTick, _) {
   var setCanvasRef = function (theRef, param) {
     var send = param[/* send */3];
-    param[/* state */1][/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     Curry._1(saveRef, theRef);
     return Curry._1(saveTick, (function () {
                   return Curry._1(send, /* Draw */0);
@@ -38,11 +40,11 @@ function make(size, audioCtx, input, saveRef, saveTick, _) {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               if (input !== undefined) {
-                input.connect(self[/* state */1][/* analyser */0]);
+                Js_primitive.valFromOption(input).connect(self[/* state */1][/* stereoPanner */3]);
               }
               return Curry._1(self[/* onUnmount */4], (function () {
                             if (input !== undefined) {
-                              input.disconnect(self[/* state */1][/* analyser */0]);
+                              Js_primitive.valFromOption(input).disconnect(self[/* state */1][/* stereoPanner */3]);
                               return /* () */0;
                             } else {
                               return /* () */0;
@@ -73,16 +75,25 @@ function make(size, audioCtx, input, saveRef, saveTick, _) {
                     /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */4],
                     /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */5]
                   ]);
-              var analyser = Audio$Gayer.makeAnalyser(audioCtx, cqt.fft_size, undefined, undefined, undefined, /* () */0);
+              var analyserL = Audio$Gayer.makeAnalyser(audioCtx, cqt.fft_size, undefined, undefined, undefined, /* () */0);
+              var analyserR = Audio$Gayer.makeAnalyser(audioCtx, cqt.fft_size, undefined, undefined, undefined, /* () */0);
+              var stereoPanner = audioCtx.createStereoPanner();
+              var channelSplitter = audioCtx.createChannelSplitter();
+              stereoPanner.connect(channelSplitter);
+              channelSplitter.connect(analyserL, 0);
+              channelSplitter.connect(analyserR, 1);
               return /* record */[
-                      /* analyser */analyser,
+                      /* analyserL */analyserL,
+                      /* analyserR */analyserR,
+                      /* channelSplitter */channelSplitter,
+                      /* stereoPanner */stereoPanner,
                       /* cqt */cqt,
                       /* canvasRef : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (_, state) {
-              var match = state[/* canvasRef */2][0];
+              var match = state[/* canvasRef */5][0];
               if (match !== undefined) {
                 var canvas = Js_primitive.valFromOption(match);
                 return /* SideEffects */Block.__(1, [(function () {

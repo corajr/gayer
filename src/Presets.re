@@ -152,7 +152,6 @@ let isItACrime = {
 
 let tughra = {
   ...defaultParams,
-  millisPerTick: 33,
   layers: [img("media/suleiman.jpg"), reader],
 };
 

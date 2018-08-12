@@ -433,12 +433,12 @@ let makeImageData = (~cqtLine: array(int)) => {
 
   for (i in 0 to n - 1) {
     let offset = i * 4;
-    let cqtVal = cqtLine[(n - i - 1) * 4];
+    let cqtOffset = (n - i - 1) * 4;
 
-    output[offset + int_of_channel(R)] = cqtVal;
-    output[offset + int_of_channel(G)] = cqtVal;
-    output[offset + int_of_channel(B)] = cqtVal;
-    output[offset + int_of_channel(A)] = 255;
+    output[offset] = cqtLine[cqtOffset];
+    output[offset + 1] = cqtLine[cqtOffset + 1];
+    output[offset + 2] = cqtLine[cqtOffset + 2];
+    output[offset + 3] = 255;
   };
 
   createImageData(output, 1, n);

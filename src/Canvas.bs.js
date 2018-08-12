@@ -292,11 +292,11 @@ function makeImageData(cqtLine) {
   var output = makeUint8ClampedArray(len);
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     var offset = (i << 2);
-    var cqtVal = Caml_array.caml_array_get(cqtLine, (((n - i | 0) - 1 | 0) << 2));
-    Caml_array.caml_array_set(output, offset + /* R */0 | 0, cqtVal);
-    Caml_array.caml_array_set(output, offset + /* G */1 | 0, cqtVal);
-    Caml_array.caml_array_set(output, offset + /* B */2 | 0, cqtVal);
-    Caml_array.caml_array_set(output, offset + /* A */3 | 0, 255);
+    var cqtOffset = (((n - i | 0) - 1 | 0) << 2);
+    Caml_array.caml_array_set(output, offset, Caml_array.caml_array_get(cqtLine, cqtOffset));
+    Caml_array.caml_array_set(output, offset + 1 | 0, Caml_array.caml_array_get(cqtLine, cqtOffset + 1 | 0));
+    Caml_array.caml_array_set(output, offset + 2 | 0, Caml_array.caml_array_get(cqtLine, cqtOffset + 2 | 0));
+    Caml_array.caml_array_set(output, offset + 3 | 0, 255);
   }
   return new ImageData(output, 1, n);
 }

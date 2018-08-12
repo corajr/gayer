@@ -70,6 +70,9 @@ type compressor = {
   release: audioParam,
 };
 
+type channelSplitter;
+type stereoPanner;
+
 type compressorParamValues = {
   threshold: float,
   knee: float,
@@ -83,6 +86,8 @@ type audioNode =
   | Gain(gainNode)
   | Compressor(compressor)
   | Analyser(analyser)
+  | ChannelSplitter(channelSplitter)
+  | StereoPanner(stereoPanner)
   | Node;
 
 external unwrapAnalyser : analyser => audioNode = "%identity";
@@ -113,6 +118,10 @@ external getFrequencyResponse :
 [@bs.send] external createBiquadFilter : audioContext => biquadFilter = "";
 [@bs.send] external createGain : audioContext => gainNode = "";
 [@bs.send] external createDynamicsCompressor : audioContext => compressor = "";
+
+[@bs.send] external createStereoPanner : audioContext => stereoPanner = "";
+[@bs.send]
+external createChannelSplitter : audioContext => channelSplitter = "";
 [@bs.send]
 external createMediaStreamSource : (audioContext, mediaStream) => audioNode =
   "";
@@ -143,6 +152,13 @@ external connectGainToNode : (gainNode, audioNode) => unit = "connect";
 [@bs.send]
 external connectCompressorToNode : (compressor, audioNode) => unit = "connect";
 
+[@bs.send]
+external connectNodeToStereoPanner : (audioNode, stereoPanner) => unit =
+  "connect";
+
+/* TODO: figure out how to type these better. */
+[@bs.send] external connect : ('a, 'b) => unit = "connect";
+[@bs.send] external connectWithOutputIndex : ('a, 'b, int) => unit = "connect";
 [@bs.send] external disconnect : ('a, 'b) => unit = "disconnect";
 
 let midiNoteA440Hz = 69.0;
