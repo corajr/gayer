@@ -43,10 +43,10 @@ let make = (~saveRef, _children) => {
           Array.iter(Js.log, outputs(webmidi));
           /* TODO: Select component for midi inputs */
           let input = inputs(webmidi)[1];
-          addListener(input, WebMidiNoteOn, All, e =>
+          addListener(input, WebMidiEventType.NoteOn, All, e =>
             self.send(MIDIEventReceived(e))
           );
-          addListener(input, WebMidiNoteOff, All, e =>
+          addListener(input, WebMidiEventType.NoteOff, All, e =>
             self.send(MIDIEventReceived(e))
           );
         },
@@ -61,7 +61,6 @@ let make = (~saveRef, _children) => {
             (
               _self => {
                 MIDI.update(state.midiState^, event);
-                Js.log(state.midiState^.notesOn);
                 let canvasElement = getFromReact(canvas);
                 let ctx = getContext(canvasElement);
                 drawMidiNotes(ctx, state);

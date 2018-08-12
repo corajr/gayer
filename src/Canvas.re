@@ -168,6 +168,18 @@ type length = string;
 type degree = string;
 type color = string;
 
+let rgba: (int, int, int, float) => color =
+  (r, g, b, a) =>
+    "rgba("
+    ++ Js.Int.toString(r)
+    ++ ","
+    ++ Js.Int.toString(g)
+    ++ ","
+    ++ Js.Int.toString(b)
+    ++ ","
+    ++ Js.Float.toString(a)
+    ++ ")";
+
 type filter =
   | Url(string)
   | Blur(length)

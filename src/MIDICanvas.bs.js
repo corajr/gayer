@@ -50,10 +50,10 @@ function make(saveRef, _) {
                               return /* () */0;
                             }), Webmidi.outputs);
                       var input = Caml_array.caml_array_get(Webmidi.inputs, 1);
-                      WebMIDI$Gayer.addListener(input, /* WebMidiNoteOn */0, /* All */0, (function (e) {
+                      WebMIDI$Gayer.addListener(input, /* NoteOn */0, /* All */0, (function (e) {
                               return Curry._1(self[/* send */3], /* MIDIEventReceived */[e]);
                             }));
-                      return WebMIDI$Gayer.addListener(input, /* WebMidiNoteOff */1, /* All */0, (function (e) {
+                      return WebMIDI$Gayer.addListener(input, /* NoteOff */1, /* All */0, (function (e) {
                                     return Curry._1(self[/* send */3], /* MIDIEventReceived */[e]);
                                   }));
                     }));
@@ -79,7 +79,6 @@ function make(saveRef, _) {
                 var canvas = Js_primitive.valFromOption(match);
                 return /* SideEffects */Block.__(1, [(function () {
                               MIDI$Gayer.update(state[/* midiState */1][0], $$event);
-                              console.log(state[/* midiState */1][0][/* notesOn */0]);
                               var ctx = canvas.getContext("2d");
                               return drawMidiNotes(ctx, state);
                             })]);

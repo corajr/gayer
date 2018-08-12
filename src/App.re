@@ -255,10 +255,10 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       Ctx.setFillStyle(
         ctx,
         switch (channel) {
-        | R => "red"
-        | G => "green"
-        | B => "blue"
-        | A => "white"
+        | R => rgba(127, 0, 0, 0.5)
+        | G => rgba(0, 127, 0, 0.5)
+        | B => rgba(0, 0, 127, 0.5)
+        | A => rgba(127, 127, 127, 0.5)
         },
       );
       Ctx.fillRect(ctx, xToRead, 0, 1, height);
@@ -516,14 +516,9 @@ let make =
       };
     };
 
-    /* If we change the read or write position offsets, immediately reset the read or write head to that position. */
-    if (oldSelf.state.params.readPosOffset
-        != newSelf.state.params.readPosOffset) {
+    /* If we change the read or write position offsets, immediately reset the read or write head to the starting position. */
+    if (oldSelf.state.params.layers != newSelf.state.params.layers) {
       newSelf.state.readPos := newSelf.state.params.readPosOffset;
-    };
-
-    if (oldSelf.state.params.writePosOffset
-        != newSelf.state.params.writePosOffset) {
       newSelf.state.writePos := newSelf.state.params.writePosOffset;
     };
 

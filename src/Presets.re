@@ -20,7 +20,12 @@ let webcam = {...baseLayer, content: Webcam({slitscan: None})};
 
 let slitscan = {...baseLayer, content: Webcam({slitscan: Some({x: 320})})};
 
-let reader = {...baseLayer, content: Reader(R), alpha: 0.1};
+let reader = {
+  ...baseLayer,
+  content: Reader(R),
+  alpha: 1.0,
+  compositeOperation: Multiply,
+};
 
 let pitchFilter = pc => {
   ...baseLayer,
@@ -210,10 +215,13 @@ let droste = {
 
 let midiKeyboard = {...baseLayer, content: MIDIKeyboard};
 
-let midi = {...defaultParams, layers: [midiKeyboard, reader]};
+let midi = {
+  ...defaultParams,
+  shouldClear: false,
+  layers: [midiKeyboard, reader],
+};
 
 let presets = [
-  ("MIDI", midi),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Droste", droste),
   ("Single note", singleNote),
@@ -223,6 +231,7 @@ let presets = [
   ("History", history),
   ("King Wen", iChing),
   ("Whiteboard", whiteboardParams),
+  ("MIDI", midi),
   ("Slitscan", slitscanParams),
   /* ("Debussy", debussy), */
   ("Mic feedback (may be loud!)", feedback),

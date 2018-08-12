@@ -49,8 +49,8 @@ var reader_000 = /* content : Reader */Block.__(6, [/* R */0]);
 
 var reader = /* record */[
   reader_000,
-  /* alpha */0.1,
-  /* compositeOperation : SourceOver */0,
+  /* alpha */1.0,
+  /* compositeOperation : Multiply */11,
   /* transformMatrix */Canvas$Gayer.defaultTransform,
   /* filters */"none"
 ];
@@ -167,7 +167,7 @@ var harmony_001 = /* :: */[
       /* record */[
         /* content : Reader */Block.__(6, [/* R */0]),
         /* alpha */0.0,
-        /* compositeOperation : SourceOver */0,
+        /* compositeOperation : Multiply */11,
         /* transformMatrix */Canvas$Gayer.defaultTransform,
         /* filters */"none"
       ],
@@ -471,8 +471,8 @@ var isItACrime_011 = /* layers : :: */[
   /* :: */[
     /* record */[
       /* content : Reader */Block.__(6, [/* A */3]),
-      /* alpha */0.1,
-      /* compositeOperation : SourceOver */0,
+      /* alpha */1.0,
+      /* compositeOperation : Multiply */11,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
       /* filters */"none"
     ],
@@ -521,7 +521,7 @@ var tughra_011 = /* layers : :: */[
     /* record */[
       /* content : Reader */Block.__(6, [/* R */0]),
       /* alpha */0.25,
-      /* compositeOperation : SourceOver */0,
+      /* compositeOperation : Multiply */11,
       /* transformMatrix */Canvas$Gayer.defaultTransform,
       /* filters */"none"
     ],
@@ -769,7 +769,7 @@ var history_011 = /* layers : :: */[
         /* record */[
           /* content : Reader */Block.__(6, [/* R */0]),
           /* alpha */0.0,
-          /* compositeOperation : SourceOver */0,
+          /* compositeOperation : Multiply */11,
           /* transformMatrix */Canvas$Gayer.defaultTransform,
           /* filters */"none"
         ],
@@ -816,7 +816,7 @@ var droste_011 = /* layers : :: */[
         /* record */[
           /* content : Reader */Block.__(6, [/* R */0]),
           /* alpha */0.0,
-          /* compositeOperation : SourceOver */0,
+          /* compositeOperation : Multiply */11,
           /* transformMatrix */Canvas$Gayer.defaultTransform,
           /* filters */"none"
         ],
@@ -869,8 +869,6 @@ var midi_008 = /* q */Params$Gayer.defaultParams[/* q */8];
 
 var midi_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
 
-var midi_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
-
 var midi_011 = /* layers : :: */[
   midiKeyboard,
   /* :: */[
@@ -890,67 +888,67 @@ var midi = /* record */[
   midi_007,
   midi_008,
   midi_009,
-  midi_010,
+  /* shouldClear */false,
   midi_011
 ];
 
 var presets_000 = /* tuple */[
-  "MIDI",
-  midi
+  "Spacy",
+  /* record */[
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+    /* q */Params$Gayer.defaultParams[/* q */8],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+    /* layers */spacy
+  ]
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Spacy",
-    /* record */[
-      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-      /* q */Params$Gayer.defaultParams[/* q */8],
-      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-      /* layers */spacy
-    ]
+    "Droste",
+    droste
   ],
   /* :: */[
     /* tuple */[
-      "Droste",
-      droste
+      "Single note",
+      singleNote
     ],
     /* :: */[
       /* tuple */[
-        "Single note",
-        singleNote
+        "Tughra of Suleiman",
+        tughra
       ],
       /* :: */[
         /* tuple */[
-          "Tughra of Suleiman",
-          tughra
+          "Is it a crime?",
+          isItACrime
         ],
         /* :: */[
           /* tuple */[
-            "Is it a crime?",
-            isItACrime
+            "History",
+            history
           ],
           /* :: */[
             /* tuple */[
-              "History",
-              history
+              "King Wen",
+              iChing
             ],
             /* :: */[
               /* tuple */[
-                "King Wen",
-                iChing
+                "Whiteboard",
+                whiteboardParams
               ],
               /* :: */[
                 /* tuple */[
-                  "Whiteboard",
-                  whiteboardParams
+                  "MIDI",
+                  midi
                 ],
                 /* :: */[
                   /* tuple */[

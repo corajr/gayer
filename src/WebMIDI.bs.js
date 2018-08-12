@@ -6,21 +6,32 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 function eventType_of_string(param) {
   switch (param) {
     case "noteoff" : 
-        return /* WebMidiNoteOff */1;
+        return /* NoteOff */1;
     case "noteon" : 
-        return /* WebMidiNoteOn */0;
+        return /* NoteOn */0;
+    case "pitchbend" : 
+        return /* PitchBend */2;
     default:
-      return /* WebMidiNoteOff */1;
+      return /* NoteOff */1;
   }
 }
 
 function string_of_eventType(param) {
-  if (param) {
-    return "noteoff";
-  } else {
-    return "noteon";
+  switch (param) {
+    case 0 : 
+        return "noteon";
+    case 1 : 
+        return "noteoff";
+    case 2 : 
+        return "pitchbend";
+    
   }
 }
+
+var WebMidiEventType = /* module */[
+  /* eventType_of_string */eventType_of_string,
+  /* string_of_eventType */string_of_eventType
+];
 
 function webMidiChannelToJs(param) {
   if (param) {
@@ -40,7 +51,7 @@ function midiEvent_of_webMidiEvent(webMidiEvent) {
   var eventType = eventType_of_string(webMidiEvent.type);
   var noteNumber = webMidiEvent.note.number;
   var velocity = webMidiEvent.velocity;
-  if (eventType) {
+  if (eventType !== 0) {
     return /* NoteOff */Block.__(1, [/* tuple */[
                 noteNumber,
                 0.0
@@ -54,8 +65,7 @@ function midiEvent_of_webMidiEvent(webMidiEvent) {
 }
 
 function addListener(inputOrOutput, eventType, channel, callback) {
-  inputOrOutput.addListener(eventType ? "noteoff" : "noteon", webMidiChannelToJs(channel)[1], (function (webMidiEvent) {
-          console.log(webMidiEvent);
+  inputOrOutput.addListener(string_of_eventType(eventType), webMidiChannelToJs(channel)[1], (function (webMidiEvent) {
           return Curry._1(callback, midiEvent_of_webMidiEvent(webMidiEvent));
         }));
   return /* () */0;
@@ -107,8 +117,7 @@ WebMidi.enable(function () {
 };
 
 export {
-  eventType_of_string ,
-  string_of_eventType ,
+  WebMidiEventType ,
   webMidiChannelToJs ,
   midiEvent_of_webMidiEvent ,
   addListener ,

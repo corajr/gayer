@@ -140,6 +140,10 @@ function compositeOperation_of_string(param) {
   }
 }
 
+function rgba(r, g, b, a) {
+  return "rgba(" + (r.toString() + ("," + (g.toString() + ("," + (b.toString() + ("," + (a.toString() + ")")))))));
+}
+
 function string_of_filter(param) {
   if (typeof param === "number") {
     return "none";
@@ -541,6 +545,7 @@ export {
   string_of_compositeOperation ,
   compositeOperation_of_string ,
   defaultTransform ,
+  rgba ,
   string_of_filter ,
   Ctx ,
   simpleDrawImage ,

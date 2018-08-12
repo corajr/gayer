@@ -23,20 +23,25 @@ type webMidiEvent =
     velocity: float,
   };
 
-type eventType =
-  | WebMidiNoteOn
-  | WebMidiNoteOff;
+module WebMidiEventType = {
+  type t =
+    | NoteOn
+    | NoteOff
+    | PitchBend;
 
-let eventType_of_string =
-  fun
-  | "noteon" => WebMidiNoteOn
-  | "noteoff" => WebMidiNoteOff
-  | _ => WebMidiNoteOff;
+  let eventType_of_string: string => t =
+    fun
+    | "noteon" => NoteOn
+    | "noteoff" => NoteOff
+    | "pitchbend" => PitchBend
+    | _ => NoteOff;
 
-let string_of_eventType =
-  fun
-  | WebMidiNoteOn => "noteon"
-  | WebMidiNoteOff => "noteoff";
+  let string_of_eventType: t => string =
+    fun
+    | NoteOn => "noteon"
+    | NoteOff => "noteoff"
+    | PitchBend => "pitchbend";
+};
 
 [@bs.deriving abstract]
 type inputOrOutput =
@@ -76,12 +81,16 @@ let webMidiChannelToJs =
 
 let midiEvent_of_webMidiEvent: webMidiEvent => midiEvent =
   webMidiEvent => {
-    let eventType = eventType_of_string(webMidiEvent |. webMidiEventTypeGet);
+    let eventType =
+      WebMidiEventType.eventType_of_string(
+        webMidiEvent |. webMidiEventTypeGet,
+      );
     let noteNumber = webMidiEvent |. noteGet |. numberGet;
     let velocity = webMidiEvent |. velocityGet;
     switch (eventType) {
-    | WebMidiNoteOn => NoteOn((noteNumber, velocity))
-    | WebMidiNoteOff => NoteOff((noteNumber, 0.0))
+    | WebMidiEventType.NoteOn => NoteOn((noteNumber, velocity))
+    | WebMidiEventType.NoteOff => NoteOff((noteNumber, 0.0))
+    | WebMidiEventType.PitchBend => NoteOff((noteNumber, 0.0))
     };
   };
 
@@ -99,16 +108,16 @@ external _addListener :
 let addListener =
     (
       ~inputOrOutput,
-      ~eventType,
+      ~eventType: WebMidiEventType.t,
       ~channel: webMidiChannel,
       ~callback: midiEvent => unit,
     ) =>
   _addListener(
     inputOrOutput,
-    string_of_eventType(eventType),
+    WebMidiEventType.string_of_eventType(eventType),
     webMidiChannelToJs(channel),
     webMidiEvent => {
-      Js.log(webMidiEvent);
+      /* Js.log(webMidiEvent); */
       let midiEvent = midiEvent_of_webMidiEvent(webMidiEvent);
       callback(midiEvent);
     },

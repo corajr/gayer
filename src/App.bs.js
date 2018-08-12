@@ -323,16 +323,16 @@ function drawLayer(ctx, width, height, state, layer) {
           var tmp;
           switch (channel) {
             case 0 : 
-                tmp = "red";
+                tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
                 break;
             case 1 : 
-                tmp = "green";
+                tmp = Canvas$Gayer.rgba(0, 127, 0, 0.5);
                 break;
             case 2 : 
-                tmp = "blue";
+                tmp = Canvas$Gayer.rgba(0, 0, 127, 0.5);
                 break;
             case 3 : 
-                tmp = "white";
+                tmp = Canvas$Gayer.rgba(127, 127, 127, 0.5);
                 break;
             
           }
@@ -473,10 +473,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 }
                 
               }
-              if (oldSelf[/* state */1][/* params */3][/* readPosOffset */2] !== newSelf[/* state */1][/* params */3][/* readPosOffset */2]) {
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */3][/* layers */11], newSelf[/* state */1][/* params */3][/* layers */11])) {
                 newSelf[/* state */1][/* readPos */0][0] = newSelf[/* state */1][/* params */3][/* readPosOffset */2];
-              }
-              if (oldSelf[/* state */1][/* params */3][/* writePosOffset */3] !== newSelf[/* state */1][/* params */3][/* writePosOffset */3]) {
                 newSelf[/* state */1][/* writePos */1][0] = newSelf[/* state */1][/* params */3][/* writePosOffset */3];
               }
               if (oldSelf[/* state */1][/* params */3][/* millisPerTick */4] !== newSelf[/* state */1][/* params */3][/* millisPerTick */4]) {
