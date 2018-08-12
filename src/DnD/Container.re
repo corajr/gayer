@@ -25,6 +25,7 @@ let make =
       ~getAudio,
       ~rootWidth,
       ~rootHeight,
+      ~saveTick,
       _children,
     ) => {
   let handleCardsChange = (state, ids) => {
@@ -132,6 +133,7 @@ let make =
                    width=rootWidth
                    height=rootHeight
                    setRef=(theRef => onSetRef(card.layer, theRef))
+                   saveTick
                  />
                </div>
              )

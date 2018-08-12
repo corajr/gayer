@@ -156,18 +156,6 @@ let tughra = {
   layers: [img("media/suleiman.jpg"), reader],
 };
 
-let debussyFile = {
-  ...baseLayer,
-  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
-};
-
-let debussy = {
-  ...defaultParams,
-  shouldClear: false,
-  audioInputSetting: PinkNoise,
-  layers: [debussyFile, reader],
-};
-
 let iChing = {
   ...defaultParams,
   layers: [img("media/king_wen.png"), pitchFilter(majorHexatonic), reader],
@@ -181,7 +169,7 @@ let singleNote = {
       content:
         Draw([
           SetFillStyle("red"),
-          FillRect({x: Pixels(0), y: Pixels(60), w: Width, h: Pixels(1)}),
+          FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
         ]),
     },
     reader,
@@ -200,7 +188,7 @@ let drosteLayer = {
   ...baseLayer,
   content:
     Draw([
-      DrawImage(Self, {x: Pixels(1), y: Pixels(1), w: Width, h: Height}),
+      DrawImage(Self, {x: Pixels(1), y: Pixels(0), w: Width, h: Height}),
     ]),
   filters:
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
@@ -222,19 +210,20 @@ let history = {
   ],
 };
 
+let debussyFile = {
+  ...baseLayer,
+  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
+  /* content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")), */
+};
+
+let debussy = {...history, layers: [debussyFile, historyLayer, reader]};
+
 let droste = {
   ...defaultParams,
   readPosDelta: 0,
   writePosDelta: 0,
-  readPosOffset: 2,
-  writePosOffset: 0,
   shouldClear: false,
-  layers: [
-    analyzer,
-    drosteLayer,
-    pitchFilter(majorHexatonic),
-    {...reader, alpha: 0.0},
-  ],
+  layers: [analyzer, drosteLayer, reader],
 };
 
 let midiKeyboard = {...baseLayer, content: MIDIKeyboard};
@@ -246,11 +235,7 @@ let midiColors = {
   compositeOperation: Multiply,
 };
 
-let midi = {
-  ...defaultParams,
-  shouldClear: false,
-  layers: [midiKeyboard, reader],
-};
+let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
 
 let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
 
@@ -260,14 +245,13 @@ let presets = [
   ("Single note", singleNote),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
-  ("MIDI (w/ Droste)", midiDroste),
   ("MIDI", midi),
+  /* ("Debussy", debussy), */
   /* ("Harmony", harmonyParams), */
   ("History", history),
   ("King Wen", iChing),
   ("Whiteboard", whiteboardParams),
   ("Slitscan", slitscanParams),
-  /* ("Debussy", debussy), */
   ("Mic feedback (may be loud!)", feedback),
   ("Empty", {...defaultParams, layers: []}),
 ];

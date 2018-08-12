@@ -5,7 +5,6 @@ type state = {
   analyser,
   cqt: CQT.t,
   canvasRef: ref(option(Dom.element)),
-  timerId: ref(option(Js.Global.intervalId)),
 };
 
 type action =
@@ -24,10 +23,11 @@ let drawCQTBar = (canvasRenderingContext2D, state) => {
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
-  let setCanvasRef = (theRef, {ReasonReact.state}) => {
+let make = (~size, ~audioCtx, ~input, ~saveRef, ~saveTick, _children) => {
+  let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     saveRef(theRef);
+    saveTick(() => send(Draw));
   };
 
   {
@@ -43,7 +43,7 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
       let analyser =
         makeAnalyser(~audioContext=audioCtx, ~fftSize=cqt |. CQT.fftSize, ());
 
-      {analyser, cqt, canvasRef: ref(None), timerId: ref(None)};
+      {analyser, cqt, canvasRef: ref(None)};
     },
     didMount: self => {
       switch (input) {
@@ -55,15 +55,6 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, _children) => {
         switch (input) {
         | None => ()
         | Some(inputNode) => disconnect(inputNode, self.state.analyser)
-        }
-      );
-
-      let timerId = Js.Global.setInterval(() => self.send(Draw), 20);
-      self.state.timerId := Some(timerId);
-      self.onUnmount(() =>
-        switch (self.state.timerId^) {
-        | None => ()
-        | Some(timerId) => Js.Global.clearInterval(timerId)
         }
       );
     },

@@ -119,8 +119,8 @@ var init$1 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */[0],
-            /* y : Pixels */[-24],
+            /* x : Pixels */Block.__(0, [0]),
+            /* y : Pixels */Block.__(0, [-24]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -129,8 +129,8 @@ var init$1 = draw(undefined, /* :: */[
         /* DrawImage */Block.__(2, [
             /* Self */0,
             /* record */[
-              /* x : Pixels */[0],
-              /* y : Pixels */[-48],
+              /* x : Pixels */Block.__(0, [0]),
+              /* y : Pixels */Block.__(0, [-48]),
               /* w : Width */0,
               /* h : Height */1
             ]
@@ -338,8 +338,8 @@ var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */[0],
-            /* y : Pixels */[0],
+            /* x : Pixels */Block.__(0, [0]),
+            /* y : Pixels */Block.__(0, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -554,57 +554,6 @@ var tughra = /* record */[
   tughra_011
 ];
 
-var debussyFile_000 = /* content : Analysis */Block.__(4, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
-
-var debussyFile = /* record */[
-  debussyFile_000,
-  /* alpha */1.0,
-  /* compositeOperation : SourceOver */0,
-  /* transformMatrix */Canvas$Gayer.defaultTransform,
-  /* filters */"none"
-];
-
-var debussy_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
-
-var debussy_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
-
-var debussy_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
-
-var debussy_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
-
-var debussy_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
-
-var debussy_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
-
-var debussy_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
-
-var debussy_008 = /* q */Params$Gayer.defaultParams[/* q */8];
-
-var debussy_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
-
-var debussy_011 = /* layers : :: */[
-  debussyFile,
-  /* :: */[
-    reader,
-    /* [] */0
-  ]
-];
-
-var debussy = /* record */[
-  debussy_000,
-  debussy_001,
-  debussy_002,
-  debussy_003,
-  debussy_004,
-  /* audioInputSetting : PinkNoise */0,
-  debussy_006,
-  debussy_007,
-  debussy_008,
-  debussy_009,
-  /* shouldClear */false,
-  debussy_011
-];
-
 var iChing_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
 
 var iChing_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
@@ -681,10 +630,10 @@ var singleNote_011 = /* layers : :: */[
           /* SetFillStyle */Block.__(0, ["red"]),
           /* :: */[
             /* FillRect */Block.__(1, [/* record */[
-                  /* x : Pixels */[0],
-                  /* y : Pixels */[60],
+                  /* x : Pixels */Block.__(0, [0]),
+                  /* y : Note */Block.__(1, [60]),
                   /* w : Width */0,
-                  /* h : Pixels */[1]
+                  /* h : Pixels */Block.__(0, [1])
                 ]]),
             /* [] */0
           ]
@@ -719,8 +668,8 @@ var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */[-1],
-            /* y : Pixels */[0],
+            /* x : Pixels */Block.__(0, [-1]),
+            /* y : Pixels */Block.__(0, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -740,8 +689,8 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */[1],
-            /* y : Pixels */[1],
+            /* x : Pixels */Block.__(0, [1]),
+            /* y : Pixels */Block.__(0, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -807,6 +756,62 @@ var history = /* record */[
   history_011
 ];
 
+var debussyFile_000 = /* content : Analysis */Block.__(4, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
+
+var debussyFile = /* record */[
+  debussyFile_000,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
+var debussy_002 = history_002;
+
+var debussy_003 = history_003;
+
+var debussy_004 = history_004;
+
+var debussy_005 = history_005;
+
+var debussy_006 = history_006;
+
+var debussy_007 = history_007;
+
+var debussy_008 = history_008;
+
+var debussy_009 = history_009;
+
+var debussy_011 = /* layers : :: */[
+  debussyFile,
+  /* :: */[
+    historyLayer,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var debussy = /* record */[
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  debussy_002,
+  debussy_003,
+  debussy_004,
+  debussy_005,
+  debussy_006,
+  debussy_007,
+  debussy_008,
+  debussy_009,
+  /* shouldClear */false,
+  debussy_011
+];
+
+var droste_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
+
+var droste_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+
 var droste_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
 var droste_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
@@ -824,17 +829,8 @@ var droste_011 = /* layers : :: */[
   /* :: */[
     drosteLayer,
     /* :: */[
-      pitchFilter(Music$Gayer.majorHexatonic),
-      /* :: */[
-        /* record */[
-          /* content : Reader */Block.__(6, [/* R */0]),
-          /* alpha */0.0,
-          /* compositeOperation : Multiply */11,
-          /* transformMatrix */Canvas$Gayer.defaultTransform,
-          /* filters */"none"
-        ],
-        /* [] */0
-      ]
+      reader,
+      /* [] */0
     ]
   ]
 ];
@@ -842,8 +838,8 @@ var droste_011 = /* layers : :: */[
 var droste = /* record */[
   /* readPosDelta */0,
   /* writePosDelta */0,
-  /* readPosOffset */2,
-  /* writePosOffset */0,
+  droste_002,
+  droste_003,
   droste_004,
   droste_005,
   droste_006,
@@ -872,37 +868,36 @@ var midiColors = /* record */[
   /* filters */"none"
 ];
 
-var midi_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+var midi_002 = history_002;
 
-var midi_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+var midi_003 = history_003;
 
-var midi_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
+var midi_004 = history_004;
 
-var midi_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+var midi_005 = history_005;
 
-var midi_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+var midi_006 = history_006;
 
-var midi_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+var midi_007 = history_007;
 
-var midi_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+var midi_008 = history_008;
 
-var midi_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
-
-var midi_008 = /* q */Params$Gayer.defaultParams[/* q */8];
-
-var midi_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+var midi_009 = history_009;
 
 var midi_011 = /* layers : :: */[
   midiKeyboard,
   /* :: */[
-    reader,
-    /* [] */0
+    historyLayer,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
   ]
 ];
 
 var midi = /* record */[
-  midi_000,
-  midi_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
   midi_002,
   midi_003,
   midi_004,
@@ -914,6 +909,10 @@ var midi = /* record */[
   /* shouldClear */false,
   midi_011
 ];
+
+var midiDroste_002 = droste_002;
+
+var midiDroste_003 = droste_003;
 
 var midiDroste_004 = droste_004;
 
@@ -941,8 +940,8 @@ var midiDroste_011 = /* layers : :: */[
 var midiDroste = /* record */[
   /* readPosDelta */0,
   /* writePosDelta */0,
-  /* readPosOffset */2,
-  /* writePosOffset */0,
+  midiDroste_002,
+  midiDroste_003,
   midiDroste_004,
   midiDroste_005,
   midiDroste_006,
@@ -993,59 +992,53 @@ var presets_001 = /* :: */[
         ],
         /* :: */[
           /* tuple */[
-            "MIDI (w/ Droste)",
-            midiDroste
+            "MIDI",
+            midi
           ],
           /* :: */[
             /* tuple */[
-              "MIDI",
-              midi
+              "History",
+              history
             ],
             /* :: */[
               /* tuple */[
-                "History",
-                history
+                "King Wen",
+                iChing
               ],
               /* :: */[
                 /* tuple */[
-                  "King Wen",
-                  iChing
+                  "Whiteboard",
+                  whiteboardParams
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Whiteboard",
-                    whiteboardParams
+                    "Slitscan",
+                    slitscanParams
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Slitscan",
-                      slitscanParams
+                      "Mic feedback (may be loud!)",
+                      feedback
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Mic feedback (may be loud!)",
-                        feedback
+                        "Empty",
+                        /* record */[
+                          /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+                          /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+                          /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+                          /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+                          /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+                          /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+                          /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+                          /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+                          /* q */Params$Gayer.defaultParams[/* q */8],
+                          /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+                          /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+                          /* layers : [] */0
+                        ]
                       ],
-                      /* :: */[
-                        /* tuple */[
-                          "Empty",
-                          /* record */[
-                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-                            /* q */Params$Gayer.defaultParams[/* q */8],
-                            /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-                            /* layers : [] */0
-                          ]
-                        ],
-                        /* [] */0
-                      ]
+                      /* [] */0
                     ]
                   ]
                 ]
@@ -1091,13 +1084,13 @@ export {
   slitscanParams ,
   isItACrime ,
   tughra ,
-  debussyFile ,
-  debussy ,
   iChing ,
   singleNote ,
   historyLayer ,
   drosteLayer ,
   history ,
+  debussyFile ,
+  debussy ,
   droste ,
   midiKeyboard ,
   midiColors ,

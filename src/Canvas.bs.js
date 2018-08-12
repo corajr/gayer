@@ -344,17 +344,35 @@ function wrapCoord(index, delta, size) {
   }
 }
 
+function binsPerSemitone(height) {
+  return height / 120 | 0;
+}
+
 function imgSource() {
   return "self";
 }
 
 function length(param) {
   if (typeof param === "number") {
-    if (param !== 0) {
-      return "height";
-    } else {
+    if (param === 0) {
       return "width";
+    } else {
+      return "height";
     }
+  } else if (param.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "note"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "note",
+                    param[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
   } else {
     return param[0];
   }
@@ -458,7 +476,7 @@ function length$1(json) {
   return Json_decode.oneOf(/* :: */[
               (function (param) {
                   return Json_decode.map((function (i) {
-                                return /* Pixels */[i];
+                                return /* Pixels */Block.__(0, [i]);
                               }), Json_decode.$$int, param);
                 }),
               /* :: */[
@@ -470,11 +488,20 @@ function length$1(json) {
                                     case "width" : 
                                         return /* Width */0;
                                     default:
-                                      return /* Pixels */[0];
+                                      return /* Pixels */Block.__(0, [0]);
                                   }
                                 }), Json_decode.string, param);
                   }),
-                /* [] */0
+                /* :: */[
+                  (function (param) {
+                      return Json_decode.map((function (i) {
+                                    return /* Note */Block.__(1, [i]);
+                                  }), (function (param) {
+                                    return Json_decode.field("note", Json_decode.$$int, param);
+                                  }), param);
+                    }),
+                  /* [] */0
+                ]
               ]
             ], json);
 }
@@ -541,11 +568,15 @@ var DecodeDrawCommand = /* module */[
 
 function getLength(ctx, len) {
   if (typeof len === "number") {
-    if (len !== 0) {
-      return ctx.canvas.height;
-    } else {
+    if (len === 0) {
       return ctx.canvas.width;
+    } else {
+      return ctx.canvas.height;
     }
+  } else if (len.tag) {
+    var height = ctx.canvas.height;
+    var pixelsPerSemitone = height / 120 | 0;
+    return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
   } else {
     return len[0];
   }
@@ -582,7 +613,7 @@ var DrawCommand = /* module */[
   /* drawCommands */drawCommands
 ];
 
-var defaultSize = 120;
+var defaultSize = 480;
 
 var defaultTransform = /* record */[
   /* horizontalScaling */1.0,
@@ -615,6 +646,7 @@ export {
   makeImageDataFromFloats ,
   loadImage ,
   wrapCoord ,
+  binsPerSemitone ,
   DrawCommand ,
   
 }

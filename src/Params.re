@@ -24,7 +24,7 @@ let defaultParams: params = {
   writePosDelta: 1,
   readPosOffset: 0,
   writePosOffset: 0,
-  millisPerTick: 32,
+  millisPerTick: defaultSize > 120 ? 16 : 32,
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
@@ -87,6 +87,7 @@ let make =
       ~onChangeLayer,
       ~onSetParams,
       ~getAudio,
+      ~saveTick,
       ~rootWidth,
       ~rootHeight,
       _children,
@@ -222,6 +223,7 @@ let make =
         onSetRef
         onChangeLayer
         getAudio
+        saveTick
         rootWidth
         rootHeight
       />

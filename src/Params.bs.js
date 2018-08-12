@@ -26,6 +26,10 @@ import * as MaterialUi_FormControlLabel from "@jsiebern/bs-material-ui/src/Mater
 import * as MaterialUi_ExpansionPanelDetails from "@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelDetails.bs.js";
 import * as MaterialUi_ExpansionPanelSummary from "@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelSummary.bs.js";
 
+var match = Canvas$Gayer.defaultSize > 120;
+
+var defaultParams_004 = /* millisPerTick */match ? 16 : 32;
+
 var defaultParams_008 = /* q */Audio$Gayer.qForBinsPerOctave(Canvas$Gayer.defaultSize / 10 | 0);
 
 var defaultParams = /* record */[
@@ -33,7 +37,7 @@ var defaultParams = /* record */[
   /* writePosDelta */1,
   /* readPosOffset */0,
   /* writePosOffset */0,
-  /* millisPerTick */32,
+  defaultParams_004,
   /* audioInputSetting : PinkNoise */0,
   /* inputGain */1.0,
   /* outputGain */0.2,
@@ -145,7 +149,7 @@ var EncodeParams = /* module */[/* params */params$1];
 
 var component = ReasonReact.statelessComponent("Params");
 
-function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio, rootWidth, rootHeight, _) {
+function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio, saveTick, rootWidth, rootHeight, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -366,7 +370,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, getAudio, rootWidth, rootHeight, /* array */[])));
+                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, getAudio, rootWidth, rootHeight, saveTick, /* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

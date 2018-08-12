@@ -22,10 +22,14 @@ function drawCQTBar(canvasRenderingContext2D, state) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(size, audioCtx, input, saveRef, _) {
+function make(size, audioCtx, input, saveRef, saveTick, _) {
   var setCanvasRef = function (theRef, param) {
+    var send = param[/* send */3];
     param[/* state */1][/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    return Curry._1(saveRef, theRef);
+    Curry._1(saveRef, theRef);
+    return Curry._1(saveTick, (function () {
+                  return Curry._1(send, /* Draw */0);
+                }));
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -36,22 +40,9 @@ function make(size, audioCtx, input, saveRef, _) {
               if (input !== undefined) {
                 input.connect(self[/* state */1][/* analyser */0]);
               }
-              Curry._1(self[/* onUnmount */4], (function () {
-                      if (input !== undefined) {
-                        input.disconnect(self[/* state */1][/* analyser */0]);
-                        return /* () */0;
-                      } else {
-                        return /* () */0;
-                      }
-                    }));
-              var timerId = setInterval((function () {
-                      return Curry._1(self[/* send */3], /* Draw */0);
-                    }), 20);
-              self[/* state */1][/* timerId */3][0] = Js_primitive.some(timerId);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            var match = self[/* state */1][/* timerId */3][0];
-                            if (match !== undefined) {
-                              clearInterval(Js_primitive.valFromOption(match));
+                            if (input !== undefined) {
+                              input.disconnect(self[/* state */1][/* analyser */0]);
                               return /* () */0;
                             } else {
                               return /* () */0;
@@ -86,8 +77,7 @@ function make(size, audioCtx, input, saveRef, _) {
               return /* record */[
                       /* analyser */analyser,
                       /* cqt */cqt,
-                      /* canvasRef : record */[/* contents */undefined],
-                      /* timerId : record */[/* contents */undefined]
+                      /* canvasRef : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

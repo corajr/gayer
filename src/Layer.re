@@ -198,7 +198,7 @@ module EncodeLayer = {
 };
 
 let renderLayerContent =
-    (layerContent, changeLayer, getAudio, setRef, width, height) =>
+    (layerContent, changeLayer, getAudio, setRef, setTick, width, height) =>
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div>
       (
@@ -224,7 +224,13 @@ let renderLayerContent =
           />
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
-          <AnalysisCanvas size=height audioCtx input saveRef=setRef />;
+          <AnalysisCanvas
+            size=height
+            audioCtx
+            input
+            saveRef=setRef
+            saveTick=setTick
+          />;
         | MIDIKeyboard => <MIDICanvas saveRef=setRef />
         | Draw(_)
         | PitchClasses(_)
@@ -254,6 +260,7 @@ let make =
       ~layer,
       ~changeLayer,
       ~setRef=_ => (),
+      ~saveTick=_ => (),
       ~getAudio,
       ~width,
       ~height,
@@ -277,6 +284,7 @@ let make =
               changeLayer,
               getAudio,
               setRef,
+              saveTick,
               width,
               height,
             )

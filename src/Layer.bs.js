@@ -367,7 +367,7 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent$2, _, getAudio, setRef, _$1, height) {
+function renderLayerContent(layerContent$2, _, getAudio, setRef, setTick, _$1, height) {
   var tmp;
   if (typeof layerContent$2 === "number") {
     tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(setRef, /* array */[]));
@@ -392,7 +392,7 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef, _$1, height) {
           break;
       case 4 : 
           var match = Curry._1(getAudio, layerContent$2[0]);
-          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, match[0], match[1], setRef, /* array */[]));
+          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, match[0], match[1], setRef, setTick, /* array */[]));
           break;
       default:
         tmp = null;
@@ -407,8 +407,11 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef, _$1, height) {
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, changeLayer, $staropt$star, getAudio, width, height, _) {
+function make(layer, changeLayer, $staropt$star, $staropt$star$1, getAudio, width, height, _) {
   var setRef = $staropt$star !== undefined ? $staropt$star : (function () {
+        return /* () */0;
+      });
+  var saveTick = $staropt$star$1 !== undefined ? $staropt$star$1 : (function () {
         return /* () */0;
       });
   return /* record */[
@@ -426,7 +429,7 @@ function make(layer, changeLayer, $staropt$star, getAudio, width, height, _) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], changeLayer, getAudio, setRef, width, height)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], changeLayer, getAudio, setRef, saveTick, width, height)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[

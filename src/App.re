@@ -34,6 +34,7 @@ type state = {
   canvasRef: ref(option(Dom.element)),
   scaleCanvas: option(float),
   fullscreenCanvas: bool,
+  tickFunctions: ref(list(unit => unit)),
   timerId: ref(option(Js.Global.intervalId)),
 };
 
@@ -57,6 +58,7 @@ let defaultState: state = {
   canvasRef: ref(None),
   scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
+  tickFunctions: ref([]),
   timerId: ref(None),
 };
 
@@ -169,8 +171,6 @@ let pushParamsState = newParams => {
 
 let setLayers = (params, newLayers) =>
   pushParamsState({...params, layers: newLayers});
-
-let binsPerSemitone: int => int = height => height / 120;
 
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
@@ -409,6 +409,7 @@ let make =
 
             self.state.writePos :=
               wrapCoord(state.writePos^, state.params.writePosDelta, width);
+            List.iter(f => f(), self.state.tickFunctions^);
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
@@ -523,16 +524,19 @@ let make =
       };
     };
 
-    /* If we change the read or write position offsets, immediately reset the read or write head to the starting position. */
-    if (oldSelf.state.params.layers != newSelf.state.params.layers
+    let layersChanged =
+      oldSelf.state.params.layers != newSelf.state.params.layers;
+
+    /* If we changed the layers or read/write position offsets, immediately reset the read or write head to the starting position. */
+    if (layersChanged
         ||
         oldSelf.state.params.readPosOffset != newSelf.state.params.
                                                 readPosOffset
         ||
         oldSelf.state.params.writePosOffset != newSelf.state.params.
                                                  readPosOffset) {
-      newSelf.state.readPos := newSelf.state.params.readPosOffset;
-      newSelf.state.writePos := newSelf.state.params.writePosOffset;
+      newSelf.state.readPos := 0;
+      newSelf.state.writePos := 0;
     };
 
     if (oldSelf.state.params.q != newSelf.state.params.q
@@ -661,6 +665,11 @@ let make =
                 onSetParams=(newParams => pushParamsState(newParams))
                 rootWidth=width
                 rootHeight=height
+                saveTick=(
+                  tickFn =>
+                    self.state.tickFunctions :=
+                      [tickFn, ...self.state.tickFunctions^]
+                )
                 getAudio=(getAnalysisInput(audioCtx, self.state))
               />
             </Grid>

@@ -65,7 +65,9 @@ var defaultState_016 = /* canvasRef : record */[/* contents */undefined];
 
 var defaultState_017 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
 
-var defaultState_019 = /* timerId : record */[/* contents */undefined];
+var defaultState_019 = /* tickFunctions : record */[/* contents : [] */0];
+
+var defaultState_020 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -87,7 +89,8 @@ var defaultState = /* record */[
   defaultState_016,
   defaultState_017,
   /* fullscreenCanvas */false,
-  defaultState_019
+  defaultState_019,
+  defaultState_020
 ];
 
 function setCanvasRef(theRef, param) {
@@ -260,10 +263,6 @@ function setLayers(params, newLayers) {
             ]);
 }
 
-function binsPerSemitone(height) {
-  return height / 120 | 0;
-}
-
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
@@ -315,7 +314,7 @@ function drawLayer(ctx, width, height, state, layer) {
       case 5 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
           ctx.fillStyle = "black";
-          var pixelsPerSemitone = height / 120 | 0;
+          var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
           for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
             List.iter((function(i){
                 return function (j) {
@@ -393,11 +392,11 @@ function getAnalysisInput(audioCtx, state, audioInput) {
 function setTimer(param) {
   var send = param[/* send */3];
   var state = param[/* state */1];
-  var match = state[/* timerId */19][0];
+  var match = state[/* timerId */20][0];
   if (match !== undefined) {
     clearInterval(Js_primitive.valFromOption(match));
   }
-  state[/* timerId */19][0] = Js_primitive.some(setInterval((function () {
+  state[/* timerId */20][0] = Js_primitive.some(setInterval((function () {
               return Curry._1(send, /* Tick */1);
             }), state[/* params */4][/* millisPerTick */4]));
   return /* () */0;
@@ -430,7 +429,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               self[/* state */1][/* compressor */10][0] = Js_primitive.some(compressor);
               var noise = Audio$Gayer.pinkNoise(audioCtx);
               Curry._1(self[/* send */3], /* SetFilterInput */Block.__(2, [noise]));
-              var pixelsPerSemitone = height / 120 | 0;
+              var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
               self[/* state */1][/* freqFuncParams */2][0] = /* tuple */[
                 pixelsPerSemitone,
                 16
@@ -489,9 +488,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 }
                 
               }
-              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* layers */11], newSelf[/* state */1][/* params */4][/* layers */11]) || oldSelf[/* state */1][/* params */4][/* readPosOffset */2] !== newSelf[/* state */1][/* params */4][/* readPosOffset */2] || oldSelf[/* state */1][/* params */4][/* writePosOffset */3] !== newSelf[/* state */1][/* params */4][/* readPosOffset */2]) {
-                newSelf[/* state */1][/* readPos */0][0] = newSelf[/* state */1][/* params */4][/* readPosOffset */2];
-                newSelf[/* state */1][/* writePos */1][0] = newSelf[/* state */1][/* params */4][/* writePosOffset */3];
+              var layersChanged = Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */4][/* layers */11], newSelf[/* state */1][/* params */4][/* layers */11]);
+              if (layersChanged || oldSelf[/* state */1][/* params */4][/* readPosOffset */2] !== newSelf[/* state */1][/* params */4][/* readPosOffset */2] || oldSelf[/* state */1][/* params */4][/* writePosOffset */3] !== newSelf[/* state */1][/* params */4][/* readPosOffset */2]) {
+                newSelf[/* state */1][/* readPos */0][0] = 0;
+                newSelf[/* state */1][/* writePos */1][0] = 0;
               }
               if (oldSelf[/* state */1][/* params */4][/* q */8] !== newSelf[/* state */1][/* params */4][/* q */8] || oldSelf[/* state */1][/* params */4][/* transpose */9] !== newSelf[/* state */1][/* params */4][/* transpose */9]) {
                 var match$1 = newSelf[/* state */1][/* freqFuncParams */2][0];
@@ -587,6 +587,12 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                             return setLayers(self[/* state */1][/* params */4], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */4][/* layers */11]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
+                                                          }), (function (tickFn) {
+                                                            self[/* state */1][/* tickFunctions */19][0] = /* :: */[
+                                                              tickFn,
+                                                              self[/* state */1][/* tickFunctions */19][0]
+                                                            ];
+                                                            return /* () */0;
                                                           }), width, height, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
@@ -649,6 +655,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     self[/* state */1][/* readPos */0][0] = Canvas$Gayer.wrapCoord(state[/* readPos */0][0], state[/* params */4][/* readPosDelta */0], width);
                                     self[/* state */1][/* writePos */1][0] = Canvas$Gayer.wrapCoord(state[/* writePos */1][0], state[/* params */4][/* writePosDelta */1], width);
+                                    List.iter((function (f) {
+                                            return Curry._1(f, /* () */0);
+                                          }), self[/* state */1][/* tickFunctions */19][0]);
                                     return maybeUpdateCanvas(self[/* state */1][/* canvasRef */16], (function (canvas) {
                                                   var filterValues = drawCanvas(canvas, width, height, state);
                                                   return maybeMapFilterBank((function (filterBank) {
@@ -657,28 +666,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                 }));
                                   })]);
                   case 2 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */!state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                      var newrecord = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord[/* presetDrawerOpen */5] = !state[/* presetDrawerOpen */5], newrecord)]);
                   case 3 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     var match = state[/* canvasRef */16][0];
@@ -690,28 +679,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     }
                                   })]);
                   case 4 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */!state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                      var newrecord$1 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */18] = !state[/* fullscreenCanvas */18], newrecord$1)]);
                   
                 }
               } else {
@@ -725,156 +694,36 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                     return /* () */0;
                                   })]);
                   case 1 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages : :: */[
+                      var newrecord$2 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */13] = /* :: */[
                                     action[0],
                                     state[/* savedImages */13]
-                                  ],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                                  ], newrecord$2)]);
                   case 2 : 
+                      var newrecord$3 = Caml_array.caml_array_dup(state);
                       return /* UpdateWithSideEffects */Block.__(2, [
-                                /* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */action[0],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ],
+                                (newrecord$3[/* filterInput */3] = action[0], newrecord$3),
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
                   case 3 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */action[0],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                      var newrecord$4 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$4[/* micInput */7] = action[0], newrecord$4)]);
                   case 4 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */Js_primitive.some(action[0]),
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                      var newrecord$5 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$5[/* mediaStream */6] = Js_primitive.some(action[0]), newrecord$5)]);
                   case 5 : 
+                      var newrecord$6 = Caml_array.caml_array_dup(state);
                       return /* UpdateWithSideEffects */Block.__(2, [
-                                /* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */state[/* params */4],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */action[0],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ],
+                                (newrecord$6[/* filterBank */9] = action[0], newrecord$6),
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
                   case 6 : 
-                      return /* Update */Block.__(0, [/* record */[
-                                  /* readPos */state[/* readPos */0],
-                                  /* writePos */state[/* writePos */1],
-                                  /* freqFuncParams */state[/* freqFuncParams */2],
-                                  /* filterInput */state[/* filterInput */3],
-                                  /* params */action[0],
-                                  /* presetDrawerOpen */state[/* presetDrawerOpen */5],
-                                  /* mediaStream */state[/* mediaStream */6],
-                                  /* micInput */state[/* micInput */7],
-                                  /* cameraInput */state[/* cameraInput */8],
-                                  /* filterBank */state[/* filterBank */9],
-                                  /* compressor */state[/* compressor */10],
-                                  /* analysisCanvasRef */state[/* analysisCanvasRef */11],
-                                  /* midiCanvasRef */state[/* midiCanvasRef */12],
-                                  /* savedImages */state[/* savedImages */13],
-                                  /* loadedImages */state[/* loadedImages */14],
-                                  /* loadedAudio */state[/* loadedAudio */15],
-                                  /* canvasRef */state[/* canvasRef */16],
-                                  /* scaleCanvas */state[/* scaleCanvas */17],
-                                  /* fullscreenCanvas */state[/* fullscreenCanvas */18],
-                                  /* timerId */state[/* timerId */19]
-                                ]]);
+                      var newrecord$7 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$7[/* params */4] = action[0], newrecord$7)]);
                   
                 }
               }
@@ -903,7 +752,6 @@ export {
   clearCanvas ,
   pushParamsState ,
   setLayers ,
-  binsPerSemitone ,
   drawLayer ,
   drawCanvas ,
   getAnalysisInput ,

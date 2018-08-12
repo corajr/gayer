@@ -8,7 +8,7 @@ type canvasImageSource;
 
 type image;
 
-let defaultSize = 120;
+let defaultSize = 480;
 
 [@bs.deriving abstract]
 type imageData =
@@ -491,12 +491,15 @@ let wrapCoord: (int, int, int) => int =
     };
   };
 
+let binsPerSemitone: int => int = height => height / 120;
+
 module DrawCommand = {
   type imgSource =
     | Self;
 
   type length =
     | Pixels(int)
+    | Note(int)
     | Width
     | Height;
 
@@ -518,6 +521,7 @@ module DrawCommand = {
       Json.Encode.(
         fun
         | Pixels(i) => int(i)
+        | Note(i) => object_([("type", string("note")), ("note", int(i))])
         | Width => string("width")
         | Height => string("height")
       );
@@ -571,6 +575,7 @@ module DrawCommand = {
                | _ => Pixels(0),
                string,
              ),
+             map(i => Note(i), field("note", int)),
            ])
          );
 
@@ -617,6 +622,10 @@ module DrawCommand = {
     (ctx, len) =>
       switch (len) {
       | Pixels(i) => i
+      | Note(i) =>
+        let height = canvasHeight(Ctx.canvas(ctx));
+        let pixelsPerSemitone = binsPerSemitone(height);
+        height - i * pixelsPerSemitone;
       | Width => canvasWidth(Ctx.canvas(ctx))
       | Height => canvasHeight(Ctx.canvas(ctx))
       };
