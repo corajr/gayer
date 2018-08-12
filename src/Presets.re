@@ -208,7 +208,12 @@ let droste = {
   ],
 };
 
+let midiKeyboard = {...baseLayer, content: MIDIKeyboard};
+
+let midi = {...defaultParams, layers: [midiKeyboard, reader]};
+
 let presets = [
+  ("MIDI", midi),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Droste", droste),
   ("Single note", singleNote),

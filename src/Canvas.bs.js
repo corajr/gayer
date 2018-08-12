@@ -297,6 +297,21 @@ function makeImageData(cqtLine) {
   return new ImageData(output, 1, n);
 }
 
+function makeImageDataFromFloats(input, w, h) {
+  var n = input.length;
+  var len = (n << 2);
+  var output = makeUint8ClampedArray(len);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var offset = (i << 2);
+    var v = Caml_array.caml_array_get(input, (n - i | 0) - 1 | 0) * 255.0 | 0;
+    Caml_array.caml_array_set(output, offset + /* R */0 | 0, v);
+    Caml_array.caml_array_set(output, offset + /* G */1 | 0, v);
+    Caml_array.caml_array_set(output, offset + /* B */2 | 0, v);
+    Caml_array.caml_array_set(output, offset + /* A */3 | 0, 255);
+  }
+  return new ImageData(output, w, h);
+}
+
 var loadImage = function (src,onLoad){
      var img = new Image;
 
@@ -537,6 +552,7 @@ export {
   imageDataToFloatArray ,
   makeUint8ClampedArray ,
   makeImageData ,
+  makeImageDataFromFloats ,
   loadImage ,
   wrapCoord ,
   DrawCommand ,

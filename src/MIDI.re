@@ -1,21 +1,23 @@
+type midiChannel = int;
 type noteNumber = int;
 type velocity = float;
 
-type action =
-  | NoteOn(noteNumber, velocity)
-  | NoteOff(noteNumber, velocity);
+type midiNoteAndVelocity = (noteNumber, velocity);
 
-type state = {notesOn: array(velocity)};
+type midiChannelEvent =
+  | NoteOn(midiNoteAndVelocity)
+  | NoteOff(midiNoteAndVelocity);
+
+type midiEvent = midiChannelEvent;
+
+type midiState = {notesOn: array(velocity)};
 
 let defaultState = {notesOn: Array.make(128, 0.0)};
 
-let update: (state, action) => state =
-  (state, event) =>
+let update: (midiState, midiEvent) => unit =
+  (midiState, event) =>
     switch (event) {
-    | NoteOn(noteNumber, velocity) =>
-      state.notesOn[noteNumber] = velocity;
-      state;
-    | NoteOff(noteNumber, _) =>
-      state.notesOn[noteNumber] = 0.0;
-      state;
+    | NoteOn((noteNumber, velocity)) =>
+      midiState.notesOn[noteNumber] = velocity
+    | NoteOff((noteNumber, _)) => midiState.notesOn[noteNumber] = 0.0
     };

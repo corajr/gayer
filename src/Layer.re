@@ -1,5 +1,6 @@
 open Audio.AudioInput;
 open Canvas;
+open MIDICanvas;
 open Music;
 
 type slitscanOptions = {x: int};
@@ -31,6 +32,7 @@ type layerContent =
   | Image(string)
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
+  | MIDIKeyboard
   | Reader(channel);
 
 type layer = {
@@ -59,6 +61,7 @@ module DecodeLayer = {
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
+      | "midi-keyboard" => MIDIKeyboard
       | "webcam" =>
         json
         |> map(
@@ -170,7 +173,7 @@ module EncodeLayer = {
           ("type", string("draw")),
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
-
+      | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
       | Reader(channel) =>
         object_([
           ("type", string("reader")),
@@ -211,6 +214,7 @@ let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
           <AnalysisCanvas size=120 audioCtx input saveRef=setRef />;
+        | MIDIKeyboard => <MIDICanvas saveRef=setRef />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)

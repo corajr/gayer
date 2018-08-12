@@ -11,6 +11,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Slider$Gayer from "./Slider.bs.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
+import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
@@ -129,6 +130,8 @@ function layerByType(type_, json) {
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
+    case "midi-keyboard" : 
+        return /* MIDIKeyboard */0;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
                       return /* PitchClasses */Block.__(5, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
@@ -209,108 +212,118 @@ function transformMatrix$1(param) {
 }
 
 function layerContent$1(r) {
-  switch (r.tag | 0) {
-    case 0 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "fill"
-                    ],
-                    /* :: */[
+  if (typeof r === "number") {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "midi-keyboard"
+                ],
+                /* [] */0
+              ]);
+  } else {
+    switch (r.tag | 0) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "style",
-                        r[0]
+                        "type",
+                        "fill"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 1 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "draw"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "style",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "cmds",
-                        Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */2], r[0])
+                        "type",
+                        "draw"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 2 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "webcam"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "cmds",
+                          Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */2], r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "options",
-                        cameraOptions$1(r[0])
+                        "type",
+                        "webcam"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 3 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "image"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "options",
+                          cameraOptions$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 3 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "url",
-                        r[0]
+                        "type",
+                        "image"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 4 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "analysis"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "url",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 4 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "source",
-                        Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[0])
+                        "type",
+                        "analysis"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 5 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "pitchClasses"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "source",
+                          Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 5 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "pc",
-                        Json_encode.list((function (prim) {
-                                return prim;
-                              }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[0]))
+                        "type",
+                        "pitchClasses"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    case 6 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "reader"
-                    ],
-                    /* :: */[
+                      /* :: */[
+                        /* tuple */[
+                          "pc",
+                          Json_encode.list((function (prim) {
+                                  return prim;
+                                }), Curry._1(Music$Gayer.PitchSet[/* elements */19], r[0]))
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 6 : 
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "channel",
-                        Canvas$Gayer.int_of_channel(r[0])
+                        "type",
+                        "reader"
                       ],
-                      /* [] */0
-                    ]
-                  ]);
-    
+                      /* :: */[
+                        /* tuple */[
+                          "channel",
+                          Canvas$Gayer.int_of_channel(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      
+    }
   }
 }
 
@@ -356,30 +369,34 @@ var EncodeLayer = /* module */[
 
 function renderLayerContent(layerContent$2, _, getAudio, setRef) {
   var tmp;
-  switch (layerContent$2.tag | 0) {
-    case 2 : 
-        tmp = React.createElement("video", {
-              ref: setRef,
-              autoPlay: true,
-              height: "120",
-              muted: true,
-              width: "120"
-            });
-        break;
-    case 3 : 
-        tmp = React.createElement("img", {
-              ref: setRef,
-              height: "120",
-              src: layerContent$2[0],
-              width: "120"
-            });
-        break;
-    case 4 : 
-        var match = Curry._1(getAudio, layerContent$2[0]);
-        tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(120, match[0], match[1], setRef, /* array */[]));
-        break;
-    default:
-      tmp = null;
+  if (typeof layerContent$2 === "number") {
+    tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(setRef, /* array */[]));
+  } else {
+    switch (layerContent$2.tag | 0) {
+      case 2 : 
+          tmp = React.createElement("video", {
+                ref: setRef,
+                autoPlay: true,
+                height: "120",
+                muted: true,
+                width: "120"
+              });
+          break;
+      case 3 : 
+          tmp = React.createElement("img", {
+                ref: setRef,
+                height: "120",
+                src: layerContent$2[0],
+                width: "120"
+              });
+          break;
+      case 4 : 
+          var match = Curry._1(getAudio, layerContent$2[0]);
+          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(120, match[0], match[1], setRef, /* array */[]));
+          break;
+      default:
+        tmp = null;
+    }
   }
   return React.createElement("div", {
               style: {

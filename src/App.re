@@ -26,6 +26,7 @@ type state = {
   filterBank: option(filterBank),
   compressor: ref(option(compressor)),
   analysisCanvasRef: ref(option(Dom.element)),
+  midiCanvasRef: ref(option(Dom.element)),
   savedImages: list(string),
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
@@ -50,6 +51,7 @@ let defaultState: state = {
   loadedImages: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
   analysisCanvasRef: ref(None),
+  midiCanvasRef: ref(None),
   canvasRef: ref(None),
   scaleCanvas: Some(2),
   fullscreenCanvas: false,
@@ -91,6 +93,7 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
       }
     | _ => ()
     };
+  | (MIDIKeyboard, Some(_)) => state.midiCanvasRef := maybeRef
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -185,6 +188,17 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       | None => ()
       | Some(analysisCanvas) =>
         let canvasElt = getFromReact(analysisCanvas);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        let x =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        Ctx.drawImage(ctx, canvasAsSource, x, 0);
+      };
+      None;
+    | MIDIKeyboard =>
+      switch (state.midiCanvasRef^) {
+      | None => ()
+      | Some(midiCanvas) =>
+        let canvasElt = getFromReact(midiCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
         let x =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);

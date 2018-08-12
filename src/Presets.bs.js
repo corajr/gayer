@@ -841,88 +841,147 @@ var droste = /* record */[
   droste_011
 ];
 
-var presets_000 = /* tuple */[
-  "Spacy",
-  /* record */[
-    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-    /* q */Params$Gayer.defaultParams[/* q */8],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-    /* layers */spacy
+var midiKeyboard = /* record */[
+  /* content : MIDIKeyboard */0,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
+var midi_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+
+var midi_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+
+var midi_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
+
+var midi_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+
+var midi_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var midi_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var midi_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var midi_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var midi_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var midi_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var midi_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var midi_011 = /* layers : :: */[
+  midiKeyboard,
+  /* :: */[
+    reader,
+    /* [] */0
   ]
+];
+
+var midi = /* record */[
+  midi_000,
+  midi_001,
+  midi_002,
+  midi_003,
+  midi_004,
+  midi_005,
+  midi_006,
+  midi_007,
+  midi_008,
+  midi_009,
+  midi_010,
+  midi_011
+];
+
+var presets_000 = /* tuple */[
+  "MIDI",
+  midi
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Droste",
-    droste
+    "Spacy",
+    /* record */[
+      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+      /* q */Params$Gayer.defaultParams[/* q */8],
+      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+      /* layers */spacy
+    ]
   ],
   /* :: */[
     /* tuple */[
-      "Single note",
-      singleNote
+      "Droste",
+      droste
     ],
     /* :: */[
       /* tuple */[
-        "Tughra of Suleiman",
-        tughra
+        "Single note",
+        singleNote
       ],
       /* :: */[
         /* tuple */[
-          "Is it a crime?",
-          isItACrime
+          "Tughra of Suleiman",
+          tughra
         ],
         /* :: */[
           /* tuple */[
-            "History",
-            history
+            "Is it a crime?",
+            isItACrime
           ],
           /* :: */[
             /* tuple */[
-              "King Wen",
-              iChing
+              "History",
+              history
             ],
             /* :: */[
               /* tuple */[
-                "Whiteboard",
-                whiteboardParams
+                "King Wen",
+                iChing
               ],
               /* :: */[
                 /* tuple */[
-                  "Slitscan",
-                  slitscanParams
+                  "Whiteboard",
+                  whiteboardParams
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Mic feedback (may be loud!)",
-                    feedback
+                    "Slitscan",
+                    slitscanParams
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Empty",
-                      /* record */[
-                        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-                        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-                        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-                        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-                        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-                        /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-                        /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-                        /* q */Params$Gayer.defaultParams[/* q */8],
-                        /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-                        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-                        /* layers : [] */0
-                      ]
+                      "Mic feedback (may be loud!)",
+                      feedback
                     ],
-                    /* [] */0
+                    /* :: */[
+                      /* tuple */[
+                        "Empty",
+                        /* record */[
+                          /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+                          /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+                          /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+                          /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+                          /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+                          /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+                          /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+                          /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+                          /* q */Params$Gayer.defaultParams[/* q */8],
+                          /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+                          /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+                          /* layers : [] */0
+                        ]
+                      ],
+                      /* [] */0
+                    ]
                   ]
                 ]
               ]
@@ -971,6 +1030,8 @@ export {
   drosteLayer ,
   history ,
   droste ,
+  midiKeyboard ,
+  midi ,
   presets ,
   
 }

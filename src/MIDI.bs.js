@@ -4,13 +4,12 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 
 var defaultState = /* record */[/* notesOn */Caml_array.caml_make_vect(128, 0.0)];
 
-function update(state, $$event) {
+function update(midiState, $$event) {
   if ($$event.tag) {
-    Caml_array.caml_array_set(state[/* notesOn */0], $$event[0], 0.0);
-    return state;
+    return Caml_array.caml_array_set(midiState[/* notesOn */0], $$event[0][0], 0.0);
   } else {
-    Caml_array.caml_array_set(state[/* notesOn */0], $$event[0], $$event[1]);
-    return state;
+    var match = $$event[0];
+    return Caml_array.caml_array_set(midiState[/* notesOn */0], match[0], match[1]);
   }
 }
 

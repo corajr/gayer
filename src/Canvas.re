@@ -427,6 +427,22 @@ let makeImageData = (~cqtLine: array(int)) => {
   createImageData(output, 1, n);
 };
 
+let makeImageDataFromFloats: (array(float), int, int) => imageData =
+  (input, w, h) => {
+    let n = Array.length(input);
+    let len = n * 4;
+    let output = makeUint8ClampedArray(len);
+    for (i in 0 to n - 1) {
+      let offset = i * 4;
+      let v = int_of_float(input[n - i - 1] *. 255.0);
+      output[offset + int_of_channel(R)] = v;
+      output[offset + int_of_channel(G)] = v;
+      output[offset + int_of_channel(B)] = v;
+      output[offset + int_of_channel(A)] = 255;
+    };
+    createImageData(output, w, h);
+  };
+
 let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs.raw
   (src, onLoad) => {|
      var img = new Image;
