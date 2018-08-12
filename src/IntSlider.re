@@ -7,6 +7,7 @@ let make =
       ~includeTextField: bool=false,
       ~label: string,
       ~value: int,
+      ~step: int=1,
       ~updater: int => unit,
       _children,
     ) => {
@@ -39,6 +40,7 @@ let make =
         <Slider
           min=(float_of_int(min))
           max=(float_of_int(max))
+          step=(float_of_int(step))
           value=(float_of_int(value))
           onChange=((_evt, value) => updater(int_of_float(value)))
         />

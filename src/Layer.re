@@ -197,7 +197,8 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
+let renderLayerContent =
+    (layerContent, changeLayer, getAudio, setRef, width, height) =>
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div>
       (
@@ -209,11 +210,21 @@ let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
             muted=true
             width="120"
             height="120"
+            /* width=(Js.Int.toString(width)) */
+            /* height=(Js.Int.toString(height)) */
           />
-        | Image(url) => <img ref=setRef src=url width="120" height="120" />
+        | Image(url) =>
+          <img
+            ref=setRef
+            src=url
+            width="120"
+            height="120"
+            /* width=(Js.Int.toString(width)) */
+            /* height=(Js.Int.toString(height)) */
+          />
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
-          <AnalysisCanvas size=120 audioCtx input saveRef=setRef />;
+          <AnalysisCanvas size=height audioCtx input saveRef=setRef />;
         | MIDIKeyboard => <MIDICanvas saveRef=setRef />
         | Draw(_)
         | PitchClasses(_)
@@ -238,7 +249,16 @@ let renderLayerContent = (layerContent, changeLayer, getAudio, setRef) =>
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make = (~layer, ~changeLayer, ~setRef=_ => (), ~getAudio, _children) => {
+let make =
+    (
+      ~layer,
+      ~changeLayer,
+      ~setRef=_ => (),
+      ~getAudio,
+      ~width,
+      ~height,
+      _children,
+    ) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -251,7 +271,16 @@ let make = (~layer, ~changeLayer, ~setRef=_ => (), ~getAudio, _children) => {
           )
         )>
         <CardMedia src="dummy">
-          (renderLayerContent(layer.content, changeLayer, getAudio, setRef))
+          (
+            renderLayerContent(
+              layer.content,
+              changeLayer,
+              getAudio,
+              setRef,
+              width,
+              height,
+            )
+          )
         </CardMedia>
         <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
           <div>

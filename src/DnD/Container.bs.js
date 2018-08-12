@@ -4,7 +4,7 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Card$Gayer from "./Card.bs.js";
+import * as Layer$Gayer from "../Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Dragula$Gayer from "./Dragula.bs.js";
@@ -26,7 +26,7 @@ var defaultState = /* record */[
 
 var component = ReasonReact.reducerComponent("Container");
 
-function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
+function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, rootWidth, rootHeight, _) {
   var dragulaDecorator = function (theRef, param) {
     var state = param[/* state */1];
     state[/* dragContainerRef */1][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -118,9 +118,15 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, getAudio, _) {
               return React.createElement("div", {
                           ref: Curry._1(self[/* handle */0], dragulaDecorator)
                         }, $$Array.of_list(List.map((function (card) {
-                                    return ReasonReact.element(card[/* id */0], undefined, Card$Gayer.make(card[/* id */0], card[/* layer */1], onChangeLayer, getAudio, (function (theRef) {
-                                                      return Curry._2(onSetRef, card[/* layer */1], theRef);
-                                                    }), /* array */[]));
+                                    return React.createElement("div", {
+                                                key: card[/* id */0],
+                                                id: card[/* id */0],
+                                                style: {
+                                                  marginBottom: "16px"
+                                                }
+                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], onChangeLayer, (function (theRef) {
+                                                          return Curry._2(onSetRef, card[/* layer */1], theRef);
+                                                        }), getAudio, rootWidth, rootHeight, /* array */[])));
                                   }), cards)));
             }),
           /* initialState */(function () {

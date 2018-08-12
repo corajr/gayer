@@ -119,20 +119,20 @@ var init$1 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x */0,
-            /* y */-24,
-            /* w */120,
-            /* h */120
+            /* x : Pixels */[0],
+            /* y : Pixels */[-24],
+            /* w : Width */0,
+            /* h : Height */1
           ]
         ]),
       /* :: */[
         /* DrawImage */Block.__(2, [
             /* Self */0,
             /* record */[
-              /* x */0,
-              /* y */-48,
-              /* w */120,
-              /* h */120
+              /* x : Pixels */[0],
+              /* y : Pixels */[-48],
+              /* w : Width */0,
+              /* h : Height */1
             ]
           ]),
         /* [] */0
@@ -165,13 +165,7 @@ var harmony_001 = /* :: */[
   /* :: */[
     pitchFilter(Music$Gayer.cMajor),
     /* :: */[
-      /* record */[
-        /* content : Reader */Block.__(6, [/* R */0]),
-        /* alpha */0.0,
-        /* compositeOperation : Multiply */11,
-        /* transformMatrix */Canvas$Gayer.defaultTransform,
-        /* filters */"none"
-      ],
+      reader,
       /* [] */0
     ]
   ]
@@ -338,6 +332,27 @@ var feedback = /* record */[
   feedback_009,
   feedback_010,
   feedback_011
+];
+
+var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImage */Block.__(2, [
+          /* Self */0,
+          /* record */[
+            /* x : Pixels */[0],
+            /* y : Pixels */[0],
+            /* w : Width */0,
+            /* h : Height */1
+          ]
+        ]),
+      /* [] */0
+    ]]);
+
+var squareLayer = /* record */[
+  squareLayer_000,
+  /* alpha */1.0,
+  /* compositeOperation : Multiply */11,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
 ];
 
 var whiteboardParams_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
@@ -519,13 +534,7 @@ var tughra_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10
 var tughra_011 = /* layers : :: */[
   img("media/suleiman.jpg"),
   /* :: */[
-    /* record */[
-      /* content : Reader */Block.__(6, [/* R */0]),
-      /* alpha */0.25,
-      /* compositeOperation : Multiply */11,
-      /* transformMatrix */Canvas$Gayer.defaultTransform,
-      /* filters */"none"
-    ],
+    reader,
     /* [] */0
   ]
 ];
@@ -672,10 +681,10 @@ var singleNote_011 = /* layers : :: */[
           /* SetFillStyle */Block.__(0, ["red"]),
           /* :: */[
             /* FillRect */Block.__(1, [/* record */[
-                  /* x */0,
-                  /* y */60,
-                  /* w */120,
-                  /* h */1
+                  /* x : Pixels */[0],
+                  /* y : Pixels */[60],
+                  /* w : Width */0,
+                  /* h : Pixels */[1]
                 ]]),
             /* [] */0
           ]
@@ -710,10 +719,10 @@ var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x */-1,
-            /* y */0,
-            /* w */120,
-            /* h */120
+            /* x : Pixels */[-1],
+            /* y : Pixels */[0],
+            /* w : Width */0,
+            /* h : Height */1
           ]
         ]),
       /* [] */0
@@ -731,10 +740,10 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(2, [
           /* Self */0,
           /* record */[
-            /* x */1,
-            /* y */1,
-            /* w */119,
-            /* h */119
+            /* x : Pixels */[1],
+            /* y : Pixels */[1],
+            /* w : Width */0,
+            /* h : Height */1
           ]
         ]),
       /* [] */0
@@ -749,6 +758,10 @@ var drosteLayer = /* record */[
   /* transformMatrix */Canvas$Gayer.defaultTransform,
   drosteLayer_004
 ];
+
+var history_002 = /* readPosOffset */Canvas$Gayer.defaultSize - 1 | 0;
+
+var history_003 = /* writePosOffset */Canvas$Gayer.defaultSize - 1 | 0;
 
 var history_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
@@ -767,17 +780,14 @@ var history_011 = /* layers : :: */[
   /* :: */[
     historyLayer,
     /* :: */[
-      pitchFilter(Music$Gayer.majorHexatonic),
-      /* :: */[
-        /* record */[
-          /* content : Reader */Block.__(6, [/* R */0]),
-          /* alpha */0.0,
-          /* compositeOperation : Multiply */11,
-          /* transformMatrix */Canvas$Gayer.defaultTransform,
-          /* filters */"none"
-        ],
-        /* [] */0
-      ]
+      /* record */[
+        /* content : Reader */Block.__(6, [/* R */0]),
+        /* alpha */0.0,
+        /* compositeOperation : Multiply */11,
+        /* transformMatrix */Canvas$Gayer.defaultTransform,
+        /* filters */"none"
+      ],
+      /* [] */0
     ]
   ]
 ];
@@ -785,8 +795,8 @@ var history_011 = /* layers : :: */[
 var history = /* record */[
   /* readPosDelta */0,
   /* writePosDelta */0,
-  /* readPosOffset */119,
-  /* writePosOffset */119,
+  history_002,
+  history_003,
   history_004,
   history_005,
   history_006,
@@ -1053,9 +1063,12 @@ var presets = /* :: */[
   presets_001
 ];
 
+var defaultSize = Canvas$Gayer.defaultSize;
+
 var defaultTransform = Canvas$Gayer.defaultTransform;
 
 export {
+  defaultSize ,
   defaultTransform ,
   baseLayer ,
   analyzer ,
@@ -1073,6 +1086,7 @@ export {
   harmonyParams ,
   harmonyIntensified ,
   feedback ,
+  squareLayer ,
   whiteboardParams ,
   slitscanParams ,
   isItACrime ,

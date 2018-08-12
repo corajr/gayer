@@ -145,26 +145,31 @@ external connectCompressorToNode : (compressor, audioNode) => unit = "connect";
 
 [@bs.send] external disconnect : ('a, 'b) => unit = "disconnect";
 
-let midiNoteA440Hz = 69;
+let midiNoteA440Hz = 69.0;
 
-let yToFrequency: (int, int, int) => float =
-  (binsPerSemitone, offset) => {
+let noteToFrequency: float => float =
+  note => 440.0 *. Js.Math.pow_float(2.0, (note -. midiNoteA440Hz) /. 12.0);
+
+let yToFrequency: (int, int, int, int) => float =
+  (binsPerSemitone, offset, height) => {
     let fBinsPerSemitone = float_of_int(binsPerSemitone);
-    let bin440 = float_of_int(midiNoteA440Hz) *. fBinsPerSemitone;
-    let offset = float_of_int(offset) *. fBinsPerSemitone;
-    let octave = 12.0 *. fBinsPerSemitone;
+    let offset = float_of_int(offset);
 
     y => {
-      let note = float_of_int(y) /. fBinsPerSemitone;
-
-      440.0 *. Js.Math.pow_float(2.0, (note -. bin440 +. offset) /. octave);
+      let note = float_of_int(height - y) /. fBinsPerSemitone +. offset;
+      noteToFrequency(note);
     };
   };
+
+let qForBinsPerOctave: int => float =
+  binsPerOctave =>
+    1.0
+    /. (Js.Math.pow_float(2.0, 1.0 /. float_of_int(binsPerOctave)) -. 1.0);
 
 /* In principle, Q should be 1 / (2^(1/12) - 1) = 16.817 */
 /* but a higher Q sounds better. */
 
-let defaultQ = 34.127;
+let defaultQ = qForBinsPerOctave(48);
 
 let defaultCompressorValues: compressorParamValues = {
   threshold: (-12.0),
@@ -294,7 +299,8 @@ let makeFilterBank =
     Array.init(
       filterN,
       i => {
-        let filter = makeFilter(audioCtx, BandPass(freqFunc(i), q));
+        let filter =
+          makeFilter(audioCtx, BandPass(freqFunc(filterN - i), q));
         connectGainToFilter(input, filter);
         filter;
       },
@@ -313,36 +319,6 @@ let makeFilterBank =
     );
   {filters, gains, input, output, audioCtx};
 };
-
-/*
- WebMidi.enable(function () {
-
-     // Viewing available inputs and outputs
-     console.log(WebMidi.inputs);
-     console.log(WebMidi.outputs);
-
-     // Retrieve an input by name, id or index
-     var input = WebMidi.getInputByName("microKEY-37 MIDI 1");
-     // OR...
-     // input = WebMidi.getInputById("1809568182");
-     // input = WebMidi.inputs[0];
-
-     // Listen for a 'note on' message on all channels
-     input.addListener('noteon', 'all',
-         function (e) {
-             const gain = e.velocity * 2;
-             filterBank.setGainForNote(e.note.number, gain);
-             // filterBank.filters[bin].Q.linearRampToValueAtTime(Q, defaultAudioCtx.currentTime + delay);
-         }
-     );
-     input.addListener('noteoff', 'all',
-         function (e) {
-             filterBank.setGainForNote(e.note.number, 0);
-            // filterBank.filters[bin].Q.linearRampToValueAtTime(1, defaultAudioCtx.currentTime + delay);
-         }
-     );
- });
- */
 
 let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
   ctx =>
@@ -377,8 +353,6 @@ let updateFilterBank =
     (
       ~inputGain: float=1.0,
       ~outputGain: float=0.1,
-      ~q=defaultQ,
-      ~freqFunc=yToFrequency(1, 16),
       ~filterBank: filterBank,
       ~filterValues: array(float),
     ) => {
@@ -387,19 +361,27 @@ let updateFilterBank =
   setValueAtTime(filterBank.output |. gain_, outputGain, currentTime);
   let n = Array.length(filterValues);
   for (i in 0 to n - 1) {
+    let filterbankI = n - i - 1;
     setValueAtTime(
-      filterBank.gains[n - i - 1] |. gain_,
+      filterBank.gains[filterbankI] |. gain_,
       filterValues[i],
       currentTime,
     );
-
-    setValueAtTime(filterBank.filters[i] |. qualityFactor, q, currentTime);
-    setValueAtTime(
-      filterBank.filters[i] |. frequency,
-      freqFunc(i),
-      currentTime,
-    );
   };
+};
+
+let updateFilterBankDefinition =
+    (~filterBank: filterBank, ~freqFunc: int => float, ~q: float) => {
+  Js.log("updating filter bank definitions (costly!)");
+  let currentTime = currentTime(filterBank.audioCtx);
+  let n = Array.length(filterBank.filters);
+  Array.iteri(
+    (i, filter) => {
+      setValueAtTime(filter |. qualityFactor, q, currentTime);
+      setValueAtTime(filter |. frequency, freqFunc(n - i - 1), currentTime);
+    },
+    filterBank.filters,
+  );
 };
 
 module AudioInput = {

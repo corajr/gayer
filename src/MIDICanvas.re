@@ -30,7 +30,12 @@ let makeNoteColors: noteNumberToColorMapping => list(DrawCommand.command) =
     for (i in 127 downto 0) {
       noteDrawCommands :=
         [
-          FillRect({x: 0, y: i, w: 1, h: 1}),
+          FillRect({
+            x: Pixels(0),
+            y: Pixels(i),
+            w: Pixels(1),
+            h: Pixels(1),
+          }),
           SetFillStyle(getFillStyleForNumber(i)),
           ...noteDrawCommands^,
         ];
@@ -93,6 +98,6 @@ let make = (~saveRef, _children) => {
         }
       },
     render: self =>
-      <canvas ref=(self.handle(setCanvasRef)) width="1" height="128" />,
+      <canvas ref=(self.handle(setCanvasRef)) width="1" height="120" />,
   };
 };

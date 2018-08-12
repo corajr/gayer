@@ -11,16 +11,23 @@ import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 var makeDefaultAudioCtx = function (){return new (window.AudioContext || window.webkitAudioContext)()};
 
-function yToFrequency(binsPerSemitone, offset) {
+function noteToFrequency(note) {
+  return 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
+}
+
+function yToFrequency(binsPerSemitone, offset, height) {
   var fBinsPerSemitone = binsPerSemitone;
-  var bin440 = 69 * fBinsPerSemitone;
-  var offset$1 = offset * fBinsPerSemitone;
-  var octave = 12.0 * fBinsPerSemitone;
+  var offset$1 = offset;
   return (function (y) {
-      var note = y / fBinsPerSemitone;
-      return 440.0 * Math.pow(2.0, (note - bin440 + offset$1) / octave);
+      return noteToFrequency((height - y | 0) / fBinsPerSemitone + offset$1);
     });
 }
+
+function qForBinsPerOctave(binsPerOctave) {
+  return 1.0 / (Math.pow(2.0, 1.0 / binsPerOctave) - 1.0);
+}
+
+var defaultQ = qForBinsPerOctave(48);
 
 var defaultCompressorValues = /* record */[
   /* threshold */-12.0,
@@ -133,7 +140,7 @@ function makeFilterBank(audioCtx, filterN, q, freqFunc) {
   var t = audioCtx.currentTime;
   var filters = $$Array.init(filterN, (function (i) {
           var filter = makeFilter(audioCtx, /* BandPass */Block.__(2, [
-                  Curry._1(freqFunc, i),
+                  Curry._1(freqFunc, filterN - i | 0),
                   q
                 ]));
           input.connect(filter);
@@ -182,21 +189,29 @@ function disconnectFilterBank(noise, filterBank, compressor) {
   return /* () */0;
 }
 
-function updateFilterBank($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, filterBank, filterValues) {
+function updateFilterBank($staropt$star, $staropt$star$1, filterBank, filterValues) {
   var inputGain = $staropt$star !== undefined ? $staropt$star : 1.0;
   var outputGain = $staropt$star$1 !== undefined ? $staropt$star$1 : 0.1;
-  var q = $staropt$star$2 !== undefined ? $staropt$star$2 : 34.127;
-  var freqFunc = $staropt$star$3 !== undefined ? $staropt$star$3 : yToFrequency(1, 16);
   var currentTime = filterBank[/* audioCtx */4].currentTime;
   filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
   filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
   var n = filterValues.length;
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
-    Caml_array.caml_array_get(filterBank[/* gains */2], (n - i | 0) - 1 | 0).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
-    Caml_array.caml_array_get(filterBank[/* filters */1], i).Q.setValueAtTime(q, currentTime);
-    Caml_array.caml_array_get(filterBank[/* filters */1], i).frequency.setValueAtTime(Curry._1(freqFunc, i), currentTime);
+    var filterbankI = (n - i | 0) - 1 | 0;
+    Caml_array.caml_array_get(filterBank[/* gains */2], filterbankI).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
   }
   return /* () */0;
+}
+
+function updateFilterBankDefinition(filterBank, freqFunc, q) {
+  console.log("updating filter bank definitions (costly!)");
+  var currentTime = filterBank[/* audioCtx */4].currentTime;
+  var n = filterBank[/* filters */1].length;
+  return $$Array.iteri((function (i, filter) {
+                filter.Q.setValueAtTime(q, currentTime);
+                filter.frequency.setValueAtTime(Curry._1(freqFunc, (n - i | 0) - 1 | 0), currentTime);
+                return /* () */0;
+              }), filterBank[/* filters */1]);
 }
 
 function audioInputSetting(r) {
@@ -262,14 +277,14 @@ var AudioInput = /* module */[
   /* DecodeAudioInput */DecodeAudioInput
 ];
 
-var midiNoteA440Hz = 69;
-
-var defaultQ = 34.127;
+var midiNoteA440Hz = 69.0;
 
 export {
   makeDefaultAudioCtx ,
   midiNoteA440Hz ,
+  noteToFrequency ,
   yToFrequency ,
+  qForBinsPerOctave ,
   defaultQ ,
   defaultCompressorValues ,
   makeCompressor ,
@@ -282,7 +297,8 @@ export {
   connectFilterBank ,
   disconnectFilterBank ,
   updateFilterBank ,
+  updateFilterBankDefinition ,
   AudioInput ,
   
 }
-/* Json_encode Not a pure module */
+/* defaultQ Not a pure module */

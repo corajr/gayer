@@ -8,6 +8,8 @@ type canvasImageSource;
 
 type image;
 
+let defaultSize = 120;
+
 [@bs.deriving abstract]
 type imageData =
   pri {
@@ -217,6 +219,9 @@ let string_of_filter: filter => string =
   | NoFilter => "none";
 
 external getFromReact : Dom.element => canvasElement = "%identity";
+
+[@bs.get] external canvasWidth : canvasElement => int = "width";
+[@bs.get] external canvasHeight : canvasElement => int = "height";
 
 [@bs.send] external toDataURL : canvasElement => string = "";
 
@@ -490,6 +495,18 @@ module DrawCommand = {
   type imgSource =
     | Self;
 
+  type length =
+    | Pixels(int)
+    | Width
+    | Height;
+
+  type rect = {
+    x: length,
+    y: length,
+    w: length,
+    h: length,
+  };
+
   type command =
     | SetFillStyle(string)
     | FillRect(rect)
@@ -497,14 +514,21 @@ module DrawCommand = {
 
   module EncodeDrawCommand = {
     let imgSource = _r => Json.Encode.string("self");
+    let length =
+      Json.Encode.(
+        fun
+        | Pixels(i) => int(i)
+        | Width => string("width")
+        | Height => string("height")
+      );
 
     let rect = r =>
       Json.Encode.(
         object_([
-          ("x", int(r.x)),
-          ("y", int(r.y)),
-          ("w", int(r.w)),
-          ("h", int(r.h)),
+          ("x", length(r.x)),
+          ("y", length(r.y)),
+          ("w", length(r.w)),
+          ("h", length(r.h)),
         ])
       );
 
@@ -535,12 +559,27 @@ module DrawCommand = {
         }
       );
 
+    let length = json =>
+      json
+      |> Json.Decode.(
+           oneOf([
+             map(i => Pixels(i), int),
+             map(
+               fun
+               | "width" => Width
+               | "height" => Height
+               | _ => Pixels(0),
+               string,
+             ),
+           ])
+         );
+
     let rect = json =>
       Json.Decode.{
-        x: json |> field("x", int),
-        y: json |> field("y", int),
-        w: json |> field("w", int),
-        h: json |> field("h", int),
+        x: json |> field("x", length),
+        y: json |> field("y", length),
+        w: json |> field("w", length),
+        h: json |> field("h", length),
       };
 
     let commandByType: (string, Js.Json.t) => command =
@@ -574,21 +613,36 @@ module DrawCommand = {
         json |> Json.Decode.(field("type", string) |> andThen(commandByType));
   };
 
+  let getLength: (ctx, length) => int =
+    (ctx, len) =>
+      switch (len) {
+      | Pixels(i) => i
+      | Width => canvasWidth(Ctx.canvas(ctx))
+      | Height => canvasHeight(Ctx.canvas(ctx))
+      };
+
   let drawCommand: (ctx, command) => unit =
     (ctx, cmd) =>
       switch (cmd) {
       | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
-      | FillRect({x, y, w, h}) => Ctx.fillRect(ctx, x, y, w, h)
+      | FillRect({x, y, w, h}) =>
+        Ctx.fillRect(
+          ctx,
+          getLength(ctx, x),
+          getLength(ctx, y),
+          getLength(ctx, w),
+          getLength(ctx, h),
+        )
       | DrawImage(src, {x, y, w, h}) =>
         switch (src) {
         | Self =>
           Ctx.drawImageDestRect(
             ctx,
             getCanvasAsSource(Ctx.canvas(ctx)),
-            x,
-            y,
-            w,
-            h,
+            getLength(ctx, x),
+            getLength(ctx, y),
+            getLength(ctx, w),
+            getLength(ctx, h),
           )
         }
       };

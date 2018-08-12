@@ -17,7 +17,16 @@ let defaultState = {
 let component = ReasonReact.reducerComponent("Container");
 
 let make =
-    (~cards, ~onMoveCard, ~onChangeLayer, ~onSetRef, ~getAudio, _children) => {
+    (
+      ~cards,
+      ~onMoveCard,
+      ~onChangeLayer,
+      ~onSetRef,
+      ~getAudio,
+      ~rootWidth,
+      ~rootHeight,
+      _children,
+    ) => {
   let handleCardsChange = (state, ids) => {
     let idToLayer =
       List.fold_left(
@@ -112,14 +121,19 @@ let make =
         (
           cards
           |> List.map((card: T.card) =>
-               <Card
+               <div
                  key=card.id
                  id=card.id
-                 layer=card.layer
-                 changeLayer=onChangeLayer
-                 getAudio
-                 setRef=(theRef => onSetRef(card.layer, theRef))
-               />
+                 style=(ReactDOMRe.Style.make(~marginBottom="16px", ()))>
+                 <Layer
+                   layer=card.layer
+                   changeLayer=onChangeLayer
+                   getAudio
+                   width=rootWidth
+                   height=rootHeight
+                   setRef=(theRef => onSetRef(card.layer, theRef))
+                 />
+               </div>
              )
           |> Array.of_list
           |> ReasonReact.array

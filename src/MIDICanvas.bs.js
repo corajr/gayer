@@ -29,10 +29,10 @@ function makeNoteColors(getFillStyleForNumber) {
   for(var i = 127; i >= 0; --i){
     noteDrawCommands = /* :: */[
       /* FillRect */Block.__(1, [/* record */[
-            /* x */0,
-            /* y */i,
-            /* w */1,
-            /* h */1
+            /* x : Pixels */[0],
+            /* y : Pixels */[i],
+            /* w : Pixels */[1],
+            /* h : Pixels */[1]
           ]]),
       /* :: */[
         /* SetFillStyle */Block.__(0, [Curry._1(getFillStyleForNumber, i)]),
@@ -90,7 +90,7 @@ function make(saveRef, _) {
           /* render */(function (self) {
               return React.createElement("canvas", {
                           ref: Curry._1(self[/* handle */0], setCanvasRef),
-                          height: "128",
+                          height: "120",
                           width: "1"
                         });
             }),

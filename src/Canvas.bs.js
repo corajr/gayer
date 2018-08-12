@@ -348,26 +348,38 @@ function imgSource() {
   return "self";
 }
 
+function length(param) {
+  if (typeof param === "number") {
+    if (param !== 0) {
+      return "height";
+    } else {
+      return "width";
+    }
+  } else {
+    return param[0];
+  }
+}
+
 function rect(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
                 "x",
-                r[/* x */0]
+                length(r[/* x */0])
               ],
               /* :: */[
                 /* tuple */[
                   "y",
-                  r[/* y */1]
+                  length(r[/* y */1])
                 ],
                 /* :: */[
                   /* tuple */[
                     "w",
-                    r[/* w */2]
+                    length(r[/* w */2])
                   ],
                   /* :: */[
                     /* tuple */[
                       "h",
-                      r[/* h */3]
+                      length(r[/* h */3])
                     ],
                     /* [] */0
                   ]
@@ -432,6 +444,7 @@ function command(param) {
 
 var EncodeDrawCommand = /* module */[
   /* imgSource */imgSource,
+  /* length */length,
   /* rect */rect,
   /* command */command
 ];
@@ -441,12 +454,37 @@ function imgSource$1(json) {
   return /* Self */0;
 }
 
+function length$1(json) {
+  return Json_decode.oneOf(/* :: */[
+              (function (param) {
+                  return Json_decode.map((function (i) {
+                                return /* Pixels */[i];
+                              }), Json_decode.$$int, param);
+                }),
+              /* :: */[
+                (function (param) {
+                    return Json_decode.map((function (param) {
+                                  switch (param) {
+                                    case "height" : 
+                                        return /* Height */1;
+                                    case "width" : 
+                                        return /* Width */0;
+                                    default:
+                                      return /* Pixels */[0];
+                                  }
+                                }), Json_decode.string, param);
+                  }),
+                /* [] */0
+              ]
+            ], json);
+}
+
 function rect$1(json) {
   return /* record */[
-          /* x */Json_decode.field("x", Json_decode.$$int, json),
-          /* y */Json_decode.field("y", Json_decode.$$int, json),
-          /* w */Json_decode.field("w", Json_decode.$$int, json),
-          /* h */Json_decode.field("h", Json_decode.$$int, json)
+          /* x */Json_decode.field("x", length$1, json),
+          /* y */Json_decode.field("y", length$1, json),
+          /* w */Json_decode.field("w", length$1, json),
+          /* h */Json_decode.field("h", length$1, json)
         ];
 }
 
@@ -495,10 +533,23 @@ function command$1(json) {
 
 var DecodeDrawCommand = /* module */[
   /* imgSource */imgSource$1,
+  /* length */length$1,
   /* rect */rect$1,
   /* commandByType */commandByType,
   /* command */command$1
 ];
+
+function getLength(ctx, len) {
+  if (typeof len === "number") {
+    if (len !== 0) {
+      return ctx.canvas.height;
+    } else {
+      return ctx.canvas.width;
+    }
+  } else {
+    return len[0];
+  }
+}
 
 function drawCommand(ctx, cmd) {
   switch (cmd.tag | 0) {
@@ -507,11 +558,11 @@ function drawCommand(ctx, cmd) {
         return /* () */0;
     case 1 : 
         var match = cmd[0];
-        ctx.fillRect(match[/* x */0], match[/* y */1], match[/* w */2], match[/* h */3]);
+        ctx.fillRect(getLength(ctx, match[/* x */0]), getLength(ctx, match[/* y */1]), getLength(ctx, match[/* w */2]), getLength(ctx, match[/* h */3]));
         return /* () */0;
     case 2 : 
         var match$1 = cmd[1];
-        ctx.drawImage(ctx.canvas, match$1[/* x */0], match$1[/* y */1], match$1[/* w */2], match$1[/* h */3]);
+        ctx.drawImage(ctx.canvas, getLength(ctx, match$1[/* x */0]), getLength(ctx, match$1[/* y */1]), getLength(ctx, match$1[/* w */2]), getLength(ctx, match$1[/* h */3]));
         return /* () */0;
     
   }
@@ -526,9 +577,12 @@ function drawCommands(ctx, cmds) {
 var DrawCommand = /* module */[
   /* EncodeDrawCommand */EncodeDrawCommand,
   /* DecodeDrawCommand */DecodeDrawCommand,
+  /* getLength */getLength,
   /* drawCommand */drawCommand,
   /* drawCommands */drawCommands
 ];
+
+var defaultSize = 120;
 
 var defaultTransform = /* record */[
   /* horizontalScaling */1.0,
@@ -540,6 +594,7 @@ var defaultTransform = /* record */[
 ];
 
 export {
+  defaultSize ,
   int_of_channel ,
   channel_of_int ,
   string_of_compositeOperation ,

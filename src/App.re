@@ -17,6 +17,7 @@ type filterInput = audioNode;
 type state = {
   readPos: ref(int),
   writePos: ref(int),
+  freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
   presetDrawerOpen: bool,
@@ -31,7 +32,7 @@ type state = {
   loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
-  scaleCanvas: option(int),
+  scaleCanvas: option(float),
   fullscreenCanvas: bool,
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -39,6 +40,7 @@ type state = {
 let defaultState: state = {
   readPos: ref(0),
   writePos: ref(0),
+  freqFuncParams: ref((1, 16)),
   presetDrawerOpen: false,
   filterInput: None,
   mediaStream: None,
@@ -53,7 +55,7 @@ let defaultState: state = {
   analysisCanvasRef: ref(None),
   midiCanvasRef: ref(None),
   canvasRef: ref(None),
-  scaleCanvas: Some(2),
+  scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
   timerId: ref(None),
 };
@@ -168,6 +170,8 @@ let pushParamsState = newParams => {
 let setLayers = (params, newLayers) =>
   pushParamsState({...params, layers: newLayers});
 
+let binsPerSemitone: int => int = height => height / 120;
+
 let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
@@ -191,7 +195,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         let canvasAsSource = getCanvasAsSource(canvasElt);
         let x =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImage(ctx, canvasAsSource, x, 0);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
       };
       None;
     | MIDIKeyboard =>
@@ -202,7 +206,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         let canvasAsSource = getCanvasAsSource(canvasElt);
         let x =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImage(ctx, canvasAsSource, x, 0);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
       };
       None;
     | Image(url) =>
@@ -237,12 +241,12 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
       let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
 
       Ctx.setFillStyle(ctx, "black");
-      let binsPerSemitone = height / 120;
+      let pixelsPerSemitone = binsPerSemitone(height);
       for (i in 0 to height / 10) {
         List.iter(
           j => {
-            let y = (i * 12 + j) * binsPerSemitone;
-            Ctx.fillRect(ctx, 0, y, width, binsPerSemitone);
+            let y = (i * 12 + j) * pixelsPerSemitone;
+            Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
           },
           classList,
         );
@@ -334,7 +338,12 @@ let makeAudioElt: string => Dom.element = [%bs.raw
 ];
 
 let make =
-    (~width=120, ~height=120, ~audioCtx=makeDefaultAudioCtx(), _children) => {
+    (
+      ~width=defaultSize,
+      ~height=defaultSize,
+      ~audioCtx=makeDefaultAudioCtx(),
+      _children,
+    ) => {
   ...component,
   initialState: () => defaultState,
   reducer: (action, state) =>
@@ -403,21 +412,15 @@ let make =
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
-                let filterValues =
-                  drawCanvas(canvas, width, height, self.state);
+                let filterValues = drawCanvas(canvas, width, height, state);
+
                 maybeMapFilterBank(
                   filterBank =>
                     updateFilterBank(
                       ~filterBank,
                       ~filterValues,
-                      ~inputGain=self.state.params.inputGain,
-                      ~outputGain=self.state.params.outputGain,
-                      ~freqFunc=
-                        yToFrequency(
-                          height / 120,
-                          16 + self.state.params.transpose,
-                        ),
-                      ~q=self.state.params.q,
+                      ~inputGain=state.params.inputGain,
+                      ~outputGain=state.params.outputGain,
                     ),
                   self.state.filterBank,
                 );
@@ -445,14 +448,18 @@ let make =
     let noise = pinkNoise(audioCtx);
     self.send(SetFilterInput(noise));
 
-    let filterBank =
-      makeFilterBank(
-        ~audioCtx,
-        ~filterN=height,
-        ~q=defaultQ,
-        ~freqFunc=
-          yToFrequency(height / 120, 16 + self.state.params.transpose),
+    let pixelsPerSemitone = binsPerSemitone(height);
+    let defaultTranspose = 16;
+    self.state.freqFuncParams := (pixelsPerSemitone, defaultTranspose);
+    let freqFunc =
+      yToFrequency(
+        pixelsPerSemitone,
+        defaultTranspose + self.state.params.transpose,
+        height,
       );
+
+    let filterBank =
+      makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);
     self.send(SetFilterBank(filterBank));
 
     (
@@ -526,6 +533,27 @@ let make =
                                                  readPosOffset) {
       newSelf.state.readPos := newSelf.state.params.readPosOffset;
       newSelf.state.writePos := newSelf.state.params.writePosOffset;
+    };
+
+    if (oldSelf.state.params.q != newSelf.state.params.q
+        || oldSelf.state.params.transpose != newSelf.state.params.transpose) {
+      let (pixelsPerSemitone, defaultTranspose) =
+        newSelf.state.freqFuncParams^;
+      let freqFunc =
+        yToFrequency(
+          pixelsPerSemitone,
+          defaultTranspose + newSelf.state.params.transpose,
+          height,
+        );
+      maybeMapFilterBank(
+        filterBank =>
+          updateFilterBankDefinition(
+            ~freqFunc,
+            ~q=newSelf.state.params.q,
+            ~filterBank,
+          ),
+        newSelf.state.filterBank,
+      );
     };
 
     if (oldSelf.state.params.millisPerTick
@@ -631,6 +659,8 @@ let make =
                     self.handle(setLayerRef, (layer, theRef))
                 )
                 onSetParams=(newParams => pushParamsState(newParams))
+                rootWidth=width
+                rootHeight=height
                 getAudio=(getAnalysisInput(audioCtx, self.state))
               />
             </Grid>
@@ -640,10 +670,10 @@ let make =
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
                     ~minHeight=
-                      Js.Int.toString(
+                      Js.Float.toString(
                         switch (self.state.scaleCanvas) {
-                        | None => height
-                        | Some(i) => height * i
+                        | None => float_of_int(height)
+                        | Some(i) => float_of_int(height) *. i
                         },
                       )
                       ++ "px",
@@ -660,7 +690,7 @@ let make =
                     | None => ReactDOMRe.Style.make()
                     | Some(i) =>
                       ReactDOMRe.Style.make(
-                        ~transform="scale(" ++ Js.Int.toString(i) ++ ")",
+                        ~transform="scale(" ++ Js.Float.toString(i) ++ ")",
                         ~transformOrigin="top left",
                         (),
                       )

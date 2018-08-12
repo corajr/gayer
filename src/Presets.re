@@ -4,6 +4,7 @@ open Layer;
 open Music;
 open Params;
 
+let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
 
 let baseLayer = {
@@ -66,14 +67,20 @@ let harmony = [
   {
     ...
       draw([
-        DrawImage(Self, {x: 0, y: (-24), w: 120, h: 120}),
-        DrawImage(Self, {x: 0, y: (-48), w: 120, h: 120}),
+        DrawImage(
+          Self,
+          {x: Pixels(0), y: Pixels(-24), w: Width, h: Height},
+        ),
+        DrawImage(
+          Self,
+          {x: Pixels(0), y: Pixels(-48), w: Width, h: Height},
+        ),
       ]),
     compositeOperation: Difference,
     alpha: 0.5,
   },
   pitchFilter(cMajor),
-  {...reader, alpha: 0.0},
+  reader,
 ];
 
 let allLayerTypes = [
@@ -102,6 +109,15 @@ let feedback = {
   ...defaultParams,
   audioInputSetting: Mic,
   layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
+};
+
+let squareLayer = {
+  ...baseLayer,
+  content:
+    Draw([
+      DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
+    ]),
+  compositeOperation: Multiply,
 };
 
 let whiteboardParams = {
@@ -137,10 +153,7 @@ let isItACrime = {
 let tughra = {
   ...defaultParams,
   millisPerTick: 33,
-  layers: [
-    img("media/suleiman.jpg"),
-    {...reader, content: Reader(R), alpha: 0.25},
-  ],
+  layers: [img("media/suleiman.jpg"), reader],
 };
 
 let debussyFile = {
@@ -166,7 +179,10 @@ let singleNote = {
     {
       ...baseLayer,
       content:
-        Draw([SetFillStyle("red"), FillRect({x: 0, y: 60, w: 120, h: 1})]),
+        Draw([
+          SetFillStyle("red"),
+          FillRect({x: Pixels(0), y: Pixels(60), w: Width, h: Pixels(1)}),
+        ]),
     },
     reader,
   ],
@@ -174,12 +190,18 @@ let singleNote = {
 
 let historyLayer = {
   ...baseLayer,
-  content: Draw([DrawImage(Self, {x: (-1), y: 0, w: 120, h: 120})]),
+  content:
+    Draw([
+      DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
+    ]),
 };
 
 let drosteLayer = {
   ...baseLayer,
-  content: Draw([DrawImage(Self, {x: 1, y: 1, w: 119, h: 119})]),
+  content:
+    Draw([
+      DrawImage(Self, {x: Pixels(1), y: Pixels(1), w: Width, h: Height}),
+    ]),
   filters:
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
@@ -188,13 +210,14 @@ let history = {
   ...defaultParams,
   readPosDelta: 0,
   writePosDelta: 0,
-  readPosOffset: 119,
-  writePosOffset: 119,
+  readPosOffset: defaultSize - 1,
+  writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
     analyzer,
+    /* squareLayer, */
     historyLayer,
-    pitchFilter(majorHexatonic),
+    /* pitchFilter(majorHexatonic), */
     {...reader, alpha: 0.0},
   ],
 };

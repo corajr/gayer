@@ -24,11 +24,11 @@ let defaultParams: params = {
   writePosDelta: 1,
   readPosOffset: 0,
   writePosOffset: 0,
-  millisPerTick: 25,
+  millisPerTick: 32,
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
-  q: defaultQ,
+  q: qForBinsPerOctave(defaultSize / 10),
   transpose: 0,
   shouldClear: true,
   layers: [],
@@ -87,6 +87,8 @@ let make =
       ~onChangeLayer,
       ~onSetParams,
       ~getAudio,
+      ~rootWidth,
+      ~rootHeight,
       _children,
     ) => {
   ...component,
@@ -123,6 +125,9 @@ let make =
               <IntSlider
                 label="Read position offset"
                 value=params.readPosOffset
+                min=0
+                max=(rootWidth - 1)
+                step=1
                 updater=(
                   readPosOffset => onSetParams({...params, readPosOffset})
                 )
@@ -130,6 +135,8 @@ let make =
               <IntSlider
                 label="Write position offset"
                 value=params.writePosOffset
+                min=0
+                max=(rootWidth - 1)
                 updater=(
                   writePosOffset => onSetParams({...params, writePosOffset})
                 )
@@ -140,8 +147,8 @@ let make =
                 updater=(
                   readPosDelta => onSetParams({...params, readPosDelta})
                 )
-                min=(-119)
-                max=119
+                min=(- rootWidth + 1)
+                max=(rootWidth - 1)
               />
               <IntSlider
                 label="Write position delta"
@@ -149,8 +156,8 @@ let make =
                 updater=(
                   writePosDelta => onSetParams({...params, writePosDelta})
                 )
-                min=(-119)
-                max=119
+                min=(- rootWidth + 1)
+                max=(rootWidth - 1)
               />
             </FormControl>
             <FormControl component=(`String("fieldset"))>
@@ -215,6 +222,8 @@ let make =
         onSetRef
         onChangeLayer
         getAudio
+        rootWidth
+        rootHeight
       />
     </div>,
 };

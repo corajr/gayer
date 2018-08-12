@@ -11,10 +11,11 @@ import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_
 
 var component = ReasonReact.statelessComponent("IntSlider");
 
-function make($staropt$star, $staropt$star$1, $staropt$star$2, label, value, updater, _) {
+function make($staropt$star, $staropt$star$1, $staropt$star$2, label, value, $staropt$star$3, updater, _) {
   var min = $staropt$star !== undefined ? $staropt$star : 0;
   var max = $staropt$star$1 !== undefined ? $staropt$star$1 : 119;
   var includeTextField = $staropt$star$2 !== undefined ? $staropt$star$2 : false;
+  var step = $staropt$star$3 !== undefined ? $staropt$star$3 : 1;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -38,7 +39,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, label, value, upd
                                               3654863,
                                               value
                                             ], undefined, /* array */[])) : null),
-                              ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, max, min, undefined, value, undefined, (function (_, value) {
+                              ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, max, min, step, value, undefined, (function (_, value) {
                                           return Curry._1(updater, value | 0);
                                         }), undefined, /* array */[]))
                             ]));
