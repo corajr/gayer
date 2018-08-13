@@ -8,7 +8,7 @@ let make =
       ~label: string,
       ~value: int,
       ~step: int=1,
-      ~updater: int => unit,
+      ~onChange: int => unit,
       _children,
     ) => {
   ...component,
@@ -19,30 +19,13 @@ let make =
           <Typography>
             (ReasonReact.string(label ++ ": " ++ Js.Int.toString(value)))
           </Typography>
-          (
-            includeTextField ?
-              <TextField
-                value=(`Int(value))
-                onChange=(
-                  evt => {
-                    let v = ReactDOMRe.domElementToObj(
-                              ReactEventRe.Form.target(evt),
-                            )##value;
-                    updater(int_of_string(v));
-                  }
-                )
-                type_="number"
-                margin=`None
-              /> :
-              ReasonReact.null
-          )
         </div>
         <Slider
           min=(float_of_int(min))
           max=(float_of_int(max))
           step=(float_of_int(step))
           value=(float_of_int(value))
-          onChange=((_evt, value) => updater(int_of_float(value)))
+          onChange=((_evt, value) => onChange(int_of_float(value)))
         />
       </FormGroup>
     ),

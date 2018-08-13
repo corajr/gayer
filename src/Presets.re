@@ -7,50 +7,48 @@ open Params;
 let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
 
-let baseLayer = {
-  content: Fill("black"),
-  alpha: 1.0,
-  compositeOperation: SourceOver,
-  transformMatrix: defaultTransform,
-  filters: "none",
+let analyzer = {...defaultLayer, content: Analysis(Mic)};
+
+let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
+
+let slitscan = {
+  ...defaultLayer,
+  content: Webcam({slitscan: Some({x: 320})}),
 };
 
-let analyzer = {...baseLayer, content: Analysis(Mic)};
-
-let webcam = {...baseLayer, content: Webcam({slitscan: None})};
-
-let slitscan = {...baseLayer, content: Webcam({slitscan: Some({x: 320})})};
-
 let reader = {
-  ...baseLayer,
+  ...defaultLayer,
   content: Reader(R),
   alpha: 1.0,
   compositeOperation: Multiply,
 };
 
 let pitchFilter = pc => {
-  ...baseLayer,
+  ...defaultLayer,
   content: PitchClasses(pc),
   compositeOperation: DestinationOut,
 };
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
-  ...baseLayer,
+  ...defaultLayer,
   content: Fill(fillStyle),
   alpha,
 };
 
 let draw = (~alpha: float=1.0, cmds: list(command)) => {
-  ...baseLayer,
+  ...defaultLayer,
   content: Draw(cmds),
   alpha,
 };
 
-let img = url => {...baseLayer, content: Image(url)};
+let img = url => {...defaultLayer, content: Image(url)};
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
 
 let spacy = [hubble, pitchFilter(cMajor), reader];
+
+let drawSelfFullScreen =
+  DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height});
 
 let harmony = [
   /* fill("black", ~alpha=0.1), */
@@ -83,6 +81,16 @@ let harmony = [
   reader,
 ];
 
+let rotateLayer = {
+  ...draw([drawSelfFullScreen]),
+  transformMatrix: {
+    ...defaultTransform,
+    horizontalMoving: float_of_int(defaultSize) *. 0.5,
+    verticalMoving: float_of_int(defaultSize) *. (-0.5),
+  },
+  rotation: oneCompleteTurnAfterNTicks(defaultSize),
+};
+
 let allLayerTypes = [
   hubble,
   analyzer,
@@ -112,7 +120,7 @@ let feedback = {
 };
 
 let squareLayer = {
-  ...baseLayer,
+  ...defaultLayer,
   content:
     Draw([
       DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
@@ -142,10 +150,8 @@ let slitscanParams = {
 
 let isItACrime = {
   ...defaultParams,
-  outputGain: 0.2,
-  millisPerTick: 33,
   layers: [
-    img("media/is_it_a_crime.png"),
+    img("media/is_it_a_crime_large.png"),
     {...reader, content: Reader(A)},
   ],
 };
@@ -160,23 +166,20 @@ let iChing = {
   layers: [img("media/king_wen.png"), pitchFilter(majorHexatonic), reader],
 };
 
-let singleNote = {
-  ...defaultParams,
-  layers: [
-    {
-      ...baseLayer,
-      content:
-        Draw([
-          SetFillStyle("red"),
-          FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
-        ]),
-    },
-    reader,
-  ],
+let singleNoteDrawCommands = note => [
+  SetFillStyle("red"),
+  FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
+];
+
+let singleNoteLayer = note => {
+  ...defaultLayer,
+  content: Draw(singleNoteDrawCommands(note)),
 };
 
+let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
+
 let historyLayer = {
-  ...baseLayer,
+  ...defaultLayer,
   content:
     Draw([
       DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
@@ -184,7 +187,7 @@ let historyLayer = {
 };
 
 let drosteLayer = {
-  ...baseLayer,
+  ...defaultLayer,
   content:
     Draw([
       DrawImage(Self, {x: Pixels(1), y: Pixels(0), w: Width, h: Height}),
@@ -210,7 +213,7 @@ let history = {
 };
 
 let debussyFile = {
-  ...baseLayer,
+  ...defaultLayer,
   content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
   /* content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")), */
 };
@@ -225,11 +228,11 @@ let droste = {
   layers: [analyzer, drosteLayer, reader],
 };
 
-let midiKeyboard = {...baseLayer, content: MIDIKeyboard};
+let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
 
 /* TODO: think of a more elegant way to do this */
 let midiColors = {
-  ...baseLayer,
+  ...defaultLayer,
   content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
   compositeOperation: Multiply,
 };
@@ -238,14 +241,37 @@ let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
 
 let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
 
+let readFromCenterLine = {
+  ...history,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: defaultSize / 2,
+  writePosOffset: defaultSize / 2,
+};
+
+let sun = {
+  ...readFromCenterLine,
+  layers: [
+    draw([
+      Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
+      Rotate(oneCompleteTurnAfterNTicks(defaultSize)),
+      Translate(Negate(Pixels(defaultSize / 2)), Pixels(defaultSize / 2)),
+      FillRect({x: Pixels(0), y: Pixels(0), w: Width, h: Pixels(1)}),
+      /* ...singleNoteDrawCommands(60), */
+    ]),
+    reader,
+  ],
+};
+
 let presets = [
+  ("Sun", sun),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Droste", droste),
   ("Single note", singleNote),
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
-  /* ("Debussy", debussy), */
+  ("Audio file", debussy),
   /* ("Harmony", harmonyParams), */
   ("History", history),
   ("King Wen", iChing),

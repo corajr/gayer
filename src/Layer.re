@@ -39,9 +39,21 @@ type layer = {
   content: layerContent,
   alpha: float,
   compositeOperation,
+  rotation,
   transformMatrix,
   filters: string,
 };
+
+let defaultLayer = {
+  content: Fill("black"),
+  alpha: 1.0,
+  compositeOperation: SourceOver,
+  transformMatrix: defaultTransform,
+  rotation: 0.0,
+  filters: "none",
+};
+
+let oneCompleteTurnAfterNTicks: int => rotation = n => tau /. float_of_int(n);
 
 module DecodeLayer = {
   let transformMatrix = json =>
@@ -58,6 +70,9 @@ module DecodeLayer = {
       | _ => defaultTransform
       }
     );
+
+  let rotation = json => Json.Decode.(json |> float);
+
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
@@ -115,6 +130,7 @@ module DecodeLayer = {
            ),
       transformMatrix: json |> field("transformMatrix", transformMatrix),
       filters: json |> field("filters", string),
+      rotation: json |> field("rotation", rotation),
     };
 };
 
@@ -182,6 +198,8 @@ module EncodeLayer = {
       }
     );
 
+  let rotation = Json.Encode.float;
+
   let layer = r =>
     Json.Encode.(
       object_([
@@ -192,6 +210,7 @@ module EncodeLayer = {
           string(string_of_compositeOperation(r.compositeOperation)),
         ),
         ("transformMatrix", transformMatrix(r.transformMatrix)),
+        ("rotation", rotation(r.rotation)),
         ("filters", string(r.filters)),
       ])
     );
@@ -291,19 +310,28 @@ let make =
           )
         </CardMedia>
         <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
-          <div>
-            <Typography> (ReasonReact.string("Alpha")) </Typography>
-            <Slider
-              min=0.0
-              max=1.0
-              step=0.1
-              value=layer.alpha
-              onChange=(
-                (_evt, value) =>
-                  changeLayer(layer, {...layer, alpha: value})
-              )
-            />
-          </div>
+          <FloatSlider
+            value=layer.alpha
+            label="Alpha"
+            onChange=(value => changeLayer(layer, {...layer, alpha: value}))
+          />
+          <FloatSlider
+            min=((-0.5) *. tau)
+            max=(0.5 *. tau)
+            value=layer.rotation
+            label="Rotation"
+            step=0.01
+            onChange=(
+              value => changeLayer(layer, {...layer, rotation: value})
+            )
+          />
+          /* <NumericTextField */
+          /*   label=(ReasonReact.string("Rotation")) */
+          /*   value=(`Float(layer.rotation)) */
+          /*   onChange=( */
+          /*     value => changeLayer(layer, {...layer, rotation: value}) */
+          /*   ) */
+          /* /> */
           <div>
             <CompositeOperationSelect
               compositeOperation=layer.compositeOperation

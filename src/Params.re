@@ -129,7 +129,7 @@ let make =
                 min=0
                 max=(rootWidth - 1)
                 step=1
-                updater=(
+                onChange=(
                   readPosOffset => onSetParams({...params, readPosOffset})
                 )
               />
@@ -138,14 +138,14 @@ let make =
                 value=params.writePosOffset
                 min=0
                 max=(rootWidth - 1)
-                updater=(
+                onChange=(
                   writePosOffset => onSetParams({...params, writePosOffset})
                 )
               />
               <IntSlider
                 label="Read position delta"
                 value=params.readPosDelta
-                updater=(
+                onChange=(
                   readPosDelta => onSetParams({...params, readPosDelta})
                 )
                 min=(- rootWidth + 1)
@@ -154,7 +154,7 @@ let make =
               <IntSlider
                 label="Write position delta"
                 value=params.writePosDelta
-                updater=(
+                onChange=(
                   writePosDelta => onSetParams({...params, writePosDelta})
                 )
                 min=(- rootWidth + 1)
@@ -175,31 +175,31 @@ let make =
               <FloatSlider
                 label="Input gain"
                 value=params.inputGain
-                updater=(inputGain => onSetParams({...params, inputGain}))
+                onChange=(inputGain => onSetParams({...params, inputGain}))
               />
               <FloatSlider
                 label="Output gain"
                 value=params.outputGain
-                updater=(outputGain => onSetParams({...params, outputGain}))
+                onChange=(outputGain => onSetParams({...params, outputGain}))
               />
               <FloatSlider
                 label="Q"
                 value=params.q
-                updater=(q => onSetParams({...params, q}))
+                onChange=(q => onSetParams({...params, q}))
                 min=1.0
                 max=200.0
               />
               <IntSlider
                 label="Transpose"
                 value=params.transpose
-                updater=(transpose => onSetParams({...params, transpose}))
+                onChange=(transpose => onSetParams({...params, transpose}))
                 min=(-119)
                 max=119
               />
               <IntSlider
                 label="Milliseconds per tick"
                 value=params.millisPerTick
-                updater=(
+                onChange=(
                   millisPerTick => onSetParams({...params, millisPerTick})
                 )
                 min=10

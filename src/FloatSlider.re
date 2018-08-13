@@ -6,7 +6,8 @@ let make =
       ~max: float=1.0,
       ~label: string,
       ~value: float,
-      ~updater: float => unit,
+      ~step: option(float)=?,
+      ~onChange: float => unit,
       _children,
     ) => {
   ...component,
@@ -16,7 +17,25 @@ let make =
         <Typography>
           (ReasonReact.string(label ++ ": " ++ Js.Float.toString(value)))
         </Typography>
-        <Slider min max value onChange=((_evt, value) => updater(value)) />
+        (
+          switch (step) {
+          | Some(f) =>
+            <Slider
+              min
+              max
+              value
+              step=f
+              onChange=((_evt, value) => onChange(value))
+            />
+          | None =>
+            <Slider
+              min
+              max
+              value
+              onChange=((_evt, value) => onChange(value))
+            />
+          }
+        )
       </FormGroup>
     ),
 };

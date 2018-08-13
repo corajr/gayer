@@ -9,9 +9,9 @@ import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
-import * as Slider$Gayer from "./Slider.bs.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
+import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
@@ -58,6 +58,21 @@ var EncodeCameraOptions = /* module */[
   /* cameraOptions */cameraOptions$1
 ];
 
+var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
+
+var defaultLayer = /* record */[
+  defaultLayer_000,
+  /* alpha */1.0,
+  /* compositeOperation : SourceOver */0,
+  /* rotation */0.0,
+  /* transformMatrix */Canvas$Gayer.defaultTransform,
+  /* filters */"none"
+];
+
+function oneCompleteTurnAfterNTicks(n) {
+  return Canvas$Gayer.tau / n;
+}
+
 function transformMatrix(json) {
   var match = Json_decode.list(Json_decode.$$float, json);
   if (match) {
@@ -99,6 +114,8 @@ function transformMatrix(json) {
   }
 }
 
+var rotation = Json_decode.$$float;
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -109,7 +126,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("source", partial_arg, param);
                     }), json);
     case "draw" : 
-        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */1][/* command */4];
+        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* command */4];
         var partial_arg$2 = function (param) {
           return Json_decode.list(partial_arg$1, param);
         };
@@ -175,6 +192,7 @@ function layer(json) {
           /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
                   return Json_decode.field("compositeOperation", Json_decode.string, param);
                 }), json),
+          /* rotation */Json_decode.field("rotation", rotation, json),
           /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json),
           /* filters */Json_decode.field("filters", Json_decode.string, json)
         ];
@@ -182,6 +200,7 @@ function layer(json) {
 
 var DecodeLayer = /* module */[
   /* transformMatrix */transformMatrix,
+  /* rotation */rotation,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
@@ -245,7 +264,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "cmds",
-                          Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */0][/* command */3], r[0])
+                          Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* command */3], r[0])
                         ],
                         /* [] */0
                       ]
@@ -327,6 +346,10 @@ function layerContent$1(r) {
   }
 }
 
+function rotation$1(prim) {
+  return prim;
+}
+
 function layer$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -346,14 +369,20 @@ function layer$1(r) {
                   /* :: */[
                     /* tuple */[
                       "transformMatrix",
-                      transformMatrix$1(r[/* transformMatrix */3])
+                      transformMatrix$1(r[/* transformMatrix */4])
                     ],
                     /* :: */[
                       /* tuple */[
-                        "filters",
-                        r[/* filters */4]
+                        "rotation",
+                        r[/* rotation */3]
                       ],
-                      /* [] */0
+                      /* :: */[
+                        /* tuple */[
+                          "filters",
+                          r[/* filters */5]
+                        ],
+                        /* [] */0
+                      ]
                     ]
                   ]
                 ]
@@ -364,6 +393,7 @@ function layer$1(r) {
 var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
   /* layerContent */layerContent$1,
+  /* rotation */rotation$1,
   /* layer */layer$1
 ];
 
@@ -433,22 +463,34 @@ function make(layer, changeLayer, $staropt$star, $staropt$star$1, getAudio, widt
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
-                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Alpha"])), ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, 1.0, 0.0, 0.1, layer[/* alpha */1], undefined, (function (_, value) {
-                                                        return Curry._2(changeLayer, layer, /* record */[
-                                                                    /* content */layer[/* content */0],
-                                                                    /* alpha */value,
-                                                                    /* compositeOperation */layer[/* compositeOperation */2],
-                                                                    /* transformMatrix */layer[/* transformMatrix */3],
-                                                                    /* filters */layer[/* filters */4]
-                                                                  ]);
-                                                      }), undefined, /* array */[]))),
+                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */1], undefined, (function (value) {
+                                                    return Curry._2(changeLayer, layer, /* record */[
+                                                                /* content */layer[/* content */0],
+                                                                /* alpha */value,
+                                                                /* compositeOperation */layer[/* compositeOperation */2],
+                                                                /* rotation */layer[/* rotation */3],
+                                                                /* transformMatrix */layer[/* transformMatrix */4],
+                                                                /* filters */layer[/* filters */5]
+                                                              ]);
+                                                  }), /* array */[])),
+                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-0.5 * Canvas$Gayer.tau, 0.5 * Canvas$Gayer.tau, "Rotation", layer[/* rotation */3], 0.01, (function (value) {
+                                                    return Curry._2(changeLayer, layer, /* record */[
+                                                                /* content */layer[/* content */0],
+                                                                /* alpha */layer[/* alpha */1],
+                                                                /* compositeOperation */layer[/* compositeOperation */2],
+                                                                /* rotation */value,
+                                                                /* transformMatrix */layer[/* transformMatrix */4],
+                                                                /* filters */layer[/* filters */5]
+                                                              ]);
+                                                  }), /* array */[])),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],
                                                                     /* alpha */layer[/* alpha */1],
                                                                     /* compositeOperation */newOperation,
-                                                                    /* transformMatrix */layer[/* transformMatrix */3],
-                                                                    /* filters */layer[/* filters */4]
+                                                                    /* rotation */layer[/* rotation */3],
+                                                                    /* transformMatrix */layer[/* transformMatrix */4],
+                                                                    /* filters */layer[/* filters */5]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))
@@ -465,6 +507,8 @@ function make(layer, changeLayer, $staropt$star, $staropt$star$1, getAudio, widt
 export {
   DecodeCameraOptions ,
   EncodeCameraOptions ,
+  defaultLayer ,
+  oneCompleteTurnAfterNTicks ,
   DecodeLayer ,
   EncodeLayer ,
   renderLayerContent ,

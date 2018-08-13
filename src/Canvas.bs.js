@@ -23,6 +23,12 @@ function channel_of_int($$int) {
   }
 }
 
+var tau = Math.PI * 2.0;
+
+function degreesToRadians(degrees) {
+  return degrees * (360.0 / tau);
+}
+
 function string_of_compositeOperation(param) {
   switch (param) {
     case 0 : 
@@ -198,6 +204,11 @@ function setFilter(ctx, filters) {
   return /* () */0;
 }
 
+function transform(ctx, param) {
+  ctx.transform(param[/* horizontalScaling */0], param[/* horizontalSkewing */1], param[/* verticalSkewing */2], param[/* verticalScaling */3], param[/* horizontalMoving */4], param[/* verticalMoving */5]);
+  return /* () */0;
+}
+
 function setTransform(ctx, param) {
   ctx.setTransform(param[/* horizontalScaling */0], param[/* horizontalSkewing */1], param[/* verticalSkewing */2], param[/* verticalScaling */3], param[/* horizontalMoving */4], param[/* verticalMoving */5]);
   return /* () */0;
@@ -229,6 +240,7 @@ function line(ctx, param, param$1) {
 var Ctx = /* module */[
   /* setGlobalCompositeOperation */setGlobalCompositeOperation,
   /* setFilter */setFilter,
+  /* transform */transform,
   /* setTransform */setTransform,
   /* circle */circle,
   /* moveToPos */moveToPos,
@@ -348,6 +360,20 @@ function binsPerSemitone(height) {
   return height / 120 | 0;
 }
 
+function field2(f, a, aDec, b, bDec, json) {
+  return Json_decode.andThen((function (a) {
+                return (function (param) {
+                    return Json_decode.map((function (b) {
+                                  return Curry._2(f, a, b);
+                                }), (function (param) {
+                                  return Json_decode.field(b, bDec, param);
+                                }), param);
+                  });
+              }), (function (param) {
+                return Json_decode.field(a, aDec, param);
+              }), json);
+}
+
 function imgSource() {
   return "self";
 }
@@ -359,22 +385,61 @@ function length(param) {
     } else {
       return "height";
     }
-  } else if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "note"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "note",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
   } else {
-    return param[0];
+    switch (param.tag | 0) {
+      case 0 : 
+          return param[0];
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "note"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "note",
+                          param[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "-"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "x",
+                          length(param[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 3 : 
+      case 4 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "*"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "a",
+                          length(param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "b",
+                            length(param[1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      
+    }
   }
 }
 
@@ -440,6 +505,40 @@ function command(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "Rotate"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "rad",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 3 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "Translate"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "x",
+                        length(param[0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "y",
+                          length(param[1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 4 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "DrawImage"
                     ],
                     /* :: */[
@@ -493,13 +592,51 @@ function length$1(json) {
                                 }), Json_decode.string, param);
                   }),
                 /* :: */[
-                  (function (param) {
-                      return Json_decode.map((function (i) {
-                                    return /* Note */Block.__(1, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("note", Json_decode.$$int, param);
-                                  }), param);
-                    }),
+                  Json_decode.map((function (param) {
+                          switch (param) {
+                            case "*" : 
+                                return (function (param) {
+                                    return field2((function (a, b) {
+                                                  return /* Multiply */Block.__(4, [
+                                                            a,
+                                                            b
+                                                          ]);
+                                                }), "a", length$1, "b", length$1, param);
+                                  });
+                            case "+" : 
+                                return (function (param) {
+                                    return field2((function (a, b) {
+                                                  return /* Add */Block.__(3, [
+                                                            a,
+                                                            b
+                                                          ]);
+                                                }), "a", length$1, "b", length$1, param);
+                                  });
+                            case "-" : 
+                                return (function (param) {
+                                    return Json_decode.map((function (x) {
+                                                  return /* Negate */Block.__(2, [x]);
+                                                }), (function (param) {
+                                                  return Json_decode.field("x", length$1, param);
+                                                }), param);
+                                  });
+                            case "note" : 
+                                return (function (param) {
+                                    return Json_decode.map((function (i) {
+                                                  return /* Note */Block.__(1, [i]);
+                                                }), (function (param) {
+                                                  return Json_decode.field("note", Json_decode.$$int, param);
+                                                }), param);
+                                  });
+                            default:
+                              throw [
+                                    Json_decode.DecodeError,
+                                    "Expected length type, got " + JSON.stringify(json)
+                                  ];
+                          }
+                        }), (function (param) {
+                          return Json_decode.field("type", Json_decode.string, param);
+                        }), json),
                   /* [] */0
                 ]
               ]
@@ -521,7 +658,7 @@ function commandByType(type_, json) {
         return Json_decode.andThen((function (src) {
                       return (function (param) {
                           return Json_decode.map((function (rect_) {
-                                        return /* DrawImage */Block.__(2, [
+                                        return /* DrawImage */Block.__(4, [
                                                   src,
                                                   rect_
                                                 ]);
@@ -538,11 +675,32 @@ function commandByType(type_, json) {
                     }), (function (param) {
                       return Json_decode.field("rect", rect$1, param);
                     }), json);
+    case "Rotate" : 
+        return Json_decode.map((function (r) {
+                      return /* Rotate */Block.__(2, [r]);
+                    }), (function (param) {
+                      return Json_decode.field("rad", Json_decode.$$float, param);
+                    }), json);
     case "SetFillStyle" : 
         return Json_decode.map((function (s) {
                       return /* SetFillStyle */Block.__(0, [s]);
                     }), (function (param) {
                       return Json_decode.field("style", Json_decode.string, param);
+                    }), json);
+    case "Translate" : 
+        return Json_decode.andThen((function (x) {
+                      return (function (param) {
+                          return Json_decode.map((function (y) {
+                                        return /* Translate */Block.__(3, [
+                                                  x,
+                                                  y
+                                                ]);
+                                      }), (function (param) {
+                                        return Json_decode.field("y", length$1, param);
+                                      }), param);
+                        });
+                    }), (function (param) {
+                      return Json_decode.field("x", length$1, param);
                     }), json);
     default:
       throw [
@@ -573,12 +731,22 @@ function getLength(ctx, len) {
     } else {
       return ctx.canvas.height;
     }
-  } else if (len.tag) {
-    var height = ctx.canvas.height;
-    var pixelsPerSemitone = height / 120 | 0;
-    return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
   } else {
-    return len[0];
+    switch (len.tag | 0) {
+      case 0 : 
+          return len[0];
+      case 1 : 
+          var height = ctx.canvas.height;
+          var pixelsPerSemitone = height / 120 | 0;
+          return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
+      case 2 : 
+          return -getLength(ctx, len[0]) | 0;
+      case 3 : 
+          return getLength(ctx, len[0]) + getLength(ctx, len[1]) | 0;
+      case 4 : 
+          return Caml_int32.imul(getLength(ctx, len[0]), getLength(ctx, len[1]));
+      
+    }
   }
 }
 
@@ -592,6 +760,18 @@ function drawCommand(ctx, cmd) {
         ctx.fillRect(getLength(ctx, match[/* x */0]), getLength(ctx, match[/* y */1]), getLength(ctx, match[/* w */2]), getLength(ctx, match[/* h */3]));
         return /* () */0;
     case 2 : 
+        ctx.rotate(cmd[0]);
+        return /* () */0;
+    case 3 : 
+        return setTransform(ctx, /* record */[
+                    /* horizontalScaling */1.0,
+                    /* horizontalSkewing */0.0,
+                    /* verticalSkewing */0.0,
+                    /* verticalScaling */1.0,
+                    /* horizontalMoving */getLength(ctx, cmd[0]),
+                    /* verticalMoving */getLength(ctx, cmd[1])
+                  ]);
+    case 4 : 
         var match$1 = cmd[1];
         ctx.drawImage(ctx.canvas, getLength(ctx, match$1[/* x */0]), getLength(ctx, match$1[/* y */1]), getLength(ctx, match$1[/* w */2]), getLength(ctx, match$1[/* h */3]));
         return /* () */0;
@@ -606,6 +786,7 @@ function drawCommands(ctx, cmds) {
 }
 
 var DrawCommand = /* module */[
+  /* field2 */field2,
   /* EncodeDrawCommand */EncodeDrawCommand,
   /* DecodeDrawCommand */DecodeDrawCommand,
   /* getLength */getLength,
@@ -628,6 +809,8 @@ export {
   defaultSize ,
   int_of_channel ,
   channel_of_int ,
+  tau ,
+  degreesToRadians ,
   string_of_compositeOperation ,
   compositeOperation_of_string ,
   defaultTransform ,
@@ -650,4 +833,4 @@ export {
   DrawCommand ,
   
 }
-/* Json_encode Not a pure module */
+/* tau Not a pure module */

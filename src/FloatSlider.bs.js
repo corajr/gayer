@@ -8,7 +8,7 @@ import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_
 
 var component = ReasonReact.statelessComponent("FloatSlider");
 
-function make($staropt$star, $staropt$star$1, label, value, updater, _) {
+function make($staropt$star, $staropt$star$1, label, value, step, onChange, _) {
   var min = $staropt$star !== undefined ? $staropt$star : 0.0;
   var max = $staropt$star$1 !== undefined ? $staropt$star$1 : 1.0;
   return /* record */[
@@ -24,9 +24,11 @@ function make($staropt$star, $staropt$star$1, label, value, updater, _) {
           /* render */(function () {
               return ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[label + (": " + value.toString())])),
-                              ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, max, min, undefined, value, undefined, (function (_, value) {
-                                          return Curry._1(updater, value);
-                                        }), undefined, /* array */[]))
+                              step !== undefined ? ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, max, min, step, value, undefined, (function (_, value) {
+                                            return Curry._1(onChange, value);
+                                          }), undefined, /* array */[])) : ReasonReact.element(undefined, undefined, Slider$Gayer.make(undefined, undefined, undefined, undefined, undefined, max, min, undefined, value, undefined, (function (_, value) {
+                                            return Curry._1(onChange, value);
+                                          }), undefined, /* array */[]))
                             ]));
             }),
           /* initialState */component[/* initialState */10],

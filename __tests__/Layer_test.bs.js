@@ -26,7 +26,7 @@ describe("EncodeCameraOptions <=> DecodeCameraOptions", (function () {
 
 describe("EncodeLayer <=> DecodeLayer", (function () {
         return Jest.testAll("decode inverts encode", Presets$Gayer.allLayerTypes, (function (layer) {
-                      return Jest.Expect[/* toEqual */12](layer, Jest.Expect[/* expect */0](Layer$Gayer.DecodeLayer[/* layer */3](Layer$Gayer.EncodeLayer[/* layer */2](layer))));
+                      return Jest.Expect[/* toEqual */12](layer, Jest.Expect[/* expect */0](Layer$Gayer.DecodeLayer[/* layer */4](Layer$Gayer.EncodeLayer[/* layer */3](layer))));
                     }));
       }));
 

@@ -266,8 +266,9 @@ function setLayers(params, newLayers) {
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
-  Canvas$Gayer.Ctx[/* setTransform */2](ctx, layer[/* transformMatrix */3]);
-  ctx.filter = layer[/* filters */4];
+  Canvas$Gayer.Ctx[/* setTransform */3](ctx, layer[/* transformMatrix */4]);
+  ctx.rotate(layer[/* rotation */3]);
+  ctx.filter = layer[/* filters */5];
   var match = layer[/* content */0];
   if (typeof match === "number") {
     var match$1 = state[/* midiCanvasRef */12][0];
@@ -283,7 +284,7 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillRect(0, 0, width, height);
           return undefined;
       case 1 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */4](ctx, match[0]);
+          Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match[0]);
           return undefined;
       case 2 : 
           var match$2 = state[/* cameraInput */8][0];

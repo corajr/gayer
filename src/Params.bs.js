@@ -48,7 +48,7 @@ var defaultParams = /* record */[
 ];
 
 function params(json) {
-  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */3];
+  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */4];
   return /* record */[
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
@@ -128,7 +128,7 @@ function params$1(r) {
                                   /* :: */[
                                     /* tuple */[
                                       "layers",
-                                      Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */2], r[/* layers */11])
+                                      Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */3], r[/* layers */11])
                                     ],
                                     /* [] */0
                                   ]
@@ -282,7 +282,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                                               /* layers */params[/* layers */11]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */6], (function (inputGain) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */6], undefined, (function (inputGain) {
                                                                   return Curry._1(onSetParams, /* record */[
                                                                               /* readPosDelta */params[/* readPosDelta */0],
                                                                               /* writePosDelta */params[/* writePosDelta */1],
@@ -298,7 +298,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                                               /* layers */params[/* layers */11]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */7], (function (outputGain) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */7], undefined, (function (outputGain) {
                                                                   return Curry._1(onSetParams, /* record */[
                                                                               /* readPosDelta */params[/* readPosDelta */0],
                                                                               /* writePosDelta */params[/* writePosDelta */1],
@@ -314,7 +314,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                                               /* layers */params[/* layers */11]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */8], (function (q) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */8], undefined, (function (q) {
                                                                   return Curry._1(onSetParams, /* record */[
                                                                               /* readPosDelta */params[/* readPosDelta */0],
                                                                               /* writePosDelta */params[/* writePosDelta */1],

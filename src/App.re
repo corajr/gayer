@@ -177,6 +177,13 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
     Ctx.setGlobalAlpha(ctx, layer.alpha);
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
     Ctx.setTransform(ctx, layer.transformMatrix);
+
+    /* NOTE:  setTransform will return to the identity matrix, then transforms
+       translation, scaling, and skew. Rotations will take effect after the
+       transform is complete (to allow for a different axis of rotation than the
+       origin). */
+
+    Ctx.rotate(ctx, layer.rotation);
     Ctx._setFilter(ctx, layer.filters);
 
     switch (layer.content) {

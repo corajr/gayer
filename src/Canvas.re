@@ -50,6 +50,12 @@ type pixel = {
 
 type dim = int;
 
+type rotation = float;
+
+let tau: rotation = Js.Math._PI *. 2.0;
+
+let degreesToRadians: float => rotation = degrees => degrees *. (360.0 /. tau);
+
 type rect = {
   x: dim,
   y: dim,
@@ -273,6 +279,32 @@ module Ctx = {
       );
 
   [@bs.send]
+  external _transform : (ctx, float, float, float, float, float, float) => unit =
+    "transform";
+
+  let transform: (ctx, transformMatrix) => unit =
+    (
+      ctx,
+      {
+        horizontalScaling,
+        horizontalSkewing,
+        verticalSkewing,
+        verticalScaling,
+        horizontalMoving,
+        verticalMoving,
+      },
+    ) =>
+      _transform(
+        ctx,
+        horizontalScaling,
+        horizontalSkewing,
+        verticalSkewing,
+        verticalScaling,
+        horizontalMoving,
+        verticalMoving,
+      );
+
+  [@bs.send]
   external _setTransform :
     (ctx, float, float, float, float, float, float) => unit =
     "setTransform";
@@ -298,6 +330,8 @@ module Ctx = {
         horizontalMoving,
         verticalMoving,
       );
+
+  [@bs.send] external rotate : (ctx, rotation) => unit = "";
 
   /* void ctx.drawImage(image, dx, dy); */
   [@bs.send]
@@ -501,7 +535,10 @@ module DrawCommand = {
     | Pixels(int)
     | Note(int)
     | Width
-    | Height;
+    | Height
+    | Negate(length)
+    | Add(length, length)
+    | Multiply(length, length);
 
   type rect = {
     x: length,
@@ -513,17 +550,40 @@ module DrawCommand = {
   type command =
     | SetFillStyle(string)
     | FillRect(rect)
+    | Rotate(rotation)
+    | Translate(length, length)
     | DrawImage(imgSource, rect);
+
+  let field2 = (f, a, aDec, b, bDec, json) =>
+    Json.Decode.(
+      json
+      |> (
+        field(a, aDec) |> andThen(a => map(b => f(a, b), field(b, bDec)))
+      )
+    );
 
   module EncodeDrawCommand = {
     let imgSource = _r => Json.Encode.string("self");
-    let length =
+    let rec length =
       Json.Encode.(
         fun
         | Pixels(i) => int(i)
         | Note(i) => object_([("type", string("note")), ("note", int(i))])
         | Width => string("width")
         | Height => string("height")
+        | Negate(x) => object_([("type", string("-")), ("x", length(x))])
+        | Multiply(a, b) =>
+          object_([
+            ("type", string("*")),
+            ("a", length(a)),
+            ("b", length(b)),
+          ])
+        | Add(a, b) =>
+          object_([
+            ("type", string("*")),
+            ("a", length(a)),
+            ("b", length(b)),
+          ])
       );
 
     let rect = r =>
@@ -546,6 +606,15 @@ module DrawCommand = {
           ])
         | FillRect(r) =>
           object_([("type", string("FillRect")), ("rect", rect(r))])
+
+        | Rotate(r) =>
+          object_([("type", string("Rotate")), ("rad", float(r))])
+        | Translate(x, y) =>
+          object_([
+            ("type", string("Translate")),
+            ("x", length(x)),
+            ("y", length(y)),
+          ])
         | DrawImage(src, r) =>
           object_([
             ("type", string("DrawImage")),
@@ -563,7 +632,7 @@ module DrawCommand = {
         }
       );
 
-    let length = json =>
+    let rec length = json =>
       json
       |> Json.Decode.(
            oneOf([
@@ -575,7 +644,29 @@ module DrawCommand = {
                | _ => Pixels(0),
                string,
              ),
-             map(i => Note(i), field("note", int)),
+             /* TODO: fix broken parsing/encoding of length */
+             json
+             |> map(
+                  fun
+                  | "+" =>
+                    field2((a, b) => Add(a, b), "a", length, "b", length)
+                  | "*" =>
+                    field2(
+                      (a, b) => Multiply(a, b),
+                      "a",
+                      length,
+                      "b",
+                      length,
+                    )
+                  | "-" => map(x => Negate(x), field("x", length))
+                  | "note" => map(i => Note(i), field("note", int))
+                  | _ =>
+                    raise @@
+                    DecodeError(
+                      "Expected length type, got " ++ Js.Json.stringify(json),
+                    ),
+                  field("type", string),
+                ),
            ])
          );
 
@@ -604,7 +695,15 @@ module DrawCommand = {
                    )
                  )
             )
+          | "Translate" =>
+            json
+            |> (
+              field("x", length)
+              |> andThen(x => map(y => Translate(x, y), field("y", length)))
+            )
+
           | "FillRect" => json |> map(r => FillRect(r), field("rect", rect))
+          | "Rotate" => json |> map(r => Rotate(r), field("rad", float))
           | _ =>
             raise @@
             DecodeError(
@@ -618,7 +717,7 @@ module DrawCommand = {
         json |> Json.Decode.(field("type", string) |> andThen(commandByType));
   };
 
-  let getLength: (ctx, length) => int =
+  let rec getLength: (ctx, length) => int =
     (ctx, len) =>
       switch (len) {
       | Pixels(i) => i
@@ -628,12 +727,25 @@ module DrawCommand = {
         height - i * pixelsPerSemitone;
       | Width => canvasWidth(Ctx.canvas(ctx))
       | Height => canvasHeight(Ctx.canvas(ctx))
+      | Negate(x) => - getLength(ctx, x)
+      | Add(a, b) => getLength(ctx, a) + getLength(ctx, b)
+      | Multiply(a, b) => getLength(ctx, a) * getLength(ctx, b)
       };
 
   let drawCommand: (ctx, command) => unit =
     (ctx, cmd) =>
       switch (cmd) {
       | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
+      | Translate(x, y) =>
+        Ctx.setTransform(
+          ctx,
+          {
+            ...defaultTransform,
+            horizontalMoving: float_of_int(getLength(ctx, x)),
+            verticalMoving: float_of_int(getLength(ctx, y)),
+          },
+        )
+      | Rotate(r) => Ctx.rotate(ctx, r)
       | FillRect({x, y, w, h}) =>
         Ctx.fillRect(
           ctx,
