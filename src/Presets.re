@@ -6,6 +6,7 @@ open Params;
 
 let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
+let tau = Canvas.tau;
 
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
@@ -81,15 +82,16 @@ let harmony = [
   reader,
 ];
 
-let rotateLayer = {
-  ...draw([drawSelfFullScreen]),
-  transformMatrix: {
-    ...defaultTransform,
-    horizontalMoving: float_of_int(defaultSize) *. 0.5,
-    verticalMoving: float_of_int(defaultSize) *. (-0.5),
-  },
-  rotation: oneCompleteTurnAfterNTicks(defaultSize),
-};
+let rotateLayer =
+  draw([
+    Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
+    Rotate(oneCompleteTurnAfterNTicks(defaultSize / 2)),
+    Translate(
+      Negate(Pixels(defaultSize / 2)),
+      Negate(Pixels(defaultSize / 2)),
+    ),
+    drawSelfFullScreen,
+  ]);
 
 let allLayerTypes = [
   hubble,
@@ -190,7 +192,15 @@ let drosteLayer = {
   ...defaultLayer,
   content:
     Draw([
-      DrawImage(Self, {x: Pixels(1), y: Pixels(0), w: Width, h: Height}),
+      DrawImage(
+        Self,
+        {
+          x: Pixels(1),
+          y: Pixels(1),
+          w: Add(Width, Pixels(-1)),
+          h: Add(Height, Pixels(-1)),
+        },
+      ),
     ]),
   filters:
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
@@ -249,23 +259,11 @@ let readFromCenterLine = {
   writePosOffset: defaultSize / 2,
 };
 
-let sun = {
-  ...readFromCenterLine,
-  layers: [
-    draw([
-      Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
-      Rotate(oneCompleteTurnAfterNTicks(defaultSize)),
-      Translate(Negate(Pixels(defaultSize / 2)), Pixels(defaultSize / 2)),
-      FillRect({x: Pixels(0), y: Pixels(0), w: Width, h: Pixels(1)}),
-      /* ...singleNoteDrawCommands(60), */
-    ]),
-    reader,
-  ],
-};
+let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
 
 let presets = [
-  ("Sun", sun),
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("Vinyl", vinyl),
   ("Droste", droste),
   ("Single note", singleNote),
   ("Tughra of Suleiman", tughra),

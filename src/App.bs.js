@@ -530,7 +530,6 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var partial_arg = self[/* state */1];
               var match = self[/* state */1][/* scaleCanvas */17];
               var match$1 = self[/* state */1][/* scaleCanvas */17];
-              var match$2 = self[/* state */1][/* fullscreenCanvas */18];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -625,11 +624,6 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                   }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MaterialUIIcons.PhotoCamera[/* make */0](/* array */[])),
                                                                   "Snapshot"
-                                                                ])), ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                                    return Curry._1(self[/* send */3], /* ToggleFullscreen */4);
-                                                                  }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                  match$2 ? ReasonReact.element(undefined, undefined, MaterialUIIcons.FullscreenExit[/* make */0](/* array */[])) : ReasonReact.element(undefined, undefined, MaterialUIIcons.Fullscreen[/* make */0](/* array */[])),
-                                                                  "Fullscreen"
                                                                 ]))), $$Array.map((function (url) {
                                                             return React.createElement("img", {
                                                                         key: Hashtbl.hash(url).toString(),

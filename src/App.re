@@ -716,22 +716,24 @@ let make =
               </div>
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
-                  <Button
-                    variant=`Contained onClick=(evt => self.send(SaveImage))>
-                    <MaterialUIIcons.PhotoCamera />
-                    (ReasonReact.string("Snapshot"))
-                  </Button>
-                  <Button
-                    variant=`Contained
-                    onClick=(evt => self.send(ToggleFullscreen))>
-                    (
-                      self.state.fullscreenCanvas ?
-                        <MaterialUIIcons.FullscreenExit /> :
-                        <MaterialUIIcons.Fullscreen />
-                    )
-                    (ReasonReact.string("Fullscreen"))
-                  </Button>
-                </div>
+
+                    <Button
+                      variant=`Contained
+                      onClick=(evt => self.send(SaveImage))>
+                      <MaterialUIIcons.PhotoCamera />
+                      (ReasonReact.string("Snapshot"))
+                    </Button>
+                  </div>
+                  /* <Button */
+                  /*   variant=`Contained */
+                  /*   onClick=(evt => self.send(ToggleFullscreen))> */
+                  /*   ( */
+                  /*     self.state.fullscreenCanvas ? */
+                  /*       <MaterialUIIcons.FullscreenExit /> : */
+                  /*       <MaterialUIIcons.Fullscreen /> */
+                  /*   ) */
+                  /*   (ReasonReact.string("Fullscreen")) */
+                  /* </Button> */
                 (
                   self.state.savedImages
                   |> Array.of_list

@@ -381,14 +381,38 @@ function imgSource() {
 function length(param) {
   if (typeof param === "number") {
     if (param === 0) {
-      return "width";
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "width"
+                  ],
+                  /* [] */0
+                ]);
     } else {
-      return "height";
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "height"
+                  ],
+                  /* [] */0
+                ]);
     }
   } else {
     switch (param.tag | 0) {
       case 0 : 
-          return param[0];
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "px"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "i",
+                          param[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
       case 1 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
@@ -418,6 +442,25 @@ function length(param) {
                       ]
                     ]);
       case 3 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "+"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "a",
+                          length(param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "b",
+                            length(param[1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
       case 4 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
@@ -572,75 +615,54 @@ function imgSource$1(json) {
 }
 
 function length$1(json) {
-  return Json_decode.oneOf(/* :: */[
-              (function (param) {
-                  return Json_decode.map((function (i) {
-                                return /* Pixels */Block.__(0, [i]);
-                              }), Json_decode.$$int, param);
-                }),
-              /* :: */[
-                (function (param) {
-                    return Json_decode.map((function (param) {
-                                  switch (param) {
-                                    case "height" : 
-                                        return /* Height */1;
-                                    case "width" : 
-                                        return /* Width */0;
-                                    default:
-                                      return /* Pixels */Block.__(0, [0]);
-                                  }
-                                }), Json_decode.string, param);
-                  }),
-                /* :: */[
-                  Json_decode.map((function (param) {
-                          switch (param) {
-                            case "*" : 
-                                return (function (param) {
-                                    return field2((function (a, b) {
-                                                  return /* Multiply */Block.__(4, [
-                                                            a,
-                                                            b
-                                                          ]);
-                                                }), "a", length$1, "b", length$1, param);
-                                  });
-                            case "+" : 
-                                return (function (param) {
-                                    return field2((function (a, b) {
-                                                  return /* Add */Block.__(3, [
-                                                            a,
-                                                            b
-                                                          ]);
-                                                }), "a", length$1, "b", length$1, param);
-                                  });
-                            case "-" : 
-                                return (function (param) {
-                                    return Json_decode.map((function (x) {
-                                                  return /* Negate */Block.__(2, [x]);
-                                                }), (function (param) {
-                                                  return Json_decode.field("x", length$1, param);
-                                                }), param);
-                                  });
-                            case "note" : 
-                                return (function (param) {
-                                    return Json_decode.map((function (i) {
-                                                  return /* Note */Block.__(1, [i]);
-                                                }), (function (param) {
-                                                  return Json_decode.field("note", Json_decode.$$int, param);
-                                                }), param);
-                                  });
-                            default:
-                              throw [
-                                    Json_decode.DecodeError,
-                                    "Expected length type, got " + JSON.stringify(json)
-                                  ];
-                          }
-                        }), (function (param) {
-                          return Json_decode.field("type", Json_decode.string, param);
-                        }), json),
-                  /* [] */0
-                ]
-              ]
-            ], json);
+  var lengthByType = function (type_, json) {
+    switch (type_) {
+      case "*" : 
+          return field2((function (a, b) {
+                        return /* Multiply */Block.__(4, [
+                                  a,
+                                  b
+                                ]);
+                      }), "a", length$1, "b", length$1, json);
+      case "+" : 
+          return field2((function (a, b) {
+                        return /* Add */Block.__(3, [
+                                  a,
+                                  b
+                                ]);
+                      }), "a", length$1, "b", length$1, json);
+      case "-" : 
+          return Json_decode.map((function (x) {
+                        return /* Negate */Block.__(2, [x]);
+                      }), (function (param) {
+                        return Json_decode.field("x", length$1, param);
+                      }), json);
+      case "height" : 
+          return /* Height */1;
+      case "note" : 
+          return Json_decode.map((function (i) {
+                        return /* Note */Block.__(1, [i]);
+                      }), (function (param) {
+                        return Json_decode.field("note", Json_decode.$$int, param);
+                      }), json);
+      case "px" : 
+          return Json_decode.map((function (i) {
+                        return /* Pixels */Block.__(0, [i]);
+                      }), (function (param) {
+                        return Json_decode.field("i", Json_decode.$$int, param);
+                      }), json);
+      case "width" : 
+          return /* Width */0;
+      default:
+        throw [
+              Json_decode.DecodeError,
+              "Expected length type, got " + JSON.stringify(json)
+            ];
+    }
+  };
+  return Json_decode.andThen(lengthByType, (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
 }
 
 function rect$1(json) {
@@ -763,7 +785,7 @@ function drawCommand(ctx, cmd) {
         ctx.rotate(cmd[0]);
         return /* () */0;
     case 3 : 
-        return setTransform(ctx, /* record */[
+        return transform(ctx, /* record */[
                     /* horizontalScaling */1.0,
                     /* horizontalSkewing */0.0,
                     /* verticalSkewing */0.0,

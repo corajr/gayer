@@ -567,10 +567,10 @@ module DrawCommand = {
     let rec length =
       Json.Encode.(
         fun
-        | Pixels(i) => int(i)
+        | Pixels(i) => object_([("type", string("px")), ("i", int(i))])
         | Note(i) => object_([("type", string("note")), ("note", int(i))])
-        | Width => string("width")
-        | Height => string("height")
+        | Width => object_([("type", string("width"))])
+        | Height => object_([("type", string("height"))])
         | Negate(x) => object_([("type", string("-")), ("x", length(x))])
         | Multiply(a, b) =>
           object_([
@@ -580,7 +580,7 @@ module DrawCommand = {
           ])
         | Add(a, b) =>
           object_([
-            ("type", string("*")),
+            ("type", string("+")),
             ("a", length(a)),
             ("b", length(b)),
           ])
@@ -632,43 +632,30 @@ module DrawCommand = {
         }
       );
 
-    let rec length = json =>
-      json
-      |> Json.Decode.(
-           oneOf([
-             map(i => Pixels(i), int),
-             map(
-               fun
-               | "width" => Width
-               | "height" => Height
-               | _ => Pixels(0),
-               string,
-             ),
-             /* TODO: fix broken parsing/encoding of length */
-             json
-             |> map(
-                  fun
-                  | "+" =>
-                    field2((a, b) => Add(a, b), "a", length, "b", length)
-                  | "*" =>
-                    field2(
-                      (a, b) => Multiply(a, b),
-                      "a",
-                      length,
-                      "b",
-                      length,
-                    )
-                  | "-" => map(x => Negate(x), field("x", length))
-                  | "note" => map(i => Note(i), field("note", int))
-                  | _ =>
-                    raise @@
-                    DecodeError(
-                      "Expected length type, got " ++ Js.Json.stringify(json),
-                    ),
-                  field("type", string),
-                ),
-           ])
-         );
+    let rec length = json => {
+      let lengthByType = (type_, json) =>
+        Json.Decode.(
+          switch (type_) {
+          | "px" => json |> map(i => Pixels(i), field("i", int))
+          | "width" => Width
+          | "height" => Height
+          | "+" =>
+            json |> field2((a, b) => Add(a, b), "a", length, "b", length)
+          | "*" =>
+            json
+            |> field2((a, b) => Multiply(a, b), "a", length, "b", length)
+          | "-" => json |> map(x => Negate(x), field("x", length))
+          | "note" => json |> map(i => Note(i), field("note", int))
+          | _ =>
+            raise @@
+            DecodeError(
+              "Expected length type, got " ++ Js.Json.stringify(json),
+            )
+          }
+        );
+
+      json |> Json.Decode.(field("type", string) |> andThen(lengthByType));
+    };
 
     let rect = json =>
       Json.Decode.{
@@ -737,7 +724,7 @@ module DrawCommand = {
       switch (cmd) {
       | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
       | Translate(x, y) =>
-        Ctx.setTransform(
+        Ctx.transform(
           ctx,
           {
             ...defaultTransform,

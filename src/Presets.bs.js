@@ -223,38 +223,25 @@ var harmony = /* :: */[
   harmony_001
 ];
 
-var init$2 = draw(undefined, /* :: */[
-      drawSelfFullScreen,
-      /* [] */0
+var rotateLayer = draw(undefined, /* :: */[
+      /* Translate */Block.__(3, [
+          /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0]),
+          /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])
+        ]),
+      /* :: */[
+        /* Rotate */Block.__(2, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
+        /* :: */[
+          /* Translate */Block.__(3, [
+              /* Negate */Block.__(2, [/* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])]),
+              /* Negate */Block.__(2, [/* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])])
+            ]),
+          /* :: */[
+            drawSelfFullScreen,
+            /* [] */0
+          ]
+        ]
+      ]
     ]);
-
-var rotateLayer_000 = /* content */init$2[/* content */0];
-
-var rotateLayer_001 = /* alpha */init$2[/* alpha */1];
-
-var rotateLayer_002 = /* compositeOperation */init$2[/* compositeOperation */2];
-
-var rotateLayer_003 = /* rotation */Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize);
-
-var rotateLayer_004 = /* transformMatrix : record */[
-  /* horizontalScaling */Canvas$Gayer.defaultTransform[/* horizontalScaling */0],
-  /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
-  /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
-  /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
-  /* horizontalMoving */Canvas$Gayer.defaultSize * 0.5,
-  /* verticalMoving */Canvas$Gayer.defaultSize * -0.5
-];
-
-var rotateLayer_005 = /* filters */init$2[/* filters */5];
-
-var rotateLayer = /* record */[
-  rotateLayer_000,
-  rotateLayer_001,
-  rotateLayer_002,
-  rotateLayer_003,
-  rotateLayer_004,
-  rotateLayer_005
-];
 
 var allLayerTypes_001 = /* :: */[
   analyzer,
@@ -809,9 +796,15 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
           /* Self */0,
           /* record */[
             /* x : Pixels */Block.__(0, [1]),
-            /* y : Pixels */Block.__(0, [0]),
-            /* w : Width */0,
-            /* h : Height */1
+            /* y : Pixels */Block.__(0, [1]),
+            /* w : Add */Block.__(3, [
+                /* Width */0,
+                /* Pixels */Block.__(0, [-1])
+              ]),
+            /* h : Add */Block.__(3, [
+                /* Height */1,
+                /* Pixels */Block.__(0, [-1])
+              ])
           ]
         ]),
       /* [] */0
@@ -1145,90 +1138,70 @@ var readFromCenterLine = /* record */[
   readFromCenterLine_011
 ];
 
-var sun_002 = readFromCenterLine_002;
+var vinyl_002 = readFromCenterLine_002;
 
-var sun_003 = readFromCenterLine_003;
+var vinyl_003 = readFromCenterLine_003;
 
-var sun_004 = readFromCenterLine_004;
+var vinyl_004 = readFromCenterLine_004;
 
-var sun_005 = readFromCenterLine_005;
+var vinyl_005 = readFromCenterLine_005;
 
-var sun_006 = readFromCenterLine_006;
+var vinyl_006 = readFromCenterLine_006;
 
-var sun_007 = readFromCenterLine_007;
+var vinyl_007 = readFromCenterLine_007;
 
-var sun_008 = readFromCenterLine_008;
+var vinyl_008 = readFromCenterLine_008;
 
-var sun_009 = readFromCenterLine_009;
+var vinyl_009 = readFromCenterLine_009;
 
-var sun_011 = /* layers : :: */[
-  draw(undefined, /* :: */[
-        /* Translate */Block.__(3, [
-            /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0]),
-            /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])
-          ]),
-        /* :: */[
-          /* Rotate */Block.__(2, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize)]),
-          /* :: */[
-            /* Translate */Block.__(3, [
-                /* Negate */Block.__(2, [/* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])]),
-                /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])
-              ]),
-            /* :: */[
-              /* FillRect */Block.__(1, [/* record */[
-                    /* x : Pixels */Block.__(0, [0]),
-                    /* y : Pixels */Block.__(0, [0]),
-                    /* w : Width */0,
-                    /* h : Pixels */Block.__(0, [1])
-                  ]]),
-              /* [] */0
-            ]
-          ]
-        ]
-      ]),
+var vinyl_011 = /* layers : :: */[
+  rotateLayer,
   /* :: */[
-    reader,
-    /* [] */0
+    analyzer,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
   ]
 ];
 
-var sun = /* record */[
+var vinyl = /* record */[
   /* readPosDelta */0,
   /* writePosDelta */0,
-  sun_002,
-  sun_003,
-  sun_004,
-  sun_005,
-  sun_006,
-  sun_007,
-  sun_008,
-  sun_009,
+  vinyl_002,
+  vinyl_003,
+  vinyl_004,
+  vinyl_005,
+  vinyl_006,
+  vinyl_007,
+  vinyl_008,
+  vinyl_009,
   /* shouldClear */false,
-  sun_011
+  vinyl_011
 ];
 
 var presets_000 = /* tuple */[
-  "Sun",
-  sun
+  "Spacy",
+  /* record */[
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+    /* q */Params$Gayer.defaultParams[/* q */8],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+    /* layers */spacy
+  ]
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Spacy",
-    /* record */[
-      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-      /* q */Params$Gayer.defaultParams[/* q */8],
-      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-      /* layers */spacy
-    ]
+    "Vinyl",
+    vinyl
   ],
   /* :: */[
     /* tuple */[
@@ -1327,9 +1300,12 @@ var defaultSize = Canvas$Gayer.defaultSize;
 
 var defaultTransform = Canvas$Gayer.defaultTransform;
 
+var tau = Canvas$Gayer.tau;
+
 export {
   defaultSize ,
   defaultTransform ,
+  tau ,
   analyzer ,
   webcam ,
   slitscan ,
@@ -1367,7 +1343,7 @@ export {
   midi ,
   midiDroste ,
   readFromCenterLine ,
-  sun ,
+  vinyl ,
   presets ,
   
 }
