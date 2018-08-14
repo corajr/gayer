@@ -7,6 +7,7 @@ open Fscreen;
 open Layer;
 open Params;
 open Presets;
+open Timing;
 open UserMedia;
 open Video;
 
@@ -15,6 +16,8 @@ module RList = Rationale.RList;
 type filterInput = audioNode;
 
 type state = {
+  animationStartTime: ref(float),
+  animationLastUpdated: ref(float),
   readPos: ref(int),
   writePos: ref(int),
   freqFuncParams: ref((int, int)),
@@ -39,6 +42,8 @@ type state = {
 };
 
 let defaultState: state = {
+  animationStartTime: ref(0.0),
+  animationLastUpdated: ref(0.0),
   readPos: ref(0),
   writePos: ref(0),
   freqFuncParams: ref((1, 16)),
@@ -78,6 +83,19 @@ type action =
 
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
+
+/* TODO: remove if not needed */
+/* let setTimer = ({ReasonReact.send, ReasonReact.state}) => { */
+/*   switch (state.timerId^) { */
+/*   | None => () */
+/*   | Some(id) => Js.Global.clearInterval(id) */
+/*   }; */
+
+/*   state.timerId := */
+/*     Some( */
+/*   Js.Global.setInterval(() => send(Tick), state.params.millisPerTick), */
+/* ); */
+/* }; */
 
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
@@ -309,27 +327,6 @@ let getAnalysisInput:
     | Mic => (audioCtx, state.micInput)
     };
 
-let setTimer = ({ReasonReact.send, ReasonReact.state}) => {
-  switch (state.timerId^) {
-  | None => ()
-  | Some(id) => Js.Global.clearInterval(id)
-  };
-
-  state.timerId :=
-    Some(
-      Js.Global.setInterval(() => send(Tick), state.params.millisPerTick),
-    );
-};
-
-type domHighResTimeStamp;
-
-[@bs.val] external window : Dom.window = "window";
-
-[@bs.send]
-external requestAnimationFrame :
-  (Dom.window, domHighResTimeStamp => unit) => unit =
-  "";
-
 let makeAudioElt: string => Dom.element = [%bs.raw
   url => {|
      var audio = document.createElement("audio");
@@ -411,12 +408,13 @@ let make =
       ReasonReact.SideEffects(
         (
           self => {
+            /* Js.log("heartbeat"); */
             self.state.readPos :=
               wrapCoord(state.readPos^, state.params.readPosDelta, width);
 
             self.state.writePos :=
               wrapCoord(state.writePos^, state.params.writePosDelta, width);
-            List.iter(f => f(), self.state.tickFunctions^);
+
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
@@ -488,7 +486,29 @@ let make =
 
     self.send(Clear);
 
-    setTimer(self);
+    let sendTickFn = () => self.send(Tick);
+    self.state.tickFunctions := [sendTickFn, ...self.state.tickFunctions^];
+
+    let rec animationFn = timestamp => {
+      let lastUpdated = self.state.animationLastUpdated^;
+      let timeSinceLastUpdate = timestamp -. lastUpdated;
+
+      self.state.animationLastUpdated := timestamp;
+
+      /* Time since beginning; Don't need to know yet, but maybe we would? */
+
+      /* if (self.state.animationStartTime^ === 0.0) { */
+      /*   self.state.animationStartTime := timestamp; */
+      /* }; */
+      /* let timeSinceBeginning = timestamp -. self.state.animationStartTime^; */
+
+      /* Js.log(timeSinceLastUpdate); */
+
+      List.iter(f => f(), self.state.tickFunctions^);
+      requestAnimationFrame(window, animationFn);
+    };
+
+    requestAnimationFrame(window, animationFn);
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
@@ -569,7 +589,8 @@ let make =
 
     if (oldSelf.state.params.millisPerTick
         != newSelf.state.params.millisPerTick) {
-      setTimer(newSelf);
+      ();
+        /* Update millis per tick once requestAnimationFrame is worked out. */
     };
     if (oldSelf.state.fullscreenCanvas != newSelf.state.fullscreenCanvas) {
       if (newSelf.state.fullscreenCanvas) {
@@ -716,24 +737,22 @@ let make =
               </div>
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
-
-                    <Button
-                      variant=`Contained
-                      onClick=(evt => self.send(SaveImage))>
-                      <MaterialUIIcons.PhotoCamera />
-                      (ReasonReact.string("Snapshot"))
-                    </Button>
-                  </div>
-                  /* <Button */
-                  /*   variant=`Contained */
-                  /*   onClick=(evt => self.send(ToggleFullscreen))> */
-                  /*   ( */
-                  /*     self.state.fullscreenCanvas ? */
-                  /*       <MaterialUIIcons.FullscreenExit /> : */
-                  /*       <MaterialUIIcons.Fullscreen /> */
-                  /*   ) */
-                  /*   (ReasonReact.string("Fullscreen")) */
-                  /* </Button> */
+                  <Button
+                    variant=`Contained onClick=(evt => self.send(SaveImage))>
+                    <MaterialUIIcons.PhotoCamera />
+                    (ReasonReact.string("Snapshot"))
+                  </Button>
+                </div>
+                /* <Button */
+                /*   variant=`Contained */
+                /*   onClick=(evt => self.send(ToggleFullscreen))> */
+                /*   ( */
+                /*     self.state.fullscreenCanvas ? */
+                /*       <MaterialUIIcons.FullscreenExit /> : */
+                /*       <MaterialUIIcons.Fullscreen /> */
+                /*   ) */
+                /*   (ReasonReact.string("Fullscreen")) */
+                /* </Button> */
                 (
                   self.state.savedImages
                   |> Array.of_list
