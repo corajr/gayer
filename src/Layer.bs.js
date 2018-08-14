@@ -422,7 +422,7 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef, setTick, millis
           break;
       case 4 : 
           var match = Curry._1(getAudio, layerContent$2[0]);
-          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make((height << 1), match[0], match[1], millisPerTick, setRef, setTick, /* array */[]));
+          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, match[0], match[1], millisPerTick, setRef, setTick, /* array */[]));
           break;
       default:
         tmp = null;

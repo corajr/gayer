@@ -1,5 +1,6 @@
 open Audio;
 open Canvas;
+open Timing;
 
 type state = {
   analyserL: analyser,
@@ -13,20 +14,6 @@ type state = {
 
 type action =
   | Draw;
-
-let maybeClearTimer = state =>
-  switch (state.timerId^) {
-  | None => ()
-  | Some(id) => Js.Global.clearInterval(id)
-  };
-
-let setTimer = ({ReasonReact.send, ReasonReact.state}, millisPerTick) => {
-  maybeClearTimer(state);
-  Js.log(millisPerTick);
-
-  state.timerId :=
-    Some(Js.Global.setInterval(() => send(Draw), millisPerTick));
-};
 
 let drawCQTBar = (canvasRenderingContext2D, state) => {
   let audioDataL = CQT.getInputArray(state.cqt, 0);
@@ -94,8 +81,8 @@ let make =
         | Some(inputNode) => disconnect(inputNode, self.state.stereoPanner)
         }
       );
-      setTimer(self, millisPerTick);
-      self.onUnmount(() => maybeClearTimer(self.state));
+      setTimer(self.state.timerId, () => self.send(Draw), millisPerTick);
+      self.onUnmount(() => maybeClearTimer(self.state.timerId));
     },
     reducer: (action, state) =>
       switch (action) {

@@ -8,27 +8,7 @@ import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-
-function maybeClearTimer(state) {
-  var match = state[/* timerId */6][0];
-  if (match !== undefined) {
-    clearInterval(Js_primitive.valFromOption(match));
-    return /* () */0;
-  } else {
-    return /* () */0;
-  }
-}
-
-function setTimer(param, millisPerTick) {
-  var send = param[/* send */3];
-  var state = param[/* state */1];
-  maybeClearTimer(state);
-  console.log(millisPerTick);
-  state[/* timerId */6][0] = Js_primitive.some(setInterval((function () {
-              return Curry._1(send, /* Draw */0);
-            }), millisPerTick));
-  return /* () */0;
-}
+import * as Timing$Gayer from "./Timing.bs.js";
 
 function drawCQTBar(canvasRenderingContext2D, state) {
   var audioDataL = state[/* cqt */4].get_input_array(0);
@@ -67,9 +47,11 @@ function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
                         return /* () */0;
                       }
                     }));
-              setTimer(self, millisPerTick);
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */6], (function () {
+                      return Curry._1(self[/* send */3], /* Draw */0);
+                    }), millisPerTick);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            return maybeClearTimer(self[/* state */1]);
+                            return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */6]);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -132,8 +114,6 @@ function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
 }
 
 export {
-  maybeClearTimer ,
-  setTimer ,
   drawCQTBar ,
   component ,
   make ,

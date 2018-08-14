@@ -19,6 +19,7 @@ import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Params$Gayer from "./Params.bs.js";
+import * as Timing$Gayer from "./Timing.bs.js";
 import * as Presets$Gayer from "./Presets.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
@@ -71,6 +72,8 @@ var defaultState_019 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
 
 var defaultState_021 = /* tickFunctions : record */[/* contents : [] */0];
 
+var defaultState_022 = /* timerId : record */[/* contents */undefined];
+
 var defaultState = /* record */[
   defaultState_000,
   defaultState_001,
@@ -93,7 +96,8 @@ var defaultState = /* record */[
   defaultState_018,
   defaultState_019,
   /* fullscreenCanvas */false,
-  defaultState_021
+  defaultState_021,
+  defaultState_022
 ];
 
 function setCanvasRef(theRef, param) {
@@ -445,15 +449,21 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 sendTickFn,
                 self[/* state */1][/* tickFunctions */21][0]
               ];
-              var animationFn = function (timestamp) {
-                self[/* state */1][/* animationLastUpdated */1][0] = timestamp;
+              var animationFn = function () {
                 List.iter((function (f) {
                         return Curry._1(f, /* () */0);
                       }), self[/* state */1][/* tickFunctions */21][0]);
                 window.requestAnimationFrame(animationFn);
                 return /* () */0;
               };
-              window.requestAnimationFrame(animationFn);
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */22], (function () {
+                      return List.iter((function (f) {
+                                    return Curry._1(f, /* () */0);
+                                  }), self[/* state */1][/* tickFunctions */21][0]);
+                    }), self[/* state */1][/* params */6][/* millisPerTick */4]);
+              Curry._1(self[/* onUnmount */4], (function () {
+                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */22]);
+                    }));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
                       var hash = decodeURIComponent(url[/* hash */1]);
                       var match = Json.parse(hash);

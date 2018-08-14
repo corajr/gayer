@@ -38,6 +38,7 @@ type state = {
   scaleCanvas: option(float),
   fullscreenCanvas: bool,
   tickFunctions: ref(list(unit => unit)),
+  timerId: ref(option(Js.Global.intervalId)),
 };
 
 let defaultState: state = {
@@ -63,6 +64,7 @@ let defaultState: state = {
   scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
   tickFunctions: ref([]),
+  timerId: ref(None),
 };
 
 type action =
@@ -81,19 +83,6 @@ type action =
 
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
-
-/* TODO: remove if not needed */
-/* let setTimer = ({ReasonReact.send, ReasonReact.state}) => { */
-/*   switch (state.timerId^) { */
-/*   | None => () */
-/*   | Some(id) => Js.Global.clearInterval(id) */
-/*   }; */
-
-/*   state.timerId := */
-/*     Some( */
-/*   Js.Global.setInterval(() => send(Tick), state.params.millisPerTick), */
-/* ); */
-/* }; */
 
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
@@ -488,10 +477,10 @@ let make =
     self.state.tickFunctions := [sendTickFn, ...self.state.tickFunctions^];
 
     let rec animationFn = timestamp => {
-      let lastUpdated = self.state.animationLastUpdated^;
-      let timeSinceLastUpdate = timestamp -. lastUpdated;
+      /* let lastUpdated = self.state.animationLastUpdated^; */
+      /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
 
-      self.state.animationLastUpdated := timestamp;
+      /* self.state.animationLastUpdated := timestamp; */
 
       /* Time since beginning; Don't need to know yet, but maybe we would? */
 
@@ -506,7 +495,15 @@ let make =
       requestAnimationFrame(window, animationFn);
     };
 
-    requestAnimationFrame(window, animationFn);
+    /* requestAnimationFrame(window, animationFn); */
+
+    setTimer(
+      self.state.timerId,
+      () => List.iter(f => f(), self.state.tickFunctions^),
+      self.state.params.millisPerTick,
+    );
+
+    self.onUnmount(() => maybeClearTimer(self.state.timerId));
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {

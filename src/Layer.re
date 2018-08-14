@@ -253,7 +253,7 @@ let renderLayerContent =
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
           <AnalysisCanvas
-            size=(height * 2)
+            size=height
             audioCtx
             input
             millisPerTick

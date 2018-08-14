@@ -210,7 +210,8 @@ let makeCompressor =
   compressor;
 };
 
-let pinkNoise: audioContext => audioNode = [%bs.raw
+/* http://www.musicdsp.org/files/pink.txt */
+let pinkNoiseFull: audioContext => audioNode = [%bs.raw
   audioCtx => {|
      var bufferSize = 4096;
      return (function() {
@@ -236,6 +237,30 @@ let pinkNoise: audioContext => audioNode = [%bs.raw
      })();
      |}
 ];
+
+let cheaperPinkNoise: audioContext => audioNode = [%bs.raw
+  audioCtx => {|
+     var bufferSize = 4096;
+     return (function() {
+     var b0, b1, b2;
+     b0 = b1 = b2 = 0.0;
+     var node = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+     node.onaudioprocess = function(e) {
+     var output = e.outputBuffer.getChannelData(0);
+     for (var i = 0; i < bufferSize; i++) {
+     var white = Math.random() * 2 - 1;
+     b0 = 0.99765 * b0 + white * 0.0990460;
+     b1 = 0.96300 * b1 + white * 0.2965164;
+     b2 = 0.57000 * b2 + white * 1.0526913;
+     output[i] = b0 + b1 + b2 + white * 0.1848;
+     }
+     }
+     return node;
+     })();
+     |}
+];
+
+let pinkNoise = pinkNoiseFull;
 
 [@bs.send]
 external getFloatFrequencyData : (analyser, array(float)) => unit = "";

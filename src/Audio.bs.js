@@ -48,7 +48,7 @@ function makeCompressor(audioCtx, $staropt$star) {
   return compressor;
 }
 
-var pinkNoise = function (audioCtx){
+var pinkNoiseFull = function (audioCtx){
      var bufferSize = 4096;
      return (function() {
      var b0, b1, b2, b3, b4, b5, b6;
@@ -67,6 +67,26 @@ var pinkNoise = function (audioCtx){
      output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
      output[i] *= 0.11; // (roughly) compensate for gain
      b6 = white * 0.115926;
+     }
+     }
+     return node;
+     })();
+     };
+
+var cheaperPinkNoise = function (audioCtx){
+     var bufferSize = 4096;
+     return (function() {
+     var b0, b1, b2;
+     b0 = b1 = b2 = 0.0;
+     var node = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+     node.onaudioprocess = function(e) {
+     var output = e.outputBuffer.getChannelData(0);
+     for (var i = 0; i < bufferSize; i++) {
+     var white = Math.random() * 2 - 1;
+     b0 = 0.99765 * b0 + white * 0.0990460;
+     b1 = 0.96300 * b1 + white * 0.2965164;
+     b2 = 0.57000 * b2 + white * 1.0526913;
+     output[i] = b0 + b1 + b2 + white * 0.1848;
      }
      }
      return node;
@@ -279,6 +299,8 @@ var AudioInput = /* module */[
 
 var midiNoteA440Hz = 69.0;
 
+var pinkNoise = pinkNoiseFull;
+
 export {
   makeDefaultAudioCtx ,
   midiNoteA440Hz ,
@@ -288,6 +310,8 @@ export {
   defaultQ ,
   defaultCompressorValues ,
   makeCompressor ,
+  pinkNoiseFull ,
+  cheaperPinkNoise ,
   pinkNoise ,
   makeAnalyser ,
   string_of_filterType ,
