@@ -71,8 +71,6 @@ var defaultState_019 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
 
 var defaultState_021 = /* tickFunctions : record */[/* contents : [] */0];
 
-var defaultState_022 = /* timerId : record */[/* contents */undefined];
-
 var defaultState = /* record */[
   defaultState_000,
   defaultState_001,
@@ -95,8 +93,7 @@ var defaultState = /* record */[
   defaultState_018,
   defaultState_019,
   /* fullscreenCanvas */false,
-  defaultState_021,
-  defaultState_022
+  defaultState_021
 ];
 
 function setCanvasRef(theRef, param) {
@@ -599,7 +596,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                               self[/* state */1][/* tickFunctions */21][0]
                                                             ];
                                                             return /* () */0;
-                                                          }), width, height, /* array */[]))])),
+                                                          }), width, height, self[/* state */1][/* params */6][/* millisPerTick */4], /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
                                                       style: {

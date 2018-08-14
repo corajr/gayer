@@ -8,10 +8,25 @@ type state = {
   stereoPanner,
   cqt: CQT.t,
   canvasRef: ref(option(Dom.element)),
+  timerId: ref(option(Js.Global.intervalId)),
 };
 
 type action =
   | Draw;
+
+let maybeClearTimer = state =>
+  switch (state.timerId^) {
+  | None => ()
+  | Some(id) => Js.Global.clearInterval(id)
+  };
+
+let setTimer = ({ReasonReact.send, ReasonReact.state}, millisPerTick) => {
+  maybeClearTimer(state);
+  Js.log(millisPerTick);
+
+  state.timerId :=
+    Some(Js.Global.setInterval(() => send(Draw), millisPerTick));
+};
 
 let drawCQTBar = (canvasRenderingContext2D, state) => {
   let audioDataL = CQT.getInputArray(state.cqt, 0);
@@ -28,11 +43,12 @@ let drawCQTBar = (canvasRenderingContext2D, state) => {
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-let make = (~size, ~audioCtx, ~input, ~saveRef, ~saveTick, _children) => {
+let make =
+    (~size, ~audioCtx, ~input, ~millisPerTick, ~saveRef, ~saveTick, _children) => {
   let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     saveRef(theRef);
-    saveTick(() => send(Draw));
+    /* saveTick(() => send(Draw)); */
   };
 
   {
@@ -64,6 +80,7 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, ~saveTick, _children) => {
         stereoPanner,
         cqt,
         canvasRef: ref(None),
+        timerId: ref(None),
       };
     },
     didMount: self => {
@@ -77,6 +94,8 @@ let make = (~size, ~audioCtx, ~input, ~saveRef, ~saveTick, _children) => {
         | Some(inputNode) => disconnect(inputNode, self.state.stereoPanner)
         }
       );
+      setTimer(self, millisPerTick);
+      self.onUnmount(() => maybeClearTimer(self.state));
     },
     reducer: (action, state) =>
       switch (action) {

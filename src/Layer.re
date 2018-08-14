@@ -217,7 +217,16 @@ module EncodeLayer = {
 };
 
 let renderLayerContent =
-    (layerContent, changeLayer, getAudio, setRef, setTick, width, height) =>
+    (
+      layerContent,
+      changeLayer,
+      getAudio,
+      setRef,
+      setTick,
+      millisPerTick,
+      width,
+      height,
+    ) =>
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div>
       (
@@ -244,9 +253,10 @@ let renderLayerContent =
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);
           <AnalysisCanvas
-            size=height
+            size=(height * 2)
             audioCtx
             input
+            millisPerTick
             saveRef=setRef
             saveTick=setTick
           />;
@@ -281,6 +291,7 @@ let make =
       ~setRef=_ => (),
       ~saveTick=_ => (),
       ~getAudio,
+      ~millisPerTick,
       ~width,
       ~height,
       _children,
@@ -304,6 +315,7 @@ let make =
               getAudio,
               setRef,
               saveTick,
+              millisPerTick,
               width,
               height,
             )

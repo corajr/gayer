@@ -38,7 +38,6 @@ type state = {
   scaleCanvas: option(float),
   fullscreenCanvas: bool,
   tickFunctions: ref(list(unit => unit)),
-  timerId: ref(option(Js.Global.intervalId)),
 };
 
 let defaultState: state = {
@@ -64,7 +63,6 @@ let defaultState: state = {
   scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
   tickFunctions: ref([]),
-  timerId: ref(None),
 };
 
 type action =
@@ -693,6 +691,7 @@ let make =
                 onSetParams=(newParams => pushParamsState(newParams))
                 rootWidth=width
                 rootHeight=height
+                millisPerAudioTick=self.state.params.millisPerTick
                 saveTick=(
                   tickFn =>
                     self.state.tickFunctions :=

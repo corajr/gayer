@@ -25,6 +25,7 @@ let make =
       ~getAudio,
       ~rootWidth,
       ~rootHeight,
+      ~millisPerAudioTick,
       ~saveTick,
       _children,
     ) => {
@@ -132,6 +133,7 @@ let make =
                    getAudio
                    width=rootWidth
                    height=rootHeight
+                   millisPerTick=millisPerAudioTick
                    setRef=(theRef => onSetRef(card.layer, theRef))
                    saveTick
                  />

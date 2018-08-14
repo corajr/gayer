@@ -93,6 +93,17 @@ let rotateLayer =
     drawSelfFullScreen,
   ]);
 
+let squareColumnLayer = {
+  ...
+    draw([
+      DrawImage(
+        Self,
+        {x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Pixels(1)},
+      ),
+    ]),
+  compositeOperation: Multiply,
+};
+
 let allLayerTypes = [
   hubble,
   analyzer,
@@ -259,7 +270,10 @@ let readFromCenterLine = {
   writePosOffset: defaultSize / 2,
 };
 
-let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
+let vinyl = {
+  ...readFromCenterLine,
+  layers: [rotateLayer, analyzer, squareColumnLayer, reader],
+};
 
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),

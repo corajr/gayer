@@ -243,6 +243,38 @@ var rotateLayer = draw(undefined, /* :: */[
       ]
     ]);
 
+var init$2 = draw(undefined, /* :: */[
+      /* DrawImage */Block.__(4, [
+          /* Self */0,
+          /* record */[
+            /* x : Pixels */Block.__(0, [0]),
+            /* y : Pixels */Block.__(0, [0]),
+            /* w : Pixels */Block.__(0, [1]),
+            /* h : Pixels */Block.__(0, [1])
+          ]
+        ]),
+      /* [] */0
+    ]);
+
+var squareColumnLayer_000 = /* content */init$2[/* content */0];
+
+var squareColumnLayer_001 = /* alpha */init$2[/* alpha */1];
+
+var squareColumnLayer_003 = /* rotation */init$2[/* rotation */3];
+
+var squareColumnLayer_004 = /* transformMatrix */init$2[/* transformMatrix */4];
+
+var squareColumnLayer_005 = /* filters */init$2[/* filters */5];
+
+var squareColumnLayer = /* record */[
+  squareColumnLayer_000,
+  squareColumnLayer_001,
+  /* compositeOperation : Multiply */11,
+  squareColumnLayer_003,
+  squareColumnLayer_004,
+  squareColumnLayer_005
+];
+
 var allLayerTypes_001 = /* :: */[
   analyzer,
   /* :: */[
@@ -1159,8 +1191,11 @@ var vinyl_011 = /* layers : :: */[
   /* :: */[
     analyzer,
     /* :: */[
-      reader,
-      /* [] */0
+      squareColumnLayer,
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -1319,6 +1354,7 @@ export {
   drawSelfFullScreen ,
   harmony ,
   rotateLayer ,
+  squareColumnLayer ,
   allLayerTypes ,
   harmonyParams ,
   harmonyIntensified ,

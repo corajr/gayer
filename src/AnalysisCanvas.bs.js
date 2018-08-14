@@ -9,6 +9,27 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 
+function maybeClearTimer(state) {
+  var match = state[/* timerId */6][0];
+  if (match !== undefined) {
+    clearInterval(Js_primitive.valFromOption(match));
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
+function setTimer(param, millisPerTick) {
+  var send = param[/* send */3];
+  var state = param[/* state */1];
+  maybeClearTimer(state);
+  console.log(millisPerTick);
+  state[/* timerId */6][0] = Js_primitive.some(setInterval((function () {
+              return Curry._1(send, /* Draw */0);
+            }), millisPerTick));
+  return /* () */0;
+}
+
 function drawCQTBar(canvasRenderingContext2D, state) {
   var audioDataL = state[/* cqt */4].get_input_array(0);
   var audioDataR = state[/* cqt */4].get_input_array(1);
@@ -24,14 +45,10 @@ function drawCQTBar(canvasRenderingContext2D, state) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(size, audioCtx, input, saveRef, saveTick, _) {
+function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
   var setCanvasRef = function (theRef, param) {
-    var send = param[/* send */3];
     param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    Curry._1(saveRef, theRef);
-    return Curry._1(saveTick, (function () {
-                  return Curry._1(send, /* Draw */0);
-                }));
+    return Curry._1(saveRef, theRef);
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -42,13 +59,17 @@ function make(size, audioCtx, input, saveRef, saveTick, _) {
               if (input !== undefined) {
                 Js_primitive.valFromOption(input).connect(self[/* state */1][/* stereoPanner */3]);
               }
+              Curry._1(self[/* onUnmount */4], (function () {
+                      if (input !== undefined) {
+                        Js_primitive.valFromOption(input).disconnect(self[/* state */1][/* stereoPanner */3]);
+                        return /* () */0;
+                      } else {
+                        return /* () */0;
+                      }
+                    }));
+              setTimer(self, millisPerTick);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            if (input !== undefined) {
-                              Js_primitive.valFromOption(input).disconnect(self[/* state */1][/* stereoPanner */3]);
-                              return /* () */0;
-                            } else {
-                              return /* () */0;
-                            }
+                            return maybeClearTimer(self[/* state */1]);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -88,7 +109,8 @@ function make(size, audioCtx, input, saveRef, saveTick, _) {
                       /* channelSplitter */channelSplitter,
                       /* stereoPanner */stereoPanner,
                       /* cqt */cqt,
-                      /* canvasRef : record */[/* contents */undefined]
+                      /* canvasRef : record */[/* contents */undefined],
+                      /* timerId : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -110,6 +132,8 @@ function make(size, audioCtx, input, saveRef, saveTick, _) {
 }
 
 export {
+  maybeClearTimer ,
+  setTimer ,
   drawCQTBar ,
   component ,
   make ,
