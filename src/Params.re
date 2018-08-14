@@ -28,7 +28,10 @@ let defaultParams: params = {
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
-  q: qForBinsPerOctave(defaultSize / 10),
+  q:
+    qForBinsPerOctave(
+      defaultSize === 120 ? defaultSize / 5 : defaultSize / 10,
+    ),
   transpose: 0,
   shouldClear: true,
   layers: [],

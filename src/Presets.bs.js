@@ -598,7 +598,7 @@ var isItACrime_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9]
 var isItACrime_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
 
 var isItACrime_011 = /* layers : :: */[
-  img("media/is_it_a_crime_large.png"),
+  img("media/is_it_a_crime.png"),
   /* :: */[
     /* record */[
       /* content : Reader */Block.__(6, [/* A */3]),
@@ -1191,11 +1191,8 @@ var vinyl_011 = /* layers : :: */[
   /* :: */[
     analyzer,
     /* :: */[
-      squareColumnLayer,
-      /* :: */[
-        reader,
-        /* [] */0
-      ]
+      reader,
+      /* [] */0
     ]
   ]
 ];

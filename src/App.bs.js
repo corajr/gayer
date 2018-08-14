@@ -516,7 +516,13 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                         return Audio$Gayer.updateFilterBankDefinition(filterBank, freqFunc, newSelf[/* state */1][/* params */6][/* q */8]);
                       }), newSelf[/* state */1][/* filterBank */11]);
               }
-              oldSelf[/* state */1][/* params */6][/* millisPerTick */4] !== newSelf[/* state */1][/* params */6][/* millisPerTick */4];
+              if (oldSelf[/* state */1][/* params */6][/* millisPerTick */4] !== newSelf[/* state */1][/* params */6][/* millisPerTick */4]) {
+                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */22], (function () {
+                        return List.iter((function (f) {
+                                      return Curry._1(f, /* () */0);
+                                    }), newSelf[/* state */1][/* tickFunctions */21][0]);
+                      }), newSelf[/* state */1][/* params */6][/* millisPerTick */4]);
+              }
               if (oldSelf[/* state */1][/* fullscreenCanvas */20] !== newSelf[/* state */1][/* fullscreenCanvas */20]) {
                 if (newSelf[/* state */1][/* fullscreenCanvas */20]) {
                   var match$2 = newSelf[/* state */1][/* canvasRef */18][0];
@@ -606,7 +612,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                               self[/* state */1][/* tickFunctions */21][0]
                                                             ];
                                                             return /* () */0;
-                                                          }), width, height, self[/* state */1][/* params */6][/* millisPerTick */4], /* array */[]))])),
+                                                          }), width, height, 16, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
                                                       style: {

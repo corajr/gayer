@@ -584,8 +584,11 @@ let make =
 
     if (oldSelf.state.params.millisPerTick
         != newSelf.state.params.millisPerTick) {
-      ();
-        /* Update millis per tick once requestAnimationFrame is worked out. */
+      setTimer(
+        newSelf.state.timerId,
+        () => List.iter(f => f(), newSelf.state.tickFunctions^),
+        newSelf.state.params.millisPerTick,
+      );
     };
     if (oldSelf.state.fullscreenCanvas != newSelf.state.fullscreenCanvas) {
       if (newSelf.state.fullscreenCanvas) {
@@ -688,7 +691,7 @@ let make =
                 onSetParams=(newParams => pushParamsState(newParams))
                 rootWidth=width
                 rootHeight=height
-                millisPerAudioTick=self.state.params.millisPerTick
+                millisPerAudioTick=16
                 saveTick=(
                   tickFn =>
                     self.state.tickFunctions :=

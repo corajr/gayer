@@ -26,7 +26,9 @@ import * as MaterialUi_FormControlLabel from "@jsiebern/bs-material-ui/src/Mater
 import * as MaterialUi_ExpansionPanelDetails from "@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelDetails.bs.js";
 import * as MaterialUi_ExpansionPanelSummary from "@jsiebern/bs-material-ui/src/MaterialUi_ExpansionPanelSummary.bs.js";
 
-var defaultParams_008 = /* q */Audio$Gayer.qForBinsPerOctave(Canvas$Gayer.defaultSize / 10 | 0);
+var match = Canvas$Gayer.defaultSize === 120;
+
+var defaultParams_008 = /* q */Audio$Gayer.qForBinsPerOctave(match ? Canvas$Gayer.defaultSize / 5 | 0 : Canvas$Gayer.defaultSize / 10 | 0);
 
 var defaultParams = /* record */[
   /* readPosDelta */1,

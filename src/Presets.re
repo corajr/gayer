@@ -164,7 +164,7 @@ let slitscanParams = {
 let isItACrime = {
   ...defaultParams,
   layers: [
-    img("media/is_it_a_crime_large.png"),
+    img("media/is_it_a_crime.png"),
     {...reader, content: Reader(A)},
   ],
 };
@@ -270,10 +270,7 @@ let readFromCenterLine = {
   writePosOffset: defaultSize / 2,
 };
 
-let vinyl = {
-  ...readFromCenterLine,
-  layers: [rotateLayer, analyzer, squareColumnLayer, reader],
-};
+let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
 
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
