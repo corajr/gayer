@@ -78,8 +78,10 @@ function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
                     /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */4],
                     /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */5]
                   ]);
-              var analyserL = Audio$Gayer.makeAnalyser(audioCtx, cqt.fft_size, undefined, undefined, undefined, /* () */0);
-              var analyserR = Audio$Gayer.makeAnalyser(audioCtx, cqt.fft_size, undefined, undefined, undefined, /* () */0);
+              var fftSize = cqt.fft_size;
+              console.log("Constant-Q transform initialized. Using FFT of size " + fftSize.toString());
+              var analyserL = Audio$Gayer.makeAnalyser(audioCtx, fftSize, undefined, undefined, undefined, /* () */0);
+              var analyserR = Audio$Gayer.makeAnalyser(audioCtx, fftSize, undefined, undefined, undefined, /* () */0);
               var stereoPanner = audioCtx.createStereoPanner();
               var channelSplitter = audioCtx.createChannelSplitter();
               stereoPanner.connect(channelSplitter);

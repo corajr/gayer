@@ -48,11 +48,15 @@ let make =
           width: size,
         });
 
-      let analyserL =
-        makeAnalyser(~audioContext=audioCtx, ~fftSize=cqt |. CQT.fftSize, ());
+      let fftSize = cqt |. CQT.fftSizeGet;
+      Js.log(
+        "Constant-Q transform initialized. Using FFT of size "
+        ++ Js.Int.toString(fftSize),
+      );
 
-      let analyserR =
-        makeAnalyser(~audioContext=audioCtx, ~fftSize=cqt |. CQT.fftSize, ());
+      let analyserL = makeAnalyser(~audioContext=audioCtx, ~fftSize, ());
+
+      let analyserR = makeAnalyser(~audioContext=audioCtx, ~fftSize, ());
 
       let stereoPanner = createStereoPanner(audioCtx);
       let channelSplitter = createChannelSplitter(audioCtx);
