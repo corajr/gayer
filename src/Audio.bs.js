@@ -11,6 +11,24 @@ import * as UserMedia$Gayer from "./UserMedia.bs.js";
 
 var makeDefaultAudioCtx = function (){return new (window.AudioContext || window.webkitAudioContext)()};
 
+function string_of_oscillatorType(param) {
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return "sine";
+      case 1 : 
+          return "square";
+      case 2 : 
+          return "sawtooth";
+      case 3 : 
+          return "triangle";
+      
+    }
+  } else {
+    return "custom";
+  }
+}
+
 function noteToFrequency(note) {
   return 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
 }
@@ -106,6 +124,28 @@ function makeAnalyser(audioContext, $staropt$star, $staropt$star$1, $staropt$sta
   return analyser;
 }
 
+function setOscillatorType(audioCtx, oscillator, type_) {
+  oscillator.type = string_of_oscillatorType(type_);
+  if (typeof type_ === "number") {
+    return /* () */0;
+  } else {
+    var match = type_[0];
+    var periodicWave = audioCtx.createPeriodicWave(match[/* real */0], match[/* imag */1]);
+    oscillator.setPeriodicWave(periodicWave);
+    return /* () */0;
+  }
+}
+
+function makeOscillator(audioCtx, $staropt$star, $staropt$star$1) {
+  var frequency = $staropt$star !== undefined ? $staropt$star : 440.0;
+  var type_ = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Sine */0;
+  var oscillator = audioCtx.createOscillator();
+  var t = audioCtx.currentTime;
+  oscillator.frequency.setValueAtTime(frequency, t);
+  setOscillatorType(audioCtx, oscillator, type_);
+  return oscillator;
+}
+
 function string_of_filterType(filterType) {
   switch (filterType.tag | 0) {
     case 0 : 
@@ -154,33 +194,50 @@ function makeFilter(audioCtx, filterType) {
   return filter;
 }
 
-function makeFilterBank(audioCtx, filterN, q, freqFunc) {
-  var input = audioCtx.createGain();
+function makeBankOf(audioCtx, n, hasInput, f) {
+  var input = hasInput ? Js_primitive.some(audioCtx.createGain()) : undefined;
   var output = audioCtx.createGain();
   var t = audioCtx.currentTime;
-  var filters = $$Array.init(filterN, (function (i) {
-          var filter = makeFilter(audioCtx, /* BandPass */Block.__(2, [
-                  Curry._1(freqFunc, filterN - i | 0),
-                  q
-                ]));
-          input.connect(filter);
-          return filter;
-        }));
-  var gains = $$Array.init(filterN, (function (i) {
-          var filter = Caml_array.caml_array_get(filters, i);
+  var createNode = input !== undefined ? (function (i) {
+        var node = Curry._2(f, audioCtx, i);
+        input.connect(node);
+        return node;
+      }) : Curry._1(f, audioCtx);
+  var nodes = $$Array.init(n, createNode);
+  var gains = $$Array.map((function (node) {
           var gainNode = audioCtx.createGain();
           gainNode.gain.setValueAtTime(0.0, t);
-          filter.connect(gainNode);
+          node.connect(gainNode);
           gainNode.connect(output);
           return gainNode;
-        }));
+        }), nodes);
   return /* record */[
           /* input */input,
-          /* filters */filters,
+          /* nodes */nodes,
           /* gains */gains,
           /* output */output,
           /* audioCtx */audioCtx
         ];
+}
+
+function makeFilterBank(audioCtx, filterN, q, freqFunc) {
+  var createNode = function (audioCtx, i) {
+    return makeFilter(audioCtx, /* BandPass */Block.__(2, [
+                  Curry._1(freqFunc, filterN - i | 0),
+                  q
+                ]));
+  };
+  return makeBankOf(audioCtx, filterN, true, createNode);
+}
+
+function makeOscillatorBank(audioCtx, n, type_, freqFunc) {
+  var createNode = function (audioCtx, i) {
+    return makeOscillator(audioCtx, Curry._1(freqFunc, n - i | 0), type_);
+  };
+  var bank = makeBankOf(audioCtx, n, false, createNode);
+  var t = audioCtx.currentTime;
+  bank[/* output */3].gain.setValueAtTime(0.007, t);
+  return bank;
 }
 
 function getAudioSource(ctx) {
@@ -198,14 +255,30 @@ function getAudioSource(ctx) {
 }
 
 function connectFilterBank(noise, filterBank, compressor) {
-  noise.connect(filterBank[/* input */0]);
+  var match = filterBank[/* input */0];
+  if (match !== undefined) {
+    noise.connect(Js_primitive.valFromOption(match));
+  }
   filterBank[/* output */3].connect(compressor);
   return /* () */0;
 }
 
 function disconnectFilterBank(noise, filterBank, compressor) {
-  noise.disconnect(filterBank[/* input */0]);
+  var match = filterBank[/* input */0];
+  if (match !== undefined) {
+    noise.disconnect(Js_primitive.valFromOption(match));
+  }
   filterBank[/* output */3].disconnect(compressor);
+  return /* () */0;
+}
+
+function updateBankGains(bank, gainValues) {
+  var t = bank[/* audioCtx */4].currentTime;
+  var n = gainValues.length;
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var gainI = (n - i | 0) - 1 | 0;
+    Caml_array.caml_array_get(bank[/* gains */2], gainI).gain.setValueAtTime(Caml_array.caml_array_get(gainValues, i), t);
+  }
   return /* () */0;
 }
 
@@ -213,25 +286,23 @@ function updateFilterBank($staropt$star, $staropt$star$1, filterBank, filterValu
   var inputGain = $staropt$star !== undefined ? $staropt$star : 1.0;
   var outputGain = $staropt$star$1 !== undefined ? $staropt$star$1 : 0.1;
   var currentTime = filterBank[/* audioCtx */4].currentTime;
-  filterBank[/* input */0].gain.setValueAtTime(inputGain, currentTime);
-  filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
-  var n = filterValues.length;
-  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
-    var filterbankI = (n - i | 0) - 1 | 0;
-    Caml_array.caml_array_get(filterBank[/* gains */2], filterbankI).gain.setValueAtTime(Caml_array.caml_array_get(filterValues, i), currentTime);
+  var match = filterBank[/* input */0];
+  if (match !== undefined) {
+    Js_primitive.valFromOption(match).gain.setValueAtTime(inputGain, currentTime);
   }
-  return /* () */0;
+  filterBank[/* output */3].gain.setValueAtTime(outputGain, currentTime);
+  return updateBankGains(filterBank, filterValues);
 }
 
 function updateFilterBankDefinition(filterBank, freqFunc, q) {
   console.log("updating filter bank definitions (costly!)");
   var currentTime = filterBank[/* audioCtx */4].currentTime;
-  var n = filterBank[/* filters */1].length;
+  var n = filterBank[/* nodes */1].length;
   return $$Array.iteri((function (i, filter) {
                 filter.Q.setValueAtTime(q, currentTime);
                 filter.frequency.setValueAtTime(Curry._1(freqFunc, (n - i | 0) - 1 | 0), currentTime);
                 return /* () */0;
-              }), filterBank[/* filters */1]);
+              }), filterBank[/* nodes */1]);
 }
 
 function audioInputSetting(r) {
@@ -301,7 +372,7 @@ function audioInputSetting$1(json) {
         return /* PinkNoise */0;
     case "video" : 
         return Json_decode.map((function (url) {
-                      return /* AudioFile */Block.__(0, [url]);
+                      return /* AudioFromVideo */Block.__(1, [url]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
@@ -323,6 +394,7 @@ var pinkNoise = pinkNoiseFull;
 
 export {
   makeDefaultAudioCtx ,
+  string_of_oscillatorType ,
   midiNoteA440Hz ,
   noteToFrequency ,
   yToFrequency ,
@@ -334,12 +406,17 @@ export {
   cheaperPinkNoise ,
   pinkNoise ,
   makeAnalyser ,
+  setOscillatorType ,
+  makeOscillator ,
   string_of_filterType ,
   makeFilter ,
+  makeBankOf ,
   makeFilterBank ,
+  makeOscillatorBank ,
   getAudioSource ,
   connectFilterBank ,
   disconnectFilterBank ,
+  updateBankGains ,
   updateFilterBank ,
   updateFilterBankDefinition ,
   AudioInput ,

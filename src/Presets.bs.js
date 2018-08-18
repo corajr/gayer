@@ -1223,31 +1223,66 @@ var vinyl = /* record */[
   vinyl_011
 ];
 
-var presets_000 = /* tuple */[
-  "Video",
-  /* record */[
-    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-    /* q */Params$Gayer.defaultParams[/* q */8],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-    /* layers : :: */[
-      video("media/pond.mp4"),
-      /* :: */[
-        pitchFilter(Music$Gayer.cMajor),
-        /* :: */[
-          reader,
-          /* [] */0
-        ]
-      ]
+var videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
+
+var video_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+
+var video_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+
+var video_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
+
+var video_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+
+var video_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var video_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var video_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var video_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var video_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var video_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var video_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var video_011 = /* layers : :: */[
+  video(videoURL),
+  /* :: */[
+    /* record */[
+      /* content : Analysis */Block.__(5, [/* AudioFromVideo */Block.__(1, [videoURL])]),
+      analyzer_001,
+      analyzer_002,
+      analyzer_003,
+      analyzer_004,
+      analyzer_005
+    ],
+    /* :: */[
+      reader,
+      /* [] */0
     ]
   ]
+];
+
+var video$1 = /* record */[
+  video_000,
+  video_001,
+  video_002,
+  video_003,
+  video_004,
+  video_005,
+  video_006,
+  video_007,
+  video_008,
+  video_009,
+  video_010,
+  video_011
+];
+
+var presets_000 = /* tuple */[
+  "History",
+  history
 ];
 
 var presets_001 = /* :: */[
@@ -1270,43 +1305,43 @@ var presets_001 = /* :: */[
   ],
   /* :: */[
     /* tuple */[
-      "Vinyl",
-      vinyl
+      "Video",
+      video$1
     ],
     /* :: */[
       /* tuple */[
-        "Droste",
-        droste
+        "Vinyl",
+        vinyl
       ],
       /* :: */[
         /* tuple */[
-          "Single note",
-          singleNote
+          "Droste",
+          droste
         ],
         /* :: */[
           /* tuple */[
-            "Tughra of Suleiman",
-            tughra
+            "Single note",
+            singleNote
           ],
           /* :: */[
             /* tuple */[
-              "Is it a crime?",
-              isItACrime
+              "Tughra of Suleiman",
+              tughra
             ],
             /* :: */[
               /* tuple */[
-                "MIDI",
-                midi
+                "Is it a crime?",
+                isItACrime
               ],
               /* :: */[
                 /* tuple */[
-                  "Audio file",
-                  debussy
+                  "MIDI",
+                  midi
                 ],
                 /* :: */[
                   /* tuple */[
-                    "History",
-                    history
+                    "Audio file",
+                    debussy
                   ],
                   /* :: */[
                     /* tuple */[
@@ -1380,7 +1415,6 @@ export {
   analyzer ,
   webcam ,
   slitscan ,
-  video ,
   reader ,
   pitchFilter ,
   fill ,
@@ -1417,6 +1451,8 @@ export {
   midiDroste ,
   readFromCenterLine ,
   vinyl ,
+  videoURL ,
+  video$1 as video,
   presets ,
   
 }

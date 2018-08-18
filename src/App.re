@@ -118,10 +118,19 @@ let setLayerRef =
     let vid = getElementAsImageSource(aRef);
     state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, vid);
 
-    let mediaElementSource = createMediaElementSource(audioCtx, aRef);
-    state.loadedAudio :=
-      Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
-
+    let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
+    if (readyState >= 3) {
+      switch (Belt.Map.String.get(state.loadedAudio^, url)) {
+      | Some(_) => ()
+      | None =>
+        unmute(aRef);
+        let mediaElementSource = createMediaElementSource(audioCtx, aRef);
+        Js.log("adding element source");
+        Js.log(mediaElementSource);
+        state.loadedAudio :=
+          Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
+      };
+    };
   | _ => ()
   };
 };
@@ -461,6 +470,12 @@ let make =
         defaultTranspose + self.state.params.transpose,
         height,
       );
+
+    /* let oscillators = */
+    /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
+    /* Array.iter(startOscillator, oscillators.nodes); */
+    /* self.state.oscillatorBank := Some(oscillators); */
+    /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     let filterBank =
       makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);

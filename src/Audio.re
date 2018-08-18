@@ -39,9 +39,43 @@ type biquadFilter =
     [@bs.as "type"]
     mutable type_: string,
     frequency: audioParam,
+    detune: audioParam,
     gain: audioParam,
     [@bs.as "Q"]
     qualityFactor: audioParam,
+  };
+
+type periodicWave;
+
+type periodicWaveDescription = {
+  real: array(float),
+  imag: array(float),
+};
+
+type oscillatorType =
+  | Sine
+  | Square
+  | Sawtooth
+  | Triangle
+  | Custom(periodicWaveDescription);
+
+let string_of_oscillatorType =
+  fun
+  | Sine => "sine"
+  | Square => "square"
+  | Sawtooth => "sawtooth"
+  | Triangle => "triangle"
+  | Custom(_) => "custom";
+
+[@bs.deriving abstract]
+type oscillator =
+  pri {
+    [@bs.as "type"]
+    mutable oscillatorType: string,
+    [@bs.as "frequency"]
+    oscillatorFrequency: audioParam,
+    [@bs.as "detune"]
+    oscillatorDetune: audioParam,
   };
 
 [@bs.deriving abstract]
@@ -85,6 +119,7 @@ type audioNode =
   | BiquadFilter(biquadFilter)
   | Gain(gainNode)
   | Compressor(compressor)
+  | Oscillator(oscillator)
   | Analyser(analyser)
   | ChannelSplitter(channelSplitter)
   | StereoPanner(stereoPanner)
@@ -95,13 +130,15 @@ external unwrapFilter : biquadFilter => audioNode = "%identity";
 external unwrapGain : gainNode => audioNode = "%identity";
 external unwrapCompressor : compressor => audioNode = "%identity";
 
-type filterBank = {
-  input: gainNode,
-  filters: array(biquadFilter),
+type bank('a) = {
+  input: option(gainNode),
+  nodes: array('a),
   gains: array(gainNode),
   output: gainNode,
   audioCtx: audioContext,
 };
+
+type filterBank = bank(biquadFilter);
 
 /**
    https://developer.mozilla.org/en-US/docs/Web/API/BiquadFilterNode/getFrequencyResponse
@@ -129,6 +166,17 @@ external createMediaStreamSource : (audioContext, mediaStream) => audioNode =
 [@bs.send]
 external createMediaElementSource : (audioContext, Dom.element) => audioNode =
   "";
+
+[@bs.send] external createOscillator : audioContext => oscillator = "";
+
+[@bs.send]
+external createPeriodicWave :
+  (audioContext, array(float), array(float)) => periodicWave =
+  "";
+
+[@bs.send] external setPeriodicWave : (oscillator, periodicWave) => unit = "";
+[@bs.send] external startOscillator : oscillator => unit = "start";
+[@bs.send] external stopOscillator : oscillator => unit = "stop";
 
 [@bs.send] external setValueAtTime : (audioParam, float, float) => unit = "";
 
@@ -289,6 +337,27 @@ let makeAnalyser =
   analyser;
 };
 
+let setOscillatorType =
+    (~audioCtx: audioContext, ~oscillator: oscillator, ~type_: oscillatorType) => {
+  oscillatorTypeSet(oscillator, string_of_oscillatorType(type_));
+  switch (type_) {
+  | Custom({real, imag}) =>
+    let periodicWave = createPeriodicWave(audioCtx, real, imag);
+    setPeriodicWave(oscillator, periodicWave);
+  | _ => ()
+  };
+};
+
+let makeOscillator =
+    (~audioCtx: audioContext, ~frequency: float=440.0, ~type_=Sine)
+    : oscillator => {
+  let oscillator = createOscillator(audioCtx);
+  let t = currentTime(audioCtx);
+  setValueAtTime(oscillator |. oscillatorFrequencyGet, frequency, t);
+  setOscillatorType(audioCtx, oscillator, type_);
+  oscillator;
+};
+
 let string_of_filterType = filterType =>
   switch (filterType) {
   | LowPass(_, _) => "lowpass"
@@ -330,35 +399,72 @@ let makeFilter =
   filter;
 };
 
+let makeBankOf:
+  (
+    ~audioCtx: audioContext,
+    ~n: int,
+    ~hasInput: bool,
+    ~f: (audioContext, int) => 'a
+  ) =>
+  bank('a) =
+  (~audioCtx, ~n, ~hasInput, ~f) => {
+    let input = hasInput ? Some(createGain(audioCtx)) : None;
+    let output = createGain(audioCtx);
+    let t = currentTime(audioCtx);
+
+    let createNode =
+      switch (input) {
+      | Some(inputNode) => (
+          i => {
+            let node = f(audioCtx, i);
+            connect(input, node);
+            node;
+          }
+        )
+      | None => f(audioCtx)
+      };
+
+    let nodes = Array.init(n, createNode);
+
+    let gains =
+      Array.map(
+        node => {
+          let gainNode = createGain(audioCtx);
+          setValueAtTime(gainNode |. gain_Get, 0.0, t);
+          connect(node, gainNode);
+          connect(gainNode, output);
+          gainNode;
+        },
+        nodes,
+      );
+
+    {nodes, gains, input, output, audioCtx};
+  };
+
 let makeFilterBank =
     (~audioCtx: audioContext, ~filterN: int, ~q: float, ~freqFunc: freqFunc)
     : filterBank => {
-  let input = createGain(audioCtx);
-  let output = createGain(audioCtx);
+  let createNode = (audioCtx, i) =>
+    makeFilter(audioCtx, BandPass(freqFunc(filterN - i), q));
+
+  makeBankOf(~audioCtx, ~n=filterN, ~hasInput=true, ~f=createNode);
+};
+
+let makeOscillatorBank =
+    (
+      ~audioCtx: audioContext,
+      ~n: int,
+      ~type_: oscillatorType,
+      ~freqFunc: freqFunc,
+    )
+    : bank(oscillator) => {
+  let createNode = (audioCtx, i) =>
+    makeOscillator(~audioCtx, ~type_, ~frequency=freqFunc(n - i));
+
+  let bank = makeBankOf(~audioCtx, ~n, ~hasInput=false, ~f=createNode);
   let t = currentTime(audioCtx);
-  let filters =
-    Array.init(
-      filterN,
-      i => {
-        let filter =
-          makeFilter(audioCtx, BandPass(freqFunc(filterN - i), q));
-        connectGainToFilter(input, filter);
-        filter;
-      },
-    );
-  let gains =
-    Array.init(
-      filterN,
-      i => {
-        let filter = filters[i];
-        let gainNode = createGain(audioCtx);
-        setValueAtTime(gainNode |. gain_, 0.0, t);
-        connectFilterToGain(filter, gainNode);
-        connectGainToGain(gainNode, output);
-        gainNode;
-      },
-    );
-  {filters, gains, input, output, audioCtx};
+  setValueAtTime(bank.output |. gain_Get, 0.007, t);
+  bank;
 };
 
 let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
@@ -381,13 +487,28 @@ let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
 [@bs.get] external defaultSink : audioContext => audioNode = "destination";
 
 let connectFilterBank = (noise, filterBank, compressor) => {
-  connectNodeToGain(noise, filterBank.input);
+  switch (filterBank.input) {
+  | Some(input) => connectNodeToGain(noise, input)
+  | None => ()
+  };
   connectGainToNode(filterBank.output, unwrapCompressor(compressor));
 };
 
 let disconnectFilterBank = (noise, filterBank, compressor) => {
-  disconnect(noise, filterBank.input);
+  switch (filterBank.input) {
+  | Some(input) => disconnect(noise, input)
+  | None => ()
+  };
   disconnect(filterBank.output, compressor);
+};
+
+let updateBankGains = (~bank: bank('a), ~gainValues: array(float)) => {
+  let t = currentTime(bank.audioCtx);
+  let n = Array.length(gainValues);
+  for (i in 0 to n - 1) {
+    let gainI = n - i - 1;
+    setValueAtTime(bank.gains[gainI] |. gain_Get, gainValues[i], t);
+  };
 };
 
 let updateFilterBank =
@@ -398,30 +519,25 @@ let updateFilterBank =
       ~filterValues: array(float),
     ) => {
   let currentTime = currentTime(filterBank.audioCtx);
-  setValueAtTime(filterBank.input |. gain_, inputGain, currentTime);
-  setValueAtTime(filterBank.output |. gain_, outputGain, currentTime);
-  let n = Array.length(filterValues);
-  for (i in 0 to n - 1) {
-    let filterbankI = n - i - 1;
-    setValueAtTime(
-      filterBank.gains[filterbankI] |. gain_,
-      filterValues[i],
-      currentTime,
-    );
+  switch (filterBank.input) {
+  | Some(input) => setValueAtTime(input |. gain_Get, inputGain, currentTime)
+  | None => ()
   };
+  setValueAtTime(filterBank.output |. gain_Get, outputGain, currentTime);
+  updateBankGains(~bank=filterBank, ~gainValues=filterValues);
 };
 
 let updateFilterBankDefinition =
     (~filterBank: filterBank, ~freqFunc: int => float, ~q: float) => {
   Js.log("updating filter bank definitions (costly!)");
   let currentTime = currentTime(filterBank.audioCtx);
-  let n = Array.length(filterBank.filters);
+  let n = Array.length(filterBank.nodes);
   Array.iteri(
     (i, filter) => {
       setValueAtTime(filter |. qualityFactor, q, currentTime);
       setValueAtTime(filter |. frequency, freqFunc(n - i - 1), currentTime);
     },
-    filterBank.filters,
+    filterBank.nodes,
   );
 };
 
@@ -458,7 +574,7 @@ module AudioInput = {
           | "file" =>
             json |> map(url => AudioFile(url), field("url", string))
           | "video" =>
-            json |> map(url => AudioFile(url), field("url", string))
+            json |> map(url => AudioFromVideo(url), field("url", string))
           | _ => PinkNoise
         )
       );

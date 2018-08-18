@@ -150,9 +150,22 @@ function setLayerRef(audioCtx, param, param$1) {
           } else {
             var url = match[0];
             state[/* loadedImages */16][0] = Belt_MapString.set(state[/* loadedImages */16][0], url, theRef);
-            var mediaElementSource = audioCtx.createMediaElementSource(theRef);
-            state[/* loadedAudio */17][0] = Belt_MapString.set(state[/* loadedAudio */17][0], url, mediaElementSource);
-            return /* () */0;
+            var readyState = theRef.readyState;
+            if (readyState >= 3) {
+              var match$2 = Belt_MapString.get(state[/* loadedAudio */17][0], url);
+              if (match$2 !== undefined) {
+                return /* () */0;
+              } else {
+                Video$Gayer.unmute(theRef);
+                var mediaElementSource = audioCtx.createMediaElementSource(theRef);
+                console.log("adding element source");
+                console.log(mediaElementSource);
+                state[/* loadedAudio */17][0] = Belt_MapString.set(state[/* loadedAudio */17][0], url, mediaElementSource);
+                return /* () */0;
+              }
+            } else {
+              return 0;
+            }
           }
       case 5 : 
           if (theRef == null) {

@@ -270,15 +270,21 @@ let readFromCenterLine = {
 
 let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
 
+let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
+let video = {
+  ...defaultParams,
+  layers: [
+    video(videoURL),
+    {...analyzer, content: Analysis(AudioFromVideo(videoURL))},
+    /* pitchFilter(cMajor), */
+    reader,
+  ],
+};
+
 let presets = [
-  (
-    "Video",
-    {
-      ...defaultParams,
-      layers: [video("media/pond.mp4"), pitchFilter(cMajor), reader],
-    },
-  ),
+  ("History", history),
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("Video", video),
   ("Vinyl", vinyl),
   ("Droste", droste),
   ("Single note", singleNote),
@@ -287,7 +293,6 @@ let presets = [
   ("MIDI", midi),
   ("Audio file", debussy),
   /* ("Harmony", harmonyParams), */
-  ("History", history),
   ("King Wen", iChing),
   ("Whiteboard", whiteboardParams),
   ("Slitscan", slitscanParams),
