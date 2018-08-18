@@ -8,7 +8,7 @@ type canvasImageSource;
 
 type image;
 
-let defaultSize = 120;
+let defaultSize = 240;
 
 [@bs.deriving abstract]
 type imageData =

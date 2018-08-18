@@ -121,7 +121,7 @@ function layerByType(type_, json) {
     case "analysis" : 
         var partial_arg = Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0];
         return Json_decode.map((function (s) {
-                      return /* Analysis */Block.__(4, [s]);
+                      return /* Analysis */Block.__(5, [s]);
                     }), (function (param) {
                       return Json_decode.field("source", partial_arg, param);
                     }), json);
@@ -151,7 +151,7 @@ function layerByType(type_, json) {
         return /* MIDIKeyboard */0;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(5, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(6, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -159,11 +159,17 @@ function layerByType(type_, json) {
                     }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(6, [i]);
+                      return /* Reader */Block.__(7, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
                                   }), param);
+                    }), json);
+    case "video" : 
+        return Json_decode.map((function (s) {
+                      return /* Video */Block.__(4, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "webcam" : 
         return Json_decode.map((function (s) {
@@ -301,6 +307,20 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "video"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "url",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 5 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "analysis"
                       ],
                       /* :: */[
@@ -311,7 +331,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 5 : 
+      case 6 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -327,7 +347,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 6 : 
+      case 7 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -421,6 +441,17 @@ function renderLayerContent(layerContent$2, _, getAudio, setRef, setTick, millis
               });
           break;
       case 4 : 
+          tmp = React.createElement("video", {
+                ref: setRef,
+                autoPlay: true,
+                height: "120",
+                loop: true,
+                muted: true,
+                src: layerContent$2[0],
+                width: "120"
+              });
+          break;
+      case 5 : 
           var match = Curry._1(getAudio, layerContent$2[0]);
           tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, match[0], match[1], millisPerTick, setRef, setTick, /* array */[]));
           break;

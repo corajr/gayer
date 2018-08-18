@@ -90,7 +90,8 @@ let setCanvasRef = (theRef, {ReasonReact.state}) =>
 let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
   state.analysisCanvasRef := Js.Nullable.toOption(theRef);
 
-let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
+let setLayerRef =
+    (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   switch (layer.content, maybeRef) {
   | (Analysis(source), Some(_)) =>
@@ -113,6 +114,14 @@ let setLayerRef = ((layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   | (Image(url), Some(aRef)) =>
     let img = getElementAsImageSource(aRef);
     state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
+  | (Video(url), Some(aRef)) =>
+    let vid = getElementAsImageSource(aRef);
+    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, vid);
+
+    let mediaElementSource = createMediaElementSource(audioCtx, aRef);
+    state.loadedAudio :=
+      Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
+
   | _ => ()
   };
 };
@@ -221,7 +230,8 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
       };
       None;
-    | Image(url) =>
+    | Image(url)
+    | Video(url) =>
       switch (Belt.Map.String.get(state.loadedImages^, url)) {
       | None => ()
       | Some(img) => Ctx.drawImageDestRect(ctx, img, 0, 0, width, height)
@@ -309,6 +319,7 @@ let getAnalysisInput:
   (audioContext, option(audioNode)) =
   (audioCtx, state, audioInput) =>
     switch (audioInput) {
+    | AudioFromVideo(s)
     | AudioFile(s) => (audioCtx, Belt.Map.String.get(state.loadedAudio^, s))
     | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
     | Mic => (audioCtx, state.micInput)
@@ -686,7 +697,7 @@ let make =
                 )
                 onSetRef=(
                   (layer, theRef) =>
-                    self.handle(setLayerRef, (layer, theRef))
+                    self.handle(setLayerRef(audioCtx), (layer, theRef))
                 )
                 onSetParams=(newParams => pushParamsState(newParams))
                 rootWidth=width

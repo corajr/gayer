@@ -30,6 +30,7 @@ type layerContent =
   | Draw(list(DrawCommand.command))
   | Webcam(cameraOptions)
   | Image(string)
+  | Video(string)
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
@@ -84,6 +85,7 @@ module DecodeLayer = {
              field("options", DecodeCameraOptions.cameraOptions),
            )
       | "image" => json |> map(s => Image(s), field("url", string))
+      | "video" => json |> map(s => Video(s), field("url", string))
       | "reader" =>
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
@@ -170,6 +172,8 @@ module EncodeLayer = {
         ])
       | Image(url) =>
         object_([("type", string("image")), ("url", string(url))])
+      | Video(url) =>
+        object_([("type", string("video")), ("url", string(url))])
       | Analysis(source) =>
         object_([
           ("type", string("analysis")),
@@ -249,6 +253,16 @@ let renderLayerContent =
             height="120"
             /* width=(Js.Int.toString(width)) */
             /* height=(Js.Int.toString(height)) */
+          />
+        | Video(url) =>
+          <video
+            ref=setRef
+            src=url
+            width="120"
+            height="120"
+            autoPlay=true
+            loop=true
+            muted=true
           />
         | Analysis(source) =>
           let (audioCtx, input) = getAudio(source);

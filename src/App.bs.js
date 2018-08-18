@@ -110,7 +110,7 @@ function setAnalysisCanvasRef(theRef, param) {
   return /* () */0;
 }
 
-function setLayerRef(param, param$1) {
+function setLayerRef(audioCtx, param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
   var maybeRef = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -148,16 +148,26 @@ function setLayerRef(param, param$1) {
           if (theRef == null) {
             return /* () */0;
           } else {
+            var url = match[0];
+            state[/* loadedImages */16][0] = Belt_MapString.set(state[/* loadedImages */16][0], url, theRef);
+            var mediaElementSource = audioCtx.createMediaElementSource(theRef);
+            state[/* loadedAudio */17][0] = Belt_MapString.set(state[/* loadedAudio */17][0], url, mediaElementSource);
+            return /* () */0;
+          }
+      case 5 : 
+          if (theRef == null) {
+            return /* () */0;
+          } else {
             var source = match[0];
             state[/* analysisCanvasRef */13][0] = maybeRef;
-            if (typeof source === "number") {
+            if (typeof source === "number" || source.tag) {
               return /* () */0;
             } else {
-              var url = source[0];
-              if (Belt_MapString.has(state[/* loadedAudio */17][0], url)) {
+              var url$1 = source[0];
+              if (Belt_MapString.has(state[/* loadedAudio */17][0], url$1)) {
                 return 0;
               } else {
-                return Curry._1(param$1[/* send */3], /* LoadAudioFile */Block.__(0, [url]));
+                return Curry._1(param$1[/* send */3], /* LoadAudioFile */Block.__(0, [url$1]));
               }
             }
           }
@@ -277,6 +287,7 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.rotate(layer[/* rotation */3]);
   ctx.filter = layer[/* filters */5];
   var match = layer[/* content */0];
+  var exit = 0;
   if (typeof match === "number") {
     var match$1 = state[/* midiCanvasRef */14][0];
     if (match$1 !== undefined) {
@@ -307,19 +318,17 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 3 : 
-          var match$4 = Belt_MapString.get(state[/* loadedImages */16][0], match[0]);
-          if (match$4 !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(match$4), 0, 0, width, height);
-          }
-          return undefined;
       case 4 : 
-          var match$5 = state[/* analysisCanvasRef */13][0];
-          if (match$5 !== undefined) {
+          exit = 1;
+          break;
+      case 5 : 
+          var match$4 = state[/* analysisCanvasRef */13][0];
+          if (match$4 !== undefined) {
             var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
-            ctx.drawImage(Js_primitive.valFromOption(match$5), x$1, 0, 1, height);
+            ctx.drawImage(Js_primitive.valFromOption(match$4), x$1, 0, 1, height);
           }
           return undefined;
-      case 5 : 
+      case 6 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
           ctx.fillStyle = "black";
           var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
@@ -333,7 +342,7 @@ function drawLayer(ctx, width, height, state, layer) {
                 }(i)), classList);
           }
           return undefined;
-      case 6 : 
+      case 7 : 
           var channel = match[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */2] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
@@ -359,6 +368,14 @@ function drawLayer(ctx, width, height, state, layer) {
       
     }
   }
+  if (exit === 1) {
+    var match$5 = Belt_MapString.get(state[/* loadedImages */16][0], match[0]);
+    if (match$5 !== undefined) {
+      ctx.drawImage(Js_primitive.valFromOption(match$5), 0, 0, width, height);
+    }
+    return undefined;
+  }
+  
 }
 
 function drawCanvas(canvasElement, width, height, state) {
@@ -598,7 +615,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, Params$Gayer.make(self[/* state */1][/* params */6], (function (layers) {
                                                             return setLayers(self[/* state */1][/* params */6], layers);
                                                           }), (function (layer, theRef) {
-                                                            return Curry._2(self[/* handle */0], setLayerRef, /* tuple */[
+                                                            return Curry._2(self[/* handle */0], (function (param, param$1) {
+                                                                          return setLayerRef(audioCtx, param, param$1);
+                                                                        }), /* tuple */[
                                                                         layer,
                                                                         theRef
                                                                       ]);

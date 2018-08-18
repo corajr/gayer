@@ -17,6 +17,8 @@ let slitscan = {
   content: Webcam({slitscan: Some({x: 320})}),
 };
 
+let video = url => {...defaultLayer, content: Video(url)};
+
 let reader = {
   ...defaultLayer,
   content: Reader(R),
@@ -24,11 +26,7 @@ let reader = {
   compositeOperation: Multiply,
 };
 
-let pitchFilter = pc => {
-  ...defaultLayer,
-  content: PitchClasses(pc),
-  compositeOperation: DestinationOut,
-};
+let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
   ...defaultLayer,
@@ -273,6 +271,13 @@ let readFromCenterLine = {
 let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
 
 let presets = [
+  (
+    "Video",
+    {
+      ...defaultParams,
+      layers: [video("media/pond.mp4"), pitchFilter(cMajor), reader],
+    },
+  ),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Vinyl", vinyl),
   ("Droste", droste),

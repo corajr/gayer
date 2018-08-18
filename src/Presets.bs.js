@@ -7,7 +7,7 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Params$Gayer from "./Params.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 
-var analyzer_000 = /* content : Analysis */Block.__(4, [/* Mic */1]);
+var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */1]);
 
 var analyzer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -70,7 +70,18 @@ var slitscan = /* record */[
   slitscan_005
 ];
 
-var reader_000 = /* content : Reader */Block.__(6, [/* R */0]);
+function video(url) {
+  return /* record */[
+          /* content : Video */Block.__(4, [url]),
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */1],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */3],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */5]
+        ];
+}
+
+var reader_000 = /* content : Reader */Block.__(7, [/* R */0]);
 
 var reader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
@@ -89,9 +100,9 @@ var reader = /* record */[
 
 function pitchFilter(pc) {
   return /* record */[
-          /* content : PitchClasses */Block.__(5, [pc]),
+          /* content : PitchClasses */Block.__(6, [pc]),
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */1],
-          /* compositeOperation : DestinationOut */6,
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2],
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */3],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4],
           /* filters */Layer$Gayer.defaultLayer[/* filters */5]
@@ -402,7 +413,7 @@ var feedback_011 = /* layers : :: */[
   webcam,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(4, [/* Mic */1]),
+      /* content : Analysis */Block.__(5, [/* Mic */1]),
       /* alpha */0.5,
       analyzer_002,
       analyzer_003,
@@ -543,7 +554,7 @@ var slitscanParams_011 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(4, [/* Mic */1]),
+      /* content : Analysis */Block.__(5, [/* Mic */1]),
       /* alpha */0.25,
       analyzer_002,
       analyzer_003,
@@ -601,7 +612,7 @@ var isItACrime_011 = /* layers : :: */[
   img("media/is_it_a_crime.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(6, [/* A */3]),
+      /* content : Reader */Block.__(7, [/* A */3]),
       /* alpha */1.0,
       /* compositeOperation : Multiply */11,
       reader_003,
@@ -883,7 +894,7 @@ var history_011 = /* layers : :: */[
     historyLayer,
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(6, [/* R */0]),
+        /* content : Reader */Block.__(7, [/* R */0]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -910,7 +921,7 @@ var history = /* record */[
   history_011
 ];
 
-var debussyFile_000 = /* content : Analysis */Block.__(4, [/* AudioFile */["media/la_cathedrale_engloutie.m4a"]]);
+var debussyFile_000 = /* content : Analysis */Block.__(5, [/* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"])]);
 
 var debussyFile_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -1213,7 +1224,7 @@ var vinyl = /* record */[
 ];
 
 var presets_000 = /* tuple */[
-  "Spacy",
+  "Video",
   /* record */[
     /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
     /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
@@ -1226,89 +1237,117 @@ var presets_000 = /* tuple */[
     /* q */Params$Gayer.defaultParams[/* q */8],
     /* transpose */Params$Gayer.defaultParams[/* transpose */9],
     /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-    /* layers */spacy
+    /* layers : :: */[
+      video("media/pond.mp4"),
+      /* :: */[
+        pitchFilter(Music$Gayer.cMajor),
+        /* :: */[
+          reader,
+          /* [] */0
+        ]
+      ]
+    ]
   ]
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Vinyl",
-    vinyl
+    "Spacy",
+    /* record */[
+      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+      /* q */Params$Gayer.defaultParams[/* q */8],
+      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+      /* layers */spacy
+    ]
   ],
   /* :: */[
     /* tuple */[
-      "Droste",
-      droste
+      "Vinyl",
+      vinyl
     ],
     /* :: */[
       /* tuple */[
-        "Single note",
-        singleNote
+        "Droste",
+        droste
       ],
       /* :: */[
         /* tuple */[
-          "Tughra of Suleiman",
-          tughra
+          "Single note",
+          singleNote
         ],
         /* :: */[
           /* tuple */[
-            "Is it a crime?",
-            isItACrime
+            "Tughra of Suleiman",
+            tughra
           ],
           /* :: */[
             /* tuple */[
-              "MIDI",
-              midi
+              "Is it a crime?",
+              isItACrime
             ],
             /* :: */[
               /* tuple */[
-                "Audio file",
-                debussy
+                "MIDI",
+                midi
               ],
               /* :: */[
                 /* tuple */[
-                  "History",
-                  history
+                  "Audio file",
+                  debussy
                 ],
                 /* :: */[
                   /* tuple */[
-                    "King Wen",
-                    iChing
+                    "History",
+                    history
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Whiteboard",
-                      whiteboardParams
+                      "King Wen",
+                      iChing
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Slitscan",
-                        slitscanParams
+                        "Whiteboard",
+                        whiteboardParams
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Mic feedback (may be loud!)",
-                          feedback
+                          "Slitscan",
+                          slitscanParams
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Empty",
-                            /* record */[
-                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-                              /* q */Params$Gayer.defaultParams[/* q */8],
-                              /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-                              /* layers : [] */0
-                            ]
+                            "Mic feedback (may be loud!)",
+                            feedback
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "Empty",
+                              /* record */[
+                                /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+                                /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+                                /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+                                /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+                                /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+                                /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+                                /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+                                /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+                                /* q */Params$Gayer.defaultParams[/* q */8],
+                                /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+                                /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+                                /* layers : [] */0
+                              ]
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -1341,6 +1380,7 @@ export {
   analyzer ,
   webcam ,
   slitscan ,
+  video ,
   reader ,
   pitchFilter ,
   fill ,

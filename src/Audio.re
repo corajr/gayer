@@ -428,6 +428,7 @@ let updateFilterBankDefinition =
 module AudioInput = {
   type audioInputSetting =
     | AudioFile(string)
+    | AudioFromVideo(string)
     | PinkNoise
     | Mic;
 
@@ -437,6 +438,8 @@ module AudioInput = {
         switch (r) {
         | AudioFile(url) =>
           object_([("type", string("file")), ("url", string(url))])
+        | AudioFromVideo(url) =>
+          object_([("type", string("video")), ("url", string(url))])
         | PinkNoise => object_([("type", string("pink-noise"))])
         | Mic => object_([("type", string("mic"))])
         }
@@ -453,6 +456,8 @@ module AudioInput = {
           | "pink-noise" => PinkNoise
           | "mic" => Mic
           | "file" =>
+            json |> map(url => AudioFile(url), field("url", string))
+          | "video" =>
             json |> map(url => AudioFile(url), field("url", string))
           | _ => PinkNoise
         )

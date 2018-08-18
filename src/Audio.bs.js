@@ -236,15 +236,7 @@ function updateFilterBankDefinition(filterBank, freqFunc, q) {
 
 function audioInputSetting(r) {
   if (typeof r === "number") {
-    if (r !== 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "mic"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
+    if (r === 0) {
       return Json_encode.object_(/* :: */[
                   /* tuple */[
                     "type",
@@ -252,7 +244,29 @@ function audioInputSetting(r) {
                   ],
                   /* [] */0
                 ]);
+    } else {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "mic"
+                  ],
+                  /* [] */0
+                ]);
     }
+  } else if (r.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "video"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "url",
+                    r[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
   } else {
     return Json_encode.object_(/* :: */[
                 /* tuple */[
@@ -277,7 +291,7 @@ function audioInputSetting$1(json) {
   switch (param) {
     case "file" : 
         return Json_decode.map((function (url) {
-                      return /* AudioFile */[url];
+                      return /* AudioFile */Block.__(0, [url]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
@@ -285,6 +299,12 @@ function audioInputSetting$1(json) {
         return /* Mic */1;
     case "pink-noise" : 
         return /* PinkNoise */0;
+    case "video" : 
+        return Json_decode.map((function (url) {
+                      return /* AudioFile */Block.__(0, [url]);
+                    }), (function (param) {
+                      return Json_decode.field("url", Json_decode.string, param);
+                    }), json);
     default:
       return /* PinkNoise */0;
   }

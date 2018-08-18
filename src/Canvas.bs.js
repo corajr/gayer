@@ -816,7 +816,7 @@ var DrawCommand = /* module */[
   /* drawCommands */drawCommands
 ];
 
-var defaultSize = 120;
+var defaultSize = 240;
 
 var defaultTransform = /* record */[
   /* horizontalScaling */1.0,
