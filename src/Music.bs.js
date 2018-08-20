@@ -211,6 +211,18 @@ var allPitches = Curry._1(PitchSet[/* of_list */25], /* :: */[
       ]
     ]);
 
+function harmonicSeriesInSemitones(n) {
+  return $$Array.init(n, (function (i) {
+                return Math.log2(i + 1 | 0) * 12.0;
+              }));
+}
+
+function partials(n) {
+  return $$Array.map((function (prim) {
+                return prim | 0;
+              }), harmonicSeriesInSemitones(n));
+}
+
 export {
   PitchSet ,
   filterByPitchSet ,
@@ -224,6 +236,8 @@ export {
   majorHexatonic ,
   wholetone ,
   allPitches ,
+  harmonicSeriesInSemitones ,
+  partials ,
   
 }
 /* PitchSet Not a pure module */

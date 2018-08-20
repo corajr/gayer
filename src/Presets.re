@@ -91,6 +91,8 @@ let rotateLayer =
     drawSelfFullScreen,
   ]);
 
+let blurLayer = {...draw([drawSelfFullScreen]), filters: "blur(2px)"};
+
 let squareColumnLayer = {
   ...
     draw([
@@ -225,6 +227,7 @@ let history = {
   layers: [
     analyzer,
     /* squareLayer, */
+    /* blurLayer, */
     historyLayer,
     /* pitchFilter(majorHexatonic), */
     {...reader, alpha: 0.0},
@@ -282,8 +285,8 @@ let video = {
 };
 
 let presets = [
-  ("History", history),
   ("Spacy", {...defaultParams, layers: spacy}),
+  ("History", history),
   ("Video", video),
   ("Vinyl", vinyl),
   ("Droste", droste),

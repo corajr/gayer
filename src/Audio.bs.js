@@ -277,7 +277,7 @@ function updateBankGains(bank, gainValues) {
   var n = gainValues.length;
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     var gainI = (n - i | 0) - 1 | 0;
-    Caml_array.caml_array_get(bank[/* gains */2], gainI).gain.setValueAtTime(Caml_array.caml_array_get(gainValues, i), t);
+    Caml_array.caml_array_get(bank[/* gains */2], gainI).gain.linearRampToValueAtTime(Caml_array.caml_array_get(gainValues, i), t + 0.05);
   }
   return /* () */0;
 }

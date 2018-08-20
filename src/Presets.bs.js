@@ -255,6 +255,30 @@ var rotateLayer = draw(undefined, /* :: */[
     ]);
 
 var init$2 = draw(undefined, /* :: */[
+      drawSelfFullScreen,
+      /* [] */0
+    ]);
+
+var blurLayer_000 = /* content */init$2[/* content */0];
+
+var blurLayer_001 = /* alpha */init$2[/* alpha */1];
+
+var blurLayer_002 = /* compositeOperation */init$2[/* compositeOperation */2];
+
+var blurLayer_003 = /* rotation */init$2[/* rotation */3];
+
+var blurLayer_004 = /* transformMatrix */init$2[/* transformMatrix */4];
+
+var blurLayer = /* record */[
+  blurLayer_000,
+  blurLayer_001,
+  blurLayer_002,
+  blurLayer_003,
+  blurLayer_004,
+  /* filters */"blur(2px)"
+];
+
+var init$3 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
@@ -267,15 +291,15 @@ var init$2 = draw(undefined, /* :: */[
       /* [] */0
     ]);
 
-var squareColumnLayer_000 = /* content */init$2[/* content */0];
+var squareColumnLayer_000 = /* content */init$3[/* content */0];
 
-var squareColumnLayer_001 = /* alpha */init$2[/* alpha */1];
+var squareColumnLayer_001 = /* alpha */init$3[/* alpha */1];
 
-var squareColumnLayer_003 = /* rotation */init$2[/* rotation */3];
+var squareColumnLayer_003 = /* rotation */init$3[/* rotation */3];
 
-var squareColumnLayer_004 = /* transformMatrix */init$2[/* transformMatrix */4];
+var squareColumnLayer_004 = /* transformMatrix */init$3[/* transformMatrix */4];
 
-var squareColumnLayer_005 = /* filters */init$2[/* filters */5];
+var squareColumnLayer_005 = /* filters */init$3[/* filters */5];
 
 var squareColumnLayer = /* record */[
   squareColumnLayer_000,
@@ -1281,27 +1305,27 @@ var video$1 = /* record */[
 ];
 
 var presets_000 = /* tuple */[
-  "History",
-  history
+  "Spacy",
+  /* record */[
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
+    /* q */Params$Gayer.defaultParams[/* q */8],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */9],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
+    /* layers */spacy
+  ]
 ];
 
 var presets_001 = /* :: */[
   /* tuple */[
-    "Spacy",
-    /* record */[
-      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0],
-      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1],
-      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2],
-      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3],
-      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4],
-      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5],
-      /* inputGain */Params$Gayer.defaultParams[/* inputGain */6],
-      /* outputGain */Params$Gayer.defaultParams[/* outputGain */7],
-      /* q */Params$Gayer.defaultParams[/* q */8],
-      /* transpose */Params$Gayer.defaultParams[/* transpose */9],
-      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10],
-      /* layers */spacy
-    ]
+    "History",
+    history
   ],
   /* :: */[
     /* tuple */[
@@ -1425,6 +1449,7 @@ export {
   drawSelfFullScreen ,
   harmony ,
   rotateLayer ,
+  blurLayer ,
   squareColumnLayer ,
   allLayerTypes ,
   harmonyParams ,

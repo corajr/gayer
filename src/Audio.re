@@ -181,6 +181,9 @@ external createPeriodicWave :
 [@bs.send] external setValueAtTime : (audioParam, float, float) => unit = "";
 
 [@bs.send]
+external linearRampToValueAtTime : (audioParam, float, float) => unit = "";
+
+[@bs.send]
 external connectFilterToGain : (biquadFilter, gainNode) => unit = "connect";
 [@bs.send]
 external connectGainToFilter : (gainNode, biquadFilter) => unit = "connect";
@@ -507,7 +510,11 @@ let updateBankGains = (~bank: bank('a), ~gainValues: array(float)) => {
   let n = Array.length(gainValues);
   for (i in 0 to n - 1) {
     let gainI = n - i - 1;
-    setValueAtTime(bank.gains[gainI] |. gain_Get, gainValues[i], t);
+    linearRampToValueAtTime(
+      bank.gains[gainI] |. gain_Get,
+      gainValues[i],
+      t +. 0.05,
+    );
   };
 };
 
