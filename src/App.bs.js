@@ -58,21 +58,23 @@ var defaultState_010 = /* cameraInput : record */[/* contents */undefined];
 
 var defaultState_012 = /* compressor : record */[/* contents */undefined];
 
-var defaultState_013 = /* analysisCanvasRef : record */[/* contents */undefined];
+var defaultState_013 = /* merger : record */[/* contents */undefined];
 
-var defaultState_014 = /* midiCanvasRef : record */[/* contents */undefined];
+var defaultState_014 = /* analysisCanvasRef : record */[/* contents */undefined];
 
-var defaultState_016 = /* loadedImages : record */[/* contents */Belt_MapString.empty];
+var defaultState_015 = /* midiCanvasRef : record */[/* contents */undefined];
 
-var defaultState_017 = /* loadedAudio : record */[/* contents */Belt_MapString.empty];
+var defaultState_017 = /* loadedImages : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_018 = /* canvasRef : record */[/* contents */undefined];
+var defaultState_018 = /* loadedAudio : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_019 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
+var defaultState_019 = /* canvasRef : record */[/* contents */undefined];
 
-var defaultState_021 = /* tickFunctions : record */[/* contents : [] */0];
+var defaultState_020 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
 
-var defaultState_022 = /* timerId : record */[/* contents */undefined];
+var defaultState_022 = /* tickFunctions : record */[/* contents : [] */0];
+
+var defaultState_023 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -86,27 +88,28 @@ var defaultState = /* record */[
   /* mediaStream */undefined,
   /* micInput */undefined,
   defaultState_010,
-  /* filterBank */undefined,
+  /* filterBanks */undefined,
   defaultState_012,
   defaultState_013,
   defaultState_014,
+  defaultState_015,
   /* savedImages : [] */0,
-  defaultState_016,
   defaultState_017,
   defaultState_018,
   defaultState_019,
+  defaultState_020,
   /* fullscreenCanvas */false,
-  defaultState_021,
-  defaultState_022
+  defaultState_022,
+  defaultState_023
 ];
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */18][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+  param[/* state */1][/* canvasRef */19][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
   return /* () */0;
 }
 
 function setAnalysisCanvasRef(theRef, param) {
-  param[/* state */1][/* analysisCanvasRef */13][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+  param[/* state */1][/* analysisCanvasRef */14][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
   return /* () */0;
 }
 
@@ -119,7 +122,7 @@ function setLayerRef(audioCtx, param, param$1) {
     if (theRef == null) {
       return /* () */0;
     } else {
-      state[/* midiCanvasRef */14][0] = maybeRef;
+      state[/* midiCanvasRef */15][0] = maybeRef;
       return /* () */0;
     }
   } else {
@@ -141,7 +144,7 @@ function setLayerRef(audioCtx, param, param$1) {
           if (theRef == null) {
             return /* () */0;
           } else {
-            state[/* loadedImages */16][0] = Belt_MapString.set(state[/* loadedImages */16][0], match[0], theRef);
+            state[/* loadedImages */17][0] = Belt_MapString.set(state[/* loadedImages */17][0], match[0], theRef);
             return /* () */0;
           }
       case 4 : 
@@ -149,10 +152,10 @@ function setLayerRef(audioCtx, param, param$1) {
             return /* () */0;
           } else {
             var url = match[0];
-            state[/* loadedImages */16][0] = Belt_MapString.set(state[/* loadedImages */16][0], url, theRef);
+            state[/* loadedImages */17][0] = Belt_MapString.set(state[/* loadedImages */17][0], url, theRef);
             var readyState = theRef.readyState;
             if (readyState >= 3) {
-              var match$2 = Belt_MapString.get(state[/* loadedAudio */17][0], url);
+              var match$2 = Belt_MapString.get(state[/* loadedAudio */18][0], url);
               if (match$2 !== undefined) {
                 return /* () */0;
               } else {
@@ -160,7 +163,7 @@ function setLayerRef(audioCtx, param, param$1) {
                 var mediaElementSource = audioCtx.createMediaElementSource(theRef);
                 console.log("adding element source");
                 console.log(mediaElementSource);
-                state[/* loadedAudio */17][0] = Belt_MapString.set(state[/* loadedAudio */17][0], url, mediaElementSource);
+                state[/* loadedAudio */18][0] = Belt_MapString.set(state[/* loadedAudio */18][0], url, mediaElementSource);
                 return /* () */0;
               }
             } else {
@@ -172,12 +175,12 @@ function setLayerRef(audioCtx, param, param$1) {
             return /* () */0;
           } else {
             var source = match[0];
-            state[/* analysisCanvasRef */13][0] = maybeRef;
+            state[/* analysisCanvasRef */14][0] = maybeRef;
             if (typeof source === "number" || source.tag) {
               return /* () */0;
             } else {
               var url$1 = source[0];
-              if (Belt_MapString.has(state[/* loadedAudio */17][0], url$1)) {
+              if (Belt_MapString.has(state[/* loadedAudio */18][0], url$1)) {
                 return 0;
               } else {
                 return Curry._1(param$1[/* send */3], /* LoadAudioFile */Block.__(0, [url$1]));
@@ -242,11 +245,41 @@ function maybeMapFilterBank(f, maybeFilterBank) {
 }
 
 function connectInputs(state) {
-  var match = state[/* filterBank */11];
+  var match = state[/* filterBanks */11];
   var match$1 = state[/* filterInput */5];
-  var match$2 = state[/* compressor */12][0];
-  if (match !== undefined && match$1 !== undefined && match$2 !== undefined) {
-    return Audio$Gayer.connectFilterBank(match$1, match, Js_primitive.valFromOption(match$2));
+  var match$2 = state[/* merger */13][0];
+  if (match !== undefined) {
+    var match$3 = match;
+    if (match$3.tag) {
+      if (match$1 !== undefined) {
+        if (match$2 !== undefined) {
+          var merger = Js_primitive.valFromOption(match$2);
+          var filterInput = match$1;
+          Audio$Gayer.connectFilterBank(filterInput, match$3[0], merger, 0);
+          return Audio$Gayer.connectFilterBank(filterInput, match$3[1], merger, 1);
+        } else {
+          console.log("could not connect inputs");
+          return /* () */0;
+        }
+      } else {
+        console.log("could not connect inputs");
+        return /* () */0;
+      }
+    } else if (match$1 !== undefined) {
+      if (match$2 !== undefined) {
+        var merger$1 = Js_primitive.valFromOption(match$2);
+        var filterBank = match$3[0];
+        Audio$Gayer.connectFilterBank(match$1, filterBank, merger$1, 0);
+        filterBank[/* output */3].connect(merger$1, 0, 1);
+        return /* () */0;
+      } else {
+        console.log("could not connect inputs");
+        return /* () */0;
+      }
+    } else {
+      console.log("could not connect inputs");
+      return /* () */0;
+    }
   } else {
     console.log("could not connect inputs");
     return /* () */0;
@@ -254,11 +287,32 @@ function connectInputs(state) {
 }
 
 function disconnectInputs(state) {
-  var match = state[/* filterBank */11];
+  var match = state[/* filterBanks */11];
   var match$1 = state[/* filterInput */5];
-  var match$2 = state[/* compressor */12][0];
-  if (match !== undefined && match$1 !== undefined && match$2 !== undefined) {
-    return Audio$Gayer.disconnectFilterBank(match$1, match, Js_primitive.valFromOption(match$2));
+  var match$2 = state[/* merger */13][0];
+  if (match !== undefined) {
+    var match$3 = match;
+    if (match$3.tag) {
+      if (match$1 !== undefined) {
+        if (match$2 !== undefined) {
+          var merger = Js_primitive.valFromOption(match$2);
+          var filterInput = match$1;
+          Audio$Gayer.disconnectFilterBank(filterInput, match$3[0], merger);
+          return Audio$Gayer.disconnectFilterBank(filterInput, match$3[1], merger);
+        } else {
+          console.log("could not disconnect inputs");
+          return /* () */0;
+        }
+      } else {
+        console.log("could not disconnect inputs");
+        return /* () */0;
+      }
+    } else if (match$1 !== undefined && match$2 !== undefined) {
+      return Audio$Gayer.disconnectFilterBank(match$1, match$3[0], Js_primitive.valFromOption(match$2));
+    } else {
+      console.log("could not disconnect inputs");
+      return /* () */0;
+    }
   } else {
     console.log("could not disconnect inputs");
     return /* () */0;
@@ -302,7 +356,7 @@ function drawLayer(ctx, width, height, state, layer) {
   var match = layer[/* content */0];
   var exit = 0;
   if (typeof match === "number") {
-    var match$1 = state[/* midiCanvasRef */14][0];
+    var match$1 = state[/* midiCanvasRef */15][0];
     if (match$1 !== undefined) {
       var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
       ctx.drawImage(Js_primitive.valFromOption(match$1), x, 0, 1, height);
@@ -335,7 +389,7 @@ function drawLayer(ctx, width, height, state, layer) {
           exit = 1;
           break;
       case 5 : 
-          var match$4 = state[/* analysisCanvasRef */13][0];
+          var match$4 = state[/* analysisCanvasRef */14][0];
           if (match$4 !== undefined) {
             var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(match$4), x$1, 0, 1, height);
@@ -356,11 +410,10 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 7 : 
-          var channel = match[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */2] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var tmp;
-          switch (channel) {
+          switch (match[0]) {
             case 0 : 
                 tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
                 break;
@@ -377,14 +430,18 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           ctx.fillStyle = tmp;
           ctx.fillRect(xToRead, 0, 1, height);
-          return Canvas$Gayer.imageDataToFloatArray(slice, channel);
+          var match$5 = Canvas$Gayer.imageDataToStereo(slice, /* R */0, /* B */2);
+          return /* Stereo */Block.__(1, [
+                    match$5[0],
+                    match$5[1]
+                  ]);
       
     }
   }
   if (exit === 1) {
-    var match$5 = Belt_MapString.get(state[/* loadedImages */16][0], match[0]);
-    if (match$5 !== undefined) {
-      ctx.drawImage(Js_primitive.valFromOption(match$5), 0, 0, width, height);
+    var match$6 = Belt_MapString.get(state[/* loadedImages */17][0], match[0]);
+    if (match$6 !== undefined) {
+      ctx.drawImage(Js_primitive.valFromOption(match$6), 0, 0, width, height);
     }
     return undefined;
   }
@@ -396,14 +453,14 @@ function drawCanvas(canvasElement, width, height, state) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
-  return List.fold_left((function (values, layer) {
+  return List.fold_left((function (acc, layer) {
                 var newMaybeValues = drawLayer(ctx, width, height, state, layer);
                 if (newMaybeValues !== undefined) {
                   return newMaybeValues;
                 } else {
-                  return values;
+                  return acc;
                 }
-              }), Caml_array.caml_make_vect(height, 0.0), state[/* params */6][/* layers */11]);
+              }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */11]);
 }
 
 function getAnalysisInput(audioCtx, state, audioInput) {
@@ -422,7 +479,7 @@ function getAnalysisInput(audioCtx, state, audioInput) {
   } else {
     return /* tuple */[
             audioCtx,
-            Belt_MapString.get(state[/* loadedAudio */17][0], audioInput[0])
+            Belt_MapString.get(state[/* loadedAudio */18][0], audioInput[0])
           ];
   }
 }
@@ -449,7 +506,10 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
+              var merger = audioCtx.createChannelMerger();
+              self[/* state */1][/* merger */13][0] = Js_primitive.some(merger);
               var compressor = Audio$Gayer.makeCompressor(audioCtx, Audio$Gayer.defaultCompressorValues);
+              merger.connect(compressor);
               compressor.connect(audioCtx.destination);
               self[/* state */1][/* compressor */12][0] = Js_primitive.some(compressor);
               var noise = Audio$Gayer.pinkNoise(audioCtx);
@@ -460,8 +520,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 16
               ];
               var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + self[/* state */1][/* params */6][/* transpose */9] | 0, height);
-              var filterBank = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
-              Curry._1(self[/* send */3], /* SetFilterBank */Block.__(5, [filterBank]));
+              var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
+              Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
+              Curry._1(self[/* send */3], /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBankL])]));
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match !== undefined) {
                 Js_primitive.valFromOption(match).then((function (stream) {
@@ -475,24 +536,24 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var sendTickFn = function () {
                 return Curry._1(self[/* send */3], /* Tick */1);
               };
-              self[/* state */1][/* tickFunctions */21][0] = /* :: */[
+              self[/* state */1][/* tickFunctions */22][0] = /* :: */[
                 sendTickFn,
-                self[/* state */1][/* tickFunctions */21][0]
+                self[/* state */1][/* tickFunctions */22][0]
               ];
               var animationFn = function () {
                 List.iter((function (f) {
                         return Curry._1(f, /* () */0);
-                      }), self[/* state */1][/* tickFunctions */21][0]);
+                      }), self[/* state */1][/* tickFunctions */22][0]);
                 window.requestAnimationFrame(animationFn);
                 return /* () */0;
               };
-              Timing$Gayer.setTimer(self[/* state */1][/* timerId */22], (function () {
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */23], (function () {
                       return List.iter((function (f) {
                                     return Curry._1(f, /* () */0);
-                                  }), self[/* state */1][/* tickFunctions */21][0]);
+                                  }), self[/* state */1][/* tickFunctions */22][0]);
                     }), self[/* state */1][/* params */6][/* millisPerTick */4]);
               Curry._1(self[/* onUnmount */4], (function () {
-                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */22]);
+                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */23]);
                     }));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
                       var hash = decodeURIComponent(url[/* hash */1]);
@@ -523,7 +584,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* didUpdate */(function (param) {
               var newSelf = param[/* newSelf */1];
               var oldSelf = param[/* oldSelf */0];
-              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */5], newSelf[/* state */1][/* filterInput */5]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBank */11], newSelf[/* state */1][/* filterBank */11])) {
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */5], newSelf[/* state */1][/* filterInput */5]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBanks */11], newSelf[/* state */1][/* filterBanks */11])) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */6][/* audioInputSetting */5], newSelf[/* state */1][/* params */6][/* audioInputSetting */5])) {
@@ -542,22 +603,33 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               if (oldSelf[/* state */1][/* params */6][/* q */8] !== newSelf[/* state */1][/* params */6][/* q */8] || oldSelf[/* state */1][/* params */6][/* transpose */9] !== newSelf[/* state */1][/* params */6][/* transpose */9]) {
                 var match$1 = newSelf[/* state */1][/* freqFuncParams */4][0];
                 var freqFunc = Audio$Gayer.yToFrequency(match$1[0], match$1[1] + newSelf[/* state */1][/* params */6][/* transpose */9] | 0, height);
-                maybeMapFilterBank((function (filterBank) {
-                        return Audio$Gayer.updateFilterBankDefinition(filterBank, freqFunc, newSelf[/* state */1][/* params */6][/* q */8]);
-                      }), newSelf[/* state */1][/* filterBank */11]);
+                var updateFn = function (filterBank) {
+                  return Audio$Gayer.updateFilterBankDefinition(filterBank, freqFunc, newSelf[/* state */1][/* params */6][/* q */8]);
+                };
+                var match$2 = newSelf[/* state */1][/* filterBanks */11];
+                if (match$2 !== undefined) {
+                  var match$3 = match$2;
+                  if (match$3.tag) {
+                    updateFn(match$3[0]);
+                    updateFn(match$3[1]);
+                  } else {
+                    updateFn(match$3[0]);
+                  }
+                }
+                
               }
               if (oldSelf[/* state */1][/* params */6][/* millisPerTick */4] !== newSelf[/* state */1][/* params */6][/* millisPerTick */4]) {
-                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */22], (function () {
+                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */23], (function () {
                         return List.iter((function (f) {
                                       return Curry._1(f, /* () */0);
-                                    }), newSelf[/* state */1][/* tickFunctions */21][0]);
+                                    }), newSelf[/* state */1][/* tickFunctions */22][0]);
                       }), newSelf[/* state */1][/* params */6][/* millisPerTick */4]);
               }
-              if (oldSelf[/* state */1][/* fullscreenCanvas */20] !== newSelf[/* state */1][/* fullscreenCanvas */20]) {
-                if (newSelf[/* state */1][/* fullscreenCanvas */20]) {
-                  var match$2 = newSelf[/* state */1][/* canvasRef */18][0];
-                  if (match$2 !== undefined) {
-                    Fscreen.requestFullscreen(Js_primitive.valFromOption(match$2));
+              if (oldSelf[/* state */1][/* fullscreenCanvas */21] !== newSelf[/* state */1][/* fullscreenCanvas */21]) {
+                if (newSelf[/* state */1][/* fullscreenCanvas */21]) {
+                  var match$4 = newSelf[/* state */1][/* canvasRef */19][0];
+                  if (match$4 !== undefined) {
+                    Fscreen.requestFullscreen(Js_primitive.valFromOption(match$4));
                     return /* () */0;
                   } else {
                     return /* () */0;
@@ -577,8 +649,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var partial_arg = self[/* state */1];
-              var match = self[/* state */1][/* scaleCanvas */19];
-              var match$1 = self[/* state */1][/* scaleCanvas */19];
+              var match = self[/* state */1][/* scaleCanvas */20];
+              var match$1 = self[/* state */1][/* scaleCanvas */20];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -639,9 +711,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
                                                           }), (function (tickFn) {
-                                                            self[/* state */1][/* tickFunctions */21][0] = /* :: */[
+                                                            self[/* state */1][/* tickFunctions */22][0] = /* :: */[
                                                               tickFn,
-                                                              self[/* state */1][/* tickFunctions */21][0]
+                                                              self[/* state */1][/* tickFunctions */22][0]
                                                             ];
                                                             return /* () */0;
                                                           }), width, height, 16, /* array */[]))])),
@@ -680,7 +752,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                         key: Hashtbl.hash(url).toString(),
                                                                         src: url
                                                                       });
-                                                          }), $$Array.of_list(self[/* state */1][/* savedImages */15])))
+                                                          }), $$Array.of_list(self[/* state */1][/* savedImages */16])))
                                               ]))
                                     ]))));
             }),
@@ -693,7 +765,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 switch (action) {
                   case 0 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */18], (function (canvas) {
+                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */19], (function (canvas) {
                                                   return clearCanvas(canvas, width, height);
                                                 }));
                                   })]);
@@ -701,11 +773,31 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     self[/* state */1][/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */0], width);
                                     self[/* state */1][/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */1], width);
-                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */18], (function (canvas) {
+                                    return maybeUpdateCanvas(self[/* state */1][/* canvasRef */19], (function (canvas) {
                                                   var filterValues = drawCanvas(canvas, width, height, state);
-                                                  return maybeMapFilterBank((function (filterBank) {
-                                                                return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */6], state[/* params */6][/* outputGain */7], filterBank, filterValues);
-                                                              }), self[/* state */1][/* filterBank */11]);
+                                                  var updateBank = function (values, filterBank) {
+                                                    return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */6], state[/* params */6][/* outputGain */7], filterBank, values);
+                                                  };
+                                                  var match = self[/* state */1][/* filterBanks */11];
+                                                  if (match !== undefined) {
+                                                    var match$1 = match;
+                                                    if (match$1.tag) {
+                                                      var filterBankR = match$1[1];
+                                                      var filterBankL = match$1[0];
+                                                      if (filterValues.tag) {
+                                                        updateBank(filterValues[0], filterBankL);
+                                                        return updateBank(filterValues[1], filterBankR);
+                                                      } else {
+                                                        var filterValues$1 = filterValues[0];
+                                                        updateBank(filterValues$1, filterBankL);
+                                                        return updateBank(filterValues$1, filterBankR);
+                                                      }
+                                                    } else {
+                                                      return updateBank(filterValues[0], match$1[0]);
+                                                    }
+                                                  } else {
+                                                    return /* () */0;
+                                                  }
                                                 }));
                                   })]);
                   case 2 : 
@@ -713,7 +805,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       return /* Update */Block.__(0, [(newrecord[/* presetDrawerOpen */7] = !state[/* presetDrawerOpen */7], newrecord)]);
                   case 3 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    var match = state[/* canvasRef */18][0];
+                                    var match = state[/* canvasRef */19][0];
                                     if (match !== undefined) {
                                       var url = Js_primitive.valFromOption(match).toDataURL();
                                       return Curry._1(self[/* send */3], /* AddSavedImage */Block.__(1, [url]));
@@ -723,7 +815,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   })]);
                   case 4 : 
                       var newrecord$1 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */20] = !state[/* fullscreenCanvas */20], newrecord$1)]);
+                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */21] = !state[/* fullscreenCanvas */21], newrecord$1)]);
                   
                 }
               } else {
@@ -733,14 +825,14 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                       return /* SideEffects */Block.__(1, [(function () {
                                     var elt = makeAudioElt(url);
                                     var mediaElementSource = audioCtx.createMediaElementSource(elt);
-                                    state[/* loadedAudio */17][0] = Belt_MapString.set(state[/* loadedAudio */17][0], url, mediaElementSource);
+                                    state[/* loadedAudio */18][0] = Belt_MapString.set(state[/* loadedAudio */18][0], url, mediaElementSource);
                                     return /* () */0;
                                   })]);
                   case 1 : 
                       var newrecord$2 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */15] = /* :: */[
+                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */16] = /* :: */[
                                     action[0],
-                                    state[/* savedImages */15]
+                                    state[/* savedImages */16]
                                   ], newrecord$2)]);
                   case 2 : 
                       var newrecord$3 = Caml_array.caml_array_dup(state);
@@ -759,7 +851,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                   case 5 : 
                       var newrecord$6 = Caml_array.caml_array_dup(state);
                       return /* UpdateWithSideEffects */Block.__(2, [
-                                (newrecord$6[/* filterBank */11] = action[0], newrecord$6),
+                                (newrecord$6[/* filterBanks */11] = action[0], newrecord$6),
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
                                   })

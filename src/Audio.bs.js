@@ -254,21 +254,29 @@ function getAudioSource(ctx) {
   }
 }
 
-function connectFilterBank(noise, filterBank, compressor) {
+function connectFilterBank(noise, filterBank, merger, channel) {
   var match = filterBank[/* input */0];
   if (match !== undefined) {
     noise.connect(Js_primitive.valFromOption(match));
   }
-  filterBank[/* output */3].connect(compressor);
+  filterBank[/* output */3].connect(merger, 0, channel);
   return /* () */0;
 }
 
-function disconnectFilterBank(noise, filterBank, compressor) {
+function disconnectFilterBank(noise, filterBank, _) {
   var match = filterBank[/* input */0];
   if (match !== undefined) {
     noise.disconnect(Js_primitive.valFromOption(match));
   }
-  filterBank[/* output */3].disconnect(compressor);
+  filterBank[/* output */3].disconnect((function (prim, prim$1, prim$2, prim$3, prim$4) {
+          return {
+                  threshold: prim,
+                  knee: prim$1,
+                  ratio: prim$2,
+                  attack: prim$3,
+                  release: prim$4
+                };
+        }));
   return /* () */0;
 }
 

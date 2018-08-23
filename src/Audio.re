@@ -104,6 +104,7 @@ type compressor = {
   release: audioParam,
 };
 
+type channelMerger;
 type channelSplitter;
 type stereoPanner;
 
@@ -159,6 +160,8 @@ external getFrequencyResponse :
 [@bs.send] external createStereoPanner : audioContext => stereoPanner = "";
 [@bs.send]
 external createChannelSplitter : audioContext => channelSplitter = "";
+
+[@bs.send] external createChannelMerger : audioContext => channelMerger = "";
 [@bs.send]
 external createMediaStreamSource : (audioContext, mediaStream) => audioNode =
   "";
@@ -210,6 +213,9 @@ external connectNodeToStereoPanner : (audioNode, stereoPanner) => unit =
 /* TODO: figure out how to type these better. */
 [@bs.send] external connect : ('a, 'b) => unit = "connect";
 [@bs.send] external connectWithOutputIndex : ('a, 'b, int) => unit = "connect";
+[@bs.send]
+external connectWithOutputAndInputIndex : ('a, 'b, int, int) => unit =
+  "connect";
 [@bs.send] external disconnect : ('a, 'b) => unit = "disconnect";
 
 let midiNoteA440Hz = 69.0;
@@ -489,15 +495,15 @@ let getAudioSource: audioContext => Js.Promise.t(option(audioNode)) =
 
 [@bs.get] external defaultSink : audioContext => audioNode = "destination";
 
-let connectFilterBank = (noise, filterBank, compressor) => {
+let connectFilterBank = (noise, filterBank, merger, channel) => {
   switch (filterBank.input) {
   | Some(input) => connectNodeToGain(noise, input)
   | None => ()
   };
-  connectGainToNode(filterBank.output, unwrapCompressor(compressor));
+  connectWithOutputAndInputIndex(filterBank.output, merger, 0, channel);
 };
 
-let disconnectFilterBank = (noise, filterBank, compressor) => {
+let disconnectFilterBank = (noise, filterBank, merger) => {
   switch (filterBank.input) {
   | Some(input) => disconnect(noise, input)
   | None => ()
@@ -547,6 +553,14 @@ let updateFilterBankDefinition =
     filterBank.nodes,
   );
 };
+
+type filterValues =
+  | Mono(array(float))
+  | Stereo(array(float), array(float));
+
+type filterBanks =
+  | MonoBank(filterBank)
+  | StereoBanks(filterBank, filterBank);
 
 module AudioInput = {
   type audioInputSetting =

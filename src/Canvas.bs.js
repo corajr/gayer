@@ -296,6 +296,22 @@ function imageDataToFloatArray(imageData, channel) {
   return mapRawData(imageData.data, f);
 }
 
+function imageDataToStereo(imageData, channelL, channelR) {
+  var rawData = imageData.data;
+  var n = rawData.length / 4 | 0;
+  var arrayL = Caml_array.caml_make_vect(n, 0.0);
+  var arrayR = Caml_array.caml_make_vect(n, 0.0);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var offset = (i << 2);
+    Caml_array.caml_array_set(arrayL, i, Caml_array.caml_array_get(rawData, offset + channelL | 0) / 255.0);
+    Caml_array.caml_array_set(arrayR, i, Caml_array.caml_array_get(rawData, offset + channelR | 0) / 255.0);
+  }
+  return /* tuple */[
+          arrayL,
+          arrayR
+        ];
+}
+
 var makeUint8ClampedArray = function (len){return new Uint8ClampedArray(len)};
 
 function makeImageData(cqtLine) {
@@ -846,6 +862,7 @@ export {
   imageDataToPixels ,
   rawDataToFloatArray ,
   imageDataToFloatArray ,
+  imageDataToStereo ,
   makeUint8ClampedArray ,
   makeImageData ,
   makeImageDataFromFloats ,

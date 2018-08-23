@@ -27,8 +27,9 @@ type state = {
   mediaStream: option(mediaStream),
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
-  filterBank: option(filterBank),
+  filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
+  merger: ref(option(channelMerger)),
   analysisCanvasRef: ref(option(Dom.element)),
   midiCanvasRef: ref(option(Dom.element)),
   savedImages: list(string),
@@ -53,8 +54,9 @@ let defaultState: state = {
   micInput: None,
   cameraInput: ref(None),
   params: snd(List.nth(presets, 0)),
-  filterBank: None,
+  filterBanks: None,
   compressor: ref(None),
+  merger: ref(None),
   savedImages: [],
   loadedImages: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
@@ -78,7 +80,7 @@ type action =
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
-  | SetFilterBank(filterBank)
+  | SetFilterBanks(filterBanks)
   | SetParams(params);
 
 [@bs.val] external decodeURIComponent : string => string = "";
@@ -167,17 +169,33 @@ let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
 
 let connectInputs: state => unit =
   state =>
-    switch (state.filterBank, state.filterInput, state.compressor^) {
-    | (Some(filterBank), Some(filterInput), Some(compressor)) =>
-      connectFilterBank(filterInput, filterBank, compressor)
+    switch (state.filterBanks, state.filterInput, state.merger^) {
+    | (
+        Some(StereoBanks(filterBankL, filterBankR)),
+        Some(filterInput),
+        Some(merger),
+      ) =>
+      connectFilterBank(filterInput, filterBankL, merger, 0);
+      connectFilterBank(filterInput, filterBankR, merger, 1);
+    | (Some(MonoBank(filterBank)), Some(filterInput), Some(merger)) =>
+      connectFilterBank(filterInput, filterBank, merger, 0);
+      connectWithOutputAndInputIndex(filterBank.output, merger, 0, 1);
+
     | _ => Js.log("could not connect inputs")
     };
 
 let disconnectInputs: state => unit =
   state =>
-    switch (state.filterBank, state.filterInput, state.compressor^) {
-    | (Some(filterBank), Some(filterInput), Some(compressor)) =>
-      disconnectFilterBank(filterInput, filterBank, compressor)
+    switch (state.filterBanks, state.filterInput, state.merger^) {
+    | (
+        Some(StereoBanks(filterBankL, filterBankR)),
+        Some(filterInput),
+        Some(merger),
+      ) =>
+      disconnectFilterBank(filterInput, filterBankL, merger);
+      disconnectFilterBank(filterInput, filterBankR, merger);
+    | (Some(MonoBank(filterBank)), Some(filterInput), Some(merger)) =>
+      disconnectFilterBank(filterInput, filterBank, merger)
     | _ => Js.log("could not disconnect inputs")
     };
 
@@ -195,7 +213,7 @@ let pushParamsState = newParams => {
 let setLayers = (params, newLayers) =>
   pushParamsState({...params, layers: newLayers});
 
-let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
+let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
@@ -297,7 +315,15 @@ let drawLayer: (ctx, int, int, state, layer) => option(array(float)) =
         },
       );
       Ctx.fillRect(ctx, xToRead, 0, 1, height);
-      Some(imageDataToFloatArray(slice, channel));
+      let (l, r) = imageDataToStereo(slice, R, B);
+      Some(Stereo(l, r));
+    /* Some(Mono(imageDataToFloatArray(slice, channel))); */
+    /* Some( */
+    /*   Stereo( */
+    /*     imageDataToFloatArray(slice, R), */
+    /*     imageDataToFloatArray(slice, B), */
+    /*   ), */
+    /* ); */
     };
   };
 
@@ -309,14 +335,14 @@ let drawCanvas = (canvasElement, width, height, state) => {
 
   let values =
     List.fold_left(
-      (values, layer) => {
+      (acc, layer) => {
         let newMaybeValues = drawLayer(ctx, width, height, state, layer);
         switch (newMaybeValues) {
-        | None => values
+        | None => acc
         | Some(newValues) => newValues
         };
       },
-      Array.make(height, 0.0),
+      Mono(Array.make(height, 0.0)),
       state.params.layers,
     );
 
@@ -406,9 +432,9 @@ let make =
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
       )
-    | SetFilterBank(filterBank) =>
+    | SetFilterBanks(filterBanks) =>
       ReasonReact.UpdateWithSideEffects(
-        {...state, filterBank: Some(filterBank)},
+        {...state, filterBanks: Some(filterBanks)},
         (self => connectInputs(self.state)),
       )
     | Tick =>
@@ -426,17 +452,33 @@ let make =
               self.state.canvasRef,
               canvas => {
                 let filterValues = drawCanvas(canvas, width, height, state);
+                let updateBank = (values, filterBank) =>
+                  updateFilterBank(
+                    ~filterBank,
+                    ~filterValues=values,
+                    ~inputGain=state.params.inputGain,
+                    ~outputGain=state.params.outputGain,
+                  );
 
-                maybeMapFilterBank(
-                  filterBank =>
-                    updateFilterBank(
-                      ~filterBank,
-                      ~filterValues,
-                      ~inputGain=state.params.inputGain,
-                      ~outputGain=state.params.outputGain,
-                    ),
-                  self.state.filterBank,
-                );
+                switch (self.state.filterBanks) {
+                | None => ()
+                | Some(MonoBank(filterBank)) =>
+                  switch (filterValues) {
+                  | Mono(filterValues) =>
+                    updateBank(filterValues, filterBank)
+                  | Stereo(filterValuesL, _) =>
+                    updateBank(filterValuesL, filterBank)
+                  }
+                | Some(StereoBanks(filterBankL, filterBankR)) =>
+                  switch (filterValues) {
+                  | Mono(filterValues) =>
+                    updateBank(filterValues, filterBankL);
+                    updateBank(filterValues, filterBankR);
+                  | Stereo(filterValuesL, filterValuesR) =>
+                    updateBank(filterValuesL, filterBankL);
+                    updateBank(filterValuesR, filterBankR);
+                  }
+                };
               },
             );
           }
@@ -453,8 +495,12 @@ let make =
       )
     },
   didMount: self => {
+    let merger = createChannelMerger(audioCtx);
+    self.state.merger := Some(merger);
+
     let compressor =
       makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
+    connect(merger, compressor);
     connectCompressorToNode(compressor, defaultSink(audioCtx));
     self.state.compressor := Some(compressor);
 
@@ -477,9 +523,12 @@ let make =
     /* self.state.oscillatorBank := Some(oscillators); */
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
-    let filterBank =
+    let filterBankL =
       makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);
-    self.send(SetFilterBank(filterBank));
+    let filterBankR =
+      makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);
+    self.send(SetFilterBanks(MonoBank(filterBankL)));
+    /* self.send(SetFilterBanks(StereoBanks(filterBankL, filterBankR))); */
 
     (
       switch (getAudioVisualStream()) {
@@ -554,7 +603,7 @@ let make =
   },
   didUpdate: ({oldSelf, newSelf}) => {
     if (oldSelf.state.filterInput != newSelf.state.filterInput
-        || oldSelf.state.filterBank != newSelf.state.filterBank) {
+        || oldSelf.state.filterBanks != newSelf.state.filterBanks) {
       disconnectInputs(oldSelf.state);
     };
 
@@ -597,15 +646,20 @@ let make =
           defaultTranspose + newSelf.state.params.transpose,
           height,
         );
-      maybeMapFilterBank(
-        filterBank =>
-          updateFilterBankDefinition(
-            ~freqFunc,
-            ~q=newSelf.state.params.q,
-            ~filterBank,
-          ),
-        newSelf.state.filterBank,
-      );
+      let updateFn = filterBank =>
+        updateFilterBankDefinition(
+          ~freqFunc,
+          ~q=newSelf.state.params.q,
+          ~filterBank,
+        );
+
+      switch (newSelf.state.filterBanks) {
+      | None => ()
+      | Some(StereoBanks(filterBankL, filterBankR)) =>
+        updateFn(filterBankL);
+        updateFn(filterBankR);
+      | Some(MonoBank(filterBank)) => updateFn(filterBank)
+      };
     };
 
     if (oldSelf.state.params.millisPerTick

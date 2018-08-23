@@ -456,6 +456,25 @@ let imageDataToFloatArray: (imageData, channel) => array(float) =
   (imageData, channel) =>
     mapImageData(imageData, rawDataToFloatArray(channel, channel === A));
 
+let imageDataToStereo =
+    (imageData, channelL, channelR)
+    : (array(float), array(float)) => {
+  let rawData = imageData |. dataGet;
+  let n = Array.length(rawData) / 4;
+  let arrayL = Array.make(n, 0.0);
+  let arrayR = Array.make(n, 0.0);
+
+  let offsetL = int_of_channel(channelL);
+  let offsetR = int_of_channel(channelR);
+
+  for (i in 0 to n - 1) {
+    let offset = i * 4;
+    arrayL[i] = float_of_int(rawData[offset + offsetL]) /. 255.0;
+    arrayR[i] = float_of_int(rawData[offset + offsetR]) /. 255.0;
+  };
+  (arrayL, arrayR);
+};
+
 let makeUint8ClampedArray = [%bs.raw
   len => {|return new Uint8ClampedArray(len)|}
 ];
