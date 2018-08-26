@@ -33,6 +33,7 @@ import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Draw
 import * as MaterialUi_Divider from "@jsiebern/bs-material-ui/src/MaterialUi_Divider.bs.js";
 import * as MaterialUi_Toolbar from "@jsiebern/bs-material-ui/src/MaterialUi_Toolbar.bs.js";
 import * as MaterialUi_ListItem from "@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js";
+import * as MediaProvider$Gayer from "./MediaProvider.bs.js";
 import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_WithStyles from "@jsiebern/bs-material-ui/src/MaterialUi_WithStyles.bs.js";
@@ -718,6 +719,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                             return /* () */0;
                                                           }), width, height, 16, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
+                                                ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(audioCtx, /* array */[], /* array */[])),
                                                 React.createElement("div", {
                                                       style: {
                                                         marginBottom: "24px",

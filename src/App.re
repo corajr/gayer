@@ -781,6 +781,8 @@ let make =
               />
             </Grid>
             <Grid item=true xs=Grid.V6>
+              <MediaProvider audioCtx media=[||] />
+              /* MediaProvider not yet ready; ignore */
               <div
                 style=(
                   ReactDOMRe.Style.make(
