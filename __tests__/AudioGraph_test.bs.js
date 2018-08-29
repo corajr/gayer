@@ -10,9 +10,11 @@ var g = /* record */[
   /* edges */Belt_MapString.empty
 ];
 
-var n1 = ('n1');
+var mockAudioNode = function (id){return {'id': id, 'connect': (n) => 1, 'disconnect': (n) => 0 }};
 
-var n2 = ('n2');
+var n1 = mockAudioNode("n1");
+
+var n2 = mockAudioNode("n2");
 
 var g1_000 = /* nodes */Belt_MapString.fromArray(/* array */[/* tuple */[
         "0",
@@ -67,12 +69,27 @@ describe("addNode", (function () {
                     }));
       }));
 
+describe("removeAllEdgesInvolvingNode", (function () {
+        Jest.test("does nothing if node is absent", (function () {
+                return Jest.Expect[/* toEqual */12](g2withEdge, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeAllEdgesInvolvingNode(g2withEdge, "2")));
+              }));
+        Jest.test("removes the edges where node is source", (function () {
+                return Jest.Expect[/* toEqual */12](g2, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeAllEdgesInvolvingNode(g2withEdge, "0")));
+              }));
+        return Jest.test("removes the edges where node is target", (function () {
+                      return Jest.Expect[/* toEqual */12](g2, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeAllEdgesInvolvingNode(g2withEdge, "1")));
+                    }));
+      }));
+
 describe("removeNode", (function () {
         Jest.test("does nothing if node is absent", (function () {
                 return Jest.Expect[/* toEqual */12](g, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeNode(g, "0")));
               }));
-        return Jest.test("removes a node by ID", (function () {
-                      return Jest.Expect[/* toEqual */12](g, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeNode(g1, "0")));
+        Jest.test("removes a node by ID", (function () {
+                return Jest.Expect[/* toEqual */12](g, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeNode(g1, "0")));
+              }));
+        return Jest.test("removes any associated edges", (function () {
+                      return Jest.Expect[/* toEqual */12](g1, Jest.Expect[/* expect */0](AudioGraph$Gayer.removeNode(g2withEdge, "1")));
                     }));
       }));
 
@@ -108,6 +125,7 @@ describe("removeEdge", (function () {
 
 export {
   g ,
+  mockAudioNode ,
   n1 ,
   n2 ,
   g1 ,

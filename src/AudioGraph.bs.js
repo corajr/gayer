@@ -11,18 +11,41 @@ function addNode(graph, param) {
         ];
 }
 
-function removeNode(graph, key) {
+function removeAllEdgesInvolvingNode(graph, key) {
+  var edgesWithoutNodeAsSource = Belt_MapString.remove(graph[/* edges */1], key);
+  var edgesWithoutNodeAsTarget = Belt_MapString.map(edgesWithoutNodeAsSource, (function (s) {
+          return Belt_SetString.remove(s, key);
+        }));
+  var nonEmptyEdges = Belt_MapString.keep(edgesWithoutNodeAsTarget, (function (_, s) {
+          return !Belt_SetString.isEmpty(s);
+        }));
   return /* record */[
-          /* nodes */Belt_MapString.remove(graph[/* nodes */0], key),
-          /* edges */graph[/* edges */1]
+          /* nodes */graph[/* nodes */0],
+          /* edges */nonEmptyEdges
         ];
+}
+
+function removeNode(graph, key) {
+  return removeAllEdgesInvolvingNode(/* record */[
+              /* nodes */Belt_MapString.remove(graph[/* nodes */0], key),
+              /* edges */graph[/* edges */1]
+            ], key);
 }
 
 function addEdge(graph, param) {
   var targetId = param[1];
+  var sourceId = param[0];
+  var maybeSource = Belt_MapString.get(graph[/* nodes */0], sourceId);
+  var maybeTarget = Belt_MapString.get(graph[/* nodes */0], targetId);
+  if (maybeSource !== undefined) {
+    if (maybeTarget !== undefined) {
+      maybeSource.connect(maybeTarget);
+    }
+    
+  }
   return /* record */[
           /* nodes */graph[/* nodes */0],
-          /* edges */Belt_MapString.update(graph[/* edges */1], param[0], (function (param) {
+          /* edges */Belt_MapString.update(graph[/* edges */1], sourceId, (function (param) {
                   if (param !== undefined) {
                     return Js_primitive.some(Belt_SetString.add(Js_primitive.valFromOption(param), targetId));
                   } else {
@@ -34,9 +57,18 @@ function addEdge(graph, param) {
 
 function removeEdge(graph, param) {
   var targetId = param[1];
+  var sourceId = param[0];
+  var maybeSource = Belt_MapString.get(graph[/* nodes */0], sourceId);
+  var maybeTarget = Belt_MapString.get(graph[/* nodes */0], targetId);
+  if (maybeSource !== undefined) {
+    if (maybeTarget !== undefined) {
+      maybeSource.disconnect(maybeTarget);
+    }
+    
+  }
   return /* record */[
           /* nodes */graph[/* nodes */0],
-          /* edges */Belt_MapString.update(graph[/* edges */1], param[0], (function (param) {
+          /* edges */Belt_MapString.update(graph[/* edges */1], sourceId, (function (param) {
                   if (param !== undefined) {
                     var newS = Belt_SetString.remove(Js_primitive.valFromOption(param), targetId);
                     var match = Belt_SetString.isEmpty(newS);
@@ -53,6 +85,7 @@ function removeEdge(graph, param) {
 
 export {
   addNode ,
+  removeAllEdgesInvolvingNode ,
   removeNode ,
   addEdge ,
   removeEdge ,
