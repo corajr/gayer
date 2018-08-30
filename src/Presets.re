@@ -156,7 +156,6 @@ let feedback = {
 
 let slitscanParams = {
   ...defaultParams,
-  audioInputSetting: Mic,
   shouldClear: false,
   layers: [
     slitscan,
