@@ -315,15 +315,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         },
       );
       Ctx.fillRect(ctx, xToRead, 0, 1, height);
-      let (l, r) = imageDataToStereo(slice, R, B);
-      Some(Stereo(l, r));
-    /* Some(Mono(imageDataToFloatArray(slice, channel))); */
-    /* Some( */
-    /*   Stereo( */
-    /*     imageDataToFloatArray(slice, R), */
-    /*     imageDataToFloatArray(slice, B), */
-    /*   ), */
-    /* ); */
+      switch (channel) {
+      | R
+      | G
+      | B =>
+        let (l, r) = imageDataToStereo(slice, channel, B);
+        Some(Stereo(l, r));
+      | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+      };
     };
   };
 

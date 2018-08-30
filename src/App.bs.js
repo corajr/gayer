@@ -411,10 +411,11 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 7 : 
+          var channel = match[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */2] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var tmp;
-          switch (match[0]) {
+          switch (channel) {
             case 0 : 
                 tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
                 break;
@@ -431,11 +432,15 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           ctx.fillStyle = tmp;
           ctx.fillRect(xToRead, 0, 1, height);
-          var match$5 = Canvas$Gayer.imageDataToStereo(slice, /* R */0, /* B */2);
-          return /* Stereo */Block.__(1, [
-                    match$5[0],
-                    match$5[1]
-                  ]);
+          if (channel >= 3) {
+            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
+          } else {
+            var match$5 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            return /* Stereo */Block.__(1, [
+                      match$5[0],
+                      match$5[1]
+                    ]);
+          }
       
     }
   }

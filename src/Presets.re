@@ -8,15 +8,12 @@ let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
 let tau = Canvas.tau;
 
-let analyzer = {...defaultLayer, content: Analysis(Mic)};
+/* ## Layer definitions */
+/* */
+/* GAYER is built up from a series of layers. Convenience methods are provided
+   here for creating several commonly used layers. */
 
-let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
-
-let slitscan = {
-  ...defaultLayer,
-  content: Webcam({slitscan: Some({x: 320})}),
-};
-
+let img = url => {...defaultLayer, content: Image(url)};
 let video = url => {...defaultLayer, content: Video(url)};
 
 let reader = {
@@ -40,7 +37,14 @@ let draw = (~alpha: float=1.0, cmds: list(command)) => {
   alpha,
 };
 
-let img = url => {...defaultLayer, content: Image(url)};
+let analyzer = {...defaultLayer, content: Analysis(Mic)};
+
+let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
+
+let slitscan = {
+  ...defaultLayer,
+  content: Webcam({slitscan: Some({x: 320})}),
+};
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
 
@@ -104,6 +108,15 @@ let squareColumnLayer = {
   compositeOperation: Multiply,
 };
 
+let squareLayer = {
+  ...defaultLayer,
+  content:
+    Draw([
+      DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
+    ]),
+  compositeOperation: Multiply,
+};
+
 let allLayerTypes = [
   hubble,
   analyzer,
@@ -111,8 +124,17 @@ let allLayerTypes = [
   slitscan,
   fill(~alpha=0.0125, "white"),
   pitchFilter(cMajor),
+  blurLayer,
+  rotateLayer,
+  squareColumnLayer,
+  squareLayer,
   reader,
 ];
+
+/* ## Param definitions */
+/* These are the params definitions, which include not only a list of layers but
+   a variety of other parameters as well. Complete definitions are available in
+   Params.re. */
 
 let harmonyParams = {
   ...defaultParams,
@@ -132,13 +154,28 @@ let feedback = {
   layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
 };
 
-let squareLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
-    ]),
-  compositeOperation: Multiply,
+let slitscanParams = {
+  ...defaultParams,
+  audioInputSetting: Mic,
+  shouldClear: false,
+  layers: [
+    slitscan,
+    {...analyzer, alpha: 0.25},
+    pitchFilter(cMajor),
+    reader,
+  ],
+};
+
+let slitscanParams = {
+  ...defaultParams,
+  audioInputSetting: Mic,
+  shouldClear: false,
+  layers: [
+    slitscan,
+    {...analyzer, alpha: 0.25},
+    pitchFilter(cMajor),
+    reader,
+  ],
 };
 
 let whiteboardParams = {
@@ -150,21 +187,10 @@ let whiteboardParams = {
   ],
 };
 
-let slitscanParams = {
-  ...defaultParams,
-  shouldClear: false,
-  layers: [
-    slitscan,
-    {...analyzer, alpha: 0.25},
-    pitchFilter(cMajor),
-    reader,
-  ],
-};
-
 let isItACrime = {
   ...defaultParams,
   layers: [
-    img("media/is_it_a_crime.png"),
+    img("media/is_it_a_crime_large.png"),
     {...reader, content: Reader(A)},
   ],
 };
@@ -286,19 +312,19 @@ let video = {
 
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
-  ("History", history),
-  ("Video", video),
-  ("Vinyl", vinyl),
-  ("Droste", droste),
   ("Single note", singleNote),
+  ("Slitscan", slitscanParams),
+  ("History", history),
+  /* ("Video", video), */
+  ("Rotation", vinyl),
+  /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
-  ("Audio file", debussy),
+  /* ("Audio file", debussy), */
   /* ("Harmony", harmonyParams), */
-  ("King Wen", iChing),
-  ("Whiteboard", whiteboardParams),
-  ("Slitscan", slitscanParams),
+  /* ("King Wen", iChing), */
+  /* ("Whiteboard", whiteboardParams), */
   ("Mic feedback (may be loud!)", feedback),
   ("Empty", {...defaultParams, layers: []}),
 ];
