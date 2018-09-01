@@ -252,6 +252,31 @@ let history = {
   ],
 };
 
+let historyHalving = {
+  ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: defaultSize - 1,
+  writePosOffset: defaultSize - 1,
+  shouldClear: false,
+  layers: [
+    analyzer,
+    historyLayer,
+    draw([
+      DrawImage(
+        Self,
+        {
+          x: Pixels(0),
+          y: Pixels(0),
+          w: Divide(Width, Constant(2)),
+          h: Height,
+        },
+      ),
+    ]),
+    {...reader, alpha: 0.0},
+  ],
+};
+
 let debussyFile = {
   ...defaultLayer,
   content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
@@ -307,6 +332,7 @@ let presets = [
   ("Single note", singleNote),
   ("Slitscan", slitscanParams),
   ("History", history),
+  /* ("History (halving)", historyHalving), */
   /* ("Video", video), */
   ("Rotation", vinyl),
   /* ("Angle", droste), */

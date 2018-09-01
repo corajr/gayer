@@ -419,6 +419,20 @@ function length(param) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "constant"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "v",
+                          param[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "px"
                       ],
                       /* :: */[
@@ -429,7 +443,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 1 : 
+      case 2 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -443,7 +457,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 2 : 
+      case 3 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -457,7 +471,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 3 : 
+      case 4 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -477,7 +491,27 @@ function length(param) {
                         ]
                       ]
                     ]);
-      case 4 : 
+      case 5 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "/"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "a",
+                          length(param[0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "b",
+                            length(param[1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      case 6 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -635,35 +669,48 @@ function length$1(json) {
     switch (type_) {
       case "*" : 
           return field2((function (a, b) {
-                        return /* Multiply */Block.__(4, [
+                        return /* Multiply */Block.__(6, [
                                   a,
                                   b
                                 ]);
                       }), "a", length$1, "b", length$1, json);
       case "+" : 
           return field2((function (a, b) {
-                        return /* Add */Block.__(3, [
+                        return /* Add */Block.__(4, [
                                   a,
                                   b
                                 ]);
                       }), "a", length$1, "b", length$1, json);
       case "-" : 
           return Json_decode.map((function (x) {
-                        return /* Negate */Block.__(2, [x]);
+                        return /* Negate */Block.__(3, [x]);
                       }), (function (param) {
                         return Json_decode.field("x", length$1, param);
+                      }), json);
+      case "/" : 
+          return field2((function (a, b) {
+                        return /* Divide */Block.__(5, [
+                                  a,
+                                  b
+                                ]);
+                      }), "a", length$1, "b", length$1, json);
+      case "constant" : 
+          return Json_decode.map((function (i) {
+                        return /* Constant */Block.__(0, [i]);
+                      }), (function (param) {
+                        return Json_decode.field("v", Json_decode.$$int, param);
                       }), json);
       case "height" : 
           return /* Height */1;
       case "note" : 
           return Json_decode.map((function (i) {
-                        return /* Note */Block.__(1, [i]);
+                        return /* Note */Block.__(2, [i]);
                       }), (function (param) {
                         return Json_decode.field("note", Json_decode.$$int, param);
                       }), json);
       case "px" : 
           return Json_decode.map((function (i) {
-                        return /* Pixels */Block.__(0, [i]);
+                        return /* Pixels */Block.__(1, [i]);
                       }), (function (param) {
                         return Json_decode.field("i", Json_decode.$$int, param);
                       }), json);
@@ -772,16 +819,19 @@ function getLength(ctx, len) {
   } else {
     switch (len.tag | 0) {
       case 0 : 
-          return len[0];
       case 1 : 
+          return len[0];
+      case 2 : 
           var height = ctx.canvas.height;
           var pixelsPerSemitone = height / 120 | 0;
           return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
-      case 2 : 
-          return -getLength(ctx, len[0]) | 0;
       case 3 : 
-          return getLength(ctx, len[0]) + getLength(ctx, len[1]) | 0;
+          return -getLength(ctx, len[0]) | 0;
       case 4 : 
+          return getLength(ctx, len[0]) + getLength(ctx, len[1]) | 0;
+      case 5 : 
+          return Caml_int32.div(getLength(ctx, len[0]), getLength(ctx, len[1]));
+      case 6 : 
           return Caml_int32.imul(getLength(ctx, len[0]), getLength(ctx, len[1]));
       
     }
