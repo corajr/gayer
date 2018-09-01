@@ -2,7 +2,6 @@
 
 import * as Json from "@glennsl/bs-json/src/Json.bs.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
-import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
@@ -10,7 +9,6 @@ import * as MaterialUi_Select from "@jsiebern/bs-material-ui/src/MaterialUi_Sele
 import * as MaterialUi_MenuItem from "@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js";
 
 var allAudioInputs = /* array */[
-  /* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"]),
   /* PinkNoise */0,
   /* Mic */1
 ];

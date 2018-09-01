@@ -1,7 +1,8 @@
 open Audio.AudioInput;
 
 let allAudioInputs = [|
-  AudioFile("media/la_cathedrale_engloutie.m4a"),
+  /* AudioFile("media/la_cathedrale_engloutie.m4a"), */
+  /* Oscillator(Square), */
   PinkNoise,
   Mic,
 |];

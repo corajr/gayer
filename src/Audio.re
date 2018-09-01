@@ -67,6 +67,14 @@ let string_of_oscillatorType =
   | Triangle => "triangle"
   | Custom(_) => "custom";
 
+let oscillatorType_of_string =
+  fun
+  | "sine" => Sine
+  | "square" => Square
+  | "sawtooth" => Sawtooth
+  | "triangle" => Triangle
+  | _ => Sine;
+
 [@bs.deriving abstract]
 type oscillator =
   pri {
@@ -566,6 +574,7 @@ module AudioInput = {
   type audioInputSetting =
     | AudioFile(string)
     | AudioFromVideo(string)
+    | Oscillator(oscillatorType)
     | PinkNoise
     | Mic;
 
@@ -578,6 +587,11 @@ module AudioInput = {
         | AudioFromVideo(url) =>
           object_([("type", string("video")), ("url", string(url))])
         | PinkNoise => object_([("type", string("pink-noise"))])
+        | Oscillator(oType) =>
+          object_([
+            ("type", string("oscillator")),
+            ("oscType", string(string_of_oscillatorType(oType))),
+          ])
         | Mic => object_([("type", string("mic"))])
         }
       );
@@ -594,6 +608,13 @@ module AudioInput = {
           | "mic" => Mic
           | "file" =>
             json |> map(url => AudioFile(url), field("url", string))
+
+          | "oscillator" =>
+            json
+            |> map(
+                 oType => Oscillator(oscillatorType_of_string(oType)),
+                 field("oscType", string),
+               )
           | "video" =>
             json |> map(url => AudioFromVideo(url), field("url", string))
           | _ => PinkNoise

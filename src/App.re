@@ -27,6 +27,7 @@ type state = {
   mediaStream: option(mediaStream),
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
+  oscillatorBank: ref(option(bank(oscillator))),
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
   merger: ref(option(channelMerger)),
@@ -54,6 +55,7 @@ let defaultState: state = {
   micInput: None,
   cameraInput: ref(None),
   params: snd(List.nth(presets, 0)),
+  oscillatorBank: ref(None),
   filterBanks: None,
   compressor: ref(None),
   merger: ref(None),
@@ -355,6 +357,13 @@ let getAnalysisInput:
     switch (audioInput) {
     | AudioFromVideo(s)
     | AudioFile(s) => (audioCtx, Belt.Map.String.get(state.loadedAudio^, s))
+    | Oscillator(oType) => (
+        audioCtx,
+        switch (state.oscillatorBank^) {
+        | None => None
+        | Some(bank) => Some(unwrapGain(bank.output))
+        },
+      )
     | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
     | Mic => (audioCtx, state.micInput)
     };
@@ -478,6 +487,16 @@ let make =
                     updateBank(filterValuesR, filterBankR);
                   }
                 };
+
+                switch (self.state.oscillatorBank^) {
+                | Some(bank) =>
+                  switch (filterValues) {
+                  | Mono(filterValues) => updateBankGains(bank, filterValues)
+                  | Stereo(filterValuesL, _) =>
+                    updateBankGains(bank, filterValuesL)
+                  }
+                | None => ()
+                };
               },
             );
           }
@@ -516,10 +535,10 @@ let make =
         height,
       );
 
-    /* let oscillators = */
-    /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
-    /* Array.iter(startOscillator, oscillators.nodes); */
-    /* self.state.oscillatorBank := Some(oscillators); */
+    let oscillators =
+      makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc);
+    Array.iter(startOscillator, oscillators.nodes);
+    self.state.oscillatorBank := Some(oscillators);
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     let filterBankL =

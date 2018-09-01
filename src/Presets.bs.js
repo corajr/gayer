@@ -542,6 +542,8 @@ var slitscanParams_003 = /* writePosOffset */Params$Gayer.defaultParams[/* write
 
 var slitscanParams_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
+var slitscanParams_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
 var slitscanParams_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
 
 var slitscanParams_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
@@ -577,7 +579,7 @@ var slitscanParams = /* record */[
   slitscanParams_002,
   slitscanParams_003,
   slitscanParams_004,
-  /* audioInputSetting : Mic */1,
+  slitscanParams_005,
   slitscanParams_006,
   slitscanParams_007,
   slitscanParams_008,

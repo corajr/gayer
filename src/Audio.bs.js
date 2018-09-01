@@ -29,6 +29,21 @@ function string_of_oscillatorType(param) {
   }
 }
 
+function oscillatorType_of_string(param) {
+  switch (param) {
+    case "sawtooth" : 
+        return /* Sawtooth */2;
+    case "sine" : 
+        return /* Sine */0;
+    case "square" : 
+        return /* Square */1;
+    case "triangle" : 
+        return /* Triangle */3;
+    default:
+      return /* Sine */0;
+  }
+}
+
 function noteToFrequency(note) {
   return 440.0 * Math.pow(2.0, (note - 69.0) / 12.0);
 }
@@ -332,34 +347,52 @@ function audioInputSetting(r) {
                   /* [] */0
                 ]);
     }
-  } else if (r.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "video"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "url",
-                    r[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
   } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "file"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "url",
-                    r[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
+    switch (r.tag | 0) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "file"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "url",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "video"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "url",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "oscillator"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "oscType",
+                          string_of_oscillatorType(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      
+    }
   }
 }
 
@@ -376,6 +409,12 @@ function audioInputSetting$1(json) {
                     }), json);
     case "mic" : 
         return /* Mic */1;
+    case "oscillator" : 
+        return Json_decode.map((function (oType) {
+                      return /* Oscillator */Block.__(2, [oscillatorType_of_string(oType)]);
+                    }), (function (param) {
+                      return Json_decode.field("oscType", Json_decode.string, param);
+                    }), json);
     case "pink-noise" : 
         return /* PinkNoise */0;
     case "video" : 
@@ -403,6 +442,7 @@ var pinkNoise = pinkNoiseFull;
 export {
   makeDefaultAudioCtx ,
   string_of_oscillatorType ,
+  oscillatorType_of_string ,
   midiNoteA440Hz ,
   noteToFrequency ,
   yToFrequency ,
