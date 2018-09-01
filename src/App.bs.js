@@ -541,9 +541,9 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
               self[/* state */1][/* freqFuncParams */4][0] = /* tuple */[
                 pixelsPerSemitone,
-                16
+                15
               ];
-              var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + self[/* state */1][/* params */6][/* transpose */9] | 0, height);
+              var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 15 + self[/* state */1][/* params */6][/* transpose */9] | 0, height);
               var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
               Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
               Curry._1(self[/* send */3], /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBankL])]));

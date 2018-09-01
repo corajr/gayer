@@ -162,8 +162,8 @@ var spacy = /* :: */[
 var drawSelfFullScreen = /* DrawImage */Block.__(4, [
     /* Self */0,
     /* record */[
-      /* x : Pixels */Block.__(0, [0]),
-      /* y : Pixels */Block.__(0, [0]),
+      /* x : Pixels */Block.__(1, [0]),
+      /* y : Pixels */Block.__(1, [0]),
       /* w : Width */0,
       /* h : Height */1
     ]
@@ -175,8 +175,8 @@ var init$1 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(0, [0]),
-            /* y : Pixels */Block.__(0, [-24]),
+            /* x : Pixels */Block.__(1, [0]),
+            /* y : Pixels */Block.__(1, [-24]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -185,8 +185,8 @@ var init$1 = draw(undefined, /* :: */[
         /* DrawImage */Block.__(4, [
             /* Self */0,
             /* record */[
-              /* x : Pixels */Block.__(0, [0]),
-              /* y : Pixels */Block.__(0, [-48]),
+              /* x : Pixels */Block.__(1, [0]),
+              /* y : Pixels */Block.__(1, [-48]),
               /* w : Width */0,
               /* h : Height */1
             ]
@@ -236,15 +236,15 @@ var harmony = /* :: */[
 
 var rotateLayer = draw(undefined, /* :: */[
       /* Translate */Block.__(3, [
-          /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0]),
-          /* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])
+          /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0]),
+          /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])
         ]),
       /* :: */[
         /* Rotate */Block.__(2, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
         /* :: */[
           /* Translate */Block.__(3, [
-              /* Negate */Block.__(2, [/* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])]),
-              /* Negate */Block.__(2, [/* Pixels */Block.__(0, [Canvas$Gayer.defaultSize / 2 | 0])])
+              /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])]),
+              /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])])
             ]),
           /* :: */[
             drawSelfFullScreen,
@@ -282,9 +282,9 @@ var init$3 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(0, [0]),
-            /* y : Pixels */Block.__(0, [0]),
-            /* w : Pixels */Block.__(0, [1]),
+            /* x : Pixels */Block.__(1, [0]),
+            /* y : Pixels */Block.__(1, [0]),
+            /* w : Pixels */Block.__(1, [1]),
             /* h : Height */1
           ]
         ]),
@@ -314,8 +314,8 @@ var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(0, [0]),
-            /* y : Pixels */Block.__(0, [0]),
+            /* x : Pixels */Block.__(1, [0]),
+            /* y : Pixels */Block.__(1, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -345,10 +345,10 @@ function singleNoteDrawCommands() {
           /* SetFillStyle */Block.__(0, ["red"]),
           /* :: */[
             /* FillRect */Block.__(1, [/* record */[
-                  /* x : Pixels */Block.__(0, [0]),
-                  /* y : Note */Block.__(1, [60]),
+                  /* x : Pixels */Block.__(1, [0]),
+                  /* y : Note */Block.__(2, [60]),
                   /* w : Width */0,
-                  /* h : Pixels */Block.__(0, [1])
+                  /* h : Pixels */Block.__(1, [1])
                 ]]),
             /* [] */0
           ]
@@ -415,8 +415,8 @@ var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(0, [-1]),
-            /* y : Pixels */Block.__(0, [0]),
+            /* x : Pixels */Block.__(1, [-1]),
+            /* y : Pixels */Block.__(1, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -447,15 +447,15 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(4, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(0, [1]),
-            /* y : Pixels */Block.__(0, [1]),
-            /* w : Add */Block.__(3, [
+            /* x : Pixels */Block.__(1, [1]),
+            /* y : Pixels */Block.__(1, [1]),
+            /* w : Add */Block.__(4, [
                 /* Width */0,
-                /* Pixels */Block.__(0, [-1])
+                /* Pixels */Block.__(1, [-1])
               ]),
-            /* h : Add */Block.__(3, [
+            /* h : Add */Block.__(4, [
                 /* Height */1,
-                /* Pixels */Block.__(0, [-1])
+                /* Pixels */Block.__(1, [-1])
               ])
           ]
         ]),
@@ -953,6 +953,72 @@ var history = /* record */[
   history_011
 ];
 
+var historyHalving_002 = /* readPosOffset */Canvas$Gayer.defaultSize - 1 | 0;
+
+var historyHalving_003 = /* writePosOffset */Canvas$Gayer.defaultSize - 1 | 0;
+
+var historyHalving_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var historyHalving_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var historyHalving_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var historyHalving_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var historyHalving_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var historyHalving_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var historyHalving_011 = /* layers : :: */[
+  analyzer,
+  /* :: */[
+    historyLayer,
+    /* :: */[
+      draw(undefined, /* :: */[
+            /* DrawImage */Block.__(4, [
+                /* Self */0,
+                /* record */[
+                  /* x : Pixels */Block.__(1, [0]),
+                  /* y : Pixels */Block.__(1, [0]),
+                  /* w : Divide */Block.__(5, [
+                      /* Width */0,
+                      /* Constant */Block.__(0, [2])
+                    ]),
+                  /* h : Height */1
+                ]
+              ]),
+            /* [] */0
+          ]),
+      /* :: */[
+        /* record */[
+          /* content : Reader */Block.__(7, [/* R */0]),
+          /* alpha */0.0,
+          /* compositeOperation : Multiply */11,
+          reader_003,
+          reader_004,
+          reader_005
+        ],
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var historyHalving = /* record */[
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  historyHalving_002,
+  historyHalving_003,
+  historyHalving_004,
+  historyHalving_005,
+  historyHalving_006,
+  historyHalving_007,
+  historyHalving_008,
+  historyHalving_009,
+  /* shouldClear */false,
+  historyHalving_011
+];
+
 var debussyFile_000 = /* content : Analysis */Block.__(5, [/* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"])]);
 
 var debussyFile_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
@@ -1445,6 +1511,7 @@ export {
   tughra ,
   iChing ,
   history ,
+  historyHalving ,
   debussyFile ,
   debussy ,
   droste ,

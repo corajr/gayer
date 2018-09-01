@@ -551,12 +551,14 @@ module DrawCommand = {
     | Self;
 
   type length =
+    | Constant(int)
     | Pixels(int)
     | Note(int)
     | Width
     | Height
     | Negate(length)
     | Add(length, length)
+    | Divide(length, length)
     | Multiply(length, length);
 
   type rect = {
@@ -586,6 +588,8 @@ module DrawCommand = {
     let rec length =
       Json.Encode.(
         fun
+        | Constant(v) =>
+          object_([("type", string("constant")), ("v", int(v))])
         | Pixels(i) => object_([("type", string("px")), ("i", int(i))])
         | Note(i) => object_([("type", string("note")), ("note", int(i))])
         | Width => object_([("type", string("width"))])
@@ -594,6 +598,12 @@ module DrawCommand = {
         | Multiply(a, b) =>
           object_([
             ("type", string("*")),
+            ("a", length(a)),
+            ("b", length(b)),
+          ])
+        | Divide(a, b) =>
+          object_([
+            ("type", string("/")),
             ("a", length(a)),
             ("b", length(b)),
           ])
@@ -655,6 +665,7 @@ module DrawCommand = {
       let lengthByType = (type_, json) =>
         Json.Decode.(
           switch (type_) {
+          | "constant" => json |> map(i => Constant(i), field("v", int))
           | "px" => json |> map(i => Pixels(i), field("i", int))
           | "width" => Width
           | "height" => Height
@@ -663,6 +674,9 @@ module DrawCommand = {
           | "*" =>
             json
             |> field2((a, b) => Multiply(a, b), "a", length, "b", length)
+          | "/" =>
+            json |> field2((a, b) => Divide(a, b), "a", length, "b", length)
+
           | "-" => json |> map(x => Negate(x), field("x", length))
           | "note" => json |> map(i => Note(i), field("note", int))
           | _ =>
@@ -726,6 +740,7 @@ module DrawCommand = {
   let rec getLength: (ctx, length) => int =
     (ctx, len) =>
       switch (len) {
+      | Constant(v) => v
       | Pixels(i) => i
       | Note(i) =>
         let height = canvasHeight(Ctx.canvas(ctx));
@@ -736,6 +751,7 @@ module DrawCommand = {
       | Negate(x) => - getLength(ctx, x)
       | Add(a, b) => getLength(ctx, a) + getLength(ctx, b)
       | Multiply(a, b) => getLength(ctx, a) * getLength(ctx, b)
+      | Divide(a, b) => getLength(ctx, a) / getLength(ctx, b)
       };
 
   let drawCommand: (ctx, command) => unit =

@@ -529,7 +529,7 @@ let make =
     self.send(SetFilterInput(noise));
 
     let pixelsPerSemitone = binsPerSemitone(height);
-    let defaultTranspose = 16;
+    let defaultTranspose = 15;
     self.state.freqFuncParams := (pixelsPerSemitone, defaultTranspose);
     let freqFunc =
       yToFrequency(
