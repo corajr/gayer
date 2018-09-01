@@ -147,7 +147,7 @@ var EncodeParams = /* module */[/* params */params$1];
 
 var component = ReasonReact.statelessComponent("Params");
 
-function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio, saveTick, rootWidth, rootHeight, millisPerAudioTick, _) {
+function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParams, _, saveTick, rootWidth, rootHeight, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -368,7 +368,7 @@ function make(params, onMoveCard, onSetRef, onChangeLayer, onSetParams, getAudio
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, getAudio, rootWidth, rootHeight, millisPerAudioTick, saveTick, /* array */[])));
+                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, layerRefs, rootWidth, rootHeight, saveTick, /* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

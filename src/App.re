@@ -31,15 +31,13 @@ type state = {
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
   merger: ref(option(channelMerger)),
-  analysisCanvasRef: ref(option(Dom.element)),
-  midiCanvasRef: ref(option(Dom.element)),
+  layerRefs: ref(Belt.Map.String.t(Dom.element)),
   savedImages: list(string),
-  loadedImages: ref(Belt.Map.String.t(canvasImageSource)),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
   scaleCanvas: option(float),
   fullscreenCanvas: bool,
-  tickFunctions: ref(list(unit => unit)),
+  tickFunctions: ref(Belt.Map.String.t(unit => unit)),
   timerId: ref(option(Js.Global.intervalId)),
 };
 
@@ -60,14 +58,12 @@ let defaultState: state = {
   compressor: ref(None),
   merger: ref(None),
   savedImages: [],
-  loadedImages: ref(Belt.Map.String.empty),
+  layerRefs: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
-  analysisCanvasRef: ref(None),
-  midiCanvasRef: ref(None),
   canvasRef: ref(None),
   scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
-  tickFunctions: ref([]),
+  tickFunctions: ref(Belt.Map.String.empty),
   timerId: ref(None),
 };
 
@@ -91,15 +87,14 @@ type action =
 let setCanvasRef = (theRef, {ReasonReact.state}) =>
   state.canvasRef := Js.Nullable.toOption(theRef);
 
-let setAnalysisCanvasRef = (theRef, {ReasonReact.state}) =>
-  state.analysisCanvasRef := Js.Nullable.toOption(theRef);
-
 let setLayerRef =
     (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
+  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+
   switch (layer.content, maybeRef) {
-  | (Analysis(source), Some(_)) =>
-    state.analysisCanvasRef := maybeRef;
+  | (Analysis(source), Some(aRef)) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     switch (source) {
     | AudioFile(url) =>
       if (! Belt.Map.String.has(state.loadedAudio^, url)) {
@@ -107,7 +102,8 @@ let setLayerRef =
       }
     | _ => ()
     };
-  | (MIDIKeyboard, Some(_)) => state.midiCanvasRef := maybeRef
+  | (MIDIKeyboard, Some(aRef)) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -116,11 +112,9 @@ let setLayerRef =
     | None => ()
     }
   | (Image(url), Some(aRef)) =>
-    let img = getElementAsImageSource(aRef);
-    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, img);
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Video(url), Some(aRef)) =>
-    let vid = getElementAsImageSource(aRef);
-    state.loadedImages := Belt.Map.String.set(state.loadedImages^, url, vid);
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
 
     let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
     if (readyState >= 3) {
@@ -229,6 +223,10 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
     Ctx.rotate(ctx, layer.rotation);
     Ctx._setFilter(ctx, layer.filters);
 
+    let layerKey =
+      Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+    let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
+
     switch (layer.content) {
     | Draw(cmds) =>
       DrawCommand.drawCommands(ctx, cmds);
@@ -238,7 +236,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
       Ctx.fillRect(ctx, 0, 0, width, height);
       None;
     | Analysis(_) =>
-      switch (state.analysisCanvasRef^) {
+      switch (maybeLayerRef) {
       | None => ()
       | Some(analysisCanvas) =>
         let canvasElt = getFromReact(analysisCanvas);
@@ -249,7 +247,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
       };
       None;
     | MIDIKeyboard =>
-      switch (state.midiCanvasRef^) {
+      switch (maybeLayerRef) {
       | None => ()
       | Some(midiCanvas) =>
         let canvasElt = getFromReact(midiCanvas);
@@ -261,9 +259,11 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
       None;
     | Image(url)
     | Video(url) =>
-      switch (Belt.Map.String.get(state.loadedImages^, url)) {
+      switch (maybeLayerRef) {
       | None => ()
-      | Some(img) => Ctx.drawImageDestRect(ctx, img, 0, 0, width, height)
+      | Some(aRef) =>
+        let img = getElementAsImageSource(aRef);
+        Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
       };
       None;
     | Webcam(opts) =>
@@ -381,6 +381,8 @@ let makeAudioElt: string => Dom.element = [%bs.raw
      return audio;
      |}
 ];
+
+let sortLayers = List.sort((a, b) => compare(a.content, b.content));
 
 let make =
     (
@@ -567,7 +569,8 @@ let make =
     self.send(Clear);
 
     let sendTickFn = () => self.send(Tick);
-    self.state.tickFunctions := [sendTickFn, ...self.state.tickFunctions^];
+    self.state.tickFunctions :=
+      Belt.Map.String.set(self.state.tickFunctions^, "master", sendTickFn);
 
     let rec animationFn = timestamp => {
       /* let lastUpdated = self.state.animationLastUpdated^; */
@@ -584,7 +587,10 @@ let make =
 
       /* Js.log(timeSinceLastUpdate); */
 
-      List.iter(f => f(), self.state.tickFunctions^);
+      Array.iter(
+        f => f(),
+        Belt.Map.String.valuesToArray(self.state.tickFunctions^),
+      );
       requestAnimationFrame(window, animationFn);
     };
 
@@ -592,7 +598,11 @@ let make =
 
     setTimer(
       self.state.timerId,
-      () => List.iter(f => f(), self.state.tickFunctions^),
+      () =>
+        Array.iter(
+          f => f(),
+          Belt.Map.String.valuesToArray(self.state.tickFunctions^),
+        ),
       self.state.params.millisPerTick,
     );
 
@@ -684,7 +694,11 @@ let make =
         != newSelf.state.params.millisPerTick) {
       setTimer(
         newSelf.state.timerId,
-        () => List.iter(f => f(), newSelf.state.tickFunctions^),
+        () =>
+          Array.iter(
+            f => f(),
+            Belt.Map.String.valuesToArray(newSelf.state.tickFunctions^),
+          ),
         newSelf.state.params.millisPerTick,
       );
     };
@@ -786,14 +800,19 @@ let make =
                   (layer, theRef) =>
                     self.handle(setLayerRef(audioCtx), (layer, theRef))
                 )
+                layerRefs=self.state.layerRefs
                 onSetParams=(newParams => pushParamsState(newParams))
                 rootWidth=width
                 rootHeight=height
                 millisPerAudioTick=16
                 saveTick=(
-                  tickFn =>
+                  (key, tickFn) =>
                     self.state.tickFunctions :=
-                      [tickFn, ...self.state.tickFunctions^]
+                      Belt.Map.String.set(
+                        self.state.tickFunctions^,
+                        key,
+                        tickFn,
+                      )
                 )
                 getAudio=(getAnalysisInput(audioCtx, self.state))
               />
@@ -842,11 +861,15 @@ let make =
                   rootHeight=height
                   millisPerAudioTick=16
                   saveTick=(
-                    tickFn =>
+                    (key, tickFn) =>
                       self.state.tickFunctions :=
-                        [tickFn, ...self.state.tickFunctions^]
+                        Belt.Map.String.set(
+                          self.state.tickFunctions^,
+                          key,
+                          tickFn,
+                        )
                   )
-                  layers=self.state.params.layers
+                  layers=(sortLayers(self.state.params.layers))
                 />
                 <Button
                   style=(

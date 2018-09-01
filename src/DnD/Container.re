@@ -22,10 +22,9 @@ let make =
       ~onMoveCard,
       ~onChangeLayer,
       ~onSetRef,
-      ~getAudio,
+      ~layerRefs,
       ~rootWidth,
       ~rootHeight,
-      ~millisPerAudioTick,
       ~saveTick,
       _children,
     ) => {
@@ -132,6 +131,8 @@ let make =
                    changeLayer=onChangeLayer
                    width=rootWidth
                    height=rootHeight
+                   saveTick
+                   layerRefs
                  />
                </div>
              )

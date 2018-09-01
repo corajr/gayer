@@ -87,6 +87,7 @@ let make =
       ~params,
       ~onMoveCard,
       ~onSetRef,
+      ~layerRefs,
       ~onChangeLayer,
       ~onSetParams,
       ~getAudio,
@@ -225,10 +226,9 @@ let make =
         )
         onMoveCard
         onSetRef
+        layerRefs
         onChangeLayer
-        getAudio
         saveTick
-        millisPerAudioTick
         rootWidth
         rootHeight
       />

@@ -220,8 +220,25 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = layerContent =>
+let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
+  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layerContent));
+
+  let savePreviewRef = aRef =>
+    switch (Js.Nullable.toOption(aRef)) {
+    | Some(previewCanvas) =>
+      saveTick(layerKey ++ "preview", () =>
+        switch (Belt.Map.String.get(layerRefs^, layerKey)) {
+        | Some(layer) =>
+          let ctx = getContext(getFromReact(previewCanvas));
+          let src = getElementAsImageSource(layer);
+          Ctx.drawImageDestRect(ctx, src, 0, 0, 120, 120);
+        | _ => ()
+        }
+      )
+    | None => ()
+    };
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
+    <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
     <div>
       <MaterialUi.Typography>
         (
@@ -235,10 +252,12 @@ let renderLayerContent = layerContent =>
       </MaterialUi.Typography>
     </div>
   </div>;
+};
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make = (~layer, ~changeLayer, ~width, ~height, _children) => {
+let make =
+    (~layer, ~layerRefs, ~saveTick, ~changeLayer, ~width, ~height, _children) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -251,7 +270,13 @@ let make = (~layer, ~changeLayer, ~width, ~height, _children) => {
           )
         )>
         <CardMedia src="dummy">
-          (renderLayerContent(layer.content))
+          (
+            renderLayerContent(
+              ~layerContent=layer.content,
+              ~saveTick,
+              ~layerRefs,
+            )
+          )
         </CardMedia>
         <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
           <FloatSlider

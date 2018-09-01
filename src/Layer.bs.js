@@ -9,6 +9,8 @@ import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
+import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
@@ -415,17 +417,38 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent$2) {
+function renderLayerContent(layerContent$2, saveTick, layerRefs) {
+  var layerKey = JSON.stringify(layerContent$1(layerContent$2));
+  var savePreviewRef = function (aRef) {
+    if (aRef == null) {
+      return /* () */0;
+    } else {
+      return Curry._2(saveTick, layerKey + "preview", (function () {
+                    var match = Belt_MapString.get(layerRefs[0], layerKey);
+                    if (match !== undefined) {
+                      var ctx = aRef.getContext("2d");
+                      ctx.drawImage(Js_primitive.valFromOption(match), 0, 0, 120, 120);
+                      return /* () */0;
+                    } else {
+                      return /* () */0;
+                    }
+                  }));
+    }
+  };
   return React.createElement("div", {
               style: {
                 display: "flex"
               }
-            }, React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layerContent$2), null, 2)]))));
+            }, React.createElement("div", undefined, React.createElement("canvas", {
+                      ref: savePreviewRef,
+                      height: "120",
+                      width: "120"
+                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layerContent$2), null, 2)]))));
 }
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, changeLayer, _, _$1, _$2) {
+function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -441,7 +464,7 @@ function make(layer, changeLayer, _, _$1, _$2) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0])])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], saveTick, layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
