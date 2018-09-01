@@ -6,18 +6,8 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
-
-var defaultState_000 = /* audioNodes : record */[/* contents */Belt_MapString.empty];
-
-var defaultState_001 = /* canvasRefs : record */[/* contents */Belt_MapString.empty];
-
-var defaultState = /* record */[
-  defaultState_000,
-  defaultState_001
-];
 
 function renderLayerContent(key, getAudio, setRef, setTick, millisPerTick, _, height, layerContent) {
   var tmp;
@@ -66,7 +56,7 @@ function renderLayerContent(key, getAudio, setRef, setTick, millisPerTick, _, he
             }, tmp);
 }
 
-var component = ReasonReact.reducerComponent("MediaProvider");
+var component = ReasonReact.statelessComponent("MediaProvider");
 
 function make(layers, rootWidth, rootHeight, onSetRef, getAudio, saveTick, millisPerAudioTick, _) {
   return /* record */[
@@ -89,20 +79,15 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, saveTick, milli
                                     return renderLayerContent(JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0])), getAudio, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0]);
                                   }), layers)));
             }),
-          /* initialState */(function () {
-              return defaultState;
-            }),
+          /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */(function (_, _$1) {
-              return /* NoUpdate */0;
-            }),
+          /* reducer */component[/* reducer */12],
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];
 }
 
 export {
-  defaultState ,
   renderLayerContent ,
   component ,
   make ,

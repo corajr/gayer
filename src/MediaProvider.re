@@ -2,16 +2,6 @@ open Audio;
 open Canvas;
 open Layer;
 
-type state = {
-  audioNodes: ref(Belt.Map.String.t(audioNode)),
-  canvasRefs: ref(Belt.Map.String.t(canvasImageSource)),
-};
-
-let defaultState = {
-  audioNodes: ref(Belt.Map.String.empty),
-  canvasRefs: ref(Belt.Map.String.empty),
-};
-
 let renderLayerContent =
     (
       key,
@@ -74,7 +64,7 @@ let renderLayerContent =
     )
   </div>;
 
-let component = ReasonReact.reducerComponent("MediaProvider");
+let component = ReasonReact.statelessComponent("MediaProvider");
 
 let make =
     (
@@ -88,8 +78,6 @@ let make =
       _children,
     ) => {
   ...component,
-  initialState: () => defaultState,
-  reducer: ((), _state: state) => ReasonReact.NoUpdate,
   render: self =>
     <div
       style=(

@@ -109,6 +109,7 @@ let setLayerRef =
     | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
       state.cameraInput := Some(video);
+      state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     | None => ()
     }
   | (Image(url), Some(aRef)) =>
@@ -871,25 +872,25 @@ let make =
                   )
                   layers=(sortLayers(self.state.params.layers))
                 />
-                <Button
-                  style=(
-                    ReactDOMRe.Style.make(
-                      ~position="absolute",
-                      ~right="0px",
-                      ~bottom="0px",
-                      (),
-                    )
-                  )
-                  variant=`Contained
-                  onClick=(evt => self.send(ToggleFullscreen))>
-                  (
-                    self.state.fullscreenCanvas ?
-                      <MaterialUIIcons.FullscreenExit /> :
-                      <MaterialUIIcons.Fullscreen />
-                  )
-                  (ReasonReact.string("Fullscreen"))
-                </Button>
               </div>
+              /* <Button */
+              /*   style=( */
+              /*     ReactDOMRe.Style.make( */
+              /*       ~position="absolute", */
+              /*       ~right="0px", */
+              /*       ~bottom="0px", */
+              /*       (), */
+              /*     ) */
+              /*   ) */
+              /*   variant=`Contained */
+              /*   onClick=(evt => self.send(ToggleFullscreen))> */
+              /*   ( */
+              /*     self.state.fullscreenCanvas ? */
+              /*       <MaterialUIIcons.FullscreenExit /> : */
+              /*       <MaterialUIIcons.Fullscreen /> */
+              /*   ) */
+              /*   (ReasonReact.string("Fullscreen")) */
+              /* </Button> */
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
                   <Button

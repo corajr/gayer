@@ -102,7 +102,7 @@ let squareColumnLayer = {
     draw([
       DrawImage(
         Self,
-        {x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Pixels(1)},
+        {x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Height},
       ),
     ]),
   compositeOperation: Multiply,
@@ -115,6 +115,44 @@ let squareLayer = {
       DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
     ]),
   compositeOperation: Multiply,
+};
+
+let singleNoteDrawCommands = note => [
+  SetFillStyle("red"),
+  FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
+];
+
+let singleNoteLayer = note => {
+  ...defaultLayer,
+  content: Draw(singleNoteDrawCommands(note)),
+};
+
+let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
+
+let historyLayer = {
+  ...defaultLayer,
+  content:
+    Draw([
+      DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
+    ]),
+};
+
+let drosteLayer = {
+  ...defaultLayer,
+  content:
+    Draw([
+      DrawImage(
+        Self,
+        {
+          x: Pixels(1),
+          y: Pixels(1),
+          w: Add(Width, Pixels(-1)),
+          h: Add(Height, Pixels(-1)),
+        },
+      ),
+    ]),
+  filters:
+    "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
 
 let allLayerTypes = [
@@ -156,22 +194,16 @@ let feedback = {
 
 let slitscanParams = {
   ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: defaultSize - 1,
+  writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
     slitscan,
-    {...analyzer, alpha: 0.25},
-    pitchFilter(cMajor),
-    reader,
-  ],
-};
-
-let slitscanParams = {
-  ...defaultParams,
-  shouldClear: false,
-  layers: [
-    slitscan,
-    {...analyzer, alpha: 0.25},
-    pitchFilter(cMajor),
+    {...analyzer, compositeOperation: Multiply, alpha: 0.9},
+    /* pitchFilter(cMajor), */
+    historyLayer,
     reader,
   ],
 };
@@ -201,44 +233,6 @@ let tughra = {
 let iChing = {
   ...defaultParams,
   layers: [img("media/king_wen.png"), pitchFilter(majorHexatonic), reader],
-};
-
-let singleNoteDrawCommands = note => [
-  SetFillStyle("red"),
-  FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
-];
-
-let singleNoteLayer = note => {
-  ...defaultLayer,
-  content: Draw(singleNoteDrawCommands(note)),
-};
-
-let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
-
-let historyLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
-    ]),
-};
-
-let drosteLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(
-        Self,
-        {
-          x: Pixels(1),
-          y: Pixels(1),
-          w: Add(Width, Pixels(-1)),
-          h: Add(Height, Pixels(-1)),
-        },
-      ),
-    ]),
-  filters:
-    "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
 
 let history = {

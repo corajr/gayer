@@ -126,6 +126,7 @@ function setLayerRef(audioCtx, param, param$1) {
             if (match$1 !== undefined) {
               var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
               state[/* cameraInput */10][0] = Js_primitive.some(video);
+              state[/* layerRefs */15][0] = Belt_MapString.set(state[/* layerRefs */15][0], layerKey, theRef);
               return /* () */0;
             } else {
               return /* () */0;
@@ -672,7 +673,6 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var match = self[/* state */1][/* scaleCanvas */19];
               var match$1 = self[/* state */1][/* scaleCanvas */19];
               var partial_arg$1 = self[/* state */1];
-              var match$2 = self[/* state */1][/* fullscreenCanvas */20];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -769,16 +769,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                               }), (function (key, tickFn) {
                                                                 self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], key, tickFn);
                                                                 return /* () */0;
-                                                              }), 16, /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                                return Curry._1(self[/* send */3], /* ToggleFullscreen */4);
-                                                              }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
-                                                              bottom: "0px",
-                                                              position: "absolute",
-                                                              right: "0px"
-                                                            }, /* array */[
-                                                              match$2 ? ReasonReact.element(undefined, undefined, MaterialUIIcons.FullscreenExit[/* make */0](/* array */[])) : ReasonReact.element(undefined, undefined, MaterialUIIcons.Fullscreen[/* make */0](/* array */[])),
-                                                              "Fullscreen"
-                                                            ]))),
+                                                              }), 16, /* array */[]))),
                                                 React.createElement("div", undefined, React.createElement("div", {
                                                           style: {
                                                             marginBottom: "24px"

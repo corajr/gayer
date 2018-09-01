@@ -285,7 +285,7 @@ var init$3 = draw(undefined, /* :: */[
             /* x : Pixels */Block.__(0, [0]),
             /* y : Pixels */Block.__(0, [0]),
             /* w : Pixels */Block.__(0, [1]),
-            /* h : Pixels */Block.__(0, [1])
+            /* h : Height */1
           ]
         ]),
       /* [] */0
@@ -338,6 +338,147 @@ var squareLayer = /* record */[
   squareLayer_003,
   squareLayer_004,
   squareLayer_005
+];
+
+function singleNoteDrawCommands() {
+  return /* :: */[
+          /* SetFillStyle */Block.__(0, ["red"]),
+          /* :: */[
+            /* FillRect */Block.__(1, [/* record */[
+                  /* x : Pixels */Block.__(0, [0]),
+                  /* y : Note */Block.__(1, [60]),
+                  /* w : Width */0,
+                  /* h : Pixels */Block.__(0, [1])
+                ]]),
+            /* [] */0
+          ]
+        ];
+}
+
+function singleNoteLayer(note) {
+  return /* record */[
+          /* content : Draw */Block.__(1, [singleNoteDrawCommands(note)]),
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */1],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */3],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */5]
+        ];
+}
+
+var singleNote_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
+
+var singleNote_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
+
+var singleNote_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
+
+var singleNote_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+
+var singleNote_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
+
+var singleNote_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
+
+var singleNote_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
+
+var singleNote_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
+
+var singleNote_008 = /* q */Params$Gayer.defaultParams[/* q */8];
+
+var singleNote_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
+
+var singleNote_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
+
+var singleNote_011 = /* layers : :: */[
+  singleNoteLayer(60),
+  /* :: */[
+    reader,
+    /* [] */0
+  ]
+];
+
+var singleNote = /* record */[
+  singleNote_000,
+  singleNote_001,
+  singleNote_002,
+  singleNote_003,
+  singleNote_004,
+  singleNote_005,
+  singleNote_006,
+  singleNote_007,
+  singleNote_008,
+  singleNote_009,
+  singleNote_010,
+  singleNote_011
+];
+
+var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImage */Block.__(4, [
+          /* Self */0,
+          /* record */[
+            /* x : Pixels */Block.__(0, [-1]),
+            /* y : Pixels */Block.__(0, [0]),
+            /* w : Width */0,
+            /* h : Height */1
+          ]
+        ]),
+      /* [] */0
+    ]]);
+
+var historyLayer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var historyLayer_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var historyLayer_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var historyLayer_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var historyLayer_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var historyLayer = /* record */[
+  historyLayer_000,
+  historyLayer_001,
+  historyLayer_002,
+  historyLayer_003,
+  historyLayer_004,
+  historyLayer_005
+];
+
+var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImage */Block.__(4, [
+          /* Self */0,
+          /* record */[
+            /* x : Pixels */Block.__(0, [1]),
+            /* y : Pixels */Block.__(0, [1]),
+            /* w : Add */Block.__(3, [
+                /* Width */0,
+                /* Pixels */Block.__(0, [-1])
+              ]),
+            /* h : Add */Block.__(3, [
+                /* Height */1,
+                /* Pixels */Block.__(0, [-1])
+              ])
+          ]
+        ]),
+      /* [] */0
+    ]]);
+
+var drosteLayer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var drosteLayer_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var drosteLayer_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var drosteLayer_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var drosteLayer_005 = /* filters */"hue-rotate(" + ((1.0 / 30.0 * (5.0 / 6.0)).toString() + "turn)");
+
+var drosteLayer = /* record */[
+  drosteLayer_000,
+  drosteLayer_001,
+  drosteLayer_002,
+  drosteLayer_003,
+  drosteLayer_004,
+  drosteLayer_005
 ];
 
 var allLayerTypes_001 = /* :: */[
@@ -511,34 +652,9 @@ var feedback = /* record */[
   feedback_011
 ];
 
-/* :: */[
-  slitscan,
-  /* :: */[
-    /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */1]),
-      /* alpha */0.25,
-      analyzer_002,
-      analyzer_003,
-      analyzer_004,
-      analyzer_005
-    ],
-    /* :: */[
-      pitchFilter(Music$Gayer.cMajor),
-      /* :: */[
-        reader,
-        /* [] */0
-      ]
-    ]
-  ]
-];
+var slitscanParams_002 = /* readPosOffset */Canvas$Gayer.defaultSize - 1 | 0;
 
-var slitscanParams_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
-
-var slitscanParams_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
-
-var slitscanParams_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
-
-var slitscanParams_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
+var slitscanParams_003 = /* writePosOffset */Canvas$Gayer.defaultSize - 1 | 0;
 
 var slitscanParams_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
 
@@ -557,14 +673,14 @@ var slitscanParams_011 = /* layers : :: */[
   /* :: */[
     /* record */[
       /* content : Analysis */Block.__(5, [/* Mic */1]),
-      /* alpha */0.25,
-      analyzer_002,
+      /* alpha */0.9,
+      /* compositeOperation : Multiply */11,
       analyzer_003,
       analyzer_004,
       analyzer_005
     ],
     /* :: */[
-      pitchFilter(Music$Gayer.cMajor),
+      historyLayer,
       /* :: */[
         reader,
         /* [] */0
@@ -574,8 +690,8 @@ var slitscanParams_011 = /* layers : :: */[
 ];
 
 var slitscanParams = /* record */[
-  slitscanParams_000,
-  slitscanParams_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
   slitscanParams_002,
   slitscanParams_003,
   slitscanParams_004,
@@ -786,147 +902,6 @@ var iChing = /* record */[
   iChing_009,
   iChing_010,
   iChing_011
-];
-
-function singleNoteDrawCommands() {
-  return /* :: */[
-          /* SetFillStyle */Block.__(0, ["red"]),
-          /* :: */[
-            /* FillRect */Block.__(1, [/* record */[
-                  /* x : Pixels */Block.__(0, [0]),
-                  /* y : Note */Block.__(1, [60]),
-                  /* w : Width */0,
-                  /* h : Pixels */Block.__(0, [1])
-                ]]),
-            /* [] */0
-          ]
-        ];
-}
-
-function singleNoteLayer(note) {
-  return /* record */[
-          /* content : Draw */Block.__(1, [singleNoteDrawCommands(note)]),
-          /* alpha */Layer$Gayer.defaultLayer[/* alpha */1],
-          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2],
-          /* rotation */Layer$Gayer.defaultLayer[/* rotation */3],
-          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4],
-          /* filters */Layer$Gayer.defaultLayer[/* filters */5]
-        ];
-}
-
-var singleNote_000 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */0];
-
-var singleNote_001 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */1];
-
-var singleNote_002 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */2];
-
-var singleNote_003 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */3];
-
-var singleNote_004 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */4];
-
-var singleNote_005 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */5];
-
-var singleNote_006 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */6];
-
-var singleNote_007 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */7];
-
-var singleNote_008 = /* q */Params$Gayer.defaultParams[/* q */8];
-
-var singleNote_009 = /* transpose */Params$Gayer.defaultParams[/* transpose */9];
-
-var singleNote_010 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */10];
-
-var singleNote_011 = /* layers : :: */[
-  singleNoteLayer(60),
-  /* :: */[
-    reader,
-    /* [] */0
-  ]
-];
-
-var singleNote = /* record */[
-  singleNote_000,
-  singleNote_001,
-  singleNote_002,
-  singleNote_003,
-  singleNote_004,
-  singleNote_005,
-  singleNote_006,
-  singleNote_007,
-  singleNote_008,
-  singleNote_009,
-  singleNote_010,
-  singleNote_011
-];
-
-var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImage */Block.__(4, [
-          /* Self */0,
-          /* record */[
-            /* x : Pixels */Block.__(0, [-1]),
-            /* y : Pixels */Block.__(0, [0]),
-            /* w : Width */0,
-            /* h : Height */1
-          ]
-        ]),
-      /* [] */0
-    ]]);
-
-var historyLayer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
-
-var historyLayer_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
-
-var historyLayer_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
-
-var historyLayer_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
-
-var historyLayer_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
-
-var historyLayer = /* record */[
-  historyLayer_000,
-  historyLayer_001,
-  historyLayer_002,
-  historyLayer_003,
-  historyLayer_004,
-  historyLayer_005
-];
-
-var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImage */Block.__(4, [
-          /* Self */0,
-          /* record */[
-            /* x : Pixels */Block.__(0, [1]),
-            /* y : Pixels */Block.__(0, [1]),
-            /* w : Add */Block.__(3, [
-                /* Width */0,
-                /* Pixels */Block.__(0, [-1])
-              ]),
-            /* h : Add */Block.__(3, [
-                /* Height */1,
-                /* Pixels */Block.__(0, [-1])
-              ])
-          ]
-        ]),
-      /* [] */0
-    ]]);
-
-var drosteLayer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
-
-var drosteLayer_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
-
-var drosteLayer_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
-
-var drosteLayer_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
-
-var drosteLayer_005 = /* filters */"hue-rotate(" + ((1.0 / 30.0 * (5.0 / 6.0)).toString() + "turn)");
-
-var drosteLayer = /* record */[
-  drosteLayer_000,
-  drosteLayer_001,
-  drosteLayer_002,
-  drosteLayer_003,
-  drosteLayer_004,
-  drosteLayer_005
 ];
 
 var history_002 = /* readPosOffset */Canvas$Gayer.defaultSize - 1 | 0;
@@ -1455,6 +1430,11 @@ export {
   blurLayer ,
   squareColumnLayer ,
   squareLayer ,
+  singleNoteDrawCommands ,
+  singleNoteLayer ,
+  singleNote ,
+  historyLayer ,
+  drosteLayer ,
   allLayerTypes ,
   harmonyParams ,
   harmonyIntensified ,
@@ -1464,11 +1444,6 @@ export {
   isItACrime ,
   tughra ,
   iChing ,
-  singleNoteDrawCommands ,
-  singleNoteLayer ,
-  singleNote ,
-  historyLayer ,
-  drosteLayer ,
   history ,
   debussyFile ,
   debussy ,
