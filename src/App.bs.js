@@ -546,12 +546,6 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                 16
               ];
               var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + self[/* state */1][/* params */6][/* transpose */9] | 0, height);
-              var oscillators = Audio$Gayer.makeOscillatorBank(audioCtx, height, /* Sine */0, freqFunc);
-              $$Array.iter((function (prim) {
-                      prim.start();
-                      return /* () */0;
-                    }), oscillators[/* nodes */1]);
-              self[/* state */1][/* oscillatorBank */11][0] = oscillators;
               var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
               Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
               Curry._1(self[/* send */3], /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBankL])]));
@@ -683,6 +677,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var partial_arg = self[/* state */1];
               var match = self[/* state */1][/* scaleCanvas */21];
               var match$1 = self[/* state */1][/* scaleCanvas */21];
+              var partial_arg$1 = self[/* state */1];
+              var match$2 = self[/* state */1][/* fullscreenCanvas */22];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -750,8 +746,8 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                             return /* () */0;
                                                           }), width, height, 16, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
-                                                ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(audioCtx, /* array */[], /* array */[])),
                                                 React.createElement("div", {
+                                                      id: "main-display",
                                                       style: {
                                                         marginBottom: "24px",
                                                         minHeight: (
@@ -770,7 +766,31 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                               console.log(evt);
                                                               return /* () */0;
                                                             })
-                                                        })),
+                                                        }), ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(self[/* state */1][/* params */6][/* layers */11], width, height, (function (layer, theRef) {
+                                                                return Curry._2(self[/* handle */0], (function (param, param$1) {
+                                                                              return setLayerRef(audioCtx, param, param$1);
+                                                                            }), /* tuple */[
+                                                                            layer,
+                                                                            theRef
+                                                                          ]);
+                                                              }), (function (param) {
+                                                                return getAnalysisInput(audioCtx, partial_arg$1, param);
+                                                              }), (function (tickFn) {
+                                                                self[/* state */1][/* tickFunctions */23][0] = /* :: */[
+                                                                  tickFn,
+                                                                  self[/* state */1][/* tickFunctions */23][0]
+                                                                ];
+                                                                return /* () */0;
+                                                              }), 16, /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                                                return Curry._1(self[/* send */3], /* ToggleFullscreen */4);
+                                                              }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
+                                                              bottom: "0px",
+                                                              position: "absolute",
+                                                              right: "0px"
+                                                            }, /* array */[
+                                                              match$2 ? ReasonReact.element(undefined, undefined, MaterialUIIcons.FullscreenExit[/* make */0](/* array */[])) : ReasonReact.element(undefined, undefined, MaterialUIIcons.Fullscreen[/* make */0](/* array */[])),
+                                                              "Fullscreen"
+                                                            ]))),
                                                 React.createElement("div", undefined, React.createElement("div", {
                                                           style: {
                                                             marginBottom: "24px"

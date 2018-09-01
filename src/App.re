@@ -535,10 +535,10 @@ let make =
         height,
       );
 
-    let oscillators =
-      makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc);
-    Array.iter(startOscillator, oscillators.nodes);
-    self.state.oscillatorBank := Some(oscillators);
+    /* let oscillators = */
+    /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
+    /* Array.iter(startOscillator, oscillators.nodes); */
+    /* self.state.oscillatorBank := Some(oscillators); */
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     let filterBankL =
@@ -799,9 +799,8 @@ let make =
               />
             </Grid>
             <Grid item=true xs=Grid.V6>
-              <MediaProvider audioCtx media=[||] />
-              /* MediaProvider not yet ready; ignore */
               <div
+                id="main-display"
                 style=(
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
@@ -833,6 +832,40 @@ let make =
                     }
                   )
                 />
+                <MediaProvider
+                  getAudio=(getAnalysisInput(audioCtx, self.state))
+                  onSetRef=(
+                    (layer, theRef) =>
+                      self.handle(setLayerRef(audioCtx), (layer, theRef))
+                  )
+                  rootWidth=width
+                  rootHeight=height
+                  millisPerAudioTick=16
+                  saveTick=(
+                    tickFn =>
+                      self.state.tickFunctions :=
+                        [tickFn, ...self.state.tickFunctions^]
+                  )
+                  layers=self.state.params.layers
+                />
+                <Button
+                  style=(
+                    ReactDOMRe.Style.make(
+                      ~position="absolute",
+                      ~right="0px",
+                      ~bottom="0px",
+                      (),
+                    )
+                  )
+                  variant=`Contained
+                  onClick=(evt => self.send(ToggleFullscreen))>
+                  (
+                    self.state.fullscreenCanvas ?
+                      <MaterialUIIcons.FullscreenExit /> :
+                      <MaterialUIIcons.Fullscreen />
+                  )
+                  (ReasonReact.string("Fullscreen"))
+                </Button>
               </div>
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
@@ -842,16 +875,6 @@ let make =
                     (ReasonReact.string("Snapshot"))
                   </Button>
                 </div>
-                /* <Button */
-                /*   variant=`Contained */
-                /*   onClick=(evt => self.send(ToggleFullscreen))> */
-                /*   ( */
-                /*     self.state.fullscreenCanvas ? */
-                /*       <MaterialUIIcons.FullscreenExit /> : */
-                /*       <MaterialUIIcons.Fullscreen /> */
-                /*   ) */
-                /*   (ReasonReact.string("Fullscreen")) */
-                /* </Button> */
                 (
                   self.state.savedImages
                   |> Array.of_list

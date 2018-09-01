@@ -130,12 +130,8 @@ let make =
                  <Layer
                    layer=card.layer
                    changeLayer=onChangeLayer
-                   getAudio
                    width=rootWidth
                    height=rootHeight
-                   millisPerTick=millisPerAudioTick
-                   setRef=(theRef => onSetRef(card.layer, theRef))
-                   saveTick
                  />
                </div>
              )

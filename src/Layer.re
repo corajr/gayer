@@ -220,68 +220,8 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent =
-    (
-      layerContent,
-      changeLayer,
-      getAudio,
-      setRef,
-      setTick,
-      millisPerTick,
-      width,
-      height,
-    ) =>
+let renderLayerContent = layerContent =>
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
-    <div>
-      (
-        switch (layerContent) {
-        | Webcam(_) =>
-          <video
-            ref=setRef
-            autoPlay=true
-            muted=true
-            width="120"
-            height="120"
-            /* width=(Js.Int.toString(width)) */
-            /* height=(Js.Int.toString(height)) */
-          />
-        | Image(url) =>
-          <img
-            ref=setRef
-            src=url
-            width="120"
-            height="120"
-            /* width=(Js.Int.toString(width)) */
-            /* height=(Js.Int.toString(height)) */
-          />
-        | Video(url) =>
-          <video
-            ref=setRef
-            src=url
-            width="120"
-            height="120"
-            autoPlay=true
-            loop=true
-            muted=true
-          />
-        | Analysis(source) =>
-          let (audioCtx, input) = getAudio(source);
-          <AnalysisCanvas
-            size=height
-            audioCtx
-            input
-            millisPerTick
-            saveRef=setRef
-            saveTick=setTick
-          />;
-        | MIDIKeyboard => <MIDICanvas saveRef=setRef />
-        | Draw(_)
-        | PitchClasses(_)
-        | Fill(_)
-        | Reader(_) => ReasonReact.null
-        }
-      )
-    </div>
     <div>
       <MaterialUi.Typography>
         (
@@ -298,18 +238,7 @@ let renderLayerContent =
 
 let component = ReasonReact.statelessComponent("Layer");
 
-let make =
-    (
-      ~layer,
-      ~changeLayer,
-      ~setRef=_ => (),
-      ~saveTick=_ => (),
-      ~getAudio,
-      ~millisPerTick,
-      ~width,
-      ~height,
-      _children,
-    ) => {
+let make = (~layer, ~changeLayer, ~width, ~height, _children) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -322,18 +251,7 @@ let make =
           )
         )>
         <CardMedia src="dummy">
-          (
-            renderLayerContent(
-              layer.content,
-              changeLayer,
-              getAudio,
-              setRef,
-              saveTick,
-              millisPerTick,
-              width,
-              height,
-            )
-          )
+          (renderLayerContent(layer.content))
         </CardMedia>
         <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
           <FloatSlider
