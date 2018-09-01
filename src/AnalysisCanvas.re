@@ -3,26 +3,23 @@ open Canvas;
 open Timing;
 
 type state = {
-  analyserL: analyser,
-  analyserR: analyser,
-  channelSplitter,
-  stereoPanner,
-  cqt: CQT.t,
+  analyserL: ref(analyser),
+  analyserR: ref(analyser),
+  channelSplitter: ref(channelSplitter),
+  stereoPanner: ref(stereoPanner),
+  cqt: ref(CQT.t),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-type action =
-  | Draw;
-
 let drawCQTBar = (canvasRenderingContext2D, state) => {
-  let audioDataL = CQT.getInputArray(state.cqt, 0);
-  let audioDataR = CQT.getInputArray(state.cqt, 1);
-  getFloatTimeDomainData(state.analyserL, audioDataL);
-  getFloatTimeDomainData(state.analyserR, audioDataR);
-  CQT.calc(state.cqt);
-  CQT.renderLine(state.cqt, 1);
-  let cqtLine = CQT.getOutputArray(state.cqt);
+  let audioDataL = CQT.getInputArray(state.cqt^, 0);
+  let audioDataR = CQT.getInputArray(state.cqt^, 1);
+  getFloatTimeDomainData(state.analyserL^, audioDataL);
+  getFloatTimeDomainData(state.analyserR^, audioDataR);
+  CQT.calc(state.cqt^);
+  CQT.renderLine(state.cqt^, 1);
+  let cqtLine = CQT.getOutputArray(state.cqt^);
   let outputImageData = makeImageData(~cqtLine);
 
   Ctx.putImageData(canvasRenderingContext2D, outputImageData, 0, 0);
@@ -65,11 +62,11 @@ let make =
       connectWithOutputIndex(channelSplitter, analyserR, 1);
 
       {
-        analyserL,
-        analyserR,
-        channelSplitter,
-        stereoPanner,
-        cqt,
+        analyserL: ref(analyserL),
+        analyserR: ref(analyserR),
+        channelSplitter: ref(channelSplitter),
+        stereoPanner: ref(stereoPanner),
+        cqt: ref(cqt),
         canvasRef: ref(None),
         timerId: ref(None),
       };
@@ -77,34 +74,29 @@ let make =
     didMount: self => {
       switch (input) {
       | None => ()
-      | Some(inputNode) => connect(inputNode, self.state.stereoPanner)
+      | Some(inputNode) => connect(inputNode, self.state.stereoPanner^)
       };
       self.onUnmount(() =>
         switch (input) {
         | None => ()
-        | Some(inputNode) => disconnect(inputNode, self.state.stereoPanner)
+        | Some(inputNode) => disconnect(inputNode, self.state.stereoPanner^)
         }
       );
-      setTimer(self.state.timerId, () => self.send(Draw), millisPerTick);
+      setTimer(
+        self.state.timerId,
+        () =>
+          switch (self.state.canvasRef^) {
+          | Some(canvas) =>
+            let canvasElement = getFromReact(canvas);
+            let ctx = getContext(canvasElement);
+            drawCQTBar(ctx, self.state);
+          | None => ()
+          },
+        millisPerTick,
+      );
       self.onUnmount(() => maybeClearTimer(self.state.timerId));
     },
-    reducer: (action, state) =>
-      switch (action) {
-      | Draw =>
-        switch (state.canvasRef^) {
-        | None => ReasonReact.NoUpdate
-        | Some(canvas) =>
-          ReasonReact.SideEffects(
-            (
-              _self => {
-                let canvasElement = getFromReact(canvas);
-                let ctx = getContext(canvasElement);
-                drawCQTBar(ctx, state);
-              }
-            ),
-          )
-        }
-      },
+    reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>
       <canvas
         ref=(self.handle(setCanvasRef))
