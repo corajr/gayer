@@ -227,8 +227,6 @@ let isItACrime = {
 
 let tughra = {
   ...defaultParams,
-  width: 120,
-  height: 120,
   layers: [img("media/suleiman.jpg"), reader],
 };
 

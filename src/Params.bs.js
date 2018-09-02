@@ -303,6 +303,28 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                                 -976970511,
                                                                 "legend"
                                                               ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Audio"])),
+                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                                      737456202,
+                                                                                      params[/* stereo */12]
+                                                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
+                                                                                        return Curry._1(onSetParams, /* record */[
+                                                                                                    /* width */params[/* width */0],
+                                                                                                    /* height */params[/* height */1],
+                                                                                                    /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                    /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                    /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                    /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                    /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                    /* inputGain */params[/* inputGain */8],
+                                                                                                    /* outputGain */params[/* outputGain */9],
+                                                                                                    /* q */params[/* q */10],
+                                                                                                    /* transpose */params[/* transpose */11],
+                                                                                                    /* stereo */value,
+                                                                                                    /* shouldClear */params[/* shouldClear */13],
+                                                                                                    /* layers */params[/* layers */14]
+                                                                                                  ]);
+                                                                                      }), undefined, "stereo", undefined, undefined, /* array */[]))), undefined, undefined, "Stereo (red=L, blue=R)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
                                                       ReasonReact.element(undefined, undefined, AudioInputSelect$Gayer.make(params[/* audioInputSetting */7], (function (audioInputSetting) {
                                                                   return Curry._1(onSetParams, /* record */[
                                                                               /* width */params[/* width */0],

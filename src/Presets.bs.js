@@ -874,6 +874,10 @@ var isItACrime = /* record */[
   isItACrime_014
 ];
 
+var tughra_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var tughra_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
 var tughra_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
 var tughra_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
@@ -907,8 +911,8 @@ var tughra_014 = /* layers : :: */[
 ];
 
 var tughra = /* record */[
-  /* width */120,
-  /* height */120,
+  tughra_000,
+  tughra_001,
   tughra_002,
   tughra_003,
   tughra_004,

@@ -180,6 +180,21 @@ let make =
               <FormLabel component=(`String("legend"))>
                 (ReasonReact.string("Audio"))
               </FormLabel>
+              <FormGroup row=true>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked=(`Bool(params.stereo))
+                      onChange=(
+                        (_evt, value) =>
+                          onSetParams({...params, stereo: value})
+                      )
+                      value="stereo"
+                    />
+                  }
+                  label=(ReasonReact.string("Stereo (red=L, blue=R)"))
+                />
+              </FormGroup>
               <AudioInputSelect
                 audioInputSetting=params.audioInputSetting
                 onChangeSetting=(
