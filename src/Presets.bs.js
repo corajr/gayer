@@ -279,10 +279,22 @@ var blurLayer = /* record */[
 ];
 
 var init$3 = draw(undefined, /* :: */[
-      /* DrawImage */Block.__(4, [
+      /* DrawImageSourceDest */Block.__(5, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(1, [0]),
+            /* x : Add */Block.__(4, [
+                /* Width */0,
+                /* Pixels */Block.__(1, [-1])
+              ]),
+            /* y : Pixels */Block.__(1, [0]),
+            /* w : Pixels */Block.__(1, [1]),
+            /* h : Height */1
+          ],
+          /* record */[
+            /* x : Add */Block.__(4, [
+                /* Width */0,
+                /* Pixels */Block.__(1, [-1])
+              ]),
             /* y : Pixels */Block.__(1, [0]),
             /* w : Pixels */Block.__(1, [1]),
             /* h : Height */1
@@ -293,8 +305,6 @@ var init$3 = draw(undefined, /* :: */[
 
 var squareColumnLayer_000 = /* content */init$3[/* content */0];
 
-var squareColumnLayer_001 = /* alpha */init$3[/* alpha */1];
-
 var squareColumnLayer_003 = /* rotation */init$3[/* rotation */3];
 
 var squareColumnLayer_004 = /* transformMatrix */init$3[/* transformMatrix */4];
@@ -303,7 +313,7 @@ var squareColumnLayer_005 = /* filters */init$3[/* filters */5];
 
 var squareColumnLayer = /* record */[
   squareColumnLayer_000,
-  squareColumnLayer_001,
+  /* alpha */0.75,
   /* compositeOperation : Multiply */11,
   squareColumnLayer_003,
   squareColumnLayer_004,
@@ -450,6 +460,82 @@ var historyLayer = /* record */[
   historyLayer_003,
   historyLayer_004,
   historyLayer_005
+];
+
+var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+      /* DrawImageSourceDest */Block.__(5, [
+          /* Self */0,
+          /* record */[
+            /* x : Divide */Block.__(5, [
+                /* Width */0,
+                /* Constant */Block.__(0, [2])
+              ]),
+            /* y : Pixels */Block.__(1, [0]),
+            /* w : Divide */Block.__(5, [
+                /* Width */0,
+                /* Constant */Block.__(0, [2])
+              ]),
+            /* h : Height */1
+          ],
+          /* record */[
+            /* x : Add */Block.__(4, [
+                /* Divide */Block.__(5, [
+                    /* Width */0,
+                    /* Constant */Block.__(0, [2])
+                  ]),
+                /* Pixels */Block.__(1, [1])
+              ]),
+            /* y : Pixels */Block.__(1, [0]),
+            /* w : Divide */Block.__(5, [
+                /* Width */0,
+                /* Constant */Block.__(0, [2])
+              ]),
+            /* h : Height */1
+          ]
+        ]),
+      /* :: */[
+        /* DrawImageSourceDest */Block.__(5, [
+            /* Self */0,
+            /* record */[
+              /* x : Pixels */Block.__(1, [1]),
+              /* y : Pixels */Block.__(1, [0]),
+              /* w : Divide */Block.__(5, [
+                  /* Width */0,
+                  /* Constant */Block.__(0, [2])
+                ]),
+              /* h : Height */1
+            ],
+            /* record */[
+              /* x : Pixels */Block.__(1, [0]),
+              /* y : Pixels */Block.__(1, [0]),
+              /* w : Divide */Block.__(5, [
+                  /* Width */0,
+                  /* Constant */Block.__(0, [2])
+                ]),
+              /* h : Height */1
+            ]
+          ]),
+        /* [] */0
+      ]
+    ]]);
+
+var historyBackAndForthLayer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var historyBackAndForthLayer_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var historyBackAndForthLayer_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var historyBackAndForthLayer_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var historyBackAndForthLayer_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var historyBackAndForthLayer = /* record */[
+  historyBackAndForthLayer_000,
+  historyBackAndForthLayer_001,
+  historyBackAndForthLayer_002,
+  historyBackAndForthLayer_003,
+  historyBackAndForthLayer_004,
+  historyBackAndForthLayer_005
 ];
 
 var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
@@ -1068,33 +1154,36 @@ var historyHalving_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var historyHalving_014 = /* layers : :: */[
   analyzer,
   /* :: */[
-    historyLayer,
+    squareColumnLayer,
     /* :: */[
-      draw(undefined, /* :: */[
-            /* DrawImage */Block.__(4, [
-                /* Self */0,
-                /* record */[
-                  /* x : Pixels */Block.__(1, [0]),
-                  /* y : Pixels */Block.__(1, [0]),
-                  /* w : Divide */Block.__(5, [
-                      /* Width */0,
-                      /* Constant */Block.__(0, [2])
-                    ]),
-                  /* h : Height */1
-                ]
-              ]),
-            /* [] */0
-          ]),
+      historyLayer,
       /* :: */[
-        /* record */[
-          /* content : Reader */Block.__(7, [/* R */0]),
-          /* alpha */0.0,
-          /* compositeOperation : Multiply */11,
-          reader_003,
-          reader_004,
-          reader_005
-        ],
-        /* [] */0
+        draw(undefined, /* :: */[
+              /* DrawImage */Block.__(4, [
+                  /* Self */0,
+                  /* record */[
+                    /* x : Pixels */Block.__(1, [0]),
+                    /* y : Pixels */Block.__(1, [0]),
+                    /* w : Divide */Block.__(5, [
+                        /* Width */0,
+                        /* Constant */Block.__(0, [2])
+                      ]),
+                    /* h : Height */1
+                  ]
+                ]),
+              /* [] */0
+            ]),
+        /* :: */[
+          /* record */[
+            /* content : Reader */Block.__(7, [/* R */0]),
+            /* alpha */0.0,
+            /* compositeOperation : Multiply */11,
+            reader_003,
+            reader_004,
+            reader_005
+          ],
+          /* [] */0
+        ]
       ]
     ]
   ]
@@ -1423,6 +1512,57 @@ var readFromCenterLine = /* record */[
   readFromCenterLine_014
 ];
 
+var historyBackAndForth_000 = readFromCenterLine_000;
+
+var historyBackAndForth_001 = readFromCenterLine_001;
+
+var historyBackAndForth_004 = readFromCenterLine_004;
+
+var historyBackAndForth_005 = readFromCenterLine_005;
+
+var historyBackAndForth_006 = readFromCenterLine_006;
+
+var historyBackAndForth_007 = readFromCenterLine_007;
+
+var historyBackAndForth_008 = readFromCenterLine_008;
+
+var historyBackAndForth_009 = readFromCenterLine_009;
+
+var historyBackAndForth_010 = readFromCenterLine_010;
+
+var historyBackAndForth_011 = readFromCenterLine_011;
+
+var historyBackAndForth_012 = readFromCenterLine_012;
+
+var historyBackAndForth_014 = /* layers : :: */[
+  analyzer,
+  /* :: */[
+    historyBackAndForthLayer,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var historyBackAndForth = /* record */[
+  historyBackAndForth_000,
+  historyBackAndForth_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  historyBackAndForth_004,
+  historyBackAndForth_005,
+  historyBackAndForth_006,
+  historyBackAndForth_007,
+  historyBackAndForth_008,
+  historyBackAndForth_009,
+  historyBackAndForth_010,
+  historyBackAndForth_011,
+  historyBackAndForth_012,
+  /* shouldClear */false,
+  historyBackAndForth_014
+];
+
 var vinyl_000 = readFromCenterLine_000;
 
 var vinyl_001 = readFromCenterLine_001;
@@ -1668,6 +1808,7 @@ export {
   singleNoteLayer ,
   singleNote ,
   historyLayer ,
+  historyBackAndForthLayer ,
   drosteLayer ,
   allLayerTypes ,
   harmonyParams ,
@@ -1688,6 +1829,7 @@ export {
   midi ,
   midiDroste ,
   readFromCenterLine ,
+  historyBackAndForth ,
   vinyl ,
   videoURL ,
   video$1 as video,

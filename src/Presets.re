@@ -100,11 +100,23 @@ let blurLayer = {...draw([drawSelfFullScreen]), filters: "blur(2px)"};
 let squareColumnLayer = {
   ...
     draw([
-      DrawImage(
+      DrawImageSourceDest(
         Self,
-        {x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Height},
+        {
+          x: Add(Width, Pixels(-1)),
+          y: Pixels(0),
+          w: Pixels(1),
+          h: Height,
+        },
+        {
+          x: Add(Width, Pixels(-1)),
+          y: Pixels(0),
+          w: Pixels(1),
+          h: Height,
+        },
       ),
     ]),
+  alpha: 0.75,
   compositeOperation: Multiply,
 };
 
@@ -134,6 +146,43 @@ let historyLayer = {
   content:
     Draw([
       DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
+    ]),
+};
+
+let historyBackAndForthLayer = {
+  ...defaultLayer,
+  content:
+    Draw([
+      DrawImageSourceDest(
+        Self,
+        {
+          x: Divide(Width, Constant(2)),
+          y: Pixels(0),
+          w: Divide(Width, Constant(2)),
+          h: Height,
+        },
+        {
+          x: Add(Divide(Width, Constant(2)), Pixels(1)),
+          y: Pixels(0),
+          w: Divide(Width, Constant(2)),
+          h: Height,
+        },
+      ),
+      DrawImageSourceDest(
+        Self,
+        {
+          x: Pixels(1),
+          y: Pixels(0),
+          w: Divide(Width, Constant(2)),
+          h: Height,
+        },
+        {
+          x: Pixels(0),
+          y: Pixels(0),
+          w: Divide(Width, Constant(2)),
+          h: Height,
+        },
+      ),
     ]),
 };
 
@@ -261,6 +310,7 @@ let historyHalving = {
   shouldClear: false,
   layers: [
     analyzer,
+    squareColumnLayer,
     historyLayer,
     draw([
       DrawImage(
@@ -314,6 +364,11 @@ let readFromCenterLine = {
   writePosOffset: defaultSize / 2,
 };
 
+let historyBackAndForth = {
+  ...readFromCenterLine,
+  layers: [analyzer, historyBackAndForthLayer, reader],
+};
+
 let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
 
 let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
@@ -332,7 +387,7 @@ let presets = [
   ("Single note", singleNote),
   ("Slitscan", slitscanParams),
   ("History", history),
-  /* ("History (halving)", historyHalving), */
+  /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   ("Rotation", vinyl),
   /* ("Angle", droste), */
