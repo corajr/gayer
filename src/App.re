@@ -1,5 +1,6 @@
 open Audio;
 open Audio.AudioInput;
+open AudioGraph;
 open Music;
 
 open Canvas;
@@ -25,6 +26,7 @@ type state = {
   params,
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
+  audioGraph: ref(audioGraph),
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
   oscillatorBank: ref(option(bank(oscillator))),
@@ -50,6 +52,7 @@ let defaultState: state = {
   presetDrawerOpen: false,
   filterInput: None,
   mediaStream: None,
+  audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
   params: snd(List.nth(presets, 0)),
@@ -521,12 +524,20 @@ let make =
 
     let compressor =
       makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
-    connect(merger, compressor);
-    connectCompressorToNode(compressor, defaultSink(audioCtx));
+
     self.state.compressor := Some(compressor);
 
     let noise = pinkNoise(audioCtx);
     self.send(SetFilterInput(noise));
+
+    self.state.audioGraph :=
+      self.state.audioGraph^
+      |> addNode(("merger", unwrapChannelMerger(merger)))
+      |> addNode(("compressor", unwrapCompressor(compressor)))
+      |> addNode(("sink", defaultSink(audioCtx)))
+      |> addEdge(("merger", "compressor", 0, 0))
+      |> addEdge(("compressor", "sink", 0, 0))
+      |> updateConnections;
 
     let pixelsPerSemitone = binsPerSemitone(height);
     let defaultTranspose = 15;
