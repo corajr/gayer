@@ -138,6 +138,8 @@ external unwrapAnalyser : analyser => audioNode = "%identity";
 external unwrapFilter : biquadFilter => audioNode = "%identity";
 external unwrapGain : gainNode => audioNode = "%identity";
 external unwrapCompressor : compressor => audioNode = "%identity";
+external unwrapChannelMerger : channelMerger => audioNode = "%identity";
+external unwrapStereoPanner : stereoPanner => audioNode = "%identity";
 
 type bank('a) = {
   input: option(gainNode),
@@ -225,6 +227,10 @@ external connectNodeToStereoPanner : (audioNode, stereoPanner) => unit =
 external connectWithOutputAndInputIndex : ('a, 'b, int, int) => unit =
   "connect";
 [@bs.send] external disconnect : ('a, 'b) => unit = "disconnect";
+
+[@bs.send]
+external disconnectWithOutputAndInputIndex : ('a, 'b, int, int) => unit =
+  "disconnect";
 
 let midiNoteA440Hz = 69.0;
 

@@ -573,7 +573,8 @@ module DrawCommand = {
     | FillRect(rect)
     | Rotate(rotation)
     | Translate(length, length)
-    | DrawImage(imgSource, rect);
+    | DrawImage(imgSource, rect)
+    | DrawImageSourceDest(imgSource, rect, rect);
 
   let field2 = (f, a, aDec, b, bDec, json) =>
     Json.Decode.(
@@ -650,6 +651,13 @@ module DrawCommand = {
             ("src", imgSource(src)),
             ("destRect", rect(r)),
           ])
+        | DrawImageSourceDest(src, srcR, destR) =>
+          object_([
+            ("type", string("DrawImageSourceDest")),
+            ("src", imgSource(src)),
+            ("srcRect", rect(srcR)),
+            ("destRect", rect(destR)),
+          ])
       );
   };
 
@@ -713,6 +721,20 @@ module DrawCommand = {
                      rect_ => DrawImage(src, rect_),
                      field("destRect", rect),
                    )
+                 )
+            )
+          | "DrawImageSourceDest" =>
+            json
+            |> (
+              field("src", imgSource)
+              |> andThen(src =>
+                   field("srcRect", rect)
+                   |> andThen(srcR =>
+                        map(
+                          destR => DrawImageSourceDest(src, srcR, destR),
+                          field("destRect", rect),
+                        )
+                      )
                  )
             )
           | "Translate" =>
@@ -782,6 +804,26 @@ module DrawCommand = {
           Ctx.drawImageDestRect(
             ctx,
             getCanvasAsSource(Ctx.canvas(ctx)),
+            getLength(ctx, x),
+            getLength(ctx, y),
+            getLength(ctx, w),
+            getLength(ctx, h),
+          )
+        }
+      | DrawImageSourceDest(
+          src,
+          {x: srcX, y: srcY, w: srcW, h: srcH},
+          {x, y, w, h},
+        ) =>
+        switch (src) {
+        | Self =>
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            getCanvasAsSource(Ctx.canvas(ctx)),
+            getLength(ctx, srcX),
+            getLength(ctx, srcY),
+            getLength(ctx, srcW),
+            getLength(ctx, srcH),
             getLength(ctx, x),
             getLength(ctx, y),
             getLength(ctx, w),

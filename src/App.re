@@ -1,5 +1,6 @@
 open Audio;
 open Audio.AudioInput;
+open AudioGraph;
 open Music;
 
 open Canvas;
@@ -25,6 +26,7 @@ type state = {
   params,
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
+  audioGraph: ref(audioGraph),
   micInput: option(audioNode),
   cameraInput: ref(option(canvasImageSource)),
   oscillatorBank: ref(option(bank(oscillator))),
@@ -35,7 +37,6 @@ type state = {
   savedImages: list(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
-  scaleCanvas: option(float),
   fullscreenCanvas: bool,
   tickFunctions: ref(Belt.Map.String.t(unit => unit)),
   timerId: ref(option(Js.Global.intervalId)),
@@ -50,6 +51,7 @@ let defaultState: state = {
   presetDrawerOpen: false,
   filterInput: None,
   mediaStream: None,
+  audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
   params: snd(List.nth(presets, 0)),
@@ -61,7 +63,6 @@ let defaultState: state = {
   layerRefs: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
   canvasRef: ref(None),
-  scaleCanvas: Some(480.0 /. float_of_int(defaultSize)),
   fullscreenCanvas: false,
   tickFunctions: ref(Belt.Map.String.empty),
   timerId: ref(None),
@@ -385,13 +386,51 @@ let makeAudioElt: string => Dom.element = [%bs.raw
 
 let sortLayers = List.sort((a, b) => compare(a.content, b.content));
 
-let make =
-    (
-      ~width=defaultSize,
-      ~height=defaultSize,
-      ~audioCtx=makeDefaultAudioCtx(),
-      _children,
-    ) => {
+let generateNewFilterBanks =
+    (audioCtx, {ReasonReact.state, ReasonReact.send}) => {
+  Js.log("regenerating filter banks (costly!)");
+
+  let pixelsPerSemitone = binsPerSemitone(state.params.height);
+  let defaultTranspose = 16;
+  state.freqFuncParams := (pixelsPerSemitone, defaultTranspose);
+  let freqFunc =
+    yToFrequency(
+      pixelsPerSemitone,
+      defaultTranspose + state.params.transpose,
+      state.params.height,
+    );
+
+  if (state.params.stereo) {
+    let filterBankL =
+      makeFilterBank(
+        ~audioCtx,
+        ~filterN=state.params.height,
+        ~q=defaultQ,
+        ~freqFunc,
+      );
+    let filterBankR =
+      makeFilterBank(
+        ~audioCtx,
+        ~filterN=state.params.height,
+        ~q=defaultQ,
+        ~freqFunc,
+      );
+
+    send(SetFilterBanks(StereoBanks(filterBankL, filterBankR)));
+  } else {
+    let filterBank =
+      makeFilterBank(
+        ~audioCtx,
+        ~filterN=state.params.height,
+        ~q=defaultQ,
+        ~freqFunc,
+      );
+
+    send(SetFilterBanks(MonoBank(filterBank)));
+  };
+};
+
+let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
   initialState: () => defaultState,
   reducer: (action, state) =>
@@ -454,15 +493,29 @@ let make =
           self => {
             /* Js.log("heartbeat"); */
             self.state.readPos :=
-              wrapCoord(state.readPos^, state.params.readPosDelta, width);
+              wrapCoord(
+                state.readPos^,
+                state.params.readPosDelta,
+                self.state.params.width,
+              );
 
             self.state.writePos :=
-              wrapCoord(state.writePos^, state.params.writePosDelta, width);
+              wrapCoord(
+                state.writePos^,
+                state.params.writePosDelta,
+                self.state.params.width,
+              );
 
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
-                let filterValues = drawCanvas(canvas, width, height, state);
+                let filterValues =
+                  drawCanvas(
+                    canvas,
+                    self.state.params.width,
+                    self.state.params.height,
+                    state,
+                  );
                 let updateBank = (values, filterBank) =>
                   updateFilterBank(
                     ~filterBank,
@@ -510,7 +563,11 @@ let make =
         (
           self =>
             maybeUpdateCanvas(self.state.canvasRef, canvas =>
-              clearCanvas(canvas, width, height)
+              clearCanvas(
+                canvas,
+                self.state.params.width,
+                self.state.params.height,
+              )
             )
         ),
       )
@@ -521,35 +578,28 @@ let make =
 
     let compressor =
       makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
-    connect(merger, compressor);
-    connectCompressorToNode(compressor, defaultSink(audioCtx));
+
     self.state.compressor := Some(compressor);
 
     let noise = pinkNoise(audioCtx);
     self.send(SetFilterInput(noise));
 
-    let pixelsPerSemitone = binsPerSemitone(height);
-    let defaultTranspose = 15;
-    self.state.freqFuncParams := (pixelsPerSemitone, defaultTranspose);
-    let freqFunc =
-      yToFrequency(
-        pixelsPerSemitone,
-        defaultTranspose + self.state.params.transpose,
-        height,
-      );
+    self.state.audioGraph :=
+      self.state.audioGraph^
+      |> addNode(("merger", unwrapChannelMerger(merger)))
+      |> addNode(("compressor", unwrapCompressor(compressor)))
+      |> addNode(("sink", defaultSink(audioCtx)))
+      |> addEdge(("merger", "compressor", 0, 0))
+      |> addEdge(("compressor", "sink", 0, 0))
+      |> updateConnections;
+
+    generateNewFilterBanks(audioCtx, self);
 
     /* let oscillators = */
     /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
     /* Array.iter(startOscillator, oscillators.nodes); */
     /* self.state.oscillatorBank := Some(oscillators); */
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
-
-    let filterBankL =
-      makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);
-    let filterBankR =
-      makeFilterBank(~audioCtx, ~filterN=height, ~q=defaultQ, ~freqFunc);
-    self.send(SetFilterBanks(MonoBank(filterBankL)));
-    /* self.send(SetFilterBanks(StereoBanks(filterBankL, filterBankR))); */
 
     (
       switch (getAudioVisualStream()) {
@@ -666,29 +716,10 @@ let make =
     };
 
     if (oldSelf.state.params.q != newSelf.state.params.q
-        || oldSelf.state.params.transpose != newSelf.state.params.transpose) {
-      let (pixelsPerSemitone, defaultTranspose) =
-        newSelf.state.freqFuncParams^;
-      let freqFunc =
-        yToFrequency(
-          pixelsPerSemitone,
-          defaultTranspose + newSelf.state.params.transpose,
-          height,
-        );
-      let updateFn = filterBank =>
-        updateFilterBankDefinition(
-          ~freqFunc,
-          ~q=newSelf.state.params.q,
-          ~filterBank,
-        );
-
-      switch (newSelf.state.filterBanks) {
-      | None => ()
-      | Some(StereoBanks(filterBankL, filterBankR)) =>
-        updateFn(filterBankL);
-        updateFn(filterBankR);
-      | Some(MonoBank(filterBank)) => updateFn(filterBank)
-      };
+        || oldSelf.state.params.transpose != newSelf.state.params.transpose
+        || oldSelf.state.params.stereo != newSelf.state.params.stereo
+        || oldSelf.state.params.height != newSelf.state.params.height) {
+      generateNewFilterBanks(audioCtx, newSelf);
     };
 
     if (oldSelf.state.params.millisPerTick
@@ -803,8 +834,6 @@ let make =
                 )
                 layerRefs=self.state.layerRefs
                 onSetParams=(newParams => pushParamsState(newParams))
-                rootWidth=width
-                rootHeight=height
                 millisPerAudioTick=16
                 saveTick=(
                   (key, tickFn) =>
@@ -824,42 +853,38 @@ let make =
                 style=(
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
-                    ~minHeight=
-                      Js.Float.toString(
-                        switch (self.state.scaleCanvas) {
-                        | None => float_of_int(height)
-                        | Some(i) => float_of_int(height) *. i
-                        },
-                      )
-                      ++ "px",
+                    ~minHeight="480px",
                     (),
                   )
                 )>
                 <canvas
                   ref=(self.handle(setCanvasRef))
                   onClick=(evt => Js.log(evt))
-                  width=(Js.Int.toString(width))
-                  height=(Js.Int.toString(height))
+                  width=(Js.Int.toString(self.state.params.width))
+                  height=(Js.Int.toString(self.state.params.height))
                   style=(
-                    switch (self.state.scaleCanvas) {
-                    | None => ReactDOMRe.Style.make()
-                    | Some(i) =>
-                      ReactDOMRe.Style.make(
-                        ~transform="scale(" ++ Js.Float.toString(i) ++ ")",
-                        ~transformOrigin="top left",
-                        (),
-                      )
-                    }
+                    ReactDOMRe.Style.make(
+                      ~transform=
+                        "scale("
+                        ++ Js.Float.toString(
+                             480.0 /. float_of_int(self.state.params.height),
+                           )
+                        ++ ")",
+                      ~transformOrigin="top left",
+                      (),
+                    )
                   )
                 />
                 <MediaProvider
+                  audioCtx
+                  audioGraph=self.state.audioGraph
                   getAudio=(getAnalysisInput(audioCtx, self.state))
                   onSetRef=(
                     (layer, theRef) =>
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
-                  rootWidth=width
-                  rootHeight=height
+                  rootWidth=self.state.params.width
+                  rootHeight=self.state.params.height
                   millisPerAudioTick=16
                   saveTick=(
                     (key, tickFn) =>

@@ -5,6 +5,8 @@ open Layer;
 open Music;
 
 type params = {
+  width: int,
+  height: int,
   readPosDelta: int,
   writePosDelta: int,
   readPosOffset: int,
@@ -15,11 +17,14 @@ type params = {
   outputGain: float,
   q: float,
   transpose: int,
+  stereo: bool,
   shouldClear: bool,
   layers: list(layer),
 };
 
 let defaultParams: params = {
+  width: defaultSize,
+  height: defaultSize,
   readPosDelta: 1,
   writePosDelta: 1,
   readPosOffset: 0,
@@ -28,6 +33,7 @@ let defaultParams: params = {
   audioInputSetting: PinkNoise,
   inputGain: 1.0,
   outputGain: 0.2,
+  stereo: false,
   q:
     qForBinsPerOctave(
       defaultSize === 120 ? defaultSize / 5 : defaultSize / 10,
@@ -42,6 +48,8 @@ module DecodeParams = {
 
   let params = json =>
     Json.Decode.{
+      width: json |> field("width", int),
+      height: json |> field("height", int),
       readPosDelta: json |> field("readPosDelta", int),
       writePosDelta: json |> field("writePosDelta", int),
       writePosOffset: json |> field("writePosOffset", int),
@@ -54,6 +62,7 @@ module DecodeParams = {
       q: json |> field("q", float),
       transpose: json |> field("transpose", int),
       shouldClear: json |> field("shouldClear", bool),
+      stereo: json |> field("stereo", bool),
       layers: json |> field("layers", list(DecodeLayer.layer)),
     };
 };
@@ -64,6 +73,8 @@ module EncodeParams = {
   let params = r =>
     Json.Encode.(
       object_([
+        ("width", int(r.width)),
+        ("height", int(r.height)),
         ("readPosDelta", int(r.readPosDelta)),
         ("writePosDelta", int(r.writePosDelta)),
         ("readPosOffset", int(r.readPosOffset)),
@@ -75,6 +86,7 @@ module EncodeParams = {
         ("q", float(r.q)),
         ("transpose", int(r.transpose)),
         ("shouldClear", bool(r.shouldClear)),
+        ("stereo", bool(r.stereo)),
         ("layers", list(EncodeLayer.layer, r.layers)),
       ])
     );
@@ -92,8 +104,6 @@ let make =
       ~onSetParams,
       ~getAudio,
       ~saveTick,
-      ~rootWidth,
-      ~rootHeight,
       ~millisPerAudioTick,
       _children,
     ) => {
@@ -132,7 +142,7 @@ let make =
                 label="Read position offset"
                 value=params.readPosOffset
                 min=0
-                max=(rootWidth - 1)
+                max=(params.width - 1)
                 step=1
                 onChange=(
                   readPosOffset => onSetParams({...params, readPosOffset})
@@ -142,7 +152,7 @@ let make =
                 label="Write position offset"
                 value=params.writePosOffset
                 min=0
-                max=(rootWidth - 1)
+                max=(params.width - 1)
                 onChange=(
                   writePosOffset => onSetParams({...params, writePosOffset})
                 )
@@ -153,8 +163,8 @@ let make =
                 onChange=(
                   readPosDelta => onSetParams({...params, readPosDelta})
                 )
-                min=(- rootWidth + 1)
-                max=(rootWidth - 1)
+                min=(- params.width + 1)
+                max=(params.width - 1)
               />
               <IntSlider
                 label="Write position delta"
@@ -162,14 +172,29 @@ let make =
                 onChange=(
                   writePosDelta => onSetParams({...params, writePosDelta})
                 )
-                min=(- rootWidth + 1)
-                max=(rootWidth - 1)
+                min=(- params.width + 1)
+                max=(params.width - 1)
               />
             </FormControl>
             <FormControl component=(`String("fieldset"))>
               <FormLabel component=(`String("legend"))>
                 (ReasonReact.string("Audio"))
               </FormLabel>
+              <FormGroup row=true>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked=(`Bool(params.stereo))
+                      onChange=(
+                        (_evt, value) =>
+                          onSetParams({...params, stereo: value})
+                      )
+                      value="stereo"
+                    />
+                  }
+                  label=(ReasonReact.string("Stereo (red=L, blue=R)"))
+                />
+              </FormGroup>
               <AudioInputSelect
                 audioInputSetting=params.audioInputSetting
                 onChangeSetting=(
@@ -229,8 +254,8 @@ let make =
         layerRefs
         onChangeLayer
         saveTick
-        rootWidth
-        rootHeight
+        rootWidth=params.width
+        rootHeight=params.height
       />
     </div>,
 };

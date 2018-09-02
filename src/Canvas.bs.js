@@ -648,6 +648,32 @@ function command(param) {
                       ]
                     ]
                   ]);
+    case 5 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "DrawImageSourceDest"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "src",
+                        "self"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "srcRect",
+                          rect(param[1])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "destRect",
+                            rect(param[2])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]
+                  ]);
     
   }
 }
@@ -749,6 +775,28 @@ function commandByType(type_, json) {
                                                 ]);
                                       }), (function (param) {
                                         return Json_decode.field("destRect", rect$1, param);
+                                      }), param);
+                        });
+                    }), (function (param) {
+                      return Json_decode.field("src", imgSource$1, param);
+                    }), json);
+    case "DrawImageSourceDest" : 
+        return Json_decode.andThen((function (src) {
+                      return (function (param) {
+                          return Json_decode.andThen((function (srcR) {
+                                        return (function (param) {
+                                            return Json_decode.map((function (destR) {
+                                                          return /* DrawImageSourceDest */Block.__(5, [
+                                                                    src,
+                                                                    srcR,
+                                                                    destR
+                                                                  ]);
+                                                        }), (function (param) {
+                                                          return Json_decode.field("destRect", rect$1, param);
+                                                        }), param);
+                                          });
+                                      }), (function (param) {
+                                        return Json_decode.field("srcRect", rect$1, param);
                                       }), param);
                         });
                     }), (function (param) {
@@ -862,6 +910,11 @@ function drawCommand(ctx, cmd) {
     case 4 : 
         var match$1 = cmd[1];
         ctx.drawImage(ctx.canvas, getLength(ctx, match$1[/* x */0]), getLength(ctx, match$1[/* y */1]), getLength(ctx, match$1[/* w */2]), getLength(ctx, match$1[/* h */3]));
+        return /* () */0;
+    case 5 : 
+        var match$2 = cmd[2];
+        var match$3 = cmd[1];
+        ctx.drawImage(ctx.canvas, getLength(ctx, match$3[/* x */0]), getLength(ctx, match$3[/* y */1]), getLength(ctx, match$3[/* w */2]), getLength(ctx, match$3[/* h */3]), getLength(ctx, match$2[/* x */0]), getLength(ctx, match$2[/* y */1]), getLength(ctx, match$2[/* w */2]), getLength(ctx, match$2[/* h */3]));
         return /* () */0;
     
   }

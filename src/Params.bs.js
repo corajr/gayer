@@ -28,9 +28,11 @@ import * as MaterialUi_ExpansionPanelSummary from "@jsiebern/bs-material-ui/src/
 
 var match = Canvas$Gayer.defaultSize === 120;
 
-var defaultParams_008 = /* q */Audio$Gayer.qForBinsPerOctave(match ? Canvas$Gayer.defaultSize / 5 | 0 : Canvas$Gayer.defaultSize / 10 | 0);
+var defaultParams_010 = /* q */Audio$Gayer.qForBinsPerOctave(match ? Canvas$Gayer.defaultSize / 5 | 0 : Canvas$Gayer.defaultSize / 10 | 0);
 
 var defaultParams = /* record */[
+  /* width */Canvas$Gayer.defaultSize,
+  /* height */Canvas$Gayer.defaultSize,
   /* readPosDelta */1,
   /* writePosDelta */1,
   /* readPosOffset */0,
@@ -39,8 +41,9 @@ var defaultParams = /* record */[
   /* audioInputSetting : PinkNoise */0,
   /* inputGain */1.0,
   /* outputGain */0.2,
-  defaultParams_008,
+  defaultParams_010,
   /* transpose */0,
+  /* stereo */false,
   /* shouldClear */true,
   /* layers : [] */0
 ];
@@ -48,6 +51,8 @@ var defaultParams = /* record */[
 function params(json) {
   var partial_arg = Layer$Gayer.DecodeLayer[/* layer */4];
   return /* record */[
+          /* width */Json_decode.field("width", Json_decode.$$int, json),
+          /* height */Json_decode.field("height", Json_decode.$$int, json),
           /* readPosDelta */Json_decode.field("readPosDelta", Json_decode.$$int, json),
           /* writePosDelta */Json_decode.field("writePosDelta", Json_decode.$$int, json),
           /* readPosOffset */Json_decode.field("readPosOffset", Json_decode.$$int, json),
@@ -58,6 +63,7 @@ function params(json) {
           /* outputGain */Json_decode.field("outputGain", Json_decode.$$float, json),
           /* q */Json_decode.field("q", Json_decode.$$float, json),
           /* transpose */Json_decode.field("transpose", Json_decode.$$int, json),
+          /* stereo */Json_decode.field("stereo", Json_decode.bool, json),
           /* shouldClear */Json_decode.field("shouldClear", Json_decode.bool, json),
           /* layers */Json_decode.field("layers", (function (param) {
                   return Json_decode.list(partial_arg, param);
@@ -70,65 +76,83 @@ var DecodeParams = /* module */[/* params */params];
 function params$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "readPosDelta",
-                r[/* readPosDelta */0]
+                "width",
+                r[/* width */0]
               ],
               /* :: */[
                 /* tuple */[
-                  "writePosDelta",
-                  r[/* writePosDelta */1]
+                  "height",
+                  r[/* height */1]
                 ],
                 /* :: */[
                   /* tuple */[
-                    "readPosOffset",
-                    r[/* readPosOffset */2]
+                    "readPosDelta",
+                    r[/* readPosDelta */2]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "writePosOffset",
-                      r[/* writePosOffset */3]
+                      "writePosDelta",
+                      r[/* writePosDelta */3]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "millisPerTick",
-                        r[/* millisPerTick */4]
+                        "readPosOffset",
+                        r[/* readPosOffset */4]
                       ],
                       /* :: */[
                         /* tuple */[
-                          "audioInputSetting",
-                          Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[/* audioInputSetting */5])
+                          "writePosOffset",
+                          r[/* writePosOffset */5]
                         ],
                         /* :: */[
                           /* tuple */[
-                            "inputGain",
-                            r[/* inputGain */6]
+                            "millisPerTick",
+                            r[/* millisPerTick */6]
                           ],
                           /* :: */[
                             /* tuple */[
-                              "outputGain",
-                              r[/* outputGain */7]
+                              "audioInputSetting",
+                              Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[/* audioInputSetting */7])
                             ],
                             /* :: */[
                               /* tuple */[
-                                "q",
-                                r[/* q */8]
+                                "inputGain",
+                                r[/* inputGain */8]
                               ],
                               /* :: */[
                                 /* tuple */[
-                                  "transpose",
-                                  r[/* transpose */9]
+                                  "outputGain",
+                                  r[/* outputGain */9]
                                 ],
                                 /* :: */[
                                   /* tuple */[
-                                    "shouldClear",
-                                    r[/* shouldClear */10]
+                                    "q",
+                                    r[/* q */10]
                                   ],
                                   /* :: */[
                                     /* tuple */[
-                                      "layers",
-                                      Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */3], r[/* layers */11])
+                                      "transpose",
+                                      r[/* transpose */11]
                                     ],
-                                    /* [] */0
+                                    /* :: */[
+                                      /* tuple */[
+                                        "shouldClear",
+                                        r[/* shouldClear */13]
+                                      ],
+                                      /* :: */[
+                                        /* tuple */[
+                                          "stereo",
+                                          r[/* stereo */12]
+                                        ],
+                                        /* :: */[
+                                          /* tuple */[
+                                            "layers",
+                                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */3], r[/* layers */14])
+                                          ],
+                                          /* [] */0
+                                        ]
+                                      ]
+                                    ]
                                   ]
                                 ]
                               ]
@@ -147,7 +171,7 @@ var EncodeParams = /* module */[/* params */params$1];
 
 var component = ReasonReact.statelessComponent("Params");
 
-function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParams, _, saveTick, rootWidth, rootHeight, _$1, _$2) {
+function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParams, _, saveTick, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -174,85 +198,100 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                               ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Graphics"])),
                                                       ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
                                                                                       737456202,
-                                                                                      params[/* shouldClear */10]
+                                                                                      params[/* shouldClear */13]
                                                                                     ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
                                                                                         return Curry._1(onSetParams, /* record */[
-                                                                                                    /* readPosDelta */params[/* readPosDelta */0],
-                                                                                                    /* writePosDelta */params[/* writePosDelta */1],
-                                                                                                    /* readPosOffset */params[/* readPosOffset */2],
-                                                                                                    /* writePosOffset */params[/* writePosOffset */3],
-                                                                                                    /* millisPerTick */params[/* millisPerTick */4],
-                                                                                                    /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                                                    /* inputGain */params[/* inputGain */6],
-                                                                                                    /* outputGain */params[/* outputGain */7],
-                                                                                                    /* q */params[/* q */8],
-                                                                                                    /* transpose */params[/* transpose */9],
+                                                                                                    /* width */params[/* width */0],
+                                                                                                    /* height */params[/* height */1],
+                                                                                                    /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                    /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                    /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                    /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                    /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                    /* inputGain */params[/* inputGain */8],
+                                                                                                    /* outputGain */params[/* outputGain */9],
+                                                                                                    /* q */params[/* q */10],
+                                                                                                    /* transpose */params[/* transpose */11],
+                                                                                                    /* stereo */params[/* stereo */12],
                                                                                                     /* shouldClear */value,
-                                                                                                    /* layers */params[/* layers */11]
+                                                                                                    /* layers */params[/* layers */14]
                                                                                                   ]);
                                                                                       }), undefined, "shouldClear", undefined, undefined, /* array */[]))), undefined, undefined, "Clear between frames", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, rootWidth - 1 | 0, undefined, "Read position offset", params[/* readPosOffset */2], 1, (function (readPosOffset) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Read position offset", params[/* readPosOffset */4], 1, (function (readPosOffset) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
                                                                               /* readPosOffset */readPosOffset,
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, rootWidth - 1 | 0, undefined, "Write position offset", params[/* writePosOffset */3], undefined, (function (writePosOffset) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Write position offset", params[/* writePosOffset */5], undefined, (function (writePosOffset) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
                                                                               /* writePosOffset */writePosOffset,
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-rootWidth | 0) + 1 | 0, rootWidth - 1 | 0, undefined, "Read position delta", params[/* readPosDelta */0], undefined, (function (readPosDelta) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Read position delta", params[/* readPosDelta */2], undefined, (function (readPosDelta) {
                                                                   return Curry._1(onSetParams, /* record */[
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
                                                                               /* readPosDelta */readPosDelta,
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-rootWidth | 0) + 1 | 0, rootWidth - 1 | 0, undefined, "Write position delta", params[/* writePosDelta */1], undefined, (function (writePosDelta) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Write position delta", params[/* writePosDelta */3], undefined, (function (writePosDelta) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
                                                                               /* writePosDelta */writePosDelta,
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[]))
                                                     ])),
@@ -264,100 +303,140 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                                 -976970511,
                                                                 "legend"
                                                               ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Audio"])),
-                                                      ReasonReact.element(undefined, undefined, AudioInputSelect$Gayer.make(params[/* audioInputSetting */5], (function (audioInputSetting) {
+                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                                      737456202,
+                                                                                      params[/* stereo */12]
+                                                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
+                                                                                        return Curry._1(onSetParams, /* record */[
+                                                                                                    /* width */params[/* width */0],
+                                                                                                    /* height */params[/* height */1],
+                                                                                                    /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                    /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                    /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                    /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                    /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                    /* inputGain */params[/* inputGain */8],
+                                                                                                    /* outputGain */params[/* outputGain */9],
+                                                                                                    /* q */params[/* q */10],
+                                                                                                    /* transpose */params[/* transpose */11],
+                                                                                                    /* stereo */value,
+                                                                                                    /* shouldClear */params[/* shouldClear */13],
+                                                                                                    /* layers */params[/* layers */14]
+                                                                                                  ]);
+                                                                                      }), undefined, "stereo", undefined, undefined, /* array */[]))), undefined, undefined, "Stereo (red=L, blue=R)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                      ReasonReact.element(undefined, undefined, AudioInputSelect$Gayer.make(params[/* audioInputSetting */7], (function (audioInputSetting) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
                                                                               /* audioInputSetting */audioInputSetting,
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */6], undefined, (function (inputGain) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */8], undefined, (function (inputGain) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
                                                                               /* inputGain */inputGain,
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */7], undefined, (function (outputGain) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */9], undefined, (function (outputGain) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
                                                                               /* outputGain */outputGain,
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */8], undefined, (function (q) {
+                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */10], undefined, (function (q) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
                                                                               /* q */q,
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(-119, 119, undefined, "Transpose", params[/* transpose */9], undefined, (function (transpose) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(-119, 119, undefined, "Transpose", params[/* transpose */11], undefined, (function (transpose) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
-                                                                              /* millisPerTick */params[/* millisPerTick */4],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
+                                                                              /* millisPerTick */params[/* millisPerTick */6],
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
                                                                               /* transpose */transpose,
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(10, 100, undefined, "Milliseconds per tick", params[/* millisPerTick */4], undefined, (function (millisPerTick) {
+                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(10, 100, undefined, "Milliseconds per tick", params[/* millisPerTick */6], undefined, (function (millisPerTick) {
                                                                   return Curry._1(onSetParams, /* record */[
-                                                                              /* readPosDelta */params[/* readPosDelta */0],
-                                                                              /* writePosDelta */params[/* writePosDelta */1],
-                                                                              /* readPosOffset */params[/* readPosOffset */2],
-                                                                              /* writePosOffset */params[/* writePosOffset */3],
+                                                                              /* width */params[/* width */0],
+                                                                              /* height */params[/* height */1],
+                                                                              /* readPosDelta */params[/* readPosDelta */2],
+                                                                              /* writePosDelta */params[/* writePosDelta */3],
+                                                                              /* readPosOffset */params[/* readPosOffset */4],
+                                                                              /* writePosOffset */params[/* writePosOffset */5],
                                                                               /* millisPerTick */millisPerTick,
-                                                                              /* audioInputSetting */params[/* audioInputSetting */5],
-                                                                              /* inputGain */params[/* inputGain */6],
-                                                                              /* outputGain */params[/* outputGain */7],
-                                                                              /* q */params[/* q */8],
-                                                                              /* transpose */params[/* transpose */9],
-                                                                              /* shouldClear */params[/* shouldClear */10],
-                                                                              /* layers */params[/* layers */11]
+                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                              /* inputGain */params[/* inputGain */8],
+                                                                              /* outputGain */params[/* outputGain */9],
+                                                                              /* q */params[/* q */10],
+                                                                              /* transpose */params[/* transpose */11],
+                                                                              /* stereo */params[/* stereo */12],
+                                                                              /* shouldClear */params[/* shouldClear */13],
+                                                                              /* layers */params[/* layers */14]
                                                                             ]);
                                                                 }), /* array */[]))
                                                     ]))
@@ -368,7 +447,7 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                 /* id */id,
                                                 /* layer */layer
                                               ];
-                                      }), params[/* layers */11]), onMoveCard, onChangeLayer, onSetRef, layerRefs, rootWidth, rootHeight, saveTick, /* array */[])));
+                                      }), params[/* layers */14]), onMoveCard, onChangeLayer, onSetRef, layerRefs, params[/* width */0], params[/* height */1], saveTick, /* array */[])));
             }),
           /* initialState */component[/* initialState */10],
           /* retainedProps */component[/* retainedProps */11],

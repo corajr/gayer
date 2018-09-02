@@ -6,59 +6,12 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
-import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
-
-function renderLayerContent(key, getAudio, setRef, setTick, millisPerTick, _, height, layerContent) {
-  var tmp;
-  if (typeof layerContent === "number") {
-    tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(setRef, /* array */[]));
-  } else {
-    switch (layerContent.tag | 0) {
-      case 2 : 
-          tmp = React.createElement("video", {
-                ref: setRef,
-                autoPlay: true,
-                height: "120",
-                muted: true,
-                width: "120"
-              });
-          break;
-      case 3 : 
-          tmp = React.createElement("img", {
-                ref: setRef,
-                height: "120",
-                src: layerContent[0],
-                width: "120"
-              });
-          break;
-      case 4 : 
-          tmp = React.createElement("video", {
-                ref: setRef,
-                autoPlay: true,
-                height: "120",
-                loop: true,
-                muted: true,
-                src: layerContent[0],
-                width: "120"
-              });
-          break;
-      case 5 : 
-          var match = Curry._1(getAudio, layerContent[0]);
-          tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, match[0], match[1], millisPerTick, setRef, setTick, /* array */[]));
-          break;
-      default:
-        tmp = null;
-    }
-  }
-  return React.createElement("div", {
-              key: key
-            }, tmp);
-}
+import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
+import * as LayerContent$Gayer from "./LayerContent.bs.js";
 
 var component = ReasonReact.statelessComponent("MediaProvider");
 
-function make(layers, rootWidth, rootHeight, onSetRef, getAudio, saveTick, millisPerAudioTick, _) {
+function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, audioCtx, saveTick, millisPerAudioTick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -76,7 +29,23 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, saveTick, milli
                             visibility: "hidden"
                           }
                         }, $$Array.of_list(List.map((function (layer) {
-                                    return renderLayerContent(JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0])), getAudio, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0]);
+                                    var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
+                                    var match = layer[/* content */0];
+                                    if (typeof match !== "number") {
+                                      if (match.tag === 5) {
+                                        var match$1 = Curry._1(getAudio, match[0]);
+                                        var maybeInput = match$1[1];
+                                        if (maybeInput !== undefined) {
+                                          audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
+                                                    key + "input",
+                                                    maybeInput
+                                                  ], audioGraph[0]));
+                                        }
+                                        
+                                      }
+                                      
+                                    }
+                                    return ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[]));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],
@@ -88,7 +57,6 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, saveTick, milli
 }
 
 export {
-  renderLayerContent ,
   component ,
   make ,
   
