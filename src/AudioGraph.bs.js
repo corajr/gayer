@@ -43,16 +43,20 @@ function addNode(param, graph) {
         ];
 }
 
+function partitionEdgesWithNode(key, edgeSet) {
+  return Belt_Set.partition(edgeSet, (function (param) {
+                if (key === param[0]) {
+                  return true;
+                } else {
+                  return key === param[1];
+                }
+              }));
+}
+
 function removeAllEdgesInvolvingNode(key, graph) {
   return /* record */[
           /* nodes */graph[/* nodes */0],
-          /* edges */Belt_Set.keep(graph[/* edges */1], (function (param) {
-                  if (key !== param[0]) {
-                    return key !== param[1];
-                  } else {
-                    return false;
-                  }
-                })),
+          /* edges */partitionEdgesWithNode(key, graph[/* edges */1])[1],
           /* actuallyConnectedEdges */graph[/* actuallyConnectedEdges */2]
         ];
 }
@@ -100,16 +104,20 @@ function maybeApplyToGraph(f, param, graph) {
   
 }
 
+function disconnectEdges(edgesToDisconnect, graph) {
+  return Belt_Set.forEach(edgesToDisconnect, (function (edge) {
+                maybeApplyToGraph((function (prim, prim$1, prim$2, prim$3) {
+                        prim.disconnect(prim$1, prim$2, prim$3);
+                        return /* () */0;
+                      }), edge, graph);
+                return /* () */0;
+              }));
+}
+
 function updateConnections(graph) {
   var edgesToConnect = Belt_Set.diff(graph[/* edges */1], graph[/* actuallyConnectedEdges */2]);
   var edgesToDisconnect = Belt_Set.diff(graph[/* actuallyConnectedEdges */2], graph[/* edges */1]);
-  Belt_Set.forEach(edgesToDisconnect, (function (edge) {
-          maybeApplyToGraph((function (prim, prim$1, prim$2, prim$3) {
-                  prim.disconnect(prim$1, prim$2, prim$3);
-                  return /* () */0;
-                }), edge, graph);
-          return /* () */0;
-        }));
+  disconnectEdges(edgesToDisconnect, graph);
   var nowConnected = Belt_Set.reduce(edgesToConnect, emptyEdgeSet, (function (acc, edge) {
           var match = maybeApplyToGraph((function (prim, prim$1, prim$2, prim$3) {
                   prim.connect(prim$1, prim$2, prim$3);
@@ -128,17 +136,31 @@ function updateConnections(graph) {
         ];
 }
 
+function replaceNode(key, newNode, graph) {
+  var match = partitionEdgesWithNode(key, graph[/* actuallyConnectedEdges */2]);
+  disconnectEdges(match[0], graph);
+  var newNodes = Belt_MapString.set(graph[/* nodes */0], key, newNode);
+  return /* record */[
+          /* nodes */newNodes,
+          /* edges */graph[/* edges */1],
+          /* actuallyConnectedEdges */match[1]
+        ];
+}
+
 export {
   EdgeComparator ,
   emptyEdgeSet ,
   emptyAudioGraph ,
   addNode ,
+  partitionEdgesWithNode ,
   removeAllEdgesInvolvingNode ,
   removeNode ,
   addEdge ,
   removeEdge ,
   maybeApplyToGraph ,
+  disconnectEdges ,
   updateConnections ,
+  replaceNode ,
   
 }
 /* EdgeComparator Not a pure module */

@@ -49,12 +49,16 @@ let addNode =
   nodes: Belt.Map.String.set(graph.nodes, key, node),
 };
 
+let partitionEdgesWithNode =
+    (key: nodeId, edgeSet: edgeSet)
+    : (edgeSet, edgeSet) =>
+  Belt.Set.partition(edgeSet, ((sourceId, targetId, _, _)) =>
+    key == sourceId || key == targetId
+  );
+
 let removeAllEdgesInvolvingNode = (key: nodeId, graph: audioGraph) => {
   ...graph,
-  edges:
-    Belt.Set.keep(graph.edges, ((sourceId, targetId, _, _)) =>
-      key != sourceId && key != targetId
-    ),
+  edges: snd(partitionEdgesWithNode(key, graph.edges)),
 };
 
 let removeNode = (key: nodeId, graph: audioGraph) : audioGraph => {
@@ -90,13 +94,7 @@ let maybeApplyToGraph =
   };
 };
 
-let updateConnections = (graph: audioGraph) : audioGraph => {
-  let edgesToConnect =
-    Belt.Set.diff(graph.edges, graph.actuallyConnectedEdges);
-
-  let edgesToDisconnect =
-    Belt.Set.diff(graph.actuallyConnectedEdges, graph.edges);
-
+let disconnectEdges = (edgesToDisconnect: edgeSet, graph) =>
   Belt.Set.forEach(
     edgesToDisconnect,
     edge => {
@@ -104,6 +102,15 @@ let updateConnections = (graph: audioGraph) : audioGraph => {
       ();
     },
   );
+
+let updateConnections = (graph: audioGraph) : audioGraph => {
+  let edgesToConnect =
+    Belt.Set.diff(graph.edges, graph.actuallyConnectedEdges);
+
+  let edgesToDisconnect =
+    Belt.Set.diff(graph.actuallyConnectedEdges, graph.edges);
+
+  disconnectEdges(edgesToDisconnect, graph);
 
   let nowConnected =
     Belt.Set.reduce(edgesToConnect, emptyEdgeSet, (acc, edge) =>
@@ -114,4 +121,16 @@ let updateConnections = (graph: audioGraph) : audioGraph => {
     );
 
   {...graph, actuallyConnectedEdges: nowConnected};
+};
+
+let replaceNode =
+    (key: nodeId, newNode: audioNode, graph: audioGraph)
+    : audioGraph => {
+  let (actualEdgesWithNode, actualEdgesWithoutNode) =
+    partitionEdgesWithNode(key, graph.actuallyConnectedEdges);
+
+  disconnectEdges(actualEdgesWithNode, graph);
+
+  let newNodes = Belt.Map.String.set(graph.nodes, key, newNode);
+  {...graph, nodes: newNodes, actuallyConnectedEdges: actualEdgesWithoutNode};
 };
