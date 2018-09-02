@@ -788,7 +788,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                           ]);
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
-                                                              }), (function (key, tickFn) {
+                                                              }), self[/* state */1][/* audioGraph */9], audioCtx, (function (key, tickFn) {
                                                                 self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], key, tickFn);
                                                                 return /* () */0;
                                                               }), 16, /* array */[]))),

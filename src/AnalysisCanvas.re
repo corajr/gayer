@@ -1,4 +1,5 @@
 open Audio;
+open AudioGraph;
 open Canvas;
 open Timing;
 
@@ -28,7 +29,16 @@ let drawCQTBar = (canvasRenderingContext2D, state) => {
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
 let make =
-    (~size, ~audioCtx, ~input, ~millisPerTick, ~saveRef, ~saveTick, _children) => {
+    (
+      ~size,
+      ~layerKey,
+      ~audioCtx,
+      ~audioGraph,
+      ~input,
+      ~millisPerTick,
+      ~saveRef,
+      _children,
+    ) => {
   let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     saveRef(theRef);
@@ -72,16 +82,20 @@ let make =
       };
     },
     didMount: self => {
-      switch (input) {
-      | None => ()
-      | Some(inputNode) => connect(inputNode, self.state.stereoPanner^)
-      };
+      audioGraph :=
+        audioGraph^
+        |> addNode((layerKey, unwrapStereoPanner(self.state.stereoPanner^)))
+        |> addEdge((layerKey ++ "input", layerKey, 0, 0))
+        |> updateConnections;
+
       self.onUnmount(() =>
-        switch (input) {
-        | None => ()
-        | Some(inputNode) => disconnect(inputNode, self.state.stereoPanner^)
-        }
+        audioGraph :=
+          audioGraph^
+          |> removeNode(layerKey)
+          |> removeAllEdgesInvolvingNode(layerKey)
+          |> updateConnections
       );
+
       setTimer(
         self.state.timerId,
         () =>

@@ -864,6 +864,8 @@ let make =
                   )
                 />
                 <MediaProvider
+                  audioCtx
+                  audioGraph=self.state.audioGraph
                   getAudio=(getAnalysisInput(audioCtx, self.state))
                   onSetRef=(
                     (layer, theRef) =>

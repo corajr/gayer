@@ -1,68 +1,7 @@
 open Audio;
+open AudioGraph;
 open Canvas;
 open Layer;
-
-let renderLayerContent =
-    (
-      key,
-      getAudio,
-      setRef,
-      setTick,
-      millisPerTick,
-      width,
-      height,
-      layerContent,
-    ) =>
-  <div key>
-    (
-      switch (layerContent) {
-      | Webcam(_) =>
-        <video
-          ref=setRef
-          autoPlay=true
-          muted=true
-          width="120"
-          height="120"
-          /* width=(Js.Int.toString(width)) */
-          /* height=(Js.Int.toString(height)) */
-        />
-      | Image(url) =>
-        <img
-          ref=setRef
-          src=url
-          width="120"
-          height="120"
-          /* width=(Js.Int.toString(width)) */
-          /* height=(Js.Int.toString(height)) */
-        />
-      | Video(url) =>
-        <video
-          ref=setRef
-          src=url
-          width="120"
-          height="120"
-          autoPlay=true
-          loop=true
-          muted=true
-        />
-      | Analysis(source) =>
-        let (audioCtx, input) = getAudio(source);
-        <AnalysisCanvas
-          size=height
-          audioCtx
-          input
-          millisPerTick
-          saveRef=setRef
-          saveTick=setTick
-        />;
-      | MIDIKeyboard => <MIDICanvas saveRef=setRef />
-      | Draw(_)
-      | PitchClasses(_)
-      | Fill(_)
-      | Reader(_) => ReasonReact.null
-      }
-    )
-  </div>;
 
 let component = ReasonReact.statelessComponent("MediaProvider");
 
@@ -73,6 +12,8 @@ let make =
       ~rootHeight,
       ~onSetRef,
       ~getAudio,
+      ~audioGraph,
+      ~audioCtx,
       ~saveTick,
       ~millisPerAudioTick,
       _children,
@@ -85,17 +26,36 @@ let make =
       )>
       (
         List.map(
-          layer =>
-            renderLayerContent(
-              Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
-              getAudio,
-              onSetRef(layer),
-              saveTick,
-              millisPerAudioTick,
-              rootWidth,
-              rootHeight,
-              layer.content,
-            ),
+          layer => {
+            let key =
+              Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+            switch (layer.content) {
+            | Analysis(source) =>
+              let (_, maybeInput) = getAudio(source);
+              switch (maybeInput) {
+              | Some(input) =>
+                audioGraph :=
+                  audioGraph^
+                  |> addNode((key ++ "input", input))
+                  |> updateConnections
+              | None => ()
+              };
+              ();
+            | _ => ()
+            };
+
+            <LayerContent
+              audioCtx
+              audioGraph
+              layerKey=key
+              setRef=(onSetRef(layer))
+              saveTick
+              millisPerTick=millisPerAudioTick
+              width=rootWidth
+              height=rootHeight
+              layerContent=layer.content
+            />;
+          },
           layers,
         )
         |> Array.of_list

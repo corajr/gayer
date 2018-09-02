@@ -139,6 +139,7 @@ external unwrapFilter : biquadFilter => audioNode = "%identity";
 external unwrapGain : gainNode => audioNode = "%identity";
 external unwrapCompressor : compressor => audioNode = "%identity";
 external unwrapChannelMerger : channelMerger => audioNode = "%identity";
+external unwrapStereoPanner : stereoPanner => audioNode = "%identity";
 
 type bank('a) = {
   input: option(gainNode),

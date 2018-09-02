@@ -8,6 +8,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
+import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 
 function drawCQTBar(canvasRenderingContext2D, state) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
@@ -24,7 +25,7 @@ function drawCQTBar(canvasRenderingContext2D, state) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
+function make(size, layerKey, audioCtx, audioGraph, _, millisPerTick, saveRef, _$1) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     return Curry._1(saveRef, theRef);
@@ -35,16 +36,18 @@ function make(size, audioCtx, input, millisPerTick, saveRef, _, _$1) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              if (input !== undefined) {
-                Js_primitive.valFromOption(input).connect(self[/* state */1][/* stereoPanner */3][0]);
-              }
+              audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addEdge(/* tuple */[
+                        layerKey + "input",
+                        layerKey,
+                        0,
+                        0
+                      ], AudioGraph$Gayer.addNode(/* tuple */[
+                            layerKey,
+                            self[/* state */1][/* stereoPanner */3][0]
+                          ], audioGraph[0])));
               Curry._1(self[/* onUnmount */4], (function () {
-                      if (input !== undefined) {
-                        Js_primitive.valFromOption(input).disconnect(self[/* state */1][/* stereoPanner */3][0]);
-                        return /* () */0;
-                      } else {
-                        return /* () */0;
-                      }
+                      audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
+                      return /* () */0;
                     }));
               Timing$Gayer.setTimer(self[/* state */1][/* timerId */6], (function () {
                       var match = self[/* state */1][/* canvasRef */5][0];
