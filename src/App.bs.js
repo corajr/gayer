@@ -73,11 +73,9 @@ var defaultState_018 = /* loadedAudio : record */[/* contents */Belt_MapString.e
 
 var defaultState_019 = /* canvasRef : record */[/* contents */undefined];
 
-var defaultState_020 = /* scaleCanvas */480.0 / Presets$Gayer.defaultSize;
+var defaultState_021 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_022 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
-
-var defaultState_023 = /* timerId : record */[/* contents */undefined];
+var defaultState_022 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -100,10 +98,9 @@ var defaultState = /* record */[
   /* savedImages : [] */0,
   defaultState_018,
   defaultState_019,
-  defaultState_020,
   /* fullscreenCanvas */false,
-  defaultState_022,
-  defaultState_023
+  defaultState_021,
+  defaultState_022
 ];
 
 function setCanvasRef(theRef, param) {
@@ -333,17 +330,20 @@ function pushParamsState(newParams) {
 
 function setLayers(params, newLayers) {
   return pushParamsState(/* record */[
-              /* readPosDelta */params[/* readPosDelta */0],
-              /* writePosDelta */params[/* writePosDelta */1],
-              /* readPosOffset */params[/* readPosOffset */2],
-              /* writePosOffset */params[/* writePosOffset */3],
-              /* millisPerTick */params[/* millisPerTick */4],
-              /* audioInputSetting */params[/* audioInputSetting */5],
-              /* inputGain */params[/* inputGain */6],
-              /* outputGain */params[/* outputGain */7],
-              /* q */params[/* q */8],
-              /* transpose */params[/* transpose */9],
-              /* shouldClear */params[/* shouldClear */10],
+              /* width */params[/* width */0],
+              /* height */params[/* height */1],
+              /* readPosDelta */params[/* readPosDelta */2],
+              /* writePosDelta */params[/* writePosDelta */3],
+              /* readPosOffset */params[/* readPosOffset */4],
+              /* writePosOffset */params[/* writePosOffset */5],
+              /* millisPerTick */params[/* millisPerTick */6],
+              /* audioInputSetting */params[/* audioInputSetting */7],
+              /* inputGain */params[/* inputGain */8],
+              /* outputGain */params[/* outputGain */9],
+              /* q */params[/* q */10],
+              /* transpose */params[/* transpose */11],
+              /* stereo */params[/* stereo */12],
+              /* shouldClear */params[/* shouldClear */13],
               /* layers */newLayers
             ]);
 }
@@ -360,7 +360,7 @@ function drawLayer(ctx, width, height, state, layer) {
   var exit = 0;
   if (typeof match === "number") {
     if (maybeLayerRef !== undefined) {
-      var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
+      var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
       ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
     }
     return undefined;
@@ -379,7 +379,7 @@ function drawLayer(ctx, width, height, state, layer) {
           if (match$1 !== undefined) {
             var input = Js_primitive.valFromOption(match$1);
             if (match$2 !== undefined) {
-              var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
+              var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
               ctx.drawImage(input, match$2[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
             } else {
               ctx.drawImage(input, 0, 0, width, height);
@@ -392,7 +392,7 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
-            var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */3] | 0, 0, width);
+            var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x$1, 0, 1, height);
           }
           return undefined;
@@ -412,7 +412,7 @@ function drawLayer(ctx, width, height, state, layer) {
           return undefined;
       case 7 : 
           var channel = match[0];
-          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */2] | 0, 0, width);
+          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var tmp;
           switch (channel) {
@@ -454,7 +454,7 @@ function drawLayer(ctx, width, height, state, layer) {
 }
 
 function drawCanvas(canvasElement, width, height, state) {
-  if (state[/* params */6][/* shouldClear */10]) {
+  if (state[/* params */6][/* shouldClear */13]) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
@@ -465,7 +465,7 @@ function drawCanvas(canvasElement, width, height, state) {
                 } else {
                   return acc;
                 }
-              }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */11]);
+              }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */14]);
 }
 
 function getAnalysisInput(audioCtx, state, audioInput) {
@@ -524,10 +524,31 @@ function sortLayers(param) {
               }), param);
 }
 
-function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
-  var width = $staropt$star !== undefined ? $staropt$star : Presets$Gayer.defaultSize;
-  var height = $staropt$star$1 !== undefined ? $staropt$star$1 : Presets$Gayer.defaultSize;
-  var audioCtx = $staropt$star$2 !== undefined ? Js_primitive.valFromOption($staropt$star$2) : Curry._1(Audio$Gayer.makeDefaultAudioCtx, /* () */0);
+function generateNewFilterBanks(audioCtx, param) {
+  var send = param[/* send */3];
+  var state = param[/* state */1];
+  console.log("regenerating filter banks (costly!)");
+  var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(state[/* params */6][/* height */1]);
+  state[/* freqFuncParams */4][0] = /* tuple */[
+    pixelsPerSemitone,
+    16
+  ];
+  var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + state[/* params */6][/* transpose */11] | 0, state[/* params */6][/* height */1]);
+  if (state[/* params */6][/* stereo */12]) {
+    var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
+    var filterBankR = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
+    return Curry._1(send, /* SetFilterBanks */Block.__(5, [/* StereoBanks */Block.__(1, [
+                      filterBankL,
+                      filterBankR
+                    ])]));
+  } else {
+    var filterBank = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
+    return Curry._1(send, /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBank])]));
+  }
+}
+
+function make($staropt$star, _) {
+  var audioCtx = $staropt$star !== undefined ? Js_primitive.valFromOption($staropt$star) : Curry._1(Audio$Gayer.makeDefaultAudioCtx, /* () */0);
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -560,15 +581,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                         "merger",
                                         merger
                                       ], self[/* state */1][/* audioGraph */9][0]))))));
-              var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
-              self[/* state */1][/* freqFuncParams */4][0] = /* tuple */[
-                pixelsPerSemitone,
-                16
-              ];
-              var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + self[/* state */1][/* params */6][/* transpose */9] | 0, height);
-              var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
-              Audio$Gayer.makeFilterBank(audioCtx, height, Audio$Gayer.defaultQ, freqFunc);
-              Curry._1(self[/* send */3], /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBankL])]));
+              generateNewFilterBanks(audioCtx, self);
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match !== undefined) {
                 Js_primitive.valFromOption(match).then((function (stream) {
@@ -582,21 +595,21 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               var sendTickFn = function () {
                 return Curry._1(self[/* send */3], /* Tick */1);
               };
-              self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], "master", sendTickFn);
+              self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], "master", sendTickFn);
               var animationFn = function () {
                 $$Array.iter((function (f) {
                         return Curry._1(f, /* () */0);
-                      }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */22][0]));
+                      }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */21][0]));
                 window.requestAnimationFrame(animationFn);
                 return /* () */0;
               };
-              Timing$Gayer.setTimer(self[/* state */1][/* timerId */23], (function () {
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */22], (function () {
                       return $$Array.iter((function (f) {
                                     return Curry._1(f, /* () */0);
-                                  }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */22][0]));
-                    }), self[/* state */1][/* params */6][/* millisPerTick */4]);
+                                  }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */21][0]));
+                    }), self[/* state */1][/* params */6][/* millisPerTick */6]);
               Curry._1(self[/* onUnmount */4], (function () {
-                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */23]);
+                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */22]);
                     }));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
                       var hash = decodeURIComponent(url[/* hash */1]);
@@ -630,49 +643,34 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
               if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterInput */5], newSelf[/* state */1][/* filterInput */5]) || Caml_obj.caml_notequal(oldSelf[/* state */1][/* filterBanks */13], newSelf[/* state */1][/* filterBanks */13])) {
                 disconnectInputs(oldSelf[/* state */1]);
               }
-              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */6][/* audioInputSetting */5], newSelf[/* state */1][/* params */6][/* audioInputSetting */5])) {
-                var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */6][/* audioInputSetting */5]);
+              if (Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */6][/* audioInputSetting */7], newSelf[/* state */1][/* params */6][/* audioInputSetting */7])) {
+                var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */6][/* audioInputSetting */7]);
                 var audio = match[1];
                 if (audio !== undefined) {
                   Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(2, [audio]));
                 }
                 
               }
-              var layersChanged = Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */6][/* layers */11], newSelf[/* state */1][/* params */6][/* layers */11]);
-              if (layersChanged || oldSelf[/* state */1][/* params */6][/* readPosOffset */2] !== newSelf[/* state */1][/* params */6][/* readPosOffset */2] || oldSelf[/* state */1][/* params */6][/* writePosOffset */3] !== newSelf[/* state */1][/* params */6][/* readPosOffset */2]) {
+              var layersChanged = Caml_obj.caml_notequal(oldSelf[/* state */1][/* params */6][/* layers */14], newSelf[/* state */1][/* params */6][/* layers */14]);
+              if (layersChanged || oldSelf[/* state */1][/* params */6][/* readPosOffset */4] !== newSelf[/* state */1][/* params */6][/* readPosOffset */4] || oldSelf[/* state */1][/* params */6][/* writePosOffset */5] !== newSelf[/* state */1][/* params */6][/* readPosOffset */4]) {
                 newSelf[/* state */1][/* readPos */2][0] = 0;
                 newSelf[/* state */1][/* writePos */3][0] = 0;
               }
-              if (oldSelf[/* state */1][/* params */6][/* q */8] !== newSelf[/* state */1][/* params */6][/* q */8] || oldSelf[/* state */1][/* params */6][/* transpose */9] !== newSelf[/* state */1][/* params */6][/* transpose */9]) {
-                var match$1 = newSelf[/* state */1][/* freqFuncParams */4][0];
-                var freqFunc = Audio$Gayer.yToFrequency(match$1[0], match$1[1] + newSelf[/* state */1][/* params */6][/* transpose */9] | 0, height);
-                var updateFn = function (filterBank) {
-                  return Audio$Gayer.updateFilterBankDefinition(filterBank, freqFunc, newSelf[/* state */1][/* params */6][/* q */8]);
-                };
-                var match$2 = newSelf[/* state */1][/* filterBanks */13];
-                if (match$2 !== undefined) {
-                  var match$3 = match$2;
-                  if (match$3.tag) {
-                    updateFn(match$3[0]);
-                    updateFn(match$3[1]);
-                  } else {
-                    updateFn(match$3[0]);
-                  }
-                }
-                
+              if (oldSelf[/* state */1][/* params */6][/* q */10] !== newSelf[/* state */1][/* params */6][/* q */10] || oldSelf[/* state */1][/* params */6][/* transpose */11] !== newSelf[/* state */1][/* params */6][/* transpose */11] || oldSelf[/* state */1][/* params */6][/* stereo */12] !== newSelf[/* state */1][/* params */6][/* stereo */12] || oldSelf[/* state */1][/* params */6][/* height */1] !== newSelf[/* state */1][/* params */6][/* height */1]) {
+                generateNewFilterBanks(audioCtx, newSelf);
               }
-              if (oldSelf[/* state */1][/* params */6][/* millisPerTick */4] !== newSelf[/* state */1][/* params */6][/* millisPerTick */4]) {
-                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */23], (function () {
+              if (oldSelf[/* state */1][/* params */6][/* millisPerTick */6] !== newSelf[/* state */1][/* params */6][/* millisPerTick */6]) {
+                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */22], (function () {
                         return $$Array.iter((function (f) {
                                       return Curry._1(f, /* () */0);
-                                    }), Belt_MapString.valuesToArray(newSelf[/* state */1][/* tickFunctions */22][0]));
-                      }), newSelf[/* state */1][/* params */6][/* millisPerTick */4]);
+                                    }), Belt_MapString.valuesToArray(newSelf[/* state */1][/* tickFunctions */21][0]));
+                      }), newSelf[/* state */1][/* params */6][/* millisPerTick */6]);
               }
-              if (oldSelf[/* state */1][/* fullscreenCanvas */21] !== newSelf[/* state */1][/* fullscreenCanvas */21]) {
-                if (newSelf[/* state */1][/* fullscreenCanvas */21]) {
-                  var match$4 = newSelf[/* state */1][/* canvasRef */19][0];
-                  if (match$4 !== undefined) {
-                    Fscreen.requestFullscreen(Js_primitive.valFromOption(match$4));
+              if (oldSelf[/* state */1][/* fullscreenCanvas */20] !== newSelf[/* state */1][/* fullscreenCanvas */20]) {
+                if (newSelf[/* state */1][/* fullscreenCanvas */20]) {
+                  var match$1 = newSelf[/* state */1][/* canvasRef */19][0];
+                  if (match$1 !== undefined) {
+                    Fscreen.requestFullscreen(Js_primitive.valFromOption(match$1));
                     return /* () */0;
                   } else {
                     return /* () */0;
@@ -692,8 +690,6 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               var partial_arg = self[/* state */1];
-              var match = self[/* state */1][/* scaleCanvas */20];
-              var match$1 = self[/* state */1][/* scaleCanvas */20];
               var partial_arg$1 = self[/* state */1];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
@@ -751,35 +747,33 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                                         theRef
                                                                       ]);
                                                           }), self[/* state */1][/* layerRefs */16], (function (oldLayer, newLayer) {
-                                                            return setLayers(self[/* state */1][/* params */6], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */6][/* layers */11]));
+                                                            return setLayers(self[/* state */1][/* params */6], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */6][/* layers */14]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
                                                           }), (function (key, tickFn) {
-                                                            self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], key, tickFn);
+                                                            self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], key, tickFn);
                                                             return /* () */0;
-                                                          }), width, height, 16, /* array */[]))])),
+                                                          }), 16, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
                                                       id: "main-display",
                                                       style: {
                                                         marginBottom: "24px",
-                                                        minHeight: (
-                                                            match !== undefined ? height * match : height
-                                                          ).toString() + "px"
+                                                        minHeight: "480px"
                                                       }
                                                     }, React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
-                                                          style: match$1 !== undefined ? ({
-                                                                transform: "scale(" + (match$1.toString() + ")"),
-                                                                transformOrigin: "top left"
-                                                              }) : { },
-                                                          height: height.toString(),
-                                                          width: width.toString(),
+                                                          style: {
+                                                            transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
+                                                            transformOrigin: "top left"
+                                                          },
+                                                          height: self[/* state */1][/* params */6][/* height */1].toString(),
+                                                          width: self[/* state */1][/* params */6][/* width */0].toString(),
                                                           onClick: (function (evt) {
                                                               console.log(evt);
                                                               return /* () */0;
                                                             })
-                                                        }), ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */11]), width, height, (function (layer, theRef) {
+                                                        }), ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */14]), self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], (function (layer, theRef) {
                                                                 return Curry._2(self[/* handle */0], (function (param, param$1) {
                                                                               return setLayerRef(audioCtx, param, param$1);
                                                                             }), /* tuple */[
@@ -789,7 +783,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
                                                               }), self[/* state */1][/* audioGraph */9], audioCtx, (function (key, tickFn) {
-                                                                self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], key, tickFn);
+                                                                self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], key, tickFn);
                                                                 return /* () */0;
                                                               }), 16, /* array */[]))),
                                                 React.createElement("div", undefined, React.createElement("div", {
@@ -820,17 +814,17 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                   case 0 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     return maybeUpdateCanvas(self[/* state */1][/* canvasRef */19], (function (canvas) {
-                                                  return clearCanvas(canvas, width, height);
+                                                  return clearCanvas(canvas, self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1]);
                                                 }));
                                   })]);
                   case 1 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    self[/* state */1][/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */0], width);
-                                    self[/* state */1][/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */1], width);
+                                    self[/* state */1][/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */2], self[/* state */1][/* params */6][/* width */0]);
+                                    self[/* state */1][/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */3], self[/* state */1][/* params */6][/* width */0]);
                                     return maybeUpdateCanvas(self[/* state */1][/* canvasRef */19], (function (canvas) {
-                                                  var filterValues = drawCanvas(canvas, width, height, state);
+                                                  var filterValues = drawCanvas(canvas, self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], state);
                                                   var updateBank = function (values, filterBank) {
-                                                    return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */6], state[/* params */6][/* outputGain */7], filterBank, values);
+                                                    return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */8], state[/* params */6][/* outputGain */9], filterBank, values);
                                                   };
                                                   var match = self[/* state */1][/* filterBanks */13];
                                                   if (match !== undefined) {
@@ -873,7 +867,7 @@ function make($staropt$star, $staropt$star$1, $staropt$star$2, _) {
                                   })]);
                   case 4 : 
                       var newrecord$1 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */21] = !state[/* fullscreenCanvas */21], newrecord$1)]);
+                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */20] = !state[/* fullscreenCanvas */20], newrecord$1)]);
                   
                 }
               } else {
@@ -949,6 +943,7 @@ export {
   getAnalysisInput ,
   makeAudioElt ,
   sortLayers ,
+  generateNewFilterBanks ,
   make ,
   
 }
