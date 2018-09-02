@@ -540,7 +540,7 @@ let make =
       |> updateConnections;
 
     let pixelsPerSemitone = binsPerSemitone(height);
-    let defaultTranspose = 15;
+    let defaultTranspose = 16;
     self.state.freqFuncParams := (pixelsPerSemitone, defaultTranspose);
     let freqFunc =
       yToFrequency(
