@@ -80,6 +80,8 @@ type action =
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
   | SetFilterBanks(filterBanks)
+  | ChangeLayer(layer, layer)
+  | SetLayers(list(layer))
   | SetParams(params);
 
 [@bs.val] external decodeURIComponent : string => string = "";
@@ -208,9 +210,6 @@ let pushParamsState = newParams => {
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
-let setLayers = (params, newLayers) =>
-  pushParamsState({...params, layers: newLayers});
-
 let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
@@ -269,11 +268,19 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
       };
       None;
     | Webcam(opts) =>
+      let cameraWidth = 640;
+      let cameraHeight = 480;
+
+      let cameraWidthToCanvasWidth =
+        float_of_int(cameraWidth) /. float_of_int(width);
+      let cameraHeightToCanvasHeight =
+        float_of_int(cameraHeight) /. float_of_int(height);
+
       switch (state.cameraInput^, opts.slitscan) {
       | (None, _) => ()
       | (Some(input), None) =>
         Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-      | (Some(input), Some({x: xToRead})) =>
+      | (Some(input), Some(StaticX(xToRead))) =>
         let xToWrite =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
         Ctx.drawImageSourceRectDestRect(
@@ -282,11 +289,67 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           xToRead,
           0,
           1,
-          480,
+          cameraHeight,
           xToWrite,
           0,
           1,
           height,
+        );
+      | (Some(input), Some(ReadPosX)) =>
+        let xToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        let xToReadCamera =
+          int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
+        Ctx.drawImageSourceRectDestRect(
+          ctx,
+          input,
+          xToReadCamera,
+          0,
+          int_of_float(cameraWidthToCanvasWidth),
+          cameraHeight,
+          xToWrite,
+          0,
+          1,
+          height,
+        );
+      | (Some(input), Some(ReadPosY)) =>
+        let yToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
+
+        let yToRead =
+          int_of_float(float_of_int(yToWrite) *. cameraHeightToCanvasHeight);
+
+        Ctx.drawImageSourceRectDestRect(
+          ctx,
+          input,
+          0,
+          yToRead,
+          cameraWidth,
+          int_of_float(cameraHeightToCanvasHeight),
+          0,
+          yToWrite,
+          width,
+          1,
+        );
+      | (Some(input), Some(StaticY(yToRead))) =>
+        /* TODO: fix this :( */
+        let yToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
+
+        let yToReadCamera =
+          int_of_float(float_of_int(yToRead) *. cameraHeightToCanvasHeight);
+
+        Ctx.drawImageSourceRectDestRect(
+          ctx,
+          input,
+          0,
+          yToReadCamera,
+          cameraWidth,
+          int_of_float(cameraHeightToCanvasHeight),
+          0,
+          yToWrite,
+          width,
+          1,
         );
       };
       None;
@@ -367,6 +430,7 @@ let getAnalysisInput:
         },
       )
     | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
+    | WhiteNoise => (audioCtx, Some(whiteNoise(audioCtx)))
     | Mic => (audioCtx, state.micInput)
     };
 
@@ -400,19 +464,35 @@ let generateNewFilterBanks =
       state.params.height,
     );
 
+  /* let oscillators = */
+  /*   makeOscillatorBank( */
+  /*     ~audioCtx, */
+  /*     ~n=state.params.height, */
+  /*     ~type_=Sine, */
+  /*     ~freqFunc, */
+  /*   ); */
+  /* Array.iter(startOscillator, oscillators.nodes); */
+  /* state.oscillatorBank := Some(oscillators); */
+
+  /* state.audioGraph := */
+  /*   state.audioGraph^ */
+  /*   |> addNode(("oscillators", unwrapGain(oscillators.output))) */
+  /*   |> addEdge(("oscillators", "compressor", 0, 0)) */
+  /*   |> updateConnections; */
+
   if (state.params.stereo) {
     let filterBankL =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
     let filterBankR =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
 
@@ -422,7 +502,7 @@ let generateNewFilterBanks =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
 
@@ -481,6 +561,22 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
       ReasonReact.UpdateWithSideEffects(
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
+      )
+    | ChangeLayer(oldLayer, newLayer) =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            pushParamsState({
+              ...self.state.params,
+              layers:
+                changeLayer(oldLayer, newLayer, self.state.params.layers),
+            })
+        ),
+      )
+
+    | SetLayers(layers) =>
+      ReasonReact.SideEffects(
+        (self => pushParamsState({...self.state.params, layers})),
       )
     | SetFilterBanks(filterBanks) =>
       ReasonReact.UpdateWithSideEffects(
@@ -595,10 +691,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     generateNewFilterBanks(audioCtx, self);
 
-    /* let oscillators = */
-    /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
-    /* Array.iter(startOscillator, oscillators.nodes); */
-    /* self.state.oscillatorBank := Some(oscillators); */
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     (
@@ -816,17 +908,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
             <Grid item=true xs=Grid.V6>
               <Params
                 params=self.state.params
-                onMoveCard=(layers => setLayers(self.state.params, layers))
+                onMoveCard=(layers => self.send(SetLayers(layers)))
                 onChangeLayer=(
                   (oldLayer, newLayer) =>
-                    setLayers(
-                      self.state.params,
-                      changeLayer(
-                        oldLayer,
-                        newLayer,
-                        self.state.params.layers,
-                      ),
-                    )
+                    self.send(ChangeLayer(oldLayer, newLayer))
                 )
                 onSetRef=(
                   (layer, theRef) =>

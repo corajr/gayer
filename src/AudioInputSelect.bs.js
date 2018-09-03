@@ -10,7 +10,8 @@ import * as MaterialUi_MenuItem from "@jsiebern/bs-material-ui/src/MaterialUi_Me
 
 var allAudioInputs = /* array */[
   /* PinkNoise */0,
-  /* Mic */1
+  /* WhiteNoise */1,
+  /* Mic */2
 ];
 
 var component = ReasonReact.statelessComponent("CompositeOperationSelect");

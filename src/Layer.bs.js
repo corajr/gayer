@@ -19,7 +19,30 @@ import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
 function slitscanOptions(json) {
-  return /* record */[/* x */Json_decode.field("x", Json_decode.$$int, json)];
+  return Json_decode.andThen((function (type_, json) {
+                switch (type_) {
+                  case "readPosX" : 
+                      return /* ReadPosX */0;
+                  case "readPosY" : 
+                      return /* ReadPosY */1;
+                  case "staticX" : 
+                      return Json_decode.map((function (i) {
+                                    return /* StaticX */Block.__(0, [i]);
+                                  }), (function (param) {
+                                    return Json_decode.field("x", Json_decode.$$int, param);
+                                  }), json);
+                  case "staticY" : 
+                      return Json_decode.map((function (i) {
+                                    return /* StaticY */Block.__(1, [i]);
+                                  }), (function (param) {
+                                    return Json_decode.field("y", Json_decode.$$int, param);
+                                  }), json);
+                  default:
+                    return /* StaticX */Block.__(0, [320]);
+                }
+              }), (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
 }
 
 function cameraOptions(json) {
@@ -33,14 +56,54 @@ var DecodeCameraOptions = /* module */[
   /* cameraOptions */cameraOptions
 ];
 
-function slitscanOptions$1(r) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "x",
-                r[/* x */0]
-              ],
-              /* [] */0
-            ]);
+function slitscanOptions$1(param) {
+  if (typeof param === "number") {
+    if (param === 0) {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "readPosX"
+                  ],
+                  /* [] */0
+                ]);
+    } else {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "readPosY"
+                  ],
+                  /* [] */0
+                ]);
+    }
+  } else if (param.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "staticY"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "y",
+                    param[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "staticX"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "x",
+                    param[0]
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  }
 }
 
 function cameraOptions$1(r) {

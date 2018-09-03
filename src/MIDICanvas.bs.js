@@ -6,6 +6,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Webmidi from "webmidi";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as MIDI$Gayer from "./MIDI.bs.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
@@ -43,18 +44,35 @@ function makeNoteColors(getFillStyleForNumber) {
   return noteDrawCommands;
 }
 
-function drawMidiNotes(canvasRenderingContext2D, state) {
+function drawMidiNotesImg(canvasRenderingContext2D, state) {
   var outputImageData = Canvas$Gayer.makeImageDataFromFloats(state[/* midiState */1][0][/* notesOn */0], 1, 128);
   canvasRenderingContext2D.putImageData(outputImageData, 0, 0);
   return /* () */0;
 }
 
+function drawMidiNotes(ctx, _, noteToY, state) {
+  var notesOn = state[/* midiState */1][0][/* notesOn */0];
+  for(var i = 127; i >= 0; --i){
+    var v = Caml_array.caml_array_get(notesOn, i);
+    if (v > 0.0) {
+      ctx.fillStyle = "rgba(255,255,255," + (v.toString() + ")");
+      ctx.fillRect(0, Curry._1(noteToY, i), 1, 1);
+    }
+    
+  }
+  return /* () */0;
+}
+
 var component = ReasonReact.reducerComponent("MIDICanvas");
 
-function make(saveRef, _) {
+function make(height, saveRef, _) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */0][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     return Curry._1(saveRef, theRef);
+  };
+  var noteToY = function (note) {
+    var pixelsPerNote = height / 120 | 0;
+    return Caml_int32.imul(124 - note | 0, pixelsPerNote);
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -90,7 +108,7 @@ function make(saveRef, _) {
           /* render */(function (self) {
               return React.createElement("canvas", {
                           ref: Curry._1(self[/* handle */0], setCanvasRef),
-                          height: "120",
+                          height: height.toString(),
                           width: "1"
                         });
             }),
@@ -104,7 +122,8 @@ function make(saveRef, _) {
                 return /* SideEffects */Block.__(1, [(function () {
                               MIDI$Gayer.update(state[/* midiState */1][0], $$event);
                               var ctx = canvas.getContext("2d");
-                              return drawMidiNotes(ctx, state);
+                              ctx.clearRect(0, 0, 1, height);
+                              return drawMidiNotes(ctx, height, noteToY, state);
                             })]);
               } else {
                 return /* NoUpdate */0;
@@ -119,6 +138,7 @@ export {
   defaultState ,
   oneRainbow ,
   makeNoteColors ,
+  drawMidiNotesImg ,
   drawMidiNotes ,
   component ,
   make ,

@@ -333,6 +333,23 @@ let cheaperPinkNoise: audioContext => audioNode = [%bs.raw
 
 let pinkNoise = pinkNoiseFull;
 
+let whiteNoise: audioContext => audioNode = [%bs.raw
+  audioCtx => {|
+     var bufferSize = 4096;
+     return (function() {
+     var node = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+     node.onaudioprocess = function(e) {
+     var output = e.outputBuffer.getChannelData(0);
+     for (var i = 0; i < bufferSize; i++) {
+     var white = Math.random() * 2 - 1;
+     output[i] = white;
+     }
+     }
+     return node;
+     })();
+     |}
+];
+
 [@bs.send]
 external getFloatFrequencyData : (analyser, array(float)) => unit = "";
 [@bs.send]
@@ -582,6 +599,7 @@ module AudioInput = {
     | AudioFromVideo(string)
     | Oscillator(oscillatorType)
     | PinkNoise
+    | WhiteNoise
     | Mic;
 
   module EncodeAudioInput = {
@@ -593,6 +611,7 @@ module AudioInput = {
         | AudioFromVideo(url) =>
           object_([("type", string("video")), ("url", string(url))])
         | PinkNoise => object_([("type", string("pink-noise"))])
+        | WhiteNoise => object_([("type", string("white-noise"))])
         | Oscillator(oType) =>
           object_([
             ("type", string("oscillator")),
@@ -611,6 +630,7 @@ module AudioInput = {
         |> (
           fun
           | "pink-noise" => PinkNoise
+          | "white-noise" => WhiteNoise
           | "mic" => Mic
           | "file" =>
             json |> map(url => AudioFile(url), field("url", string))

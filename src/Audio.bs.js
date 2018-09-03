@@ -126,6 +126,21 @@ var cheaperPinkNoise = function (audioCtx){
      })();
      };
 
+var whiteNoise = function (audioCtx){
+     var bufferSize = 4096;
+     return (function() {
+     var node = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+     node.onaudioprocess = function(e) {
+     var output = e.outputBuffer.getChannelData(0);
+     for (var i = 0; i < bufferSize; i++) {
+     var white = Math.random() * 2 - 1;
+     output[i] = white;
+     }
+     }
+     return node;
+     })();
+     };
+
 function makeAnalyser(audioContext, $staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, _) {
   var fftSize = $staropt$star !== undefined ? $staropt$star : 2048;
   var minDecibels = $staropt$star$1 !== undefined ? $staropt$star$1 : -100.0;
@@ -330,22 +345,32 @@ function updateFilterBankDefinition(filterBank, freqFunc, q) {
 
 function audioInputSetting(r) {
   if (typeof r === "number") {
-    if (r === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "pink-noise"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "mic"
-                  ],
-                  /* [] */0
-                ]);
+    switch (r) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "pink-noise"
+                      ],
+                      /* [] */0
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "white-noise"
+                      ],
+                      /* [] */0
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "mic"
+                      ],
+                      /* [] */0
+                    ]);
+      
     }
   } else {
     switch (r.tag | 0) {
@@ -408,7 +433,7 @@ function audioInputSetting$1(json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "mic" : 
-        return /* Mic */1;
+        return /* Mic */2;
     case "oscillator" : 
         return Json_decode.map((function (oType) {
                       return /* Oscillator */Block.__(2, [oscillatorType_of_string(oType)]);
@@ -423,6 +448,8 @@ function audioInputSetting$1(json) {
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
+    case "white-noise" : 
+        return /* WhiteNoise */1;
     default:
       return /* PinkNoise */0;
   }
@@ -453,6 +480,7 @@ export {
   pinkNoiseFull ,
   cheaperPinkNoise ,
   pinkNoise ,
+  whiteNoise ,
   makeAnalyser ,
   setOscillatorType ,
   makeOscillator ,
