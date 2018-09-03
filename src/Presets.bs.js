@@ -842,14 +842,6 @@ var webcamParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var webcamParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var webcamParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
-
-var webcamParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
-
-var webcamParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
-
-var webcamParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
-
 var webcamParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
 var webcamParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
@@ -864,17 +856,34 @@ var webcamParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */
 
 var webcamParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
+var webcamParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
 var webcamParams_014 = /* layers : :: */[
-  webcam,
+  /* record */[
+    /* content : Analysis */Block.__(5, [/* Mic */2]),
+    analyzer_001,
+    analyzer_002,
+    analyzer_003,
+    /* transformMatrix : record */[
+      /* horizontalScaling */Canvas$Gayer.defaultSize,
+      /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
+      /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
+      /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
+      /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
+      /* verticalMoving */Canvas$Gayer.defaultTransform[/* verticalMoving */5]
+    ],
+    analyzer_005,
+    analyzer_006
+  ],
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */2]),
-      analyzer_001,
+      /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]),
+      webcam_001,
       /* compositeOperation : Multiply */11,
-      analyzer_003,
-      analyzer_004,
-      analyzer_005,
-      analyzer_006
+      webcam_003,
+      webcam_004,
+      webcam_005,
+      webcam_006
     ],
     /* :: */[
       reader,
@@ -886,10 +895,10 @@ var webcamParams_014 = /* layers : :: */[
 var webcamParams = /* record */[
   webcamParams_000,
   webcamParams_001,
-  webcamParams_002,
-  webcamParams_003,
-  webcamParams_004,
-  webcamParams_005,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  /* readPosOffset */0,
+  /* writePosOffset */0,
   webcamParams_006,
   webcamParams_007,
   webcamParams_008,
@@ -897,7 +906,7 @@ var webcamParams = /* record */[
   webcamParams_010,
   webcamParams_011,
   webcamParams_012,
-  /* shouldClear */false,
+  webcamParams_013,
   webcamParams_014
 ];
 
@@ -1299,7 +1308,7 @@ var history_014 = /* layers : :: */[
   /* :: */[
     /* record */[
       squareColumnLayer_000,
-      /* alpha */0.75,
+      /* alpha */1.0,
       /* compositeOperation : Multiply */11,
       squareColumnLayer_003,
       squareColumnLayer_004,
@@ -1519,7 +1528,22 @@ var droste_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 var droste_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var droste_014 = /* layers : :: */[
-  analyzer,
+  /* record */[
+    /* content : Analysis */Block.__(5, [/* Mic */2]),
+    analyzer_001,
+    analyzer_002,
+    analyzer_003,
+    /* transformMatrix : record */[
+      /* horizontalScaling */Canvas$Gayer.defaultSize,
+      /* horizontalSkewing */Canvas$Gayer.defaultTransform[/* horizontalSkewing */1],
+      /* verticalSkewing */Canvas$Gayer.defaultTransform[/* verticalSkewing */2],
+      /* verticalScaling */Canvas$Gayer.defaultTransform[/* verticalScaling */3],
+      /* horizontalMoving */Canvas$Gayer.defaultTransform[/* horizontalMoving */4],
+      /* verticalMoving */Canvas$Gayer.defaultTransform[/* verticalMoving */5]
+    ],
+    analyzer_005,
+    analyzer_006
+  ],
   /* :: */[
     drosteLayer,
     /* :: */[

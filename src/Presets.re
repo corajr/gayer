@@ -248,8 +248,21 @@ let feedback = {
 
 let webcamParams = {
   ...defaultParams,
-  shouldClear: false,
-  layers: [webcam, {...analyzer, compositeOperation: Multiply}, reader],
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: 0,
+  writePosOffset: 0,
+  layers: [
+    {
+      ...analyzer,
+      transformMatrix: {
+        ...defaultTransform,
+        horizontalScaling: float_of_int(defaultSize),
+      },
+    },
+    {...webcam, compositeOperation: Multiply},
+    reader,
+  ],
 };
 
 let slitscanParams = {
@@ -317,9 +330,9 @@ let history = {
     analyzer,
     /* squareLayer, */
     /* blurLayer, */
-    {...squareColumnLayer, alpha: 0.75},
+    {...squareColumnLayer, alpha: 1.0},
     historyLayer,
-    /* pitchFilter(majorHexatonic), */
+    /* pitchFilter(cMajor), */
     {...reader, alpha: 0.0},
   ],
 };
@@ -363,7 +376,17 @@ let droste = {
   readPosDelta: 0,
   writePosDelta: 0,
   shouldClear: false,
-  layers: [analyzer, drosteLayer, reader],
+  layers: [
+    {
+      ...analyzer,
+      transformMatrix: {
+        ...defaultTransform,
+        horizontalScaling: float_of_int(defaultSize),
+      },
+    },
+    drosteLayer,
+    reader,
+  ],
 };
 
 let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};

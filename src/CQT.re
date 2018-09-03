@@ -11,6 +11,7 @@ type float32Array = array(float);
 type uint8ClampedArray = array(int);
 
 type cqtBarParams = {
+  bits: int,
   rate: float,
   width: int,
   height: int,
@@ -20,6 +21,7 @@ type cqtBarParams = {
 };
 
 let defaultCqtBarParams = {
+  bits: 12,
   rate: 44100.0,
   width: 120,
   height: 1,
@@ -29,12 +31,13 @@ let defaultCqtBarParams = {
 };
 
 [@bs.new]
-external _createShowCQTBar : (float, int, int, float, float, bool) => t =
+external _createShowCQTBar : (int, float, int, int, float, float, bool) => t =
   "ShowCQTBar";
 
 let createShowCQTBar: cqtBarParams => t =
   p =>
     _createShowCQTBar(
+      p.bits,
       p.rate,
       p.width,
       p.height,

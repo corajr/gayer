@@ -2,10 +2,11 @@
 
 
 function createShowCQTBar(p) {
-  return new ShowCQTBar(p[/* rate */0], p[/* width */1], p[/* height */2], p[/* barVolume */3], p[/* sonogramVolume */4], p[/* supersampling */5]);
+  return new ShowCQTBar(p[/* bits */0], p[/* rate */1], p[/* width */2], p[/* height */3], p[/* barVolume */4], p[/* sonogramVolume */5], p[/* supersampling */6]);
 }
 
 var defaultCqtBarParams = /* record */[
+  /* bits */12,
   /* rate */44100.0,
   /* width */120,
   /* height */1,

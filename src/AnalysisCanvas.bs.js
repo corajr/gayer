@@ -79,12 +79,13 @@ function make(size, layerKey, audioCtx, audioGraph, _, millisPerTick, saveRef, _
             }),
           /* initialState */(function () {
               var cqt = CQT$Gayer.createShowCQTBar(/* record */[
+                    /* bits */CQT$Gayer.defaultCqtBarParams[/* bits */0],
                     /* rate */audioCtx.sampleRate,
                     /* width */size,
-                    /* height */CQT$Gayer.defaultCqtBarParams[/* height */2],
-                    /* barVolume */CQT$Gayer.defaultCqtBarParams[/* barVolume */3],
-                    /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */4],
-                    /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */5]
+                    /* height */CQT$Gayer.defaultCqtBarParams[/* height */3],
+                    /* barVolume */CQT$Gayer.defaultCqtBarParams[/* barVolume */4],
+                    /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */5],
+                    /* supersampling */CQT$Gayer.defaultCqtBarParams[/* supersampling */6]
                   ]);
               var fftSize = cqt.fft_size;
               console.log("Constant-Q transform initialized. Using FFT of size " + fftSize.toString());
