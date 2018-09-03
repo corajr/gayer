@@ -400,6 +400,22 @@ let generateNewFilterBanks =
       state.params.height,
     );
 
+  /* let oscillators = */
+  /*   makeOscillatorBank( */
+  /*     ~audioCtx, */
+  /*     ~n=state.params.height, */
+  /*     ~type_=Sine, */
+  /*     ~freqFunc, */
+  /*   ); */
+  /* Array.iter(startOscillator, oscillators.nodes); */
+  /* state.oscillatorBank := Some(oscillators); */
+
+  /* state.audioGraph := */
+  /*   state.audioGraph^ */
+  /*   |> addNode(("oscillators", unwrapGain(oscillators.output))) */
+  /*   |> addEdge(("oscillators", "compressor", 0, 0)) */
+  /*   |> updateConnections; */
+
   if (state.params.stereo) {
     let filterBankL =
       makeFilterBank(
@@ -595,10 +611,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     generateNewFilterBanks(audioCtx, self);
 
-    /* let oscillators = */
-    /*   makeOscillatorBank(~audioCtx, ~n=height, ~type_=Sine, ~freqFunc); */
-    /* Array.iter(startOscillator, oscillators.nodes); */
-    /* self.state.oscillatorBank := Some(oscillators); */
     /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     (
