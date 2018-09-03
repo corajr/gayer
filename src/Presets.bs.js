@@ -1375,29 +1375,18 @@ var history_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var history_014 = /* layers : :: */[
   analyzer,
   /* :: */[
-    /* record */[
-      squareColumnLayer_000,
-      /* alpha */1.0,
-      /* compositeOperation : Multiply */11,
-      squareColumnLayer_003,
-      squareColumnLayer_004,
-      squareColumnLayer_005,
-      squareColumnLayer_006
-    ],
+    historyLayer,
     /* :: */[
-      historyLayer,
-      /* :: */[
-        /* record */[
-          /* content : Reader */Block.__(7, [/* R */0]),
-          /* alpha */0.0,
-          /* compositeOperation : Multiply */11,
-          reader_003,
-          reader_004,
-          reader_005,
-          reader_006
-        ],
-        /* [] */0
-      ]
+      /* record */[
+        /* content : Reader */Block.__(7, [/* R */0]),
+        /* alpha */0.0,
+        /* compositeOperation : Multiply */11,
+        reader_003,
+        reader_004,
+        reader_005,
+        reader_006
+      ],
+      /* [] */0
     ]
   ]
 ];
@@ -2068,31 +2057,37 @@ var presetsWithoutLayerIds_001 = /* :: */[
               ],
               /* :: */[
                 /* tuple */[
-                  "Mic feedback (may be loud!)",
-                  feedback
+                  "Audio file",
+                  debussy
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Empty",
-                    /* record */[
-                      /* width */Params$Gayer.defaultParams[/* width */0],
-                      /* height */Params$Gayer.defaultParams[/* height */1],
-                      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                      /* q */Params$Gayer.defaultParams[/* q */10],
-                      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                      /* layers : [] */0
-                    ]
+                    "Mic feedback (may be loud!)",
+                    feedback
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "Empty",
+                      /* record */[
+                        /* width */Params$Gayer.defaultParams[/* width */0],
+                        /* height */Params$Gayer.defaultParams[/* height */1],
+                        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                        /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                        /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                        /* q */Params$Gayer.defaultParams[/* q */10],
+                        /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                        /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                        /* layers : [] */0
+                      ]
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]

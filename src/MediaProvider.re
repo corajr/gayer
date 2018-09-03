@@ -26,20 +26,31 @@ let make =
           layer => {
             let key =
               Js.Json.stringify(EncodeLayer.layerContent(layer.content));
-            switch (layer.content) {
-            | Analysis(source) =>
-              let (_, maybeInput) = getAudio(source);
-              switch (maybeInput) {
-              | Some(input) =>
-                audioGraph :=
-                  audioGraph^
-                  |> addNode((key ++ "input", input))
-                  |> updateConnections
-              | None => ()
+            let maybeAudio =
+              switch (layer.content) {
+              | Analysis(source) =>
+                switch (source) {
+                | AudioFile(url) =>
+                  <AudioFile
+                    audioCtx
+                    audioGraph
+                    audioKey=(key ++ "input")
+                    url
+                  />
+                | _ =>
+                  let (_, maybeInput) = getAudio(source);
+                  switch (maybeInput) {
+                  | Some(input) =>
+                    audioGraph :=
+                      audioGraph^
+                      |> addNode((key ++ "input", input))
+                      |> updateConnections;
+                    ReasonReact.null;
+                  | None => ReasonReact.null
+                  };
+                }
+              | _ => ReasonReact.null
               };
-              ();
-            | _ => ()
-            };
 
             <div
               style=(
@@ -59,6 +70,7 @@ let make =
                   )
                 }
               )>
+              maybeAudio
               <LayerContent
                 audioCtx
                 audioGraph

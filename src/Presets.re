@@ -343,9 +343,9 @@ let history = {
     analyzer,
     /* squareLayer, */
     /* blurLayer, */
-    {...squareColumnLayer, alpha: 1.0},
+    /* {...squareColumnLayer, alpha: 1.0}, */
     historyLayer,
-    /* pitchFilter(cMajor), */
+    /* {...pitchFilter(cMajor), alpha: 0.01}, */
     {...reader, alpha: 0.0},
   ],
 };
@@ -452,7 +452,7 @@ let presetsWithoutLayerIds = [
   ("Tughra of Suleiman", tughra),
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
-  /* ("Audio file", debussy), */
+  ("Audio file", debussy),
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */

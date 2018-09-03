@@ -6,6 +6,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as AudioFile$Gayer from "./AudioFile.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as LayerContent$Gayer from "./LayerContent.bs.js";
 
@@ -30,23 +31,35 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                         }, $$Array.of_list(List.map((function (layer) {
                                     var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
                                     var match = layer[/* content */0];
-                                    if (typeof match !== "number") {
-                                      if (match.tag === 5) {
-                                        var match$1 = Curry._1(getAudio, match[0]);
+                                    var maybeAudio;
+                                    if (typeof match === "number" || match.tag !== 5) {
+                                      maybeAudio = null;
+                                    } else {
+                                      var source = match[0];
+                                      var exit = 0;
+                                      if (typeof source === "number" || source.tag) {
+                                        exit = 1;
+                                      } else {
+                                        maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
+                                      }
+                                      if (exit === 1) {
+                                        var match$1 = Curry._1(getAudio, source);
                                         var maybeInput = match$1[1];
                                         if (maybeInput !== undefined) {
                                           audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
                                                     key + "input",
                                                     maybeInput
                                                   ], audioGraph[0]));
+                                          maybeAudio = null;
+                                        } else {
+                                          maybeAudio = null;
                                         }
-                                        
                                       }
                                       
                                     }
                                     var match$2 = layer[/* content */0];
                                     var tmp;
-                                    var exit = 0;
+                                    var exit$1 = 0;
                                     if (typeof match$2 === "number" && match$2 === 0) {
                                       tmp = {
                                         border: "1px solid black",
@@ -54,9 +67,9 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                         zIndex: "10"
                                       };
                                     } else {
-                                      exit = 1;
+                                      exit$1 = 1;
                                     }
-                                    if (exit === 1) {
+                                    if (exit$1 === 1) {
                                       tmp = {
                                         position: "absolute",
                                         visibility: "hidden"
@@ -64,7 +77,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     }
                                     return React.createElement("div", {
                                                 style: tmp
-                                              }, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[])));
+                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[])));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],

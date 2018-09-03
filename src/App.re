@@ -72,7 +72,6 @@ type action =
   | Clear
   | Tick
   | TogglePresetDrawer
-  | LoadAudioFile(string)
   | SaveImage
   | ToggleFullscreen
   | AddSavedImage(string)
@@ -97,14 +96,7 @@ let setLayerRef =
 
   switch (layer.content, maybeRef) {
   | (Analysis(source), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
-    switch (source) {
-    | AudioFile(url) =>
-      if (! Belt.Map.String.has(state.loadedAudio^, url)) {
-        send(LoadAudioFile(url));
-      }
-    | _ => ()
-    };
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (MIDIKeyboard, Some(aRef)) =>
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (HandDrawn, Some(aRef)) =>
@@ -431,8 +423,11 @@ let getAnalysisInput:
   (audioContext, option(audioNode)) =
   (audioCtx, state, audioInput) =>
     switch (audioInput) {
-    | AudioFromVideo(s)
-    | AudioFile(s) => (audioCtx, Belt.Map.String.get(state.loadedAudio^, s))
+    | AudioFromVideo(s) => (
+        audioCtx,
+        Belt.Map.String.get(state.loadedAudio^, s),
+      )
+    | AudioFile(_) => (audioCtx, None)
     | Oscillator(oType) => (
         audioCtx,
         switch (state.oscillatorBank^) {
@@ -553,17 +548,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         fullscreenCanvas: ! state.fullscreenCanvas,
       })
-    | LoadAudioFile(url) =>
-      ReasonReact.SideEffects(
-        (
-          _self => {
-            let elt = makeAudioElt(url);
-            let mediaElementSource = createMediaElementSource(audioCtx, elt);
-            state.loadedAudio :=
-              Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
-          }
-        ),
-      )
     | SetParams(params) => ReasonReact.Update({...state, params})
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetMediaStream(stream) =>
