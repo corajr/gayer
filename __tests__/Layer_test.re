@@ -3,7 +3,7 @@ open Expect;
 open Layer;
 open Presets;
 
-let slitscan = {x: 60};
+let slitscan = StaticX(320);
 
 let cameraOptExamples = [{slitscan: None}, {slitscan: Some(slitscan)}];
 

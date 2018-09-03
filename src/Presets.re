@@ -43,7 +43,12 @@ let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
 
 let slitscan = {
   ...defaultLayer,
-  content: Webcam({slitscan: Some({x: 320})}),
+  content: Webcam({slitscan: Some(StaticX(320))}),
+};
+
+let slitscanMoving = {
+  ...defaultLayer,
+  content: Webcam({slitscan: Some(ReadPosX)}),
 };
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -241,6 +246,12 @@ let feedback = {
   layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
 };
 
+let webcamParams = {
+  ...defaultParams,
+  shouldClear: false,
+  layers: [webcam, {...analyzer, compositeOperation: Multiply}, reader],
+};
+
 let slitscanParams = {
   ...defaultParams,
   readPosDelta: 0,
@@ -254,6 +265,17 @@ let slitscanParams = {
     /* pitchFilter(cMajor), */
     historyLayer,
     reader,
+  ],
+};
+
+let slitscanMovingParams = {
+  ...defaultParams,
+  shouldClear: false,
+  layers: [
+    slitscanMoving,
+    {...analyzer, compositeOperation: Multiply, alpha: 0.5},
+    /* pitchFilter(cMajor), */
+    {...reader, alpha: 0.0},
   ],
 };
 
@@ -385,7 +407,9 @@ let video = {
 let presets = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
+  /* ("Webcam", webcamParams), */
   ("Slitscan", slitscanParams),
+  /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */

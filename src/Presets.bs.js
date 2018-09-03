@@ -123,7 +123,7 @@ var webcam = /* record */[
   webcam_005
 ];
 
-var slitscan_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* record */[/* x */320]]]);
+var slitscan_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* StaticX */Block.__(0, [320])]]);
 
 var slitscan_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -142,6 +142,27 @@ var slitscan = /* record */[
   slitscan_003,
   slitscan_004,
   slitscan_005
+];
+
+var slitscanMoving_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* ReadPosX */0]]);
+
+var slitscanMoving_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var slitscanMoving_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var slitscanMoving_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var slitscanMoving_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var slitscanMoving_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var slitscanMoving = /* record */[
+  slitscanMoving_000,
+  slitscanMoving_001,
+  slitscanMoving_002,
+  slitscanMoving_003,
+  slitscanMoving_004,
+  slitscanMoving_005
 ];
 
 var hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -774,6 +795,68 @@ var feedback = /* record */[
   feedback_014
 ];
 
+var webcamParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var webcamParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var webcamParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var webcamParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var webcamParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var webcamParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var webcamParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var webcamParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var webcamParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var webcamParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var webcamParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var webcamParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var webcamParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var webcamParams_014 = /* layers : :: */[
+  webcam,
+  /* :: */[
+    /* record */[
+      /* content : Analysis */Block.__(5, [/* Mic */2]),
+      analyzer_001,
+      /* compositeOperation : Multiply */11,
+      analyzer_003,
+      analyzer_004,
+      analyzer_005
+    ],
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var webcamParams = /* record */[
+  webcamParams_000,
+  webcamParams_001,
+  webcamParams_002,
+  webcamParams_003,
+  webcamParams_004,
+  webcamParams_005,
+  webcamParams_006,
+  webcamParams_007,
+  webcamParams_008,
+  webcamParams_009,
+  webcamParams_010,
+  webcamParams_011,
+  webcamParams_012,
+  /* shouldClear */false,
+  webcamParams_014
+];
+
 var slitscanParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var slitscanParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -833,6 +916,75 @@ var slitscanParams = /* record */[
   slitscanParams_012,
   /* shouldClear */false,
   slitscanParams_014
+];
+
+var slitscanMovingParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var slitscanMovingParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var slitscanMovingParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var slitscanMovingParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var slitscanMovingParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var slitscanMovingParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var slitscanMovingParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var slitscanMovingParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var slitscanMovingParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var slitscanMovingParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var slitscanMovingParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var slitscanMovingParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var slitscanMovingParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var slitscanMovingParams_014 = /* layers : :: */[
+  slitscanMoving,
+  /* :: */[
+    /* record */[
+      /* content : Analysis */Block.__(5, [/* Mic */2]),
+      /* alpha */0.5,
+      /* compositeOperation : Multiply */11,
+      analyzer_003,
+      analyzer_004,
+      analyzer_005
+    ],
+    /* :: */[
+      /* record */[
+        /* content : Reader */Block.__(7, [/* R */0]),
+        /* alpha */0.0,
+        /* compositeOperation : Multiply */11,
+        reader_003,
+        reader_004,
+        reader_005
+      ],
+      /* [] */0
+    ]
+  ]
+];
+
+var slitscanMovingParams = /* record */[
+  slitscanMovingParams_000,
+  slitscanMovingParams_001,
+  slitscanMovingParams_002,
+  slitscanMovingParams_003,
+  slitscanMovingParams_004,
+  slitscanMovingParams_005,
+  slitscanMovingParams_006,
+  slitscanMovingParams_007,
+  slitscanMovingParams_008,
+  slitscanMovingParams_009,
+  slitscanMovingParams_010,
+  slitscanMovingParams_011,
+  slitscanMovingParams_012,
+  /* shouldClear */false,
+  slitscanMovingParams_014
 ];
 
 var whiteboardParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
@@ -1796,6 +1948,7 @@ export {
   analyzer ,
   webcam ,
   slitscan ,
+  slitscanMoving ,
   hubble ,
   spacy ,
   drawSelfFullScreen ,
@@ -1814,7 +1967,9 @@ export {
   harmonyParams ,
   harmonyIntensified ,
   feedback ,
+  webcamParams ,
   slitscanParams ,
+  slitscanMovingParams ,
   whiteboardParams ,
   isItACrime ,
   tughra ,

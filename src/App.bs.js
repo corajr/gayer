@@ -374,13 +374,32 @@ function drawLayer(ctx, width, height, state, layer) {
           Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match[0]);
           return undefined;
       case 2 : 
+          var cameraWidthToCanvasWidth = 640 / width;
+          var cameraHeightToCanvasHeight = 480 / height;
           var match$1 = state[/* cameraInput */11][0];
           var match$2 = match[0][/* slitscan */0];
           if (match$1 !== undefined) {
             var input = Js_primitive.valFromOption(match$1);
             if (match$2 !== undefined) {
-              var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-              ctx.drawImage(input, match$2[/* x */0], 0, 1, 480, xToWrite, 0, 1, height);
+              var match$3 = match$2;
+              if (typeof match$3 === "number") {
+                if (match$3 === 0) {
+                  var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+                  var xToReadCamera = xToWrite * cameraWidthToCanvasWidth | 0;
+                  ctx.drawImage(input, xToReadCamera, 0, cameraWidthToCanvasWidth | 0, 480, xToWrite, 0, 1, height);
+                } else {
+                  var yToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
+                  var yToRead = yToWrite * cameraHeightToCanvasHeight | 0;
+                  ctx.drawImage(input, 0, yToRead, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite, width, 1);
+                }
+              } else if (match$3.tag) {
+                var yToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
+                var yToReadCamera = match$3[0] * cameraHeightToCanvasHeight | 0;
+                ctx.drawImage(input, 0, yToReadCamera, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite$1, width, 1);
+              } else {
+                var xToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+                ctx.drawImage(input, match$3[0], 0, 1, 480, xToWrite$1, 0, 1, height);
+              }
             } else {
               ctx.drawImage(input, 0, 0, width, height);
             }
@@ -435,10 +454,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$3 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            var match$4 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
             return /* Stereo */Block.__(1, [
-                      match$3[0],
-                      match$3[1]
+                      match$4[0],
+                      match$4[1]
                     ]);
           }
       
