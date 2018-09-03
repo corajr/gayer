@@ -81,7 +81,7 @@ function draw($staropt$star, cmds) {
         ];
 }
 
-var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */1]);
+var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */2]);
 
 var analyzer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -739,7 +739,7 @@ var feedback_014 = /* layers : :: */[
   webcam,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */1]),
+      /* content : Analysis */Block.__(5, [/* Mic */2]),
       /* alpha */0.5,
       analyzer_002,
       analyzer_003,
@@ -764,7 +764,7 @@ var feedback = /* record */[
   feedback_004,
   feedback_005,
   feedback_006,
-  /* audioInputSetting : Mic */1,
+  /* audioInputSetting : Mic */2,
   feedback_008,
   feedback_009,
   feedback_010,
@@ -800,7 +800,7 @@ var slitscanParams_014 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */1]),
+      /* content : Analysis */Block.__(5, [/* Mic */2]),
       /* alpha */0.9,
       /* compositeOperation : Multiply */11,
       analyzer_003,

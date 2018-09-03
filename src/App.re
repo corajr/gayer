@@ -367,6 +367,7 @@ let getAnalysisInput:
         },
       )
     | PinkNoise => (audioCtx, Some(pinkNoise(audioCtx)))
+    | WhiteNoise => (audioCtx, Some(whiteNoise(audioCtx)))
     | Mic => (audioCtx, state.micInput)
     };
 

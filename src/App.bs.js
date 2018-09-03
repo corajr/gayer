@@ -471,16 +471,23 @@ function drawCanvas(canvasElement, width, height, state) {
 function getAnalysisInput(audioCtx, state, audioInput) {
   var exit = 0;
   if (typeof audioInput === "number") {
-    if (audioInput === 0) {
-      return /* tuple */[
-              audioCtx,
-              Audio$Gayer.pinkNoise(audioCtx)
-            ];
-    } else {
-      return /* tuple */[
-              audioCtx,
-              state[/* micInput */10]
-            ];
+    switch (audioInput) {
+      case 0 : 
+          return /* tuple */[
+                  audioCtx,
+                  Audio$Gayer.pinkNoise(audioCtx)
+                ];
+      case 1 : 
+          return /* tuple */[
+                  audioCtx,
+                  Audio$Gayer.whiteNoise(audioCtx)
+                ];
+      case 2 : 
+          return /* tuple */[
+                  audioCtx,
+                  state[/* micInput */10]
+                ];
+      
     }
   } else {
     switch (audioInput.tag | 0) {

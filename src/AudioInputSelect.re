@@ -4,6 +4,7 @@ let allAudioInputs = [|
   /* AudioFile("media/la_cathedrale_engloutie.m4a"), */
   /* Oscillator(Square), */
   PinkNoise,
+  WhiteNoise,
   Mic,
 |];
 
