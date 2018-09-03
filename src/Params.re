@@ -243,7 +243,14 @@ let make =
         cards=(
           List.map(
             layer => {
-              let id = "card" ++ string_of_int(Hashtbl.hash(layer));
+              let id =
+                "card"
+                ++ (
+                  switch (layer.id) {
+                  | None => string_of_int(Hashtbl.hash(layer))
+                  | Some(id) => id
+                  }
+                );
               {T.id, T.layer};
             },
             params.layers,

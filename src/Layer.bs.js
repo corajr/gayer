@@ -129,7 +129,8 @@ var defaultLayer = /* record */[
   /* compositeOperation : SourceOver */0,
   /* rotation */0.0,
   /* transformMatrix */Canvas$Gayer.defaultTransform,
-  /* filters */"none"
+  /* filters */"none",
+  /* id */undefined
 ];
 
 function oneCompleteTurnAfterNTicks(n) {
@@ -263,7 +264,10 @@ function layer(json) {
                 }), json),
           /* rotation */Json_decode.field("rotation", rotation, json),
           /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json),
-          /* filters */Json_decode.field("filters", Json_decode.string, json)
+          /* filters */Json_decode.field("filters", Json_decode.string, json),
+          /* id */Json_decode.field("id", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), json)
         ];
 }
 
@@ -436,35 +440,43 @@ function rotation$1(prim) {
 function layer$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "content",
-                layerContent$1(r[/* content */0])
+                "id",
+                Json_encode.nullable((function (prim) {
+                        return prim;
+                      }), r[/* id */6])
               ],
               /* :: */[
                 /* tuple */[
-                  "alpha",
-                  r[/* alpha */1]
+                  "content",
+                  layerContent$1(r[/* content */0])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "compositeOperation",
-                    Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
+                    "alpha",
+                    r[/* alpha */1]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "transformMatrix",
-                      transformMatrix$1(r[/* transformMatrix */4])
+                      "compositeOperation",
+                      Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
                     ],
                     /* :: */[
                       /* tuple */[
-                        "rotation",
-                        r[/* rotation */3]
+                        "transformMatrix",
+                        transformMatrix$1(r[/* transformMatrix */4])
                       ],
                       /* :: */[
                         /* tuple */[
-                          "filters",
-                          r[/* filters */5]
+                          "rotation",
+                          r[/* rotation */3]
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "filters",
+                            r[/* filters */5]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -538,7 +550,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                 /* compositeOperation */layer[/* compositeOperation */2],
                                                                 /* rotation */layer[/* rotation */3],
                                                                 /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5]
+                                                                /* filters */layer[/* filters */5],
+                                                                /* id */layer[/* id */6]
                                                               ]);
                                                   }), /* array */[])),
                                         ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-0.5 * Canvas$Gayer.tau, 0.5 * Canvas$Gayer.tau, "Rotation", layer[/* rotation */3], 0.01, (function (value) {
@@ -548,7 +561,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                 /* compositeOperation */layer[/* compositeOperation */2],
                                                                 /* rotation */value,
                                                                 /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5]
+                                                                /* filters */layer[/* filters */5],
+                                                                /* id */layer[/* id */6]
                                                               ]);
                                                   }), /* array */[])),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
@@ -558,7 +572,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                     /* compositeOperation */newOperation,
                                                                     /* rotation */layer[/* rotation */3],
                                                                     /* transformMatrix */layer[/* transformMatrix */4],
-                                                                    /* filters */layer[/* filters */5]
+                                                                    /* filters */layer[/* filters */5],
+                                                                    /* id */layer[/* id */6]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))

@@ -12,8 +12,6 @@ type slitscanOptions =
 type cameraOptions = {slitscan: option(slitscanOptions)};
 
 module DecodeCameraOptions = {
-  /* let slitscanOptions = json => Json.Decode.{x: }; */
-
   let slitscanOptions = json =>
     Json.Decode.(
       json
@@ -73,6 +71,7 @@ type layer = {
   rotation,
   transformMatrix,
   filters: string,
+  id: option(string),
 };
 
 let defaultLayer = {
@@ -82,6 +81,7 @@ let defaultLayer = {
   transformMatrix: defaultTransform,
   rotation: 0.0,
   filters: "none",
+  id: None,
 };
 
 let oneCompleteTurnAfterNTicks: int => rotation = n => tau /. float_of_int(n);
@@ -152,6 +152,7 @@ module DecodeLayer = {
 
   let layer = json =>
     Json.Decode.{
+      id: json |> field("id", optional(string)),
       content: json |> field("content", layerContent),
       alpha: json |> field("alpha", float),
       compositeOperation:
@@ -237,6 +238,7 @@ module EncodeLayer = {
   let layer = r =>
     Json.Encode.(
       object_([
+        ("id", nullable(string, r.id)),
         ("content", layerContent(r.content)),
         ("alpha", float(r.alpha)),
         (

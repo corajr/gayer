@@ -468,7 +468,7 @@ let generateNewFilterBanks =
   /*   makeOscillatorBank( */
   /*     ~audioCtx, */
   /*     ~n=state.params.height, */
-  /*     ~type_=Sine, */
+  /*     ~type_=Square, */
   /*     ~freqFunc, */
   /*   ); */
   /* Array.iter(startOscillator, oscillators.nodes); */
@@ -690,8 +690,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
       |> updateConnections;
 
     generateNewFilterBanks(audioCtx, self);
-
-    /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
 
     (
       switch (getAudioVisualStream()) {

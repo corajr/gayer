@@ -317,6 +317,7 @@ let history = {
     analyzer,
     /* squareLayer, */
     /* blurLayer, */
+    {...squareColumnLayer, alpha: 0.75},
     historyLayer,
     /* pitchFilter(majorHexatonic), */
     {...reader, alpha: 0.0},
@@ -404,7 +405,7 @@ let video = {
   ],
 };
 
-let presets = [
+let presetsWithoutLayerIds = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Webcam", webcamParams), */
@@ -425,3 +426,21 @@ let presets = [
   ("Mic feedback (may be loud!)", feedback),
   ("Empty", {...defaultParams, layers: []}),
 ];
+
+let idCounter = ref(0);
+
+let addIds =
+  List.map(layer => {
+    let nextId = idCounter^;
+    idCounter := nextId + 1;
+    {...layer, id: Some(string_of_int(nextId))};
+  });
+
+let presets: list((string, params)) =
+  List.map(
+    ((name, preset)) => (
+      name,
+      {...preset, layers: addIds(preset.layers)},
+    ),
+    presetsWithoutLayerIds,
+  );
