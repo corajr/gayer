@@ -61,7 +61,7 @@ let make =
             millisPerTick
             saveRef=setRef
           />
-        | MIDIKeyboard => <MIDICanvas saveRef=setRef />
+        | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)

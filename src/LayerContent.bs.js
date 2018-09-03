@@ -21,7 +21,7 @@ function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, _$1, hei
           /* render */(function () {
               var tmp;
               if (typeof layerContent === "number") {
-                tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(setRef, /* array */[]));
+                tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
               } else {
                 switch (layerContent.tag | 0) {
                   case 2 : 
