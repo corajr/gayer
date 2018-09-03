@@ -107,6 +107,8 @@ let setLayerRef =
     };
   | (MIDIKeyboard, Some(aRef)) =>
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
+  | (HandDrawn, Some(aRef)) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -256,6 +258,15 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         let x =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
         Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+      };
+      None;
+    | HandDrawn =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(handDrawn) =>
+        let canvasElt = getFromReact(handDrawn);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
       };
       None;
     | Image(url)
@@ -937,27 +948,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
                     ~minHeight="480px",
+                    ~position="relative",
                     (),
                   )
                 )>
-                <canvas
-                  ref=(self.handle(setCanvasRef))
-                  onClick=(evt => Js.log(evt))
-                  width=(Js.Int.toString(self.state.params.width))
-                  height=(Js.Int.toString(self.state.params.height))
-                  style=(
-                    ReactDOMRe.Style.make(
-                      ~transform=
-                        "scale("
-                        ++ Js.Float.toString(
-                             480.0 /. float_of_int(self.state.params.height),
-                           )
-                        ++ ")",
-                      ~transformOrigin="top left",
-                      (),
-                    )
-                  )
-                />
                 <MediaProvider
                   audioCtx
                   audioGraph=self.state.audioGraph
@@ -979,6 +973,23 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                         )
                   )
                   layers=(sortLayers(self.state.params.layers))
+                />
+                <canvas
+                  ref=(self.handle(setCanvasRef))
+                  width=(Js.Int.toString(self.state.params.width))
+                  height=(Js.Int.toString(self.state.params.height))
+                  style=(
+                    ReactDOMRe.Style.make(
+                      ~transform=
+                        "scale("
+                        ++ Js.Float.toString(
+                             480.0 /. float_of_int(self.state.params.height),
+                           )
+                        ++ ")",
+                      ~transformOrigin="top left",
+                      (),
+                    )
+                  )
                 />
               </div>
               /* <Button */

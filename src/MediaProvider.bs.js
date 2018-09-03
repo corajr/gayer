@@ -25,8 +25,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
           /* render */(function () {
               return React.createElement("div", {
                           style: {
-                            position: "absolute",
-                            visibility: "hidden"
+                            position: "absolute"
                           }
                         }, $$Array.of_list(List.map((function (layer) {
                                     var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
@@ -45,7 +44,27 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                       }
                                       
                                     }
-                                    return ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[]));
+                                    var match$2 = layer[/* content */0];
+                                    var tmp;
+                                    var exit = 0;
+                                    if (typeof match$2 === "number" && match$2 === 0) {
+                                      tmp = {
+                                        border: "1px solid black",
+                                        position: "absolute",
+                                        zIndex: "10"
+                                      };
+                                    } else {
+                                      exit = 1;
+                                    }
+                                    if (exit === 1) {
+                                      tmp = {
+                                        position: "absolute",
+                                        visibility: "hidden"
+                                      };
+                                    }
+                                    return React.createElement("div", {
+                                                style: tmp
+                                              }, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[])));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],

@@ -4,10 +4,11 @@ import * as React from "react";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
+import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
 
-function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, _$1, height, layerContent, _$2) {
+function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, width, height, layerContent, _$1) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -21,7 +22,7 @@ function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, _$1, hei
           /* render */(function () {
               var tmp;
               if (typeof layerContent === "number") {
-                tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
+                tmp = layerContent === 0 ? ReasonReact.element(undefined, undefined, HandDrawnCanvas$Gayer.make(setRef, width, height, /* array */[])) : ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
               } else {
                 switch (layerContent.tag | 0) {
                   case 2 : 

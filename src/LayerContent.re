@@ -62,6 +62,7 @@ let make =
             saveRef=setRef
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
+        | HandDrawn => <HandDrawnCanvas setRef width height />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)

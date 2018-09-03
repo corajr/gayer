@@ -209,11 +209,23 @@ let drosteLayer = {
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
 
+let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
+
+/* TODO: think of a more elegant way to do this */
+let midiColors = {
+  ...defaultLayer,
+  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
+  compositeOperation: Multiply,
+};
+
+let handDrawn = {...defaultLayer, content: HandDrawn};
+
 let allLayerTypes = [
   hubble,
   analyzer,
   webcam,
   slitscan,
+  handDrawn,
   fill(~alpha=0.0125, "white"),
   pitchFilter(cMajor),
   blurLayer,
@@ -273,8 +285,9 @@ let slitscanParams = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    slitscan,
-    {...analyzer, compositeOperation: Multiply, alpha: 0.9},
+    analyzer,
+    /* squareColumnLayer, */
+    {...slitscan, compositeOperation: Overlay},
     /* pitchFilter(cMajor), */
     historyLayer,
     reader,
@@ -389,13 +402,9 @@ let droste = {
   ],
 };
 
-let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
-
-/* TODO: think of a more elegant way to do this */
-let midiColors = {
-  ...defaultLayer,
-  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
-  compositeOperation: Multiply,
+let handDrawnParams = {
+  ...defaultParams,
+  layers: [fill("black"), handDrawn, reader],
 };
 
 let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
@@ -432,6 +441,7 @@ let presetsWithoutLayerIds = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Webcam", webcamParams), */
+  /* ("Hand-drawn", handDrawnParams), */
   ("Slitscan", slitscanParams),
   /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),

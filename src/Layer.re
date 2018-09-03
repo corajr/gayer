@@ -56,6 +56,7 @@ module EncodeCameraOptions = {
 type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
+  | HandDrawn
   | Webcam(cameraOptions)
   | Image(string)
   | Video(string)
@@ -108,6 +109,7 @@ module DecodeLayer = {
     Json.Decode.(
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
+      | "hand-drawn" => HandDrawn
       | "webcam" =>
         json
         |> map(
@@ -225,6 +227,7 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
+      | HandDrawn => object_([("type", string("hand-drawn"))])
       | Reader(channel) =>
         object_([
           ("type", string("reader")),
@@ -252,7 +255,7 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
+let renderLayerContent = (~layerContent, ~setRef, ~saveTick, ~layerRefs) => {
   let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layerContent));
 
   let savePreviewRef = aRef =>
@@ -289,7 +292,16 @@ let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
 let component = ReasonReact.statelessComponent("Layer");
 
 let make =
-    (~layer, ~layerRefs, ~saveTick, ~changeLayer, ~width, ~height, _children) => {
+    (
+      ~layer,
+      ~layerRefs,
+      ~onSetRef,
+      ~saveTick,
+      ~changeLayer,
+      ~width,
+      ~height,
+      _children,
+    ) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -306,6 +318,7 @@ let make =
             renderLayerContent(
               ~layerContent=layer.content,
               ~saveTick,
+              ~setRef=onSetRef(layer),
               ~layerRefs,
             )
           )

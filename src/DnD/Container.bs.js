@@ -26,7 +26,7 @@ var defaultState = /* record */[
 
 var component = ReasonReact.reducerComponent("Container");
 
-function make(cards, onMoveCard, onChangeLayer, _, layerRefs, rootWidth, rootHeight, saveTick, _$1) {
+function make(cards, onMoveCard, onChangeLayer, onSetRef, layerRefs, rootWidth, rootHeight, saveTick, _) {
   var dragulaDecorator = function (theRef, param) {
     var state = param[/* state */1];
     state[/* dragContainerRef */1][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -39,7 +39,7 @@ function make(cards, onMoveCard, onChangeLayer, _, layerRefs, rootWidth, rootHei
     } else {
       var drake = ReactDragula(/* array */[Js_primitive.valFromOption(match$1)], {
             invalid: (function (_, handle) {
-                if (handle.tagName === "BUTTON") {
+                if (handle.tagName === "BUTTON" || handle.tagName === "CANVAS") {
                   return true;
                 } else {
                   return handle.getAttribute("role") === "slider";
@@ -124,7 +124,7 @@ function make(cards, onMoveCard, onChangeLayer, _, layerRefs, rootWidth, rootHei
                                                 style: {
                                                   marginBottom: "16px"
                                                 }
-                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], layerRefs, saveTick, onChangeLayer, rootWidth, rootHeight, /* array */[])));
+                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], layerRefs, onSetRef, saveTick, onChangeLayer, rootWidth, rootHeight, /* array */[])));
                                   }), cards)));
             }),
           /* initialState */(function () {

@@ -383,6 +383,8 @@ module Ctx = {
 
   [@bs.send] external beginPath : ctx => unit = "";
 
+  [@bs.send] external closePath : ctx => unit = "";
+
   [@bs.send] external stroke : ctx => unit = "";
 
   let line = (ctx, (x, y), (a, b)) => {

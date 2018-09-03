@@ -20,10 +20,7 @@ let make =
     ) => {
   ...component,
   render: self =>
-    <div
-      style=(
-        ReactDOMRe.Style.make(~visibility="hidden", ~position="absolute", ())
-      )>
+    <div style=(ReactDOMRe.Style.make(~position="absolute", ()))>
       (
         List.map(
           layer => {
@@ -44,17 +41,36 @@ let make =
             | _ => ()
             };
 
-            <LayerContent
-              audioCtx
-              audioGraph
-              layerKey=key
-              setRef=(onSetRef(layer))
-              saveTick
-              millisPerTick=millisPerAudioTick
-              width=rootWidth
-              height=rootHeight
-              layerContent=layer.content
-            />;
+            <div
+              style=(
+                switch (layer.content) {
+                | HandDrawn =>
+                  ReactDOMRe.Style.make(
+                    ~position="absolute",
+                    ~zIndex="10",
+                    ~border="1px solid black",
+                    (),
+                  )
+                | _ =>
+                  ReactDOMRe.Style.make(
+                    ~position="absolute",
+                    ~visibility="hidden",
+                    (),
+                  )
+                }
+              )>
+              <LayerContent
+                audioCtx
+                audioGraph
+                layerKey=key
+                setRef=(onSetRef(layer))
+                saveTick
+                millisPerTick=millisPerAudioTick
+                width=rootWidth
+                height=rootHeight
+                layerContent=layer.content
+              />
+            </div>;
           },
           layers,
         )

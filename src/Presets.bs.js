@@ -639,6 +639,72 @@ var drosteLayer = /* record */[
   drosteLayer_006
 ];
 
+var midiKeyboard_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var midiKeyboard_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var midiKeyboard_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var midiKeyboard_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var midiKeyboard_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var midiKeyboard_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var midiKeyboard = /* record */[
+  /* content : MIDIKeyboard */1,
+  midiKeyboard_001,
+  midiKeyboard_002,
+  midiKeyboard_003,
+  midiKeyboard_004,
+  midiKeyboard_005,
+  midiKeyboard_006
+];
+
+var midiColors_000 = /* content : Draw */Block.__(1, [MIDICanvas$Gayer.makeNoteColors(MIDICanvas$Gayer.oneRainbow)]);
+
+var midiColors_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var midiColors_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var midiColors_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var midiColors_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var midiColors_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var midiColors = /* record */[
+  midiColors_000,
+  midiColors_001,
+  /* compositeOperation : Multiply */11,
+  midiColors_003,
+  midiColors_004,
+  midiColors_005,
+  midiColors_006
+];
+
+var handDrawn_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var handDrawn_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var handDrawn_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var handDrawn_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var handDrawn_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var handDrawn_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var handDrawn = /* record */[
+  /* content : HandDrawn */0,
+  handDrawn_001,
+  handDrawn_002,
+  handDrawn_003,
+  handDrawn_004,
+  handDrawn_005,
+  handDrawn_006
+];
+
 var allLayerTypes_001 = /* :: */[
   analyzer,
   /* :: */[
@@ -646,20 +712,23 @@ var allLayerTypes_001 = /* :: */[
     /* :: */[
       slitscan,
       /* :: */[
-        fill(0.0125, "white"),
+        handDrawn,
         /* :: */[
-          pitchFilter(Music$Gayer.cMajor),
+          fill(0.0125, "white"),
           /* :: */[
-            blurLayer,
+            pitchFilter(Music$Gayer.cMajor),
             /* :: */[
-              rotateLayer,
+              blurLayer,
               /* :: */[
-                squareColumnLayer,
+                rotateLayer,
                 /* :: */[
-                  squareLayer,
+                  squareColumnLayer,
                   /* :: */[
-                    reader,
-                    /* [] */0
+                    squareLayer,
+                    /* :: */[
+                      reader,
+                      /* [] */0
+                    ]
                   ]
                 ]
               ]
@@ -933,16 +1002,16 @@ var slitscanParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 var slitscanParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var slitscanParams_014 = /* layers : :: */[
-  slitscan,
+  analyzer,
   /* :: */[
     /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */2]),
-      /* alpha */0.9,
-      /* compositeOperation : Multiply */11,
-      analyzer_003,
-      analyzer_004,
-      analyzer_005,
-      analyzer_006
+      /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* StaticX */Block.__(0, [320])]]),
+      slitscan_001,
+      /* compositeOperation : Overlay */13,
+      slitscan_003,
+      slitscan_004,
+      slitscan_005,
+      slitscan_006
     ],
     /* :: */[
       historyLayer,
@@ -1571,48 +1640,61 @@ var droste = /* record */[
   droste_014
 ];
 
-var midiKeyboard_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+var handDrawnParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
-var midiKeyboard_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+var handDrawnParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var midiKeyboard_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+var handDrawnParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var midiKeyboard_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+var handDrawnParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
 
-var midiKeyboard_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+var handDrawnParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
 
-var midiKeyboard_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+var handDrawnParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
 
-var midiKeyboard = /* record */[
-  /* content : MIDIKeyboard */0,
-  midiKeyboard_001,
-  midiKeyboard_002,
-  midiKeyboard_003,
-  midiKeyboard_004,
-  midiKeyboard_005,
-  midiKeyboard_006
+var handDrawnParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var handDrawnParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var handDrawnParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var handDrawnParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var handDrawnParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var handDrawnParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var handDrawnParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var handDrawnParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var handDrawnParams_014 = /* layers : :: */[
+  fill(undefined, "black"),
+  /* :: */[
+    handDrawn,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
 ];
 
-var midiColors_000 = /* content : Draw */Block.__(1, [MIDICanvas$Gayer.makeNoteColors(MIDICanvas$Gayer.oneRainbow)]);
-
-var midiColors_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
-
-var midiColors_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
-
-var midiColors_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
-
-var midiColors_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
-
-var midiColors_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
-
-var midiColors = /* record */[
-  midiColors_000,
-  midiColors_001,
-  /* compositeOperation : Multiply */11,
-  midiColors_003,
-  midiColors_004,
-  midiColors_005,
-  midiColors_006
+var handDrawnParams = /* record */[
+  handDrawnParams_000,
+  handDrawnParams_001,
+  handDrawnParams_002,
+  handDrawnParams_003,
+  handDrawnParams_004,
+  handDrawnParams_005,
+  handDrawnParams_006,
+  handDrawnParams_007,
+  handDrawnParams_008,
+  handDrawnParams_009,
+  handDrawnParams_010,
+  handDrawnParams_011,
+  handDrawnParams_012,
+  handDrawnParams_013,
+  handDrawnParams_014
 ];
 
 var midi_000 = history_000;
@@ -2101,6 +2183,9 @@ export {
   historyLayer ,
   historyBackAndForthLayer ,
   drosteLayer ,
+  midiKeyboard ,
+  midiColors ,
+  handDrawn ,
   allLayerTypes ,
   harmonyParams ,
   harmonyIntensified ,
@@ -2117,8 +2202,7 @@ export {
   debussyFile ,
   debussy ,
   droste ,
-  midiKeyboard ,
-  midiColors ,
+  handDrawnParams ,
   midi ,
   midiDroste ,
   readFromCenterLine ,

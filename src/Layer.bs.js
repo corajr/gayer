@@ -205,6 +205,8 @@ function layerByType(type_, json) {
                     }), (function (param) {
                       return Json_decode.field("style", Json_decode.string, param);
                     }), json);
+    case "hand-drawn" : 
+        return /* HandDrawn */0;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -212,7 +214,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "midi-keyboard" : 
-        return /* MIDIKeyboard */0;
+        return /* MIDIKeyboard */1;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
                       return /* PitchClasses */Block.__(6, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
@@ -305,13 +307,23 @@ function transformMatrix$1(param) {
 
 function layerContent$1(r) {
   if (typeof r === "number") {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "midi-keyboard"
-                ],
-                /* [] */0
-              ]);
+    if (r === 0) {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "hand-drawn"
+                  ],
+                  /* [] */0
+                ]);
+    } else {
+      return Json_encode.object_(/* :: */[
+                  /* tuple */[
+                    "type",
+                    "midi-keyboard"
+                  ],
+                  /* [] */0
+                ]);
+    }
   } else {
     switch (r.tag | 0) {
       case 0 : 
@@ -492,7 +504,7 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent$2, saveTick, layerRefs) {
+function renderLayerContent(layerContent$2, _, saveTick, layerRefs) {
   var layerKey = JSON.stringify(layerContent$1(layerContent$2));
   var savePreviewRef = function (aRef) {
     if (aRef == null) {
@@ -523,7 +535,7 @@ function renderLayerContent(layerContent$2, saveTick, layerRefs) {
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
+function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -539,7 +551,7 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], saveTick, layerRefs)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], Curry._1(onSetRef, layer), saveTick, layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[

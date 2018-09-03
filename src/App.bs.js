@@ -339,11 +339,18 @@ function drawLayer(ctx, width, height, state, layer) {
   var match = layer[/* content */0];
   var exit = 0;
   if (typeof match === "number") {
-    if (maybeLayerRef !== undefined) {
-      var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-      ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
+    if (match === 0) {
+      if (maybeLayerRef !== undefined) {
+        ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+      }
+      return undefined;
+    } else {
+      if (maybeLayerRef !== undefined) {
+        var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+        ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
+      }
+      return undefined;
     }
-    return undefined;
   } else {
     switch (match.tag | 0) {
       case 0 : 
@@ -768,21 +775,10 @@ function make($staropt$star, _) {
                                                       id: "main-display",
                                                       style: {
                                                         marginBottom: "24px",
-                                                        minHeight: "480px"
+                                                        minHeight: "480px",
+                                                        position: "relative"
                                                       }
-                                                    }, React.createElement("canvas", {
-                                                          ref: Curry._1(self[/* handle */0], setCanvasRef),
-                                                          style: {
-                                                            transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
-                                                            transformOrigin: "top left"
-                                                          },
-                                                          height: self[/* state */1][/* params */6][/* height */1].toString(),
-                                                          width: self[/* state */1][/* params */6][/* width */0].toString(),
-                                                          onClick: (function (evt) {
-                                                              console.log(evt);
-                                                              return /* () */0;
-                                                            })
-                                                        }), ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */14]), self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], (function (layer, theRef) {
+                                                    }, ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */14]), self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], (function (layer, theRef) {
                                                                 return Curry._2(self[/* handle */0], (function (param, param$1) {
                                                                               return setLayerRef(audioCtx, param, param$1);
                                                                             }), /* tuple */[
@@ -794,7 +790,15 @@ function make($staropt$star, _) {
                                                               }), self[/* state */1][/* audioGraph */9], audioCtx, (function (key, tickFn) {
                                                                 self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], key, tickFn);
                                                                 return /* () */0;
-                                                              }), 16, /* array */[]))),
+                                                              }), 16, /* array */[])), React.createElement("canvas", {
+                                                          ref: Curry._1(self[/* handle */0], setCanvasRef),
+                                                          style: {
+                                                            transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
+                                                            transformOrigin: "top left"
+                                                          },
+                                                          height: self[/* state */1][/* params */6][/* height */1].toString(),
+                                                          width: self[/* state */1][/* params */6][/* width */0].toString()
+                                                        })),
                                                 React.createElement("div", undefined, React.createElement("div", {
                                                           style: {
                                                             marginBottom: "24px"

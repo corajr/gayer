@@ -21,7 +21,7 @@ type cqtBarParams = {
 };
 
 let defaultCqtBarParams = {
-  bits: 12,
+  bits: 14,
   rate: 44100.0,
   width: 120,
   height: 1,
