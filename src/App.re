@@ -405,14 +405,14 @@ let generateNewFilterBanks =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
     let filterBankR =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
 
@@ -422,7 +422,7 @@ let generateNewFilterBanks =
       makeFilterBank(
         ~audioCtx,
         ~filterN=state.params.height,
-        ~q=defaultQ,
+        ~q=state.params.q,
         ~freqFunc,
       );
 

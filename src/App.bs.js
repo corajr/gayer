@@ -535,14 +535,14 @@ function generateNewFilterBanks(audioCtx, param) {
   ];
   var freqFunc = Audio$Gayer.yToFrequency(pixelsPerSemitone, 16 + state[/* params */6][/* transpose */11] | 0, state[/* params */6][/* height */1]);
   if (state[/* params */6][/* stereo */12]) {
-    var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
-    var filterBankR = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
+    var filterBankL = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], state[/* params */6][/* q */10], freqFunc);
+    var filterBankR = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], state[/* params */6][/* q */10], freqFunc);
     return Curry._1(send, /* SetFilterBanks */Block.__(5, [/* StereoBanks */Block.__(1, [
                       filterBankL,
                       filterBankR
                     ])]));
   } else {
-    var filterBank = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], Audio$Gayer.defaultQ, freqFunc);
+    var filterBank = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], state[/* params */6][/* q */10], freqFunc);
     return Curry._1(send, /* SetFilterBanks */Block.__(5, [/* MonoBank */Block.__(0, [filterBank])]));
   }
 }
