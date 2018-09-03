@@ -80,6 +80,8 @@ type action =
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
   | SetFilterBanks(filterBanks)
+  | ChangeLayer(layer, layer)
+  | SetLayers(list(layer))
   | SetParams(params);
 
 [@bs.val] external decodeURIComponent : string => string = "";
@@ -207,9 +209,6 @@ let pushParamsState = newParams => {
     encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
-
-let setLayers = (params, newLayers) =>
-  pushParamsState({...params, layers: newLayers});
 
 let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
   (ctx, width, height, state, layer) => {
@@ -563,6 +562,22 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
       )
+    | ChangeLayer(oldLayer, newLayer) =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            pushParamsState({
+              ...self.state.params,
+              layers:
+                changeLayer(oldLayer, newLayer, self.state.params.layers),
+            })
+        ),
+      )
+
+    | SetLayers(layers) =>
+      ReasonReact.SideEffects(
+        (self => pushParamsState({...self.state.params, layers})),
+      )
     | SetFilterBanks(filterBanks) =>
       ReasonReact.UpdateWithSideEffects(
         {...state, filterBanks: Some(filterBanks)},
@@ -893,17 +908,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
             <Grid item=true xs=Grid.V6>
               <Params
                 params=self.state.params
-                onMoveCard=(layers => setLayers(self.state.params, layers))
+                onMoveCard=(layers => self.send(SetLayers(layers)))
                 onChangeLayer=(
                   (oldLayer, newLayer) =>
-                    setLayers(
-                      self.state.params,
-                      changeLayer(
-                        oldLayer,
-                        newLayer,
-                        self.state.params.layers,
-                      ),
-                    )
+                    self.send(ChangeLayer(oldLayer, newLayer))
                 )
                 onSetRef=(
                   (layer, theRef) =>

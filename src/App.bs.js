@@ -328,26 +328,6 @@ function pushParamsState(newParams) {
   return ReasonReact.Router[/* push */0]("#" + newParamsJson);
 }
 
-function setLayers(params, newLayers) {
-  return pushParamsState(/* record */[
-              /* width */params[/* width */0],
-              /* height */params[/* height */1],
-              /* readPosDelta */params[/* readPosDelta */2],
-              /* writePosDelta */params[/* writePosDelta */3],
-              /* readPosOffset */params[/* readPosOffset */4],
-              /* writePosOffset */params[/* writePosOffset */5],
-              /* millisPerTick */params[/* millisPerTick */6],
-              /* audioInputSetting */params[/* audioInputSetting */7],
-              /* inputGain */params[/* inputGain */8],
-              /* outputGain */params[/* outputGain */9],
-              /* q */params[/* q */10],
-              /* transpose */params[/* transpose */11],
-              /* stereo */params[/* stereo */12],
-              /* shouldClear */params[/* shouldClear */13],
-              /* layers */newLayers
-            ]);
-}
-
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
@@ -643,7 +623,7 @@ function make($staropt$star, _) {
                       if (match !== undefined) {
                         var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */0], Js_primitive.valFromOption(match));
                         if (match$1 !== undefined) {
-                          return Curry._1(self[/* send */3], /* SetParams */Block.__(6, [match$1]));
+                          return Curry._1(self[/* send */3], /* SetParams */Block.__(8, [match$1]));
                         } else {
                           console.log("unable to decode params");
                           return /* () */0;
@@ -764,7 +744,7 @@ function make($staropt$star, _) {
                                                       ]));
                                       }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* V24 */3, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, Params$Gayer.make(self[/* state */1][/* params */6], (function (layers) {
-                                                            return setLayers(self[/* state */1][/* params */6], layers);
+                                                            return Curry._1(self[/* send */3], /* SetLayers */Block.__(7, [layers]));
                                                           }), (function (layer, theRef) {
                                                             return Curry._2(self[/* handle */0], (function (param, param$1) {
                                                                           return setLayerRef(audioCtx, param, param$1);
@@ -773,7 +753,10 @@ function make($staropt$star, _) {
                                                                         theRef
                                                                       ]);
                                                           }), self[/* state */1][/* layerRefs */16], (function (oldLayer, newLayer) {
-                                                            return setLayers(self[/* state */1][/* params */6], changeLayer(oldLayer, newLayer, self[/* state */1][/* params */6][/* layers */14]));
+                                                            return Curry._1(self[/* send */3], /* ChangeLayer */Block.__(6, [
+                                                                          oldLayer,
+                                                                          newLayer
+                                                                        ]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
                                                           }), (function (key, tickFn) {
@@ -935,6 +918,51 @@ function make($staropt$star, _) {
                                   })
                               ]);
                   case 6 : 
+                      var newLayer = action[1];
+                      var oldLayer = action[0];
+                      return /* SideEffects */Block.__(1, [(function (self) {
+                                    var init = self[/* state */1][/* params */6];
+                                    return pushParamsState(/* record */[
+                                                /* width */init[/* width */0],
+                                                /* height */init[/* height */1],
+                                                /* readPosDelta */init[/* readPosDelta */2],
+                                                /* writePosDelta */init[/* writePosDelta */3],
+                                                /* readPosOffset */init[/* readPosOffset */4],
+                                                /* writePosOffset */init[/* writePosOffset */5],
+                                                /* millisPerTick */init[/* millisPerTick */6],
+                                                /* audioInputSetting */init[/* audioInputSetting */7],
+                                                /* inputGain */init[/* inputGain */8],
+                                                /* outputGain */init[/* outputGain */9],
+                                                /* q */init[/* q */10],
+                                                /* transpose */init[/* transpose */11],
+                                                /* stereo */init[/* stereo */12],
+                                                /* shouldClear */init[/* shouldClear */13],
+                                                /* layers */changeLayer(oldLayer, newLayer, self[/* state */1][/* params */6][/* layers */14])
+                                              ]);
+                                  })]);
+                  case 7 : 
+                      var layers = action[0];
+                      return /* SideEffects */Block.__(1, [(function (self) {
+                                    var init = self[/* state */1][/* params */6];
+                                    return pushParamsState(/* record */[
+                                                /* width */init[/* width */0],
+                                                /* height */init[/* height */1],
+                                                /* readPosDelta */init[/* readPosDelta */2],
+                                                /* writePosDelta */init[/* writePosDelta */3],
+                                                /* readPosOffset */init[/* readPosOffset */4],
+                                                /* writePosOffset */init[/* writePosOffset */5],
+                                                /* millisPerTick */init[/* millisPerTick */6],
+                                                /* audioInputSetting */init[/* audioInputSetting */7],
+                                                /* inputGain */init[/* inputGain */8],
+                                                /* outputGain */init[/* outputGain */9],
+                                                /* q */init[/* q */10],
+                                                /* transpose */init[/* transpose */11],
+                                                /* stereo */init[/* stereo */12],
+                                                /* shouldClear */init[/* shouldClear */13],
+                                                /* layers */layers
+                                              ]);
+                                  })]);
+                  case 8 : 
                       var newrecord$7 = Caml_array.caml_array_dup(state);
                       return /* Update */Block.__(0, [(newrecord$7[/* params */6] = action[0], newrecord$7)]);
                   
@@ -963,7 +991,6 @@ export {
   disconnectInputs ,
   clearCanvas ,
   pushParamsState ,
-  setLayers ,
   drawLayer ,
   drawCanvas ,
   getAnalysisInput ,
