@@ -66,6 +66,7 @@ let make =
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)
+        | HistogramReader
         | Reader(_) => ReasonReact.null
         }
       )

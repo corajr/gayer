@@ -7,6 +7,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
+import * as Color$Gayer from "./Color.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as RList$Rationale from "rationale/src/RList.js";
@@ -310,6 +311,25 @@ function imageDataToStereo(imageData, channelL, channelR) {
           arrayL,
           arrayR
         ];
+}
+
+function imageDataToHistogram(bins, imageData) {
+  var output = Caml_array.caml_make_vect(bins, 0.0);
+  var outputMax = /* record */[/* contents */0.0];
+  $$Array.iteri((function (_, param) {
+          var match = Color$Gayer.rgbToHsvFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
+          var i = bins * match[0] | 0;
+          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + match[2]);
+          if (Caml_array.caml_array_get(output, i) > outputMax[0]) {
+            outputMax[0] = Caml_array.caml_array_get(output, i);
+            return /* () */0;
+          } else {
+            return 0;
+          }
+        }), mapRawData(imageData.data, rawDataToPixel));
+  return $$Array.map((function (x) {
+                return x / outputMax[0];
+              }), output);
 }
 
 var makeUint8ClampedArray = function (len){return new Uint8ClampedArray(len)};
@@ -966,6 +986,7 @@ export {
   rawDataToFloatArray ,
   imageDataToFloatArray ,
   imageDataToStereo ,
+  imageDataToHistogram ,
   makeUint8ClampedArray ,
   makeImageData ,
   makeImageDataFromFloats ,

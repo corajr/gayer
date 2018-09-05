@@ -207,6 +207,8 @@ function layerByType(type_, json) {
                     }), json);
     case "hand-drawn" : 
         return /* HandDrawn */0;
+    case "histogram-reader" : 
+        return /* HistogramReader */2;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -307,22 +309,32 @@ function transformMatrix$1(param) {
 
 function layerContent$1(r) {
   if (typeof r === "number") {
-    if (r === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "hand-drawn"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "midi-keyboard"
-                  ],
-                  /* [] */0
-                ]);
+    switch (r) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "hand-drawn"
+                      ],
+                      /* [] */0
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "midi-keyboard"
+                      ],
+                      /* [] */0
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "histogram-reader"
+                      ],
+                      /* [] */0
+                    ]);
+      
     }
   } else {
     switch (r.tag | 0) {

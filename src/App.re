@@ -371,6 +371,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         );
       };
       None;
+    | HistogramReader =>
+      let xToRead =
+        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+      let histogram = imageDataToHistogram(state.params.height, slice);
+      let img = makeImageDataFromFloats(histogram, 1, state.params.height);
+      Ctx.putImageData(ctx, img, xToRead, 0);
+      Some(Mono(histogram));
     | Reader(channel) =>
       let xToRead =
         wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);

@@ -23,6 +23,13 @@ let reader = {
   compositeOperation: Multiply,
 };
 
+let histogramReader = {
+  ...defaultLayer,
+  content: HistogramReader,
+  alpha: 0.0,
+  compositeOperation: SourceOver,
+};
+
 let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
@@ -437,7 +444,13 @@ let video = {
   ],
 };
 
+let histogram = {
+  ...defaultParams,
+  layers: [hubble, pitchFilter(cMajor), histogramReader],
+};
+
 let presetsWithoutLayerIds = [
+  ("Histogram", histogram),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Webcam", webcamParams), */

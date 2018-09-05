@@ -116,7 +116,14 @@ function setLayerRef(audioCtx, param, param$1) {
   var match = layer[/* content */0];
   var exit = 0;
   if (typeof match === "number") {
-    exit = 1;
+    switch (match) {
+      case 0 : 
+      case 1 : 
+          exit = 1;
+          break;
+      default:
+        return /* () */0;
+    }
   } else {
     switch (match.tag | 0) {
       case 2 : 
@@ -156,13 +163,12 @@ function setLayerRef(audioCtx, param, param$1) {
               return 0;
             }
           }
-      case 0 : 
-      case 1 : 
-      case 6 : 
-      case 7 : 
-          return /* () */0;
+      case 3 : 
+      case 5 : 
+          exit = 1;
+          break;
       default:
-        exit = 1;
+        return /* () */0;
     }
   }
   if (exit === 1) {
@@ -324,17 +330,26 @@ function drawLayer(ctx, width, height, state, layer) {
   var match = layer[/* content */0];
   var exit = 0;
   if (typeof match === "number") {
-    if (match === 0) {
-      if (maybeLayerRef !== undefined) {
-        ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-      }
-      return undefined;
-    } else {
-      if (maybeLayerRef !== undefined) {
-        var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-        ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
-      }
-      return undefined;
+    switch (match) {
+      case 0 : 
+          if (maybeLayerRef !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+          }
+          return undefined;
+      case 1 : 
+          if (maybeLayerRef !== undefined) {
+            var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
+          }
+          return undefined;
+      case 2 : 
+          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
+          var slice = ctx.getImageData(xToRead, 0, 1, height);
+          var histogram = Canvas$Gayer.imageDataToHistogram(state[/* params */6][/* height */1], slice);
+          var img = Canvas$Gayer.makeImageDataFromFloats(histogram, 1, state[/* params */6][/* height */1]);
+          ctx.putImageData(img, xToRead, 0);
+          return /* Mono */Block.__(0, [histogram]);
+      
     }
   } else {
     switch (match.tag | 0) {
@@ -403,8 +418,8 @@ function drawLayer(ctx, width, height, state, layer) {
           return undefined;
       case 7 : 
           var channel = match[0];
-          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
-          var slice = ctx.getImageData(xToRead, 0, 1, height);
+          var xToRead$1 = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
+          var slice$1 = ctx.getImageData(xToRead$1, 0, 1, height);
           var tmp;
           switch (channel) {
             case 0 : 
@@ -422,11 +437,11 @@ function drawLayer(ctx, width, height, state, layer) {
             
           }
           ctx.fillStyle = tmp;
-          ctx.fillRect(xToRead, 0, 1, height);
+          ctx.fillRect(xToRead$1, 0, 1, height);
           if (channel >= 3) {
-            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
+            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice$1, channel)]);
           } else {
-            var match$4 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            var match$4 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
             return /* Stereo */Block.__(1, [
                       match$4[0],
                       match$4[1]

@@ -477,6 +477,26 @@ let imageDataToStereo =
   (arrayL, arrayR);
 };
 
+let imageDataToHistogram: (int, imageData) => array(float) =
+  (bins, imageData) => {
+    open Color;
+    let output = Array.make(bins, 0.0);
+    let outputMax = ref(0.0);
+
+    mapImageData(imageData, rawDataToPixel)
+    |> Array.iteri((i, {r, g, b, a}) => {
+         let (h, _, v) = rgbToHsvFloat(r, g, b);
+         let i = int_of_float(float_of_int(bins) *. h);
+         output[i] = output[i] +. v;
+         if (output[i] > outputMax^) {
+           outputMax := output[i];
+         };
+       });
+
+    /* output; */
+    Array.map(x => x /. outputMax^, output);
+  };
+
 let makeUint8ClampedArray = [%bs.raw
   len => {|return new Uint8ClampedArray(len)|}
 ];

@@ -22,7 +22,16 @@ function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, width, h
           /* render */(function () {
               var tmp;
               if (typeof layerContent === "number") {
-                tmp = layerContent === 0 ? ReasonReact.element(undefined, undefined, HandDrawnCanvas$Gayer.make(setRef, width, height, /* array */[])) : ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
+                switch (layerContent) {
+                  case 0 : 
+                      tmp = ReasonReact.element(undefined, undefined, HandDrawnCanvas$Gayer.make(setRef, width, height, /* array */[]));
+                      break;
+                  case 1 : 
+                      tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
+                      break;
+                  default:
+                    tmp = null;
+                }
               } else {
                 switch (layerContent.tag | 0) {
                   case 2 : 
