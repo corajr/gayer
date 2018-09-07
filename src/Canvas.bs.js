@@ -316,10 +316,18 @@ function imageDataToStereo(imageData, channelL, channelR) {
 function imageDataToHistogram(bins, imageData) {
   var output = Caml_array.caml_make_vect(bins, 0.0);
   var outputMax = /* record */[/* contents */0.0];
+  var octave = bins / 10 | 0;
+  var numOfOctaves = Caml_int32.div(bins, octave);
+  var binFn = function (h, _, v) {
+    var positionInOctave = h * (octave - 1 | 0) | 0;
+    var octaveOffset = Caml_int32.imul((numOfOctaves - 1.0) * v | 0, octave);
+    return octaveOffset + positionInOctave | 0;
+  };
   $$Array.iteri((function (_, param) {
           var match = Color$Gayer.rgbToHsvFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
-          var i = bins * match[0] | 0;
-          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + match[2]);
+          var s = match[1];
+          var i = binFn(match[0], s, match[2]);
+          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + s);
           if (Caml_array.caml_array_get(output, i) > outputMax[0]) {
             outputMax[0] = Caml_array.caml_array_get(output, i);
             return /* () */0;
@@ -327,9 +335,14 @@ function imageDataToHistogram(bins, imageData) {
             return 0;
           }
         }), mapRawData(imageData.data, rawDataToPixel));
-  return $$Array.map((function (x) {
-                return x / outputMax[0];
-              }), output);
+  var match = outputMax[0] === 0.0;
+  if (match) {
+    return output;
+  } else {
+    return $$Array.map((function (x) {
+                  return x / outputMax[0];
+                }), output);
+  }
 }
 
 var makeUint8ClampedArray = function (len){return new Uint8ClampedArray(len)};

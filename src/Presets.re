@@ -301,6 +301,15 @@ let slitscanParams = {
   ],
 };
 
+let slitscanHistogramParams = {
+  ...slitscanParams,
+  layers: [
+    slitscan,
+    {...histogramReader, alpha: 0.75, compositeOperation: Multiply},
+    historyLayer,
+  ],
+};
+
 let slitscanMovingParams = {
   ...defaultParams,
   shouldClear: false,
@@ -450,12 +459,11 @@ let histogram = {
 };
 
 let presetsWithoutLayerIds = [
-  ("Histogram", histogram),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
-  /* ("Webcam", webcamParams), */
   /* ("Hand-drawn", handDrawnParams), */
   ("Slitscan", slitscanParams),
+  ("Slitscan histogram", slitscanHistogramParams),
   /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */

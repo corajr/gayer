@@ -482,19 +482,26 @@ let imageDataToHistogram: (int, imageData) => array(float) =
     open Color;
     let output = Array.make(bins, 0.0);
     let outputMax = ref(0.0);
+    let binsF = float_of_int(bins);
+    let octave = bins / 10;
+    let numOfOctaves = float_of_int(bins / octave);
+    let binFn = (h, s, v) : int => {
+      let positionInOctave = int_of_float(h *. float_of_int(octave - 1));
+      let octaveOffset = int_of_float((numOfOctaves -. 1.0) *. v) * octave;
+      octaveOffset + positionInOctave;
+    };
 
     mapImageData(imageData, rawDataToPixel)
-    |> Array.iteri((i, {r, g, b, a}) => {
-         let (h, _, v) = rgbToHsvFloat(r, g, b);
-         let i = int_of_float(float_of_int(bins) *. h);
-         output[i] = output[i] +. v;
+    |> Array.iteri((imageI, {r, g, b, a}) => {
+         let (h, s, v) = rgbToHsvFloat(r, g, b);
+         let i = binFn(h, s, v);
+         output[i] = output[i] +. s;
          if (output[i] > outputMax^) {
            outputMax := output[i];
          };
        });
 
-    /* output; */
-    Array.map(x => x /. outputMax^, output);
+    outputMax^ === 0.0 ? output : Array.map(x => x /. outputMax^, output);
   };
 
 let makeUint8ClampedArray = [%bs.raw

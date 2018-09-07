@@ -1059,6 +1059,65 @@ var slitscanParams = /* record */[
   slitscanParams_014
 ];
 
+var slitscanHistogramParams_000 = slitscanParams_000;
+
+var slitscanHistogramParams_001 = slitscanParams_001;
+
+var slitscanHistogramParams_004 = slitscanParams_004;
+
+var slitscanHistogramParams_005 = slitscanParams_005;
+
+var slitscanHistogramParams_006 = slitscanParams_006;
+
+var slitscanHistogramParams_007 = slitscanParams_007;
+
+var slitscanHistogramParams_008 = slitscanParams_008;
+
+var slitscanHistogramParams_009 = slitscanParams_009;
+
+var slitscanHistogramParams_010 = slitscanParams_010;
+
+var slitscanHistogramParams_011 = slitscanParams_011;
+
+var slitscanHistogramParams_012 = slitscanParams_012;
+
+var slitscanHistogramParams_014 = /* layers : :: */[
+  slitscan,
+  /* :: */[
+    /* record */[
+      /* content : HistogramReader */2,
+      /* alpha */0.75,
+      /* compositeOperation : Multiply */11,
+      histogramReader_003,
+      histogramReader_004,
+      histogramReader_005,
+      histogramReader_006
+    ],
+    /* :: */[
+      historyLayer,
+      /* [] */0
+    ]
+  ]
+];
+
+var slitscanHistogramParams = /* record */[
+  slitscanHistogramParams_000,
+  slitscanHistogramParams_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  slitscanHistogramParams_004,
+  slitscanHistogramParams_005,
+  slitscanHistogramParams_006,
+  slitscanHistogramParams_007,
+  slitscanHistogramParams_008,
+  slitscanHistogramParams_009,
+  slitscanHistogramParams_010,
+  slitscanHistogramParams_011,
+  slitscanHistogramParams_012,
+  /* shouldClear */false,
+  slitscanHistogramParams_014
+];
+
 var slitscanMovingParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var slitscanMovingParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -2075,40 +2134,40 @@ var histogram = /* record */[
 ];
 
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Histogram",
-  histogram
+  "Spacy",
+  /* record */[
+    /* width */Params$Gayer.defaultParams[/* width */0],
+    /* height */Params$Gayer.defaultParams[/* height */1],
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+    /* q */Params$Gayer.defaultParams[/* q */10],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+    /* layers */spacy
+  ]
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
   /* tuple */[
-    "Spacy",
-    /* record */[
-      /* width */Params$Gayer.defaultParams[/* width */0],
-      /* height */Params$Gayer.defaultParams[/* height */1],
-      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-      /* q */Params$Gayer.defaultParams[/* q */10],
-      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-      /* layers */spacy
-    ]
+    "Single note",
+    singleNote
   ],
   /* :: */[
     /* tuple */[
-      "Single note",
-      singleNote
+      "Slitscan",
+      slitscanParams
     ],
     /* :: */[
       /* tuple */[
-        "Slitscan",
-        slitscanParams
+        "Slitscan histogram",
+        slitscanHistogramParams
       ],
       /* :: */[
         /* tuple */[
@@ -2269,6 +2328,7 @@ export {
   feedback ,
   webcamParams ,
   slitscanParams ,
+  slitscanHistogramParams ,
   slitscanMovingParams ,
   whiteboardParams ,
   isItACrime ,

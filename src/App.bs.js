@@ -346,7 +346,10 @@ function drawLayer(ctx, width, height, state, layer) {
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var histogram = Canvas$Gayer.imageDataToHistogram(state[/* params */6][/* height */1], slice);
-          var img = Canvas$Gayer.makeImageDataFromFloats(histogram, 1, state[/* params */6][/* height */1]);
+          var revHistogram = $$Array.init(state[/* params */6][/* height */1], (function (i) {
+                  return Caml_array.caml_array_get(histogram, (state[/* params */6][/* height */1] - i | 0) - 1 | 0);
+                }));
+          var img = Canvas$Gayer.makeImageDataFromFloats(revHistogram, 1, state[/* params */6][/* height */1]);
           ctx.putImageData(img, xToRead, 0);
           return /* Mono */Block.__(0, [histogram]);
       
