@@ -32,18 +32,9 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
                                     var match = layer[/* content */0];
                                     var maybeAudio;
-                                    if (typeof match === "number" || match.tag !== 5) {
-                                      maybeAudio = null;
-                                    } else {
-                                      var source = match[0];
-                                      var exit = 0;
-                                      if (typeof source === "number" || source.tag) {
-                                        exit = 1;
-                                      } else {
-                                        maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
-                                      }
-                                      if (exit === 1) {
-                                        var match$1 = Curry._1(getAudio, source);
+                                    if (typeof match === "number") {
+                                      if (match === 2) {
+                                        var match$1 = Curry._1(getAudio, /* Mic */2);
                                         var maybeInput = match$1[1];
                                         if (maybeInput !== undefined) {
                                           audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
@@ -54,13 +45,38 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                         } else {
                                           maybeAudio = null;
                                         }
+                                      } else {
+                                        maybeAudio = null;
+                                      }
+                                    } else if (match.tag === 5) {
+                                      var source = match[0];
+                                      var exit = 0;
+                                      if (typeof source === "number" || source.tag) {
+                                        exit = 1;
+                                      } else {
+                                        maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
+                                      }
+                                      if (exit === 1) {
+                                        var match$2 = Curry._1(getAudio, source);
+                                        var maybeInput$1 = match$2[1];
+                                        if (maybeInput$1 !== undefined) {
+                                          audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
+                                                    key + "input",
+                                                    maybeInput$1
+                                                  ], audioGraph[0]));
+                                          maybeAudio = null;
+                                        } else {
+                                          maybeAudio = null;
+                                        }
                                       }
                                       
+                                    } else {
+                                      maybeAudio = null;
                                     }
-                                    var match$2 = layer[/* content */0];
+                                    var match$3 = layer[/* content */0];
                                     var tmp;
                                     var exit$1 = 0;
-                                    if (typeof match$2 === "number" && match$2 === 0) {
+                                    if (typeof match$3 === "number" && match$3 === 0) {
                                       tmp = {
                                         border: "1px solid black",
                                         position: "absolute",

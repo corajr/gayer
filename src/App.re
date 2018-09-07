@@ -101,6 +101,8 @@ let setLayerRef =
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (HandDrawn, Some(aRef)) =>
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
+  | (RawAudioWriter, Some(aRef)) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -250,6 +252,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         let x =
           wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
         Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+      };
+      None;
+    | RawAudioWriter =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(canvas) =>
+        let canvasSource = getCanvasAsSource(getFromReact(canvas));
+        Ctx.drawImage(ctx, canvasSource, 0, 0);
       };
       None;
     | HandDrawn =>

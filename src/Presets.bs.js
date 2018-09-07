@@ -61,13 +61,35 @@ var histogramReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var histogramReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogramReader = /* record */[
-  /* content : HistogramReader */2,
+  /* content : HistogramReader */3,
   /* alpha */0.0,
   /* compositeOperation : SourceOver */0,
   histogramReader_003,
   histogramReader_004,
   histogramReader_005,
   histogramReader_006
+];
+
+var rawAudioWriter_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var rawAudioWriter_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var rawAudioWriter_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var rawAudioWriter_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var rawAudioWriter_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var rawAudioWriter_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var rawAudioWriter = /* record */[
+  /* content : RawAudioWriter */2,
+  rawAudioWriter_001,
+  rawAudioWriter_002,
+  rawAudioWriter_003,
+  rawAudioWriter_004,
+  rawAudioWriter_005,
+  rawAudioWriter_006
 ];
 
 function pitchFilter(pc) {
@@ -1085,7 +1107,7 @@ var slitscanHistogramParams_014 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : HistogramReader */2,
+      /* content : HistogramReader */3,
       /* alpha */0.75,
       /* compositeOperation : Multiply */11,
       histogramReader_003,
@@ -2133,99 +2155,156 @@ var histogram = /* record */[
   histogram_014
 ];
 
+var rawAudio_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var rawAudio_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var rawAudio_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var rawAudio_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var rawAudio_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var rawAudio_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var rawAudio_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var rawAudio_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var rawAudio_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var rawAudio_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var rawAudio_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var rawAudio_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var rawAudio_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var rawAudio_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var rawAudio_014 = /* layers : :: */[
+  rawAudioWriter,
+  /* [] */0
+];
+
+var rawAudio = /* record */[
+  rawAudio_000,
+  rawAudio_001,
+  rawAudio_002,
+  rawAudio_003,
+  rawAudio_004,
+  rawAudio_005,
+  rawAudio_006,
+  rawAudio_007,
+  rawAudio_008,
+  rawAudio_009,
+  rawAudio_010,
+  rawAudio_011,
+  rawAudio_012,
+  rawAudio_013,
+  rawAudio_014
+];
+
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Spacy",
-  /* record */[
-    /* width */Params$Gayer.defaultParams[/* width */0],
-    /* height */Params$Gayer.defaultParams[/* height */1],
-    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-    /* q */Params$Gayer.defaultParams[/* q */10],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-    /* layers */spacy
-  ]
+  "Raw audio",
+  rawAudio
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
   /* tuple */[
-    "Single note",
-    singleNote
+    "Spacy",
+    /* record */[
+      /* width */Params$Gayer.defaultParams[/* width */0],
+      /* height */Params$Gayer.defaultParams[/* height */1],
+      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+      /* q */Params$Gayer.defaultParams[/* q */10],
+      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+      /* layers */spacy
+    ]
   ],
   /* :: */[
     /* tuple */[
-      "Slitscan",
-      slitscanParams
+      "Single note",
+      singleNote
     ],
     /* :: */[
       /* tuple */[
-        "Slitscan histogram",
-        slitscanHistogramParams
+        "Slitscan",
+        slitscanParams
       ],
       /* :: */[
         /* tuple */[
-          "History",
-          history
+          "Slitscan histogram",
+          slitscanHistogramParams
         ],
         /* :: */[
           /* tuple */[
-            "Rotation",
-            vinyl
+            "History",
+            history
           ],
           /* :: */[
             /* tuple */[
-              "Tughra of Suleiman",
-              tughra
+              "Rotation",
+              vinyl
             ],
             /* :: */[
               /* tuple */[
-                "Is it a crime?",
-                isItACrime
+                "Tughra of Suleiman",
+                tughra
               ],
               /* :: */[
                 /* tuple */[
-                  "MIDI",
-                  midi
+                  "Is it a crime?",
+                  isItACrime
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Audio file",
-                    debussy
+                    "MIDI",
+                    midi
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Mic feedback (may be loud!)",
-                      feedback
+                      "Audio file",
+                      debussy
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Empty",
-                        /* record */[
-                          /* width */Params$Gayer.defaultParams[/* width */0],
-                          /* height */Params$Gayer.defaultParams[/* height */1],
-                          /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                          /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                          /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                          /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                          /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                          /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                          /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                          /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                          /* q */Params$Gayer.defaultParams[/* q */10],
-                          /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                          /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                          /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                          /* layers : [] */0
-                        ]
+                        "Mic feedback (may be loud!)",
+                        feedback
                       ],
-                      /* [] */0
+                      /* :: */[
+                        /* tuple */[
+                          "Empty",
+                          /* record */[
+                            /* width */Params$Gayer.defaultParams[/* width */0],
+                            /* height */Params$Gayer.defaultParams[/* height */1],
+                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                            /* q */Params$Gayer.defaultParams[/* q */10],
+                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                            /* layers : [] */0
+                          ]
+                        ],
+                        /* [] */0
+                      ]
                     ]
                   ]
                 ]
@@ -2298,6 +2377,7 @@ export {
   img ,
   reader ,
   histogramReader ,
+  rawAudioWriter ,
   pitchFilter ,
   fill ,
   draw ,
@@ -2348,6 +2428,7 @@ export {
   videoURL ,
   video$1 as video,
   histogram ,
+  rawAudio ,
   presetsWithoutLayerIds ,
   idCounter ,
   addIds ,

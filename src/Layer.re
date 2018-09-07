@@ -63,6 +63,7 @@ type layerContent =
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
+  | RawAudioWriter
   | HistogramReader
   | Reader(channel);
 
@@ -119,6 +120,7 @@ module DecodeLayer = {
            )
       | "image" => json |> map(s => Image(s), field("url", string))
       | "video" => json |> map(s => Video(s), field("url", string))
+      | "raw-audio-writer" => RawAudioWriter
       | "histogram-reader" => HistogramReader
       | "reader" =>
         json
@@ -230,6 +232,7 @@ module EncodeLayer = {
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
       | HistogramReader => object_([("type", string("histogram-reader"))])
+      | RawAudioWriter => object_([("type", string("raw-audio-writer"))])
       | HandDrawn => object_([("type", string("hand-drawn"))])
       | Reader(channel) =>
         object_([

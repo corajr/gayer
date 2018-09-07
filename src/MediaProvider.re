@@ -49,6 +49,17 @@ let make =
                   | None => ReasonReact.null
                   };
                 }
+              | RawAudioWriter =>
+                let (_, maybeInput) = getAudio(Mic);
+                switch (maybeInput) {
+                | Some(input) =>
+                  audioGraph :=
+                    audioGraph^
+                    |> addNode((key ++ "input", input))
+                    |> updateConnections;
+                  ReasonReact.null;
+                | None => ReasonReact.null
+                };
               | _ => ReasonReact.null
               };
 

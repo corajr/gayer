@@ -208,7 +208,7 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram-reader" : 
-        return /* HistogramReader */2;
+        return /* HistogramReader */3;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -225,6 +225,8 @@ function layerByType(type_, json) {
                                     return Json_decode.list(Json_decode.$$int, param);
                                   }), param);
                     }), json);
+    case "raw-audio-writer" : 
+        return /* RawAudioWriter */2;
     case "reader" : 
         return Json_decode.map((function (i) {
                       return /* Reader */Block.__(7, [i]);
@@ -327,6 +329,14 @@ function layerContent$1(r) {
                       /* [] */0
                     ]);
       case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "raw-audio-writer"
+                      ],
+                      /* [] */0
+                    ]);
+      case 3 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",

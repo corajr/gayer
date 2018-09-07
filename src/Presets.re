@@ -30,6 +30,8 @@ let histogramReader = {
   compositeOperation: SourceOver,
 };
 
+let rawAudioWriter = {...defaultLayer, content: RawAudioWriter};
+
 let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
@@ -458,7 +460,10 @@ let histogram = {
   layers: [hubble, pitchFilter(cMajor), histogramReader],
 };
 
+let rawAudio = {...defaultParams, layers: [rawAudioWriter]};
+
 let presetsWithoutLayerIds = [
+  ("Raw audio", rawAudio),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */

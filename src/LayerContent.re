@@ -63,6 +63,17 @@ let make =
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | HandDrawn => <HandDrawnCanvas setRef width height />
+        | RawAudioWriter =>
+          <RawAudioCanvas
+            layerKey
+            audioCtx
+            audioGraph
+            setRef
+            saveTick
+            samples=4096
+            width=64
+            height=64
+          />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)

@@ -4,11 +4,12 @@ import * as React from "react";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
+import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
 import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
 
-function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, width, height, layerContent, _$1) {
+function make(layerKey, audioCtx, audioGraph, setRef, saveTick, millisPerTick, width, height, layerContent, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -28,6 +29,9 @@ function make(layerKey, audioCtx, audioGraph, setRef, _, millisPerTick, width, h
                       break;
                   case 1 : 
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
+                      break;
+                  case 2 : 
+                      tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(4096, 64, 64, saveTick, layerKey, audioCtx, audioGraph, setRef, /* array */[]));
                       break;
                   default:
                     tmp = null;
