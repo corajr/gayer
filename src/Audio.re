@@ -104,6 +104,29 @@ type analyser =
   };
 
 [@bs.deriving abstract]
+type audioBuffer =
+  pri {
+    [@bs.as "sampleRate"]
+    bufferSampleRate: float,
+    [@bs.as "length"]
+    bufferLength: int,
+    duration: float,
+    numberOfChannels: int,
+  };
+
+[@bs.deriving abstract]
+type audioBufferSourceNode =
+  pri {
+    mutable buffer: audioBuffer,
+    [@bs.as "detune"]
+    bufferDetune: audioParam,
+    mutable loop: bool,
+    mutable loopStart: float,
+    mutable loopEnd: float,
+    playbackRate: audioParam,
+  };
+
+[@bs.deriving abstract]
 type compressor = {
   threshold: audioParam,
   knee: audioParam,
@@ -162,8 +185,26 @@ external getFrequencyResponse :
   (biquadFilter, float32array, float32array, float32array) => audioParam =
   "";
 
+[@bs.get] external getAudioContext : audioNode => audioContext = "context";
+
 [@bs.send] external createAnalyser : audioContext => analyser = "";
 [@bs.send] external createBiquadFilter : audioContext => biquadFilter = "";
+
+/* ctx, numOfChannels, length, sampleRate */
+[@bs.send]
+external createBuffer : (audioContext, int, int, int) => audioBuffer = "";
+
+[@bs.send]
+external createBufferSource : audioContext => audioBufferSourceNode = "";
+
+[@bs.send]
+external getChannelData : (audioBuffer, int) => TypedArray.float32Array = "";
+
+[@bs.send]
+external copyToChannel :
+  (audioBuffer, TypedArray.float32Array, int, int) => unit =
+  "";
+
 [@bs.send] external createGain : audioContext => gainNode = "";
 [@bs.send] external createDynamicsCompressor : audioContext => compressor = "";
 
@@ -190,6 +231,12 @@ external createPeriodicWave :
 [@bs.send] external setPeriodicWave : (oscillator, periodicWave) => unit = "";
 [@bs.send] external startOscillator : oscillator => unit = "start";
 [@bs.send] external stopOscillator : oscillator => unit = "stop";
+
+/* https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode/start */
+[@bs.send]
+external startAudioBufferSourceNode : audioBufferSourceNode => unit = "start";
+[@bs.send]
+external stopAudioBufferSourceNode : audioBufferSourceNode => unit = "stop";
 
 [@bs.send] external setValueAtTime : (audioParam, float, float) => unit = "";
 

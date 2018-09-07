@@ -13,113 +13,11 @@ import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
+import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
-
-function slitscanOptions(json) {
-  return Json_decode.andThen((function (type_, json) {
-                switch (type_) {
-                  case "readPosX" : 
-                      return /* ReadPosX */0;
-                  case "readPosY" : 
-                      return /* ReadPosY */1;
-                  case "staticX" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticX */Block.__(0, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("x", Json_decode.$$int, param);
-                                  }), json);
-                  case "staticY" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticY */Block.__(1, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("y", Json_decode.$$int, param);
-                                  }), json);
-                  default:
-                    return /* StaticX */Block.__(0, [320]);
-                }
-              }), (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), json);
-}
-
-function cameraOptions(json) {
-  return /* record */[/* slitscan */Json_decode.optional((function (param) {
-                  return Json_decode.field("slitscan", slitscanOptions, param);
-                }), json)];
-}
-
-var DecodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions,
-  /* cameraOptions */cameraOptions
-];
-
-function slitscanOptions$1(param) {
-  if (typeof param === "number") {
-    if (param === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosX"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosY"
-                  ],
-                  /* [] */0
-                ]);
-    }
-  } else if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticY"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "y",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticX"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "x",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  }
-}
-
-function cameraOptions$1(r) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "slitscan",
-                Json_encode.nullable(slitscanOptions$1, r[/* slitscan */0])
-              ],
-              /* [] */0
-            ]);
-}
-
-var EncodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions$1,
-  /* cameraOptions */cameraOptions$1
-];
 
 var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
 
@@ -180,6 +78,16 @@ function transformMatrix(json) {
 
 var rotation = Json_decode.$$float;
 
+function rawAudioFormat(json) {
+  return /* record */[
+          /* x */Json_decode.field("x", Json_decode.$$int, json),
+          /* y */Json_decode.field("y", Json_decode.$$int, json),
+          /* w */Json_decode.field("w", Json_decode.$$int, json),
+          /* h */Json_decode.field("h", Json_decode.$$int, json),
+          /* sampleRate */Json_decode.field("sampleRate", Json_decode.$$int, json)
+        ];
+}
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -225,11 +133,17 @@ function layerByType(type_, json) {
                                     return Json_decode.list(Json_decode.$$int, param);
                                   }), param);
                     }), json);
+    case "raw-audio-reader" : 
+        return Json_decode.map((function (o) {
+                      return /* RawAudioReader */Block.__(7, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("format", rawAudioFormat, param);
+                    }), json);
     case "raw-audio-writer" : 
         return /* RawAudioWriter */2;
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(7, [i]);
+                      return /* Reader */Block.__(8, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
@@ -242,10 +156,11 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "webcam" : 
+        var partial_arg$3 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
                       return /* Webcam */Block.__(2, [s]);
                     }), (function (param) {
-                      return Json_decode.field("options", cameraOptions, param);
+                      return Json_decode.field("options", partial_arg$3, param);
                     }), json);
     default:
       throw [
@@ -280,6 +195,7 @@ function layer(json) {
 var DecodeLayer = /* module */[
   /* transformMatrix */transformMatrix,
   /* rotation */rotation,
+  /* rawAudioFormat */rawAudioFormat,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
@@ -302,6 +218,40 @@ function transformMatrix$1(param) {
                         param[/* verticalMoving */5],
                         /* [] */0
                       ]
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
+function rawAudioFormat$1(r) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "x",
+                r[/* x */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "y",
+                  r[/* y */1]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "w",
+                    r[/* w */2]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "h",
+                      r[/* h */3]
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "sampleRate",
+                        r[/* sampleRate */4]
+                      ],
+                      /* [] */0
                     ]
                   ]
                 ]
@@ -385,7 +335,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "options",
-                          cameraOptions$1(r[0])
+                          CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */1](r[0])
                         ],
                         /* [] */0
                       ]
@@ -449,6 +399,20 @@ function layerContent$1(r) {
                       ]
                     ]);
       case 7 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "raw-audio-reader"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "format",
+                          rawAudioFormat$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 8 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -521,6 +485,7 @@ function layer$1(r) {
 
 var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
+  /* rawAudioFormat */rawAudioFormat$1,
   /* layerContent */layerContent$1,
   /* rotation */rotation$1,
   /* layer */layer$1
@@ -622,8 +587,6 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
 }
 
 export {
-  DecodeCameraOptions ,
-  EncodeCameraOptions ,
   defaultLayer ,
   oneCompleteTurnAfterNTicks ,
   DecodeLayer ,

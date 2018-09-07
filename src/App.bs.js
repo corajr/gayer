@@ -29,6 +29,7 @@ import * as MaterialUi_List from "@jsiebern/bs-material-ui/src/MaterialUi_List.b
 import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
+import * as TypedArray$Gayer from "./TypedArray.bs.js";
 import * as MaterialUi_AppBar from "@jsiebern/bs-material-ui/src/MaterialUi_AppBar.bs.js";
 import * as MaterialUi_Button from "@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js";
 import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js";
@@ -112,7 +113,7 @@ function setLayerRef(audioCtx, param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
   var layer = param[0];
-  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
+  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
   var match = layer[/* content */0];
   var exit = 0;
   if (typeof match === "number") {
@@ -326,7 +327,7 @@ function drawLayer(ctx, width, height, state, layer) {
   Canvas$Gayer.Ctx[/* setTransform */3](ctx, layer[/* transformMatrix */4]);
   ctx.rotate(layer[/* rotation */3]);
   ctx.filter = layer[/* filters */5];
-  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
+  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */16][0], layerKey);
   var match = layer[/* content */0];
   var exit = 0;
@@ -426,6 +427,24 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 7 : 
+          var match$4 = match[0];
+          var h = match$4[/* h */3];
+          var w = match$4[/* w */2];
+          var imageData = ctx.getImageData(match$4[/* x */0], match$4[/* y */1], w, h);
+          var match$5 = AudioGraph$Gayer.getNode("sink", state[/* audioGraph */9][0]);
+          if (match$5 !== undefined) {
+            var sink = match$5;
+            var audioCtx = sink.context;
+            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$4[/* sampleRate */4]);
+            var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
+            buffer.copyToChannel(rawImgData, 0, 0);
+            var node = audioCtx.createBufferSource();
+            node.buffer = buffer;
+            node.connect(sink);
+            node.start();
+          }
+          return undefined;
+      case 8 : 
           var channel = match[0];
           var xToRead$1 = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice$1 = ctx.getImageData(xToRead$1, 0, 1, height);
@@ -450,10 +469,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice$1, channel)]);
           } else {
-            var match$4 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
+            var match$6 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
             return /* Stereo */Block.__(1, [
-                      match$4[0],
-                      match$4[1]
+                      match$6[0],
+                      match$6[1]
                     ]);
           }
       

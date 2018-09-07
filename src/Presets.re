@@ -30,7 +30,13 @@ let histogramReader = {
   compositeOperation: SourceOver,
 };
 
+let rawAudioFormat = {x: 0, y: 0, w: 64, h: 64, sampleRate: 44100};
+
 let rawAudioWriter = {...defaultLayer, content: RawAudioWriter};
+let rawAudioReader = {
+  ...defaultLayer,
+  content: RawAudioReader(rawAudioFormat),
+};
 
 let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
 
@@ -241,6 +247,8 @@ let allLayerTypes = [
   rotateLayer,
   squareColumnLayer,
   squareLayer,
+  rawAudioWriter,
+  rawAudioReader,
   reader,
 ];
 
@@ -460,7 +468,7 @@ let histogram = {
   layers: [hubble, pitchFilter(cMajor), histogramReader],
 };
 
-let rawAudio = {...defaultParams, layers: [rawAudioWriter]};
+let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
 
 let presetsWithoutLayerIds = [
   ("Raw audio", rawAudio),

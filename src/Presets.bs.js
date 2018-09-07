@@ -32,7 +32,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(7, [/* R */0]);
+var reader_000 = /* content : Reader */Block.__(8, [/* R */0]);
 
 var reader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
@@ -70,6 +70,14 @@ var histogramReader = /* record */[
   histogramReader_006
 ];
 
+var rawAudioFormat = /* record */[
+  /* x */0,
+  /* y */0,
+  /* w */64,
+  /* h */64,
+  /* sampleRate */44100
+];
+
 var rawAudioWriter_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var rawAudioWriter_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
@@ -90,6 +98,30 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_004,
   rawAudioWriter_005,
   rawAudioWriter_006
+];
+
+var rawAudioReader_000 = /* content : RawAudioReader */Block.__(7, [rawAudioFormat]);
+
+var rawAudioReader_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var rawAudioReader_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var rawAudioReader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var rawAudioReader_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var rawAudioReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var rawAudioReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var rawAudioReader = /* record */[
+  rawAudioReader_000,
+  rawAudioReader_001,
+  rawAudioReader_002,
+  rawAudioReader_003,
+  rawAudioReader_004,
+  rawAudioReader_005,
+  rawAudioReader_006
 ];
 
 function pitchFilter(pc) {
@@ -766,8 +798,14 @@ var allLayerTypes_001 = /* :: */[
                   /* :: */[
                     squareLayer,
                     /* :: */[
-                      reader,
-                      /* [] */0
+                      rawAudioWriter,
+                      /* :: */[
+                        rawAudioReader,
+                        /* :: */[
+                          reader,
+                          /* [] */0
+                        ]
+                      ]
                     ]
                   ]
                 ]
@@ -1180,7 +1218,7 @@ var slitscanMovingParams_014 = /* layers : :: */[
     ],
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(7, [/* R */0]),
+        /* content : Reader */Block.__(8, [/* R */0]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -1308,7 +1346,7 @@ var isItACrime_014 = /* layers : :: */[
   img("media/is_it_a_crime_large.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(7, [/* A */3]),
+      /* content : Reader */Block.__(8, [/* A */3]),
       /* alpha */1.0,
       /* compositeOperation : Multiply */11,
       reader_003,
@@ -1477,7 +1515,7 @@ var history_014 = /* layers : :: */[
     historyLayer,
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(7, [/* R */0]),
+        /* content : Reader */Block.__(8, [/* R */0]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -1554,7 +1592,7 @@ var historyHalving_014 = /* layers : :: */[
             ]),
         /* :: */[
           /* record */[
-            /* content : Reader */Block.__(7, [/* R */0]),
+            /* content : Reader */Block.__(8, [/* R */0]),
             /* alpha */0.0,
             /* compositeOperation : Multiply */11,
             reader_003,
@@ -2185,7 +2223,10 @@ var rawAudio_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */
 
 var rawAudio_014 = /* layers : :: */[
   rawAudioWriter,
-  /* [] */0
+  /* :: */[
+    rawAudioReader,
+    /* [] */0
+  ]
 ];
 
 var rawAudio = /* record */[
@@ -2377,7 +2418,9 @@ export {
   img ,
   reader ,
   histogramReader ,
+  rawAudioFormat ,
   rawAudioWriter ,
+  rawAudioReader ,
   pitchFilter ,
   fill ,
   draw ,

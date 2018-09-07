@@ -29,7 +29,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                             position: "absolute"
                           }
                         }, $$Array.of_list(List.map((function (layer) {
-                                    var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */1](layer[/* content */0]));
+                                    var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
                                     var match = layer[/* content */0];
                                     var maybeAudio;
                                     if (typeof match === "number") {

@@ -42,6 +42,9 @@ let emptyAudioGraph: audioGraph = {
   actuallyConnectedEdges: emptyEdgeSet,
 };
 
+let getNode = (key: nodeId, graph: audioGraph) : option(audioNode) =>
+  Belt.Map.String.get(graph.nodes, key);
+
 let addNode =
     ((key, node): (nodeId, audioNode), graph: audioGraph)
     : audioGraph => {

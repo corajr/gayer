@@ -35,6 +35,10 @@ var emptyAudioGraph = /* record */[
   /* actuallyConnectedEdges */emptyEdgeSet
 ];
 
+function getNode(key, graph) {
+  return Belt_MapString.get(graph[/* nodes */0], key);
+}
+
 function addNode(param, graph) {
   return /* record */[
           /* nodes */Belt_MapString.set(graph[/* nodes */0], param[0], param[1]),
@@ -151,6 +155,7 @@ export {
   EdgeComparator ,
   emptyEdgeSet ,
   emptyAudioGraph ,
+  getNode ,
   addNode ,
   partitionEdgesWithNode ,
   removeAllEdgesInvolvingNode ,

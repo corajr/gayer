@@ -49,7 +49,7 @@ var defaultParams = /* record */[
 ];
 
 function params(json) {
-  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */4];
+  var partial_arg = Layer$Gayer.DecodeLayer[/* layer */5];
   return /* record */[
           /* width */Json_decode.field("width", Json_decode.$$int, json),
           /* height */Json_decode.field("height", Json_decode.$$int, json),
@@ -147,7 +147,7 @@ function params$1(r) {
                                         /* :: */[
                                           /* tuple */[
                                             "layers",
-                                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */3], r[/* layers */14])
+                                            Json_encode.list(Layer$Gayer.EncodeLayer[/* layer */4], r[/* layers */14])
                                           ],
                                           /* [] */0
                                         ]

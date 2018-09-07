@@ -74,6 +74,7 @@ let make =
             width=64
             height=64
           />
+        | RawAudioReader(_)
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)

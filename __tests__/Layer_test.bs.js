@@ -4,6 +4,7 @@ import * as Jest from "@glennsl/bs-jest/src/jest.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Layer$Gayer from "../src/Layer.bs.js";
 import * as Presets$Gayer from "../src/Presets.bs.js";
+import * as CameraOptions$Gayer from "../src/CameraOptions.bs.js";
 
 var slitscan = /* StaticX */Block.__(0, [320]);
 
@@ -21,13 +22,13 @@ var cameraOptExamples = /* :: */[
 
 describe("EncodeCameraOptions <=> DecodeCameraOptions", (function () {
         return Jest.testAll("decode inverts encode", cameraOptExamples, (function (cameraOptions) {
-                      return Jest.Expect[/* toEqual */12](cameraOptions, Jest.Expect[/* expect */0](Layer$Gayer.DecodeCameraOptions[/* cameraOptions */1](Layer$Gayer.EncodeCameraOptions[/* cameraOptions */1](cameraOptions))));
+                      return Jest.Expect[/* toEqual */12](cameraOptions, Jest.Expect[/* expect */0](CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1](CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */1](cameraOptions))));
                     }));
       }));
 
 describe("EncodeLayer <=> DecodeLayer", (function () {
         return Jest.testAll("decode inverts encode", Presets$Gayer.allLayerTypes, (function (layer) {
-                      return Jest.Expect[/* toEqual */12](layer, Jest.Expect[/* expect */0](Layer$Gayer.DecodeLayer[/* layer */4](Layer$Gayer.EncodeLayer[/* layer */3](layer))));
+                      return Jest.Expect[/* toEqual */12](layer, Jest.Expect[/* expect */0](Layer$Gayer.DecodeLayer[/* layer */5](Layer$Gayer.EncodeLayer[/* layer */4](layer))));
                     }));
       }));
 
