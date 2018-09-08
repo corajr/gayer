@@ -432,24 +432,18 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 7 : 
-          var match$5 = match$1[0];
-          if (maybeLayerRef !== undefined) {
-            var otherCtx = Js_primitive.valFromOption(maybeLayerRef).getContext("2d");
-            var data = otherCtx.getImageData(0, 0, match$5[/* w */2], match$5[/* h */3]);
-            ctx.putImageData(data, match$5[/* x */0], match$5[/* y */1]);
-          }
           maybeValues = undefined;
           break;
       case 8 : 
-          var match$6 = match$1[0];
-          var h = match$6[/* h */3];
-          var w = match$6[/* w */2];
-          var imageData = ctx.getImageData(match$6[/* x */0], match$6[/* y */1], w, h);
-          var match$7 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
-          if (match$7 !== undefined) {
-            var sink = match$7;
+          var match$5 = match$1[0];
+          var h = match$5[/* h */3];
+          var w = match$5[/* w */2];
+          var imageData = ctx.getImageData(match$5[/* x */0], match$5[/* y */1], w, h);
+          var match$6 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
+          if (match$6 !== undefined) {
+            var sink = match$6;
             var audioCtx = sink.context;
-            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$6[/* sampleRate */4]);
+            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$5[/* sampleRate */4]);
             var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
             buffer.copyToChannel(rawImgData, 0, 0);
             var node = audioCtx.createBufferSource();
@@ -484,10 +478,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$8 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            var match$7 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
             maybeValues = /* Stereo */Block.__(1, [
-                match$8[0],
-                match$8[1]
+                match$7[0],
+                match$7[1]
               ]);
           }
           break;

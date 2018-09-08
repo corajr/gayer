@@ -292,14 +292,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         };
         None;
       | RawAudioWriter({x, y, w, h}) =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(canvas) =>
-          let otherCtx = getContext(getFromReact(canvas));
-          let data = Ctx.getImageData(otherCtx, 0, 0, w, h);
-          Ctx.putImageData(ctx, data, x, y);
-        };
-        None;
+        /* switch (maybeLayerRef) { */
+        /* | None => () */
+        /* | Some(canvas) => */
+        /*   let otherCtx = getContext(getFromReact(canvas)); */
+        /*   let data = Ctx.getImageData(otherCtx, 0, 0, w, h); */
+        /*   Ctx.putImageData(ctx, data, x, y); */
+        /* }; */
+        None
       | Regl =>
         switch (maybeLayerRef) {
         | None => ()

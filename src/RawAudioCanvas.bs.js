@@ -2,11 +2,9 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as Timing$Gayer from "./Timing.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as TypedArray$Gayer from "./TypedArray.bs.js";
@@ -26,10 +24,14 @@ function drawRawAudio(layerRefs, state, x, y, width, height) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(samples, width, height, _, layerKey, layerRefs, audioCtx, audioGraph, setRef, x, y, _$1) {
+function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, audioGraph, setRef, x, y, _) {
   var setCanvasRef = function (theRef, param) {
-    param[/* state */1][/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    return Curry._1(setRef, theRef);
+    var state = param[/* state */1];
+    state[/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    Curry._1(setRef, theRef);
+    return Curry._2(saveTick, layerKey, (function () {
+                  return drawRawAudio(layerRefs, state, x, y, width, height);
+                }));
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -46,15 +48,9 @@ function make(samples, width, height, _, layerKey, layerRefs, audioCtx, audioGra
                             layerKey,
                             self[/* state */1][/* analyser */0][0]
                           ], audioGraph[0])));
-              Curry._1(self[/* onUnmount */4], (function () {
-                      audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
-                      return /* () */0;
-                    }));
-              Timing$Gayer.setTimer(self[/* state */1][/* timerId */3], (function () {
-                      return drawRawAudio(layerRefs, self[/* state */1], x, y, width, height);
-                    }), Caml_int32.imul(samples, 1000) / 44100 | 0);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */3]);
+                            audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
+                            return /* () */0;
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],

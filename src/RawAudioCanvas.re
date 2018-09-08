@@ -59,7 +59,9 @@ let make =
   let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     setRef(theRef);
-    /* saveTick(layerKey, () => drawRawAudio(state, width, height)); */
+    saveTick(layerKey, () =>
+      drawRawAudio(layerRefs, state, x, y, width, height)
+    );
   };
 
   {
@@ -94,12 +96,12 @@ let make =
           |> removeAllEdgesInvolvingNode(layerKey)
           |> updateConnections
       );
-      setTimer(
-        self.state.timerId,
-        () => drawRawAudio(layerRefs, self.state, x, y, width, height),
-        samples * 1000 / 44100,
-      );
-      self.onUnmount(() => maybeClearTimer(self.state.timerId));
+      /* setTimer( */
+      /*   self.state.timerId, */
+      /*   () => drawRawAudio(layerRefs, self.state, x, y, width, height), */
+      /*   samples * 1000 / 44100, */
+      /* ); */
+      /* self.onUnmount(() => maybeClearTimer(self.state.timerId)); */
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>
