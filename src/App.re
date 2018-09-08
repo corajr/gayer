@@ -245,6 +245,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
 
     let layerKey =
       Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
 
     switch (layer.content) {
@@ -476,6 +477,24 @@ let drawCanvas = (canvasElement, width, height, state) => {
       Mono(Array.make(height, 0.0)),
       state.params.layers,
     );
+  List.iter(
+    layer => {
+      let layerKey =
+        Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+      switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
+      | None => ()
+      | Some(f) => f()
+      };
+
+      switch (
+        Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
+      ) {
+      | None => ()
+      | Some(f) => f()
+      };
+    },
+    state.params.layers,
+  );
 
   values;
 };
@@ -766,10 +785,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     self.send(Clear);
 
-    let sendTickFn = () => self.send(Tick);
-    self.state.tickFunctions :=
-      Belt.Map.String.set(self.state.tickFunctions^, "master", sendTickFn);
-
     let rec animationFn = timestamp => {
       /* let lastUpdated = self.state.animationLastUpdated^; */
       /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
@@ -785,10 +800,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
       /* Js.log(timeSinceLastUpdate); */
 
-      Array.iter(
-        f => f(),
-        Belt.Map.String.valuesToArray(self.state.tickFunctions^),
-      );
+      self.send(Tick);
       requestAnimationFrame(window, animationFn);
     };
 
@@ -796,11 +808,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     setTimer(
       self.state.timerId,
-      () =>
-        Array.iter(
-          f => f(),
-          Belt.Map.String.valuesToArray(self.state.tickFunctions^),
-        ),
+      () => self.send(Tick),
       self.state.params.millisPerTick,
     );
 

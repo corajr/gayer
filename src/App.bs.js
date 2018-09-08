@@ -486,14 +486,28 @@ function drawCanvas(canvasElement, width, height, state) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
-  return List.fold_left((function (acc, layer) {
-                var newMaybeValues = drawLayer(ctx, width, height, state, layer);
-                if (newMaybeValues !== undefined) {
-                  return newMaybeValues;
-                } else {
-                  return acc;
-                }
-              }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */14]);
+  var values = List.fold_left((function (acc, layer) {
+          var newMaybeValues = drawLayer(ctx, width, height, state, layer);
+          if (newMaybeValues !== undefined) {
+            return newMaybeValues;
+          } else {
+            return acc;
+          }
+        }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */14]);
+  List.iter((function (layer) {
+          var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
+          var match = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey);
+          if (match !== undefined) {
+            Curry._1(match, /* () */0);
+          }
+          var match$1 = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey + "preview");
+          if (match$1 !== undefined) {
+            return Curry._1(match$1, /* () */0);
+          } else {
+            return /* () */0;
+          }
+        }), state[/* params */6][/* layers */14]);
+  return values;
 }
 
 function getAnalysisInput(audioCtx, state, audioInput) {
@@ -625,21 +639,13 @@ function make($staropt$star, _) {
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              var sendTickFn = function () {
-                return Curry._1(self[/* send */3], /* Tick */1);
-              };
-              self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], "master", sendTickFn);
               var animationFn = function () {
-                $$Array.iter((function (f) {
-                        return Curry._1(f, /* () */0);
-                      }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */21][0]));
+                Curry._1(self[/* send */3], /* Tick */1);
                 window.requestAnimationFrame(animationFn);
                 return /* () */0;
               };
               Timing$Gayer.setTimer(self[/* state */1][/* timerId */22], (function () {
-                      return $$Array.iter((function (f) {
-                                    return Curry._1(f, /* () */0);
-                                  }), Belt_MapString.valuesToArray(self[/* state */1][/* tickFunctions */21][0]));
+                      return Curry._1(self[/* send */3], /* Tick */1);
                     }), self[/* state */1][/* params */6][/* millisPerTick */6]);
               Curry._1(self[/* onUnmount */4], (function () {
                       return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */22]);
