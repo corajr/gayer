@@ -120,7 +120,6 @@ function setLayerRef(audioCtx, param, param$1) {
     switch (match) {
       case 0 : 
       case 1 : 
-      case 2 : 
           exit = 1;
           break;
       default:
@@ -167,6 +166,7 @@ function setLayerRef(audioCtx, param, param$1) {
           }
       case 3 : 
       case 5 : 
+      case 7 : 
           exit = 1;
           break;
       default:
@@ -345,11 +345,6 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 2 : 
-          if (maybeLayerRef !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
-          }
-          return undefined;
-      case 3 : 
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var histogram = Canvas$Gayer.imageDataToHistogram(state[/* params */6][/* height */1], slice);
@@ -428,14 +423,22 @@ function drawLayer(ctx, width, height, state, layer) {
           return undefined;
       case 7 : 
           var match$4 = match[0];
-          var h = match$4[/* h */3];
-          var w = match$4[/* w */2];
-          var imageData = ctx.getImageData(match$4[/* x */0], match$4[/* y */1], w, h);
-          var match$5 = AudioGraph$Gayer.getNode("sink", state[/* audioGraph */9][0]);
-          if (match$5 !== undefined) {
-            var sink = match$5;
+          if (maybeLayerRef !== undefined) {
+            var otherCtx = Js_primitive.valFromOption(maybeLayerRef).getContext("2d");
+            var data = otherCtx.getImageData(0, 0, match$4[/* w */2], match$4[/* h */3]);
+            ctx.putImageData(data, match$4[/* x */0], match$4[/* y */1]);
+          }
+          return undefined;
+      case 8 : 
+          var match$5 = match[0];
+          var h = match$5[/* h */3];
+          var w = match$5[/* w */2];
+          var imageData = ctx.getImageData(match$5[/* x */0], match$5[/* y */1], w, h);
+          var match$6 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
+          if (match$6 !== undefined) {
+            var sink = match$6;
             var audioCtx = sink.context;
-            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$4[/* sampleRate */4]);
+            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$5[/* sampleRate */4]);
             var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
             buffer.copyToChannel(rawImgData, 0, 0);
             var node = audioCtx.createBufferSource();
@@ -444,7 +447,7 @@ function drawLayer(ctx, width, height, state, layer) {
             node.start();
           }
           return undefined;
-      case 8 : 
+      case 9 : 
           var channel = match[0];
           var xToRead$1 = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice$1 = ctx.getImageData(xToRead$1, 0, 1, height);
@@ -469,10 +472,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice$1, channel)]);
           } else {
-            var match$6 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
+            var match$7 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
             return /* Stereo */Block.__(1, [
-                      match$6[0],
-                      match$6[1]
+                      match$7[0],
+                      match$7[1]
                     ]);
           }
       
@@ -820,7 +823,8 @@ function make($staropt$star, _) {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                           style: {
                                                             transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
-                                                            transformOrigin: "top left"
+                                                            transformOrigin: "top left",
+                                                            imageRendering: "crisp-edges"
                                                           },
                                                           height: self[/* state */1][/* params */6][/* height */1].toString(),
                                                           width: self[/* state */1][/* params */6][/* width */0].toString()

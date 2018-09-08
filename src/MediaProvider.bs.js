@@ -33,45 +33,47 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     var match = layer[/* content */0];
                                     var maybeAudio;
                                     if (typeof match === "number") {
-                                      if (match === 2) {
-                                        var match$1 = Curry._1(getAudio, /* Mic */2);
-                                        var maybeInput = match$1[1];
-                                        if (maybeInput !== undefined) {
-                                          audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
-                                                    key + "input",
-                                                    maybeInput
-                                                  ], audioGraph[0]));
-                                          maybeAudio = null;
-                                        } else {
-                                          maybeAudio = null;
-                                        }
-                                      } else {
-                                        maybeAudio = null;
-                                      }
-                                    } else if (match.tag === 5) {
-                                      var source = match[0];
-                                      var exit = 0;
-                                      if (typeof source === "number" || source.tag) {
-                                        exit = 1;
-                                      } else {
-                                        maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
-                                      }
-                                      if (exit === 1) {
-                                        var match$2 = Curry._1(getAudio, source);
-                                        var maybeInput$1 = match$2[1];
-                                        if (maybeInput$1 !== undefined) {
-                                          audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
-                                                    key + "input",
-                                                    maybeInput$1
-                                                  ], audioGraph[0]));
-                                          maybeAudio = null;
-                                        } else {
-                                          maybeAudio = null;
-                                        }
-                                      }
-                                      
-                                    } else {
                                       maybeAudio = null;
+                                    } else {
+                                      switch (match.tag | 0) {
+                                        case 5 : 
+                                            var source = match[0];
+                                            var exit = 0;
+                                            if (typeof source === "number" || source.tag) {
+                                              exit = 1;
+                                            } else {
+                                              maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
+                                            }
+                                            if (exit === 1) {
+                                              var match$1 = Curry._1(getAudio, source);
+                                              var maybeInput = match$1[1];
+                                              if (maybeInput !== undefined) {
+                                                audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
+                                                          key + "input",
+                                                          maybeInput
+                                                        ], audioGraph[0]));
+                                                maybeAudio = null;
+                                              } else {
+                                                maybeAudio = null;
+                                              }
+                                            }
+                                            break;
+                                        case 7 : 
+                                            var match$2 = Curry._1(getAudio, /* Mic */2);
+                                            var maybeInput$1 = match$2[1];
+                                            if (maybeInput$1 !== undefined) {
+                                              audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
+                                                        key + "input",
+                                                        maybeInput$1
+                                                      ], audioGraph[0]));
+                                              maybeAudio = null;
+                                            } else {
+                                              maybeAudio = null;
+                                            }
+                                            break;
+                                        default:
+                                          maybeAudio = null;
+                                      }
                                     }
                                     var match$3 = layer[/* content */0];
                                     var tmp;

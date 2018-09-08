@@ -101,7 +101,7 @@ let setLayerRef =
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (HandDrawn, Some(aRef)) =>
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
-  | (RawAudioWriter, Some(aRef)) =>
+  | (RawAudioWriter(_), Some(aRef)) =>
     state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
@@ -254,19 +254,20 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
       };
       None;
-    | RawAudioWriter =>
+    | RawAudioWriter({x, y, w, h}) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(canvas) =>
-        let canvasSource = getCanvasAsSource(getFromReact(canvas));
-        Ctx.drawImage(ctx, canvasSource, 0, 0);
+        let otherCtx = getContext(getFromReact(canvas));
+        let data = Ctx.getImageData(otherCtx, 0, 0, w, h);
+        Ctx.putImageData(ctx, data, x, y);
       };
       None;
     | RawAudioReader({x, y, w, h, sampleRate}) =>
       open TypedArray;
 
       let imageData = Ctx.getImageData(ctx, x, y, w, h);
-      switch (getNode("sink", state.audioGraph^)) {
+      switch (getNode("compressor", state.audioGraph^)) {
       | None => ()
       | Some(sink) =>
         let audioCtx = getAudioContext(sink);
@@ -1004,6 +1005,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   height=(Js.Int.toString(self.state.params.height))
                   style=(
                     ReactDOMRe.Style.make(
+                      ~imageRendering="crisp-edges",
                       ~transform=
                         "scale("
                         ++ Js.Float.toString(

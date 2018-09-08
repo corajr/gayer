@@ -32,7 +32,10 @@ let histogramReader = {
 
 let rawAudioFormat = {x: 0, y: 0, w: 64, h: 64, sampleRate: 44100};
 
-let rawAudioWriter = {...defaultLayer, content: RawAudioWriter};
+let rawAudioWriter = {
+  ...defaultLayer,
+  content: RawAudioWriter(rawAudioFormat),
+};
 let rawAudioReader = {
   ...defaultLayer,
   content: RawAudioReader(rawAudioFormat),
@@ -470,8 +473,12 @@ let histogram = {
 
 let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
 
+let rawAudioAndSpacy = {
+  ...defaultParams,
+  layers: List.append(spacy, [rawAudioWriter, rawAudioReader]),
+};
+
 let presetsWithoutLayerIds = [
-  ("Raw audio", rawAudio),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */
@@ -491,6 +498,7 @@ let presetsWithoutLayerIds = [
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
   ("Mic feedback (may be loud!)", feedback),
+  ("Raw audio (can feedback!)", rawAudio),
   ("Empty", {...defaultParams, layers: []}),
 ];
 

@@ -32,7 +32,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(8, [/* R */0]);
+var reader_000 = /* content : Reader */Block.__(9, [/* R */0]);
 
 var reader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
@@ -61,7 +61,7 @@ var histogramReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var histogramReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogramReader = /* record */[
-  /* content : HistogramReader */3,
+  /* content : HistogramReader */2,
   /* alpha */0.0,
   /* compositeOperation : SourceOver */0,
   histogramReader_003,
@@ -78,6 +78,8 @@ var rawAudioFormat = /* record */[
   /* sampleRate */44100
 ];
 
+var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(7, [rawAudioFormat]);
+
 var rawAudioWriter_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var rawAudioWriter_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
@@ -91,7 +93,7 @@ var rawAudioWriter_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var rawAudioWriter_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var rawAudioWriter = /* record */[
-  /* content : RawAudioWriter */2,
+  rawAudioWriter_000,
   rawAudioWriter_001,
   rawAudioWriter_002,
   rawAudioWriter_003,
@@ -100,7 +102,7 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_006
 ];
 
-var rawAudioReader_000 = /* content : RawAudioReader */Block.__(7, [rawAudioFormat]);
+var rawAudioReader_000 = /* content : RawAudioReader */Block.__(8, [rawAudioFormat]);
 
 var rawAudioReader_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -1145,7 +1147,7 @@ var slitscanHistogramParams_014 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : HistogramReader */3,
+      /* content : HistogramReader */2,
       /* alpha */0.75,
       /* compositeOperation : Multiply */11,
       histogramReader_003,
@@ -1218,7 +1220,7 @@ var slitscanMovingParams_014 = /* layers : :: */[
     ],
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(8, [/* R */0]),
+        /* content : Reader */Block.__(9, [/* R */0]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -1346,7 +1348,7 @@ var isItACrime_014 = /* layers : :: */[
   img("media/is_it_a_crime_large.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(8, [/* A */3]),
+      /* content : Reader */Block.__(9, [/* A */3]),
       /* alpha */1.0,
       /* compositeOperation : Multiply */11,
       reader_003,
@@ -1515,7 +1517,7 @@ var history_014 = /* layers : :: */[
     historyLayer,
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(8, [/* R */0]),
+        /* content : Reader */Block.__(9, [/* R */0]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -1592,7 +1594,7 @@ var historyHalving_014 = /* layers : :: */[
             ]),
         /* :: */[
           /* record */[
-            /* content : Reader */Block.__(8, [/* R */0]),
+            /* content : Reader */Block.__(9, [/* R */0]),
             /* alpha */0.0,
             /* compositeOperation : Multiply */11,
             reader_003,
@@ -2247,81 +2249,135 @@ var rawAudio = /* record */[
   rawAudio_014
 ];
 
+var rawAudioAndSpacy_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var rawAudioAndSpacy_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var rawAudioAndSpacy_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var rawAudioAndSpacy_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var rawAudioAndSpacy_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var rawAudioAndSpacy_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var rawAudioAndSpacy_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var rawAudioAndSpacy_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var rawAudioAndSpacy_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var rawAudioAndSpacy_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var rawAudioAndSpacy_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var rawAudioAndSpacy_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var rawAudioAndSpacy_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var rawAudioAndSpacy_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var rawAudioAndSpacy_014 = /* layers */List.append(spacy, /* :: */[
+      rawAudioWriter,
+      /* :: */[
+        rawAudioReader,
+        /* [] */0
+      ]
+    ]);
+
+var rawAudioAndSpacy = /* record */[
+  rawAudioAndSpacy_000,
+  rawAudioAndSpacy_001,
+  rawAudioAndSpacy_002,
+  rawAudioAndSpacy_003,
+  rawAudioAndSpacy_004,
+  rawAudioAndSpacy_005,
+  rawAudioAndSpacy_006,
+  rawAudioAndSpacy_007,
+  rawAudioAndSpacy_008,
+  rawAudioAndSpacy_009,
+  rawAudioAndSpacy_010,
+  rawAudioAndSpacy_011,
+  rawAudioAndSpacy_012,
+  rawAudioAndSpacy_013,
+  rawAudioAndSpacy_014
+];
+
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Raw audio",
-  rawAudio
+  "Spacy",
+  /* record */[
+    /* width */Params$Gayer.defaultParams[/* width */0],
+    /* height */Params$Gayer.defaultParams[/* height */1],
+    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+    /* q */Params$Gayer.defaultParams[/* q */10],
+    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+    /* layers */spacy
+  ]
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
   /* tuple */[
-    "Spacy",
-    /* record */[
-      /* width */Params$Gayer.defaultParams[/* width */0],
-      /* height */Params$Gayer.defaultParams[/* height */1],
-      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-      /* q */Params$Gayer.defaultParams[/* q */10],
-      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-      /* layers */spacy
-    ]
+    "Single note",
+    singleNote
   ],
   /* :: */[
     /* tuple */[
-      "Single note",
-      singleNote
+      "Slitscan",
+      slitscanParams
     ],
     /* :: */[
       /* tuple */[
-        "Slitscan",
-        slitscanParams
+        "Slitscan histogram",
+        slitscanHistogramParams
       ],
       /* :: */[
         /* tuple */[
-          "Slitscan histogram",
-          slitscanHistogramParams
+          "History",
+          history
         ],
         /* :: */[
           /* tuple */[
-            "History",
-            history
+            "Rotation",
+            vinyl
           ],
           /* :: */[
             /* tuple */[
-              "Rotation",
-              vinyl
+              "Tughra of Suleiman",
+              tughra
             ],
             /* :: */[
               /* tuple */[
-                "Tughra of Suleiman",
-                tughra
+                "Is it a crime?",
+                isItACrime
               ],
               /* :: */[
                 /* tuple */[
-                  "Is it a crime?",
-                  isItACrime
+                  "MIDI",
+                  midi
                 ],
                 /* :: */[
                   /* tuple */[
-                    "MIDI",
-                    midi
+                    "Audio file",
+                    debussy
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Audio file",
-                      debussy
+                      "Mic feedback (may be loud!)",
+                      feedback
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Mic feedback (may be loud!)",
-                        feedback
+                        "Raw audio (can feedback!)",
+                        rawAudio
                       ],
                       /* :: */[
                         /* tuple */[
@@ -2472,6 +2528,7 @@ export {
   video$1 as video,
   histogram ,
   rawAudio ,
+  rawAudioAndSpacy ,
   presetsWithoutLayerIds ,
   idCounter ,
   addIds ,

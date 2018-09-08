@@ -49,7 +49,7 @@ let make =
                   | None => ReasonReact.null
                   };
                 }
-              | RawAudioWriter =>
+              | RawAudioWriter(_) =>
                 let (_, maybeInput) = getAudio(Mic);
                 switch (maybeInput) {
                 | Some(input) =>

@@ -116,7 +116,7 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram-reader" : 
-        return /* HistogramReader */3;
+        return /* HistogramReader */2;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -135,15 +135,19 @@ function layerByType(type_, json) {
                     }), json);
     case "raw-audio-reader" : 
         return Json_decode.map((function (o) {
-                      return /* RawAudioReader */Block.__(7, [o]);
+                      return /* RawAudioReader */Block.__(8, [o]);
                     }), (function (param) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "raw-audio-writer" : 
-        return /* RawAudioWriter */2;
+        return Json_decode.map((function (o) {
+                      return /* RawAudioWriter */Block.__(7, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("format", rawAudioFormat, param);
+                    }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(8, [i]);
+                      return /* Reader */Block.__(9, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
@@ -282,14 +286,6 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "raw-audio-writer"
-                      ],
-                      /* [] */0
-                    ]);
-      case 3 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
                         "histogram-reader"
                       ],
                       /* [] */0
@@ -402,7 +398,7 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "raw-audio-reader"
+                        "raw-audio-writer"
                       ],
                       /* :: */[
                         /* tuple */[
@@ -413,6 +409,20 @@ function layerContent$1(r) {
                       ]
                     ]);
       case 8 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "raw-audio-reader"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "format",
+                          rawAudioFormat$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 9 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
