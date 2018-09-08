@@ -2,19 +2,22 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
+import * as Timing$Gayer from "./Timing.bs.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as TypedArray$Gayer from "./TypedArray.bs.js";
 
-function drawRawAudio(state, width, height) {
-  var match = state[/* canvasRef */2][0];
+function drawRawAudio(layerRefs, state, x, y, width, height) {
+  state[/* analyser */0][0].getFloatTimeDomainData(state[/* audioData */1][0]);
+  var outputImageData = new ImageData(TypedArray$Gayer.float32toUint8ClampedArray(state[/* audioData */1][0]), width, height);
+  var match = Belt_MapString.get(layerRefs[0], "root");
   if (match !== undefined) {
     var ctx = Js_primitive.valFromOption(match).getContext("2d");
-    state[/* analyser */0][0].getFloatTimeDomainData(state[/* audioData */1][0]);
-    var outputImageData = new ImageData(TypedArray$Gayer.float32toUint8ClampedArray(state[/* audioData */1][0]), width, height);
-    ctx.putImageData(outputImageData, 0, 0);
+    ctx.putImageData(outputImageData, x, y);
     return /* () */0;
   } else {
     return /* () */0;
@@ -23,14 +26,10 @@ function drawRawAudio(state, width, height) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(samples, width, height, saveTick, layerKey, audioCtx, audioGraph, setRef, _) {
+function make(samples, width, height, _, layerKey, layerRefs, audioCtx, audioGraph, setRef, x, y, _$1) {
   var setCanvasRef = function (theRef, param) {
-    var state = param[/* state */1];
-    state[/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    Curry._1(setRef, theRef);
-    return Curry._2(saveTick, layerKey, (function () {
-                  return drawRawAudio(state, width, height);
-                }));
+    param[/* state */1][/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    return Curry._1(setRef, theRef);
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -47,9 +46,15 @@ function make(samples, width, height, saveTick, layerKey, audioCtx, audioGraph, 
                             layerKey,
                             self[/* state */1][/* analyser */0][0]
                           ], audioGraph[0])));
+              Curry._1(self[/* onUnmount */4], (function () {
+                      audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
+                      return /* () */0;
+                    }));
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */3], (function () {
+                      return drawRawAudio(layerRefs, self[/* state */1], x, y, width, height);
+                    }), Caml_int32.imul(samples, 1000) / 44100 | 0);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
-                            return /* () */0;
+                            return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */3]);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -73,7 +78,8 @@ function make(samples, width, height, saveTick, layerKey, audioCtx, audioGraph, 
               return /* record */[
                       /* analyser : record */[/* contents */analyser],
                       /* audioData : record */[/* contents */new Float32Array(samples)],
-                      /* canvasRef : record */[/* contents */undefined]
+                      /* canvasRef : record */[/* contents */undefined],
+                      /* timerId : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

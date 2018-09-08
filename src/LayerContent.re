@@ -68,6 +68,7 @@ let make =
         | RawAudioWriter({x, y, w, h}) =>
           <RawAudioCanvas
             layerKey
+            layerRefs
             audioCtx
             audioGraph
             setRef
@@ -75,6 +76,8 @@ let make =
             samples=(w * h)
             width=w
             height=h
+            x
+            y
           />
         | Histogram =>
           <HistogramCanvas

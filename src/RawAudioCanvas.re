@@ -8,28 +8,36 @@ type state = {
   analyser: ref(analyser),
   audioData: ref(float32Array),
   canvasRef: ref(option(Dom.element)),
+  timerId: ref(option(Js.Global.intervalId)),
 };
 
-let drawRawAudio = (state, width, height) =>
-  switch (state.canvasRef^) {
-  | Some(canvas) =>
-    let canvasElement = getFromReact(canvas);
-    let ctx = getContext(canvasElement);
+let drawRawAudio = (layerRefs, state, x, y, width, height) => {
+  getFloatTimeDomainData(
+    state.analyser^,
+    floatArrayAsArray(state.audioData^),
+  );
 
-    getFloatTimeDomainData(
-      state.analyser^,
-      floatArrayAsArray(state.audioData^),
+  let outputImageData =
+    createImageData(
+      float32toUint8ClampedArray(state.audioData^),
+      width,
+      height,
     );
-    let outputImageData =
-      createImageData(
-        float32toUint8ClampedArray(state.audioData^),
-        width,
-        height,
-      );
 
-    Ctx.putImageData(ctx, outputImageData, 0, 0);
+  /* switch (state.canvasRef^) { */
+  /* | Some(canvas) => */
+  /*   let ctx = getContext(getFromReact(canvas)); */
+  /*   Ctx.putImageData(ctx, outputImageData, 0, 0); */
+  /* | None => () */
+  /* }; */
+
+  switch (Belt.Map.String.get(layerRefs^, "root")) {
+  | Some(canvas) =>
+    let ctx = getContext(getFromReact(canvas));
+    Ctx.putImageData(ctx, outputImageData, x, y);
   | None => ()
   };
+};
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
@@ -40,15 +48,18 @@ let make =
       ~height,
       ~saveTick,
       ~layerKey,
+      ~layerRefs,
       ~audioCtx,
       ~audioGraph,
       ~setRef,
+      ~x,
+      ~y,
       _children,
     ) => {
   let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     setRef(theRef);
-    saveTick(layerKey, () => drawRawAudio(state, width, height));
+    /* saveTick(layerKey, () => drawRawAudio(state, width, height)); */
   };
 
   {
@@ -66,6 +77,7 @@ let make =
         analyser: ref(analyser),
         audioData: ref(createFloat32Array(samples)),
         canvasRef: ref(None),
+        timerId: ref(None),
       };
     },
     didMount: self => {
@@ -82,7 +94,12 @@ let make =
           |> removeAllEdgesInvolvingNode(layerKey)
           |> updateConnections
       );
-      /* self.onUnmount(() => maybeClearTimer(self.state.timerId)); */
+      setTimer(
+        self.state.timerId,
+        () => drawRawAudio(layerRefs, self.state, x, y, width, height),
+        samples * 1000 / 44100,
+      );
+      self.onUnmount(() => maybeClearTimer(self.state.timerId));
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>

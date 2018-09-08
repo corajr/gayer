@@ -78,7 +78,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       var match = layerContent[0];
                       var h = match[/* h */3];
                       var w = match[/* w */2];
-                      tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, audioCtx, audioGraph, setRef, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, layerRefs, audioCtx, audioGraph, setRef, match[/* x */0], match[/* y */1], /* array */[]));
                       break;
                   default:
                     tmp = null;
