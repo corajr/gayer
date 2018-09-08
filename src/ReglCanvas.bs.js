@@ -22,7 +22,7 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
       var theRegl = Regl(aRef);
       state[/* reglRef */1][0] = Js_primitive.some(theRegl);
       var triangleCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.triangleSpec);
-      state[/* drawCommandRef */2][0] = triangleCommand;
+      state[/* drawCommandRef */2][0] = Js_primitive.some(triangleCommand);
       return /* () */0;
     }
   };
@@ -46,7 +46,7 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
                                   });
                               var match$1 = self[/* state */1][/* drawCommandRef */2][0];
                               if (match$1 !== undefined) {
-                                match$1.draw();
+                                Js_primitive.valFromOption(match$1).draw({ });
                                 return /* () */0;
                               } else {
                                 return /* () */0;

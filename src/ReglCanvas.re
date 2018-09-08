@@ -43,7 +43,7 @@ let make =
           clear(regl, {"color": [|0.0, 0.0, 0.0, 1.0|], "depth": 1.0});
 
           switch (self.state.drawCommandRef^) {
-          | Some(f) => draw(f, ())
+          | Some(f) => draw(f, Js.Obj.empty())
           | None => ()
           };
         }

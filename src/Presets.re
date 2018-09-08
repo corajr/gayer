@@ -30,7 +30,7 @@ let histogram = {
   compositeOperation: SourceOver,
 };
 
-let rawAudioFormat = {x: 0, y: 0, w: 64, h: 64, sampleRate: 44100};
+let rawAudioFormat = {x: 0, y: 0, w: 32, h: 32, sampleRate: 44100};
 
 let rawAudioWriter = {
   ...defaultLayer,

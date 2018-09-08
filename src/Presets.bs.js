@@ -73,8 +73,8 @@ var histogram = /* record */[
 var rawAudioFormat = /* record */[
   /* x */0,
   /* y */0,
-  /* w */64,
-  /* h */64,
+  /* w */32,
+  /* h */32,
   /* sampleRate */44100
 ];
 

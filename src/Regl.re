@@ -10,6 +10,14 @@ type clearParams = {
 
 [@bs.send] external clear : (regl, clearParams) => unit = "";
 
+type texture;
+
+[@bs.send]
+external texture :
+  (regl, [@bs.unwrap] [ | `Canvas(Dom.element) | `Js(Js.t({..}))]) =>
+  texture =
+  "";
+
 let triangleSpec = {
   "frag": {|
      precision mediump float;
@@ -34,7 +42,7 @@ let triangleSpec = {
   "count": 3,
 };
 
-type drawCommand = unit => unit;
+type drawCommand;
 
 let makeDrawCommand = [%bs.raw
   (regl, spec) => {|
@@ -44,4 +52,4 @@ let makeDrawCommand = [%bs.raw
      |}
 ];
 
-[@bs.send] external draw : (drawCommand, unit) => unit = "";
+[@bs.send] external draw : (drawCommand, Js.t({..})) => unit = "";
