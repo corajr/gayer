@@ -4,6 +4,7 @@ import * as React from "react";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
+import * as ReglCanvas$Gayer from "./ReglCanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
 import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
@@ -34,6 +35,9 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       break;
                   case 2 : 
                       tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
+                      break;
+                  case 3 : 
+                      tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, setRef, saveTick, layerKey, width, height, /* array */[]));
                       break;
                   
                 }

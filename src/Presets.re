@@ -55,6 +55,8 @@ let draw = (~alpha: float=1.0, cmds: list(command)) => {
   alpha,
 };
 
+let regl = {...defaultLayer, content: Regl};
+
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
 let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
@@ -481,6 +483,7 @@ let rawAudioAndSpacy = {
 };
 
 let presetsWithoutLayerIds = [
+  /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */

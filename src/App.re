@@ -134,6 +134,7 @@ let setLayerRef =
   | (Video(_), _)
   | (Histogram, _)
   | (HandDrawn, _)
+  | (Regl, _)
   | (Image(_), _)
   | (Analysis(_), _)
   | (MIDIKeyboard, _)
@@ -297,6 +298,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           let otherCtx = getContext(getFromReact(canvas));
           let data = Ctx.getImageData(otherCtx, 0, 0, w, h);
           Ctx.putImageData(ctx, data, x, y);
+        };
+        None;
+      | Regl =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(canvas) =>
+          let canvasSource = getCanvasAsSource(getFromReact(canvas));
+          Ctx.drawImage(ctx, canvasSource, 0, 0);
         };
         None;
       | RawAudioReader({x, y, w, h, sampleRate}) =>

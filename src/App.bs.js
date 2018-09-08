@@ -353,6 +353,12 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           maybeValues = undefined;
           break;
+      case 3 : 
+          if (maybeLayerRef !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
+          }
+          maybeValues = undefined;
+          break;
       
     }
   } else {

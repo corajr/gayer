@@ -25,6 +25,7 @@ type layerContent =
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
   | Histogram
+  | Regl
   | Reader(channel);
 
 type layer = {
@@ -80,6 +81,7 @@ module DecodeLayer = {
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
       | "hand-drawn" => HandDrawn
+      | "regl" => Regl
       | "webcam" =>
         json
         |> map(
@@ -214,6 +216,7 @@ module EncodeLayer = {
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
       | Histogram => object_([("type", string("histogram"))])
+      | Regl => object_([("type", string("regl"))])
       | RawAudioWriter(fmt) =>
         object_([
           ("type", string("raw-audio-writer")),

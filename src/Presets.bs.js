@@ -164,6 +164,28 @@ function draw($staropt$star, cmds) {
         ];
 }
 
+var regl_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var regl_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var regl_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var regl_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var regl_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var regl_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var regl = /* record */[
+  /* content : Regl */3,
+  regl_001,
+  regl_002,
+  regl_003,
+  regl_004,
+  regl_005,
+  regl_006
+];
+
 var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */2]);
 
 var analyzer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
@@ -2491,6 +2513,7 @@ export {
   pitchFilter ,
   fill ,
   draw ,
+  regl ,
   analyzer ,
   webcam ,
   slitscan ,

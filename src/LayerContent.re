@@ -87,6 +87,8 @@ let make =
             getReadAndWritePos
             saveTick
           />
+        | Regl =>
+          <ReglCanvas setRef layerRefs width height saveTick layerKey />
         | RawAudioReader(_)
         | Draw(_)
         | PitchClasses(_)

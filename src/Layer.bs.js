@@ -154,6 +154,8 @@ function layerByType(type_, json) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
                                   }), param);
                     }), json);
+    case "regl" : 
+        return /* Regl */3;
     case "video" : 
         return Json_decode.map((function (s) {
                       return /* Video */Block.__(4, [s]);
@@ -288,6 +290,14 @@ function layerContent$1(r) {
                       /* tuple */[
                         "type",
                         "histogram"
+                      ],
+                      /* [] */0
+                    ]);
+      case 3 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "regl"
                       ],
                       /* [] */0
                     ]);
