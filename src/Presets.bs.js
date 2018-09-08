@@ -62,7 +62,7 @@ var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogram = /* record */[
   /* content : Histogram */2,
-  /* alpha */0.9,
+  /* alpha */1.0,
   /* compositeOperation : Multiply */11,
   histogram_003,
   histogram_004,

@@ -50,3 +50,21 @@ let rgbToHslFloat: (float, float, float) => hslFloat = [%bs.raw
      return [h, s, l];
 |}
 ];
+
+/* Color strings for Ctx.setFillStyle */
+let hsl = (~a: float=1.0, h: float, s: float, l: float) : string =>
+  "hsl("
+  ++ Js.Float.toString(h)
+  ++ "turn,"
+  ++ Js.Float.toString(s *. 100.0)
+  ++ "%,"
+  ++ Js.Float.toString(l *. 100.0)
+  ++ "%,"
+  ++ Js.Float.toString(a)
+  ++ ")";
+
+let gray = (l: float) : string => {
+  let color = Js.Int.toStringWithRadix(int_of_float(255.0 *. l), 16);
+
+  "#" ++ color ++ color ++ color;
+};

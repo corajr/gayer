@@ -477,23 +477,30 @@ let imageDataToStereo =
   (arrayL, arrayR);
 };
 
-let imageDataToHistogram:
-  (int, pixel => (int, float), imageData) => array(float) =
-  (binCount, binFn, imageData) => {
-    open Color;
-    let output = Array.make(binCount, 0.0);
-    let outputMax = ref(0.0);
-    mapImageData(imageData, rawDataToPixel)
-    |> Array.iter(pixel => {
-         let (i, v) = binFn(pixel);
-         output[i] = output[i] +. v;
-         if (output[i] > outputMax^) {
-           outputMax := output[i];
-         };
-       });
+let imageDataToHistogram =
+    (
+      ~binCount: int,
+      ~binFn: pixel => (int, float),
+      ~divideBy: float=1.0,
+      imageData: imageData,
+    )
+    : array(float) => {
+  open Color;
+  let output = Array.make(binCount, 0.0);
+  let outputMax = ref(0.0);
+  mapImageData(imageData, rawDataToPixel)
+  |> Array.iter(pixel => {
+       let (i, v) = binFn(pixel);
+       output[i] = output[i] +. v;
+       if (output[i] > outputMax^) {
+         outputMax := output[i];
+       };
+     });
 
-    outputMax^ === 0.0 ? output : Array.map(x => x /. outputMax^, output);
-  };
+  let divideByFinal = max(outputMax^, divideBy);
+
+  divideByFinal === 0.0 ? output : Array.map(x => x /. divideByFinal, output);
+};
 
 let makeUint8ClampedArray = [%bs.raw
   len => {|return new Uint8ClampedArray(len)|}

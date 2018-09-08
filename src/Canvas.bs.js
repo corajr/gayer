@@ -9,6 +9,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 
 function int_of_channel(channel) {
@@ -312,7 +313,8 @@ function imageDataToStereo(imageData, channelL, channelR) {
         ];
 }
 
-function imageDataToHistogram(binCount, binFn, imageData) {
+function imageDataToHistogram(binCount, binFn, $staropt$star, imageData) {
+  var divideBy = $staropt$star !== undefined ? $staropt$star : 1.0;
   var output = Caml_array.caml_make_vect(binCount, 0.0);
   var outputMax = /* record */[/* contents */0.0];
   $$Array.iter((function (pixel) {
@@ -326,12 +328,13 @@ function imageDataToHistogram(binCount, binFn, imageData) {
             return 0;
           }
         }), mapRawData(imageData.data, rawDataToPixel));
-  var match = outputMax[0] === 0.0;
+  var divideByFinal = Caml_primitive.caml_float_max(outputMax[0], divideBy);
+  var match = divideByFinal === 0.0;
   if (match) {
     return output;
   } else {
     return $$Array.map((function (x) {
-                  return x / outputMax[0];
+                  return x / divideByFinal;
                 }), output);
   }
 }

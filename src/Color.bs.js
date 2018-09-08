@@ -45,9 +45,21 @@ var rgbToHslFloat = function (r,g,b){
      return [h, s, l];
 };
 
+function hsl($staropt$star, h, s, l) {
+  var a = $staropt$star !== undefined ? $staropt$star : 1.0;
+  return "hsl(" + (h.toString() + ("turn," + ((s * 100.0).toString() + ("%," + ((l * 100.0).toString() + ("%," + (a.toString() + ")")))))));
+}
+
+function gray(l) {
+  var color = (255.0 * l | 0).toString(16);
+  return "#" + (color + (color + color));
+}
+
 export {
   rgbToHsvFloat ,
   rgbToHslFloat ,
+  hsl ,
+  gray ,
   
 }
 /* No side effect */

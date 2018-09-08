@@ -39,21 +39,28 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                                     }));
                               var slice = rootCtx.getImageData(xToRead[0], 0, 1, rootHeight);
                               var binFn = function (param) {
-                                var match = Color$Gayer.rgbToHsvFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
-                                var bin = match[0] * 11.0 | 0;
+                                var match = Color$Gayer.rgbToHslFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
+                                var octave = match[2] * 9.0 | 0;
+                                var offsetInOctave = match[0] * 11.0 | 0;
+                                var bin = Caml_int32.imul(octave, 12) + offsetInOctave | 0;
                                 return /* tuple */[
                                         bin,
                                         match[1]
                                       ];
                               };
-                              var histogram = Canvas$Gayer.imageDataToHistogram(12, binFn, slice);
-                              var n = height / 12 | 0;
+                              var histogram = Canvas$Gayer.imageDataToHistogram(120, binFn, 10.0, slice);
+                              var n = height / 120 | 0;
                               for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
-                                var offset = Caml_int32.imul(i, 12);
-                                for(var j = 0; j <= 11; ++j){
-                                  var color = (255.0 * Caml_array.caml_array_get(histogram, j) | 0).toString(16);
-                                  ctx.fillStyle = "#" + (color + (color + color));
-                                  ctx.fillRect(0, offset + j | 0, 1, 1);
+                                var offset = Caml_int32.imul((n - i | 0) - 1 | 0, 120);
+                                for(var j = 0; j <= 119; ++j){
+                                  var h = j % 12 / 12.0;
+                                  var s = Caml_array.caml_array_get(histogram, j);
+                                  var l = (j / 10 | 0) / 10.0;
+                                  var yPos = offset + ((120 - j | 0) - 1 | 0) | 0;
+                                  var match$2 = s > 0.05;
+                                  var color = Color$Gayer.hsl(undefined, h, s, match$2 ? l : 0.0);
+                                  ctx.fillStyle = color;
+                                  ctx.fillRect(0, yPos, 1, 1);
                                 }
                               }
                               return /* () */0;

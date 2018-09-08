@@ -32,25 +32,36 @@ let make =
       getReadAndWritePos((toRead, _) => xToRead := toRead);
       let slice = Ctx.getImageData(rootCtx, xToRead^, 0, 1, rootHeight);
 
-      let bins = 12;
+      let bins = 120;
       let binFn = ({r, g, b, a}) => {
-        let (h, s, v) = rgbToHsvFloat(r, g, b);
-        let bin = int_of_float(h *. 11.0);
+        let (h, s, l) = rgbToHslFloat(r, g, b);
+        let octave = int_of_float(l *. 9.0);
+        let octaveHeight = 12;
+        let offsetInOctave = int_of_float(h *. 11.0);
+        let bin = octave * octaveHeight + offsetInOctave;
         (bin, s);
       };
 
-      let histogram = imageDataToHistogram(bins, binFn, slice);
+      let histogram =
+        imageDataToHistogram(~binCount=bins, ~binFn, ~divideBy=10.0, slice);
+
+      /* let img = makeImageDataFromFloats(histogram, 1, height); */
+      /* Ctx.putImageData(ctx, img, 0, 0); */
+
       let n = height / bins;
       for (i in 0 to n - 1) {
-        let offset = i * bins;
+        let offset = (n - i - 1) * bins;
         for (j in 0 to bins - 1) {
-          let color =
-            Js.Int.toStringWithRadix(
-              int_of_float(255.0 *. histogram[j]),
-              16,
-            );
-          Ctx.setFillStyle(ctx, "#" ++ color ++ color ++ color);
-          Ctx.fillRect(ctx, 0, offset + j, 1, 1);
+          let h = float_of_int(j mod 12) /. 12.0;
+          let s = histogram[j];
+          /* let s = Js.Math.pow_float(histogram[j], 2.0); */
+          let l = float_of_int(j / 10) /. 10.0;
+
+          let yPos = offset + (bins - j - 1);
+
+          let color = hsl(h, s, s > 0.05 ? l : 0.0);
+          Ctx.setFillStyle(ctx, color);
+          Ctx.fillRect(ctx, 0, yPos, 1, 1);
         };
       };
 

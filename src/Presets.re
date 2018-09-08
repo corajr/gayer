@@ -26,7 +26,7 @@ let reader = {
 let histogram = {
   ...defaultLayer,
   content: Histogram,
-  alpha: 0.9,
+  alpha: 1.0,
   compositeOperation: Multiply,
 };
 
