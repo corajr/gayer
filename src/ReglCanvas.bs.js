@@ -46,7 +46,8 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
                                   });
                               var match$1 = self[/* state */1][/* drawCommandRef */2][0];
                               if (match$1 !== undefined) {
-                                return Curry._1(match$1, /* () */0);
+                                match$1.draw();
+                                return /* () */0;
                               } else {
                                 return /* () */0;
                               }

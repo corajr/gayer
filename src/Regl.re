@@ -15,7 +15,7 @@ let triangleSpec = {
      precision mediump float;
      uniform vec4 color;
      void main () {
-         gl_FragColor = color;
+         gl_FragColor = vec4(1, 0, 0, 1); /* color;*/
      }
   |},
   "vert": {|
@@ -36,4 +36,12 @@ let triangleSpec = {
 
 type drawCommand = unit => unit;
 
-let makeDrawCommand = [%bs.raw (regl, spec) => "return regl(spec);"];
+let makeDrawCommand = [%bs.raw
+  (regl, spec) => {|
+     var command = regl(spec);
+     command.draw = command;
+     return command;
+     |}
+];
+
+[@bs.send] external draw : (drawCommand, unit) => unit = "";

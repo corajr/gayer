@@ -2,7 +2,7 @@
 
 
 var triangleSpec = {
-  frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = color;\n     }\n  ",
+  frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = vec4(1, 0, 0, 1); /* color;*/\n     }\n  ",
   vert: "\n     precision mediump float;\n     attribute vec2 position;\n     void main () {\n       gl_Position = vec4(position, 0, 1);\n     }\n  ",
   attributes: {
     position: /* array */[
@@ -31,7 +31,11 @@ var triangleSpec = {
   count: 3
 };
 
-var makeDrawCommand = function (regl,spec){return regl(spec);};
+var makeDrawCommand = function (regl,spec){
+     var command = regl(spec);
+     command.draw = command;
+     return command;
+     };
 
 export {
   triangleSpec ,
