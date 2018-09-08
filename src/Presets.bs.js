@@ -63,7 +63,7 @@ var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 var histogram = /* record */[
   /* content : Histogram */2,
   /* alpha */1.0,
-  /* compositeOperation : Multiply */11,
+  /* compositeOperation : SourceOver */0,
   histogram_003,
   histogram_004,
   histogram_005,
@@ -1148,10 +1148,21 @@ var slitscanHistogramParams_014 = /* layers : :: */[
   /* :: */[
     histogram,
     /* :: */[
-      historyLayer,
+      /* record */[
+        /* content : Analysis */Block.__(5, [/* Mic */2]),
+        analyzer_001,
+        /* compositeOperation : Screen */12,
+        analyzer_003,
+        analyzer_004,
+        analyzer_005,
+        analyzer_006
+      ],
       /* :: */[
-        reader,
-        /* [] */0
+        historyLayer,
+        /* :: */[
+          reader,
+          /* [] */0
+        ]
       ]
     ]
   ]

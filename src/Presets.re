@@ -27,7 +27,7 @@ let histogram = {
   ...defaultLayer,
   content: Histogram,
   alpha: 1.0,
-  compositeOperation: Multiply,
+  compositeOperation: SourceOver,
 };
 
 let rawAudioFormat = {x: 0, y: 0, w: 64, h: 64, sampleRate: 44100};
@@ -316,7 +316,13 @@ let slitscanParams = {
 
 let slitscanHistogramParams = {
   ...slitscanParams,
-  layers: [slitscan, histogram, historyLayer, reader],
+  layers: [
+    slitscan,
+    histogram,
+    {...analyzer, compositeOperation: Screen},
+    historyLayer,
+    reader,
+  ],
 };
 
 let slitscanMovingParams = {
