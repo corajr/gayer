@@ -922,11 +922,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         != newSelf.state.params.millisPerTick) {
       setTimer(
         newSelf.state.timerId,
-        () =>
-          Array.iter(
-            f => f(),
-            Belt.Map.String.valuesToArray(newSelf.state.tickFunctions^),
-          ),
+        () => newSelf.send(Tick),
         newSelf.state.params.millisPerTick,
       );
     };

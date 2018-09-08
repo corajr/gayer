@@ -716,9 +716,7 @@ function make($staropt$star, _) {
               }
               if (oldSelf[/* state */1][/* params */6][/* millisPerTick */6] !== newSelf[/* state */1][/* params */6][/* millisPerTick */6]) {
                 Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */22], (function () {
-                        return $$Array.iter((function (f) {
-                                      return Curry._1(f, /* () */0);
-                                    }), Belt_MapString.valuesToArray(newSelf[/* state */1][/* tickFunctions */21][0]));
+                        return Curry._1(newSelf[/* send */3], /* Tick */1);
                       }), newSelf[/* state */1][/* params */6][/* millisPerTick */6]);
               }
               if (oldSelf[/* state */1][/* fullscreenCanvas */20] !== newSelf[/* state */1][/* fullscreenCanvas */20]) {

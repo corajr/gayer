@@ -1796,6 +1796,66 @@ var droste = /* record */[
   droste_014
 ];
 
+var fourSeasons_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var fourSeasons_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var fourSeasons_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var fourSeasons_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var fourSeasons_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var fourSeasons_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var fourSeasons_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var fourSeasons_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var fourSeasons_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var fourSeasons_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var fourSeasons_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var fourSeasons_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var fourSeasons_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var fourSeasons_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var fourSeasons_014 = /* layers : :: */[
+  img("media/four_seasons.jpg"),
+  /* :: */[
+    histogram,
+    /* :: */[
+      pitchFilter(Music$Gayer.cMajor),
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var fourSeasons = /* record */[
+  fourSeasons_000,
+  fourSeasons_001,
+  fourSeasons_002,
+  fourSeasons_003,
+  fourSeasons_004,
+  fourSeasons_005,
+  fourSeasons_006,
+  fourSeasons_007,
+  fourSeasons_008,
+  fourSeasons_009,
+  fourSeasons_010,
+  fourSeasons_011,
+  fourSeasons_012,
+  fourSeasons_013,
+  fourSeasons_014
+];
+
 var handDrawnParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var handDrawnParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -2552,6 +2612,7 @@ export {
   debussyFile ,
   debussy ,
   droste ,
+  fourSeasons ,
   handDrawnParams ,
   midi ,
   midiDroste ,

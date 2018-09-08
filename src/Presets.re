@@ -435,6 +435,16 @@ let droste = {
   ],
 };
 
+let fourSeasons = {
+  ...defaultParams,
+  layers: [
+    img("media/four_seasons.jpg"),
+    histogram,
+    pitchFilter(cMajor),
+    reader,
+  ],
+};
+
 let handDrawnParams = {
   ...defaultParams,
   layers: [fill("black"), handDrawn, reader],
@@ -496,6 +506,7 @@ let presetsWithoutLayerIds = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
+  /* ("Four Seasons", fourSeasons), */
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
   ("Audio file", debussy),
