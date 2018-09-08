@@ -26,8 +26,7 @@ let make =
       (
         List.map(
           layer => {
-            let key =
-              Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+            let key = getLayerKey(layer);
             let maybeAudio =
               switch (layer.content) {
               | Analysis(source) =>
@@ -66,6 +65,7 @@ let make =
               };
 
             <div
+              key
               style=(
                 switch (layer.content) {
                 | HandDrawn =>

@@ -253,9 +253,15 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (~layerContent, ~setRef, ~saveTick, ~layerRefs) => {
-  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layerContent));
+let getLayerKey: layer => string =
+  layer =>
+    Belt.Option.getWithDefault(
+      layer.id,
+      Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
+    );
 
+let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~layerRefs) => {
+  let layerKey = getLayerKey(layer);
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
     | Some(previewCanvas) =>
@@ -277,7 +283,7 @@ let renderLayerContent = (~layerContent, ~setRef, ~saveTick, ~layerRefs) => {
         (
           ReasonReact.string(
             Js.Json.stringifyWithSpace(
-              EncodeLayer.layerContent(layerContent),
+              EncodeLayer.layerContent(layer.content),
               2,
             ),
           )
@@ -313,8 +319,8 @@ let make =
         )>
         <CardMedia src="dummy">
           (
-            renderLayerContent(
-              ~layerContent=layer.content,
+            renderLayerPreview(
+              ~layer,
               ~saveTick,
               ~setRef=onSetRef(layer),
               ~layerRefs,

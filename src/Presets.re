@@ -490,7 +490,7 @@ let presetsWithoutLayerIds = [
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
   ("Audio file", debussy),
-  /* ("Harmony", harmonyParams), */
+  ("Harmony", harmonyParams),
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
   ("Mic feedback (may be loud!)", feedback),

@@ -99,7 +99,7 @@ let setCanvasRef = (theRef, {ReasonReact.state}) => {
 let setLayerRef =
     (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
-  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+  let layerKey = getLayerKey(layer);
 
   switch (maybeRef) {
   | None => ()
@@ -243,220 +243,270 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
     Ctx.rotate(ctx, layer.rotation);
     Ctx._setFilter(ctx, layer.filters);
 
-    let layerKey =
-      Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+    let layerKey = getLayerKey(layer);
+    switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
+    | None => ()
+    | Some(f) => f()
+    };
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
 
-    switch (layer.content) {
-    | Draw(cmds) =>
-      DrawCommand.drawCommands(ctx, cmds);
-      None;
-    | Fill(s) =>
-      Ctx.setFillStyle(ctx, s);
-      Ctx.fillRect(ctx, 0, 0, width, height);
-      None;
-    | Analysis(_) =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(analysisCanvas) =>
-        let canvasElt = getFromReact(analysisCanvas);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
-      };
-      None;
-    | MIDIKeyboard =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(midiCanvas) =>
-        let canvasElt = getFromReact(midiCanvas);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
-      };
-      None;
-    | RawAudioWriter({x, y, w, h}) =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(canvas) =>
-        let otherCtx = getContext(getFromReact(canvas));
-        let data = Ctx.getImageData(otherCtx, 0, 0, w, h);
-        Ctx.putImageData(ctx, data, x, y);
-      };
-      None;
-    | RawAudioReader({x, y, w, h, sampleRate}) =>
-      open TypedArray;
+    let maybeValues =
+      switch (layer.content) {
+      | Draw(cmds) =>
+        DrawCommand.drawCommands(ctx, cmds);
+        None;
+      | Fill(s) =>
+        Ctx.setFillStyle(ctx, s);
+        Ctx.fillRect(ctx, 0, 0, width, height);
+        None;
+      | Analysis(_) =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(analysisCanvas) =>
+          let canvasElt = getFromReact(analysisCanvas);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          let x =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+        };
+        None;
+      | MIDIKeyboard =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(midiCanvas) =>
+          let canvasElt = getFromReact(midiCanvas);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          let x =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+        };
+        None;
+      | RawAudioWriter({x, y, w, h}) =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(canvas) =>
+          let otherCtx = getContext(getFromReact(canvas));
+          let data = Ctx.getImageData(otherCtx, 0, 0, w, h);
+          Ctx.putImageData(ctx, data, x, y);
+        };
+        None;
+      | RawAudioReader({x, y, w, h, sampleRate}) =>
+        open TypedArray;
 
-      let imageData = Ctx.getImageData(ctx, x, y, w, h);
-      switch (getNode("compressor", state.audioGraph^)) {
-      | None => ()
-      | Some(sink) =>
-        let audioCtx = getAudioContext(sink);
-        let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
-        let rawImgData = toFloat32Array(dataGet(imageData));
-        copyToChannel(buffer, rawImgData, 0, 0);
-        let node = createBufferSource(audioCtx);
-        bufferSet(node, buffer);
-        connect(node, sink);
-        startAudioBufferSourceNode(node);
-      };
-      None;
-    | HandDrawn =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(handDrawn) =>
-        let canvasElt = getFromReact(handDrawn);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
-      };
-      None;
-    | Image(url)
-    | Video(url) =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(aRef) =>
-        let img = getElementAsImageSource(aRef);
-        Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
-      };
-      None;
-    | Webcam(opts) =>
-      let cameraWidth = 640;
-      let cameraHeight = 480;
+        let imageData = Ctx.getImageData(ctx, x, y, w, h);
+        switch (getNode("compressor", state.audioGraph^)) {
+        | None => ()
+        | Some(sink) =>
+          let audioCtx = getAudioContext(sink);
+          let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
+          let rawImgData = toFloat32Array(dataGet(imageData));
+          copyToChannel(buffer, rawImgData, 0, 0);
+          let node = createBufferSource(audioCtx);
+          bufferSet(node, buffer);
+          connect(node, sink);
+          startAudioBufferSourceNode(node);
+        };
+        None;
+      | HandDrawn =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(handDrawn) =>
+          let canvasElt = getFromReact(handDrawn);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+        };
+        None;
+      | Image(url)
+      | Video(url) =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(aRef) =>
+          let img = getElementAsImageSource(aRef);
+          Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
+        };
+        None;
+      | Webcam(opts) =>
+        let cameraWidth = 640;
+        let cameraHeight = 480;
 
-      let cameraWidthToCanvasWidth =
-        float_of_int(cameraWidth) /. float_of_int(width);
-      let cameraHeightToCanvasHeight =
-        float_of_int(cameraHeight) /. float_of_int(height);
+        let cameraWidthToCanvasWidth =
+          float_of_int(cameraWidth) /. float_of_int(width);
+        let cameraHeightToCanvasHeight =
+          float_of_int(cameraHeight) /. float_of_int(height);
 
-      switch (state.cameraInput^, opts.slitscan) {
-      | (None, _) => ()
-      | (Some(input), None) =>
-        Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-      | (Some(input), Some(StaticX(xToRead))) =>
-        let xToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageSourceRectDestRect(
+        switch (state.cameraInput^, opts.slitscan) {
+        | (None, _) => ()
+        | (Some(input), None) =>
+          Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+        | (Some(input), Some(StaticX(xToRead))) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            xToRead,
+            0,
+            1,
+            cameraHeight,
+            xToWrite,
+            0,
+            1,
+            height,
+          );
+        | (Some(input), Some(ReadPosX)) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          let xToReadCamera =
+            int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            xToReadCamera,
+            0,
+            int_of_float(cameraWidthToCanvasWidth),
+            cameraHeight,
+            xToWrite,
+            0,
+            1,
+            height,
+          );
+        | (Some(input), Some(ReadPosY)) =>
+          let yToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              height,
+            );
+
+          let yToRead =
+            int_of_float(
+              float_of_int(yToWrite) *. cameraHeightToCanvasHeight,
+            );
+
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            0,
+            yToRead,
+            cameraWidth,
+            int_of_float(cameraHeightToCanvasHeight),
+            0,
+            yToWrite,
+            width,
+            1,
+          );
+        | (Some(input), Some(StaticY(yToRead))) =>
+          /* TODO: fix this :( */
+          let yToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              height,
+            );
+
+          let yToReadCamera =
+            int_of_float(
+              float_of_int(yToRead) *. cameraHeightToCanvasHeight,
+            );
+
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            0,
+            yToReadCamera,
+            cameraWidth,
+            int_of_float(cameraHeightToCanvasHeight),
+            0,
+            yToWrite,
+            width,
+            1,
+          );
+        };
+        None;
+      | PitchClasses(classes) =>
+        let classList =
+          PitchSet.elements(PitchSet.diff(allPitches, classes));
+
+        Ctx.setFillStyle(ctx, "black");
+        let pixelsPerSemitone = binsPerSemitone(height);
+        for (i in 0 to height / 10) {
+          List.iter(
+            j => {
+              let y = (i * 12 + j) * pixelsPerSemitone;
+              Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
+            },
+            classList,
+          );
+        };
+        None;
+      | Histogram =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(histogram) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          let canvasElt = getFromReact(histogram);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
+        };
+        None;
+      | Reader(channel) =>
+        let xToRead =
+          wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+        let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+        Ctx.setFillStyle(
           ctx,
-          input,
-          xToRead,
-          0,
-          1,
-          cameraHeight,
-          xToWrite,
-          0,
-          1,
-          height,
-        );
-      | (Some(input), Some(ReadPosX)) =>
-        let xToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        let xToReadCamera =
-          int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          xToReadCamera,
-          0,
-          int_of_float(cameraWidthToCanvasWidth),
-          cameraHeight,
-          xToWrite,
-          0,
-          1,
-          height,
-        );
-      | (Some(input), Some(ReadPosY)) =>
-        let yToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
-
-        let yToRead =
-          int_of_float(float_of_int(yToWrite) *. cameraHeightToCanvasHeight);
-
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          0,
-          yToRead,
-          cameraWidth,
-          int_of_float(cameraHeightToCanvasHeight),
-          0,
-          yToWrite,
-          width,
-          1,
-        );
-      | (Some(input), Some(StaticY(yToRead))) =>
-        /* TODO: fix this :( */
-        let yToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
-
-        let yToReadCamera =
-          int_of_float(float_of_int(yToRead) *. cameraHeightToCanvasHeight);
-
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          0,
-          yToReadCamera,
-          cameraWidth,
-          int_of_float(cameraHeightToCanvasHeight),
-          0,
-          yToWrite,
-          width,
-          1,
-        );
-      };
-      None;
-    | PitchClasses(classes) =>
-      let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
-
-      Ctx.setFillStyle(ctx, "black");
-      let pixelsPerSemitone = binsPerSemitone(height);
-      for (i in 0 to height / 10) {
-        List.iter(
-          j => {
-            let y = (i * 12 + j) * pixelsPerSemitone;
-            Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
+          switch (channel) {
+          | R => rgba(127, 0, 0, 0.5)
+          | G => rgba(0, 127, 0, 0.5)
+          | B => rgba(0, 0, 127, 0.5)
+          | A => rgba(127, 127, 127, 0.5)
           },
-          classList,
         );
-      };
-      None;
-    | Histogram =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(histogram) =>
-        let xToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        let canvasElt = getFromReact(histogram);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
-      };
-      None;
-    | Reader(channel) =>
-      let xToRead =
-        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
-      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
-      Ctx.setFillStyle(
-        ctx,
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
         switch (channel) {
-        | R => rgba(127, 0, 0, 0.5)
-        | G => rgba(0, 127, 0, 0.5)
-        | B => rgba(0, 0, 127, 0.5)
-        | A => rgba(127, 127, 127, 0.5)
-        },
-      );
-      Ctx.fillRect(ctx, xToRead, 0, 1, height);
-      switch (channel) {
-      | R
-      | G
-      | B =>
-        let (l, r) = imageDataToStereo(slice, channel, B);
-        Some(Stereo(l, r));
-      | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+        | R
+        | G
+        | B =>
+          let (l, r) = imageDataToStereo(slice, channel, B);
+          Some(Stereo(l, r));
+        | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+        };
       };
-    };
+
+    Js.Global.setTimeout(
+      () =>
+        switch (
+          Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
+        ) {
+        | None => ()
+        | Some(f) => f()
+        },
+      0,
+    );
+
+    maybeValues;
   };
 
 let drawCanvas = (canvasElement, width, height, state) => {
@@ -477,24 +527,6 @@ let drawCanvas = (canvasElement, width, height, state) => {
       Mono(Array.make(height, 0.0)),
       state.params.layers,
     );
-  List.iter(
-    layer => {
-      let layerKey =
-        Js.Json.stringify(EncodeLayer.layerContent(layer.content));
-      switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
-      | None => ()
-      | Some(f) => f()
-      };
-
-      switch (
-        Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
-      ) {
-      | None => ()
-      | Some(f) => f()
-      };
-    },
-    state.params.layers,
-  );
 
   values;
 };

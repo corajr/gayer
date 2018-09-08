@@ -4,6 +4,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Audio$Gayer from "./Audio.bs.js";
+import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -501,8 +502,12 @@ var EncodeLayer = /* module */[
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent$2, _, saveTick, layerRefs) {
-  var layerKey = JSON.stringify(layerContent$1(layerContent$2));
+function getLayerKey(layer) {
+  return Belt_Option.getWithDefault(layer[/* id */6], JSON.stringify(layerContent$1(layer[/* content */0])));
+}
+
+function renderLayerPreview(layer, _, saveTick, layerRefs) {
+  var layerKey = getLayerKey(layer);
   var savePreviewRef = function (aRef) {
     if (aRef == null) {
       return /* () */0;
@@ -527,7 +532,7 @@ function renderLayerContent(layerContent$2, _, saveTick, layerRefs) {
                       ref: savePreviewRef,
                       height: "120",
                       width: "120"
-                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layerContent$2), null, 2)]))));
+                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layer[/* content */0]), null, 2)]))));
 }
 
 var component = ReasonReact.statelessComponent("Layer");
@@ -548,7 +553,7 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], Curry._1(onSetRef, layer), saveTick, layerRefs)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, Curry._1(onSetRef, layer), saveTick, layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
@@ -601,7 +606,8 @@ export {
   oneCompleteTurnAfterNTicks ,
   DecodeLayer ,
   EncodeLayer ,
-  renderLayerContent ,
+  getLayerKey ,
+  renderLayerPreview ,
   component ,
   make ,
   

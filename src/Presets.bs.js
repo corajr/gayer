@@ -2366,36 +2366,42 @@ var presetsWithoutLayerIds_001 = /* :: */[
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Mic feedback (may be loud!)",
-                      feedback
+                      "Harmony",
+                      harmonyParams
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Raw audio (can feedback!)",
-                        rawAudio
+                        "Mic feedback (may be loud!)",
+                        feedback
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Empty",
-                          /* record */[
-                            /* width */Params$Gayer.defaultParams[/* width */0],
-                            /* height */Params$Gayer.defaultParams[/* height */1],
-                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                            /* q */Params$Gayer.defaultParams[/* q */10],
-                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                            /* layers : [] */0
-                          ]
+                          "Raw audio (can feedback!)",
+                          rawAudio
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "Empty",
+                            /* record */[
+                              /* width */Params$Gayer.defaultParams[/* width */0],
+                              /* height */Params$Gayer.defaultParams[/* height */1],
+                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                              /* q */Params$Gayer.defaultParams[/* q */10],
+                              /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                              /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                              /* layers : [] */0
+                            ]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]

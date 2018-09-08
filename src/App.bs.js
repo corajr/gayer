@@ -120,7 +120,7 @@ function setLayerRef(audioCtx, param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
   var layer = param[0];
-  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
+  var layerKey = Layer$Gayer.getLayerKey(layer);
   if (!(theRef == null)) {
     state[/* layerRefs */16][0] = Belt_MapString.set(state[/* layerRefs */16][0], layerKey, theRef);
   }
@@ -322,51 +322,61 @@ function drawLayer(ctx, width, height, state, layer) {
   Canvas$Gayer.Ctx[/* setTransform */3](ctx, layer[/* transformMatrix */4]);
   ctx.rotate(layer[/* rotation */3]);
   ctx.filter = layer[/* filters */5];
-  var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
+  var layerKey = Layer$Gayer.getLayerKey(layer);
+  var match = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey);
+  if (match !== undefined) {
+    Curry._1(match, /* () */0);
+  }
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */16][0], layerKey);
-  var match = layer[/* content */0];
+  var match$1 = layer[/* content */0];
+  var maybeValues;
   var exit = 0;
-  if (typeof match === "number") {
-    switch (match) {
+  if (typeof match$1 === "number") {
+    switch (match$1) {
       case 0 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 1 : 
           if (maybeLayerRef !== undefined) {
             var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 2 : 
           if (maybeLayerRef !== undefined) {
             var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       
     }
   } else {
-    switch (match.tag | 0) {
+    switch (match$1.tag | 0) {
       case 0 : 
-          ctx.fillStyle = match[0];
+          ctx.fillStyle = match$1[0];
           ctx.fillRect(0, 0, width, height);
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 1 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match[0]);
-          return undefined;
+          Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match$1[0]);
+          maybeValues = undefined;
+          break;
       case 2 : 
           var cameraWidthToCanvasWidth = 640 / width;
           var cameraHeightToCanvasHeight = 480 / height;
-          var match$1 = state[/* cameraInput */11][0];
-          var match$2 = match[0][/* slitscan */0];
-          if (match$1 !== undefined) {
-            var input = Js_primitive.valFromOption(match$1);
-            if (match$2 !== undefined) {
-              var match$3 = match$2;
-              if (typeof match$3 === "number") {
-                if (match$3 === 0) {
+          var match$2 = state[/* cameraInput */11][0];
+          var match$3 = match$1[0][/* slitscan */0];
+          if (match$2 !== undefined) {
+            var input = Js_primitive.valFromOption(match$2);
+            if (match$3 !== undefined) {
+              var match$4 = match$3;
+              if (typeof match$4 === "number") {
+                if (match$4 === 0) {
                   var xToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
                   var xToReadCamera = xToWrite$1 * cameraWidthToCanvasWidth | 0;
                   ctx.drawImage(input, xToReadCamera, 0, cameraWidthToCanvasWidth | 0, 480, xToWrite$1, 0, 1, height);
@@ -375,19 +385,20 @@ function drawLayer(ctx, width, height, state, layer) {
                   var yToRead = yToWrite * cameraHeightToCanvasHeight | 0;
                   ctx.drawImage(input, 0, yToRead, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite, width, 1);
                 }
-              } else if (match$3.tag) {
+              } else if (match$4.tag) {
                 var yToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
-                var yToReadCamera = match$3[0] * cameraHeightToCanvasHeight | 0;
+                var yToReadCamera = match$4[0] * cameraHeightToCanvasHeight | 0;
                 ctx.drawImage(input, 0, yToReadCamera, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite$1, width, 1);
               } else {
                 var xToWrite$2 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-                ctx.drawImage(input, match$3[0], 0, 1, 480, xToWrite$2, 0, 1, height);
+                ctx.drawImage(input, match$4[0], 0, 1, 480, xToWrite$2, 0, 1, height);
               }
             } else {
               ctx.drawImage(input, 0, 0, width, height);
             }
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 3 : 
       case 4 : 
           exit = 1;
@@ -397,9 +408,10 @@ function drawLayer(ctx, width, height, state, layer) {
             var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x$1, 0, 1, height);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 6 : 
-          var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match[0]));
+          var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match$1[0]));
           ctx.fillStyle = "black";
           var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
           for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
@@ -411,25 +423,27 @@ function drawLayer(ctx, width, height, state, layer) {
                 }
                 }(i)), classList);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 7 : 
-          var match$4 = match[0];
+          var match$5 = match$1[0];
           if (maybeLayerRef !== undefined) {
             var otherCtx = Js_primitive.valFromOption(maybeLayerRef).getContext("2d");
-            var data = otherCtx.getImageData(0, 0, match$4[/* w */2], match$4[/* h */3]);
-            ctx.putImageData(data, match$4[/* x */0], match$4[/* y */1]);
+            var data = otherCtx.getImageData(0, 0, match$5[/* w */2], match$5[/* h */3]);
+            ctx.putImageData(data, match$5[/* x */0], match$5[/* y */1]);
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 8 : 
-          var match$5 = match[0];
-          var h = match$5[/* h */3];
-          var w = match$5[/* w */2];
-          var imageData = ctx.getImageData(match$5[/* x */0], match$5[/* y */1], w, h);
-          var match$6 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
-          if (match$6 !== undefined) {
-            var sink = match$6;
+          var match$6 = match$1[0];
+          var h = match$6[/* h */3];
+          var w = match$6[/* w */2];
+          var imageData = ctx.getImageData(match$6[/* x */0], match$6[/* y */1], w, h);
+          var match$7 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
+          if (match$7 !== undefined) {
+            var sink = match$7;
             var audioCtx = sink.context;
-            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$5[/* sampleRate */4]);
+            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$6[/* sampleRate */4]);
             var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
             buffer.copyToChannel(rawImgData, 0, 0);
             var node = audioCtx.createBufferSource();
@@ -437,9 +451,10 @@ function drawLayer(ctx, width, height, state, layer) {
             node.connect(sink);
             node.start();
           }
-          return undefined;
+          maybeValues = undefined;
+          break;
       case 9 : 
-          var channel = match[0];
+          var channel = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
           var tmp;
@@ -461,14 +476,15 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillStyle = tmp;
           ctx.fillRect(xToRead, 0, 1, height);
           if (channel >= 3) {
-            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
+            maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$7 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
-            return /* Stereo */Block.__(1, [
-                      match$7[0],
-                      match$7[1]
-                    ]);
+            var match$8 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            maybeValues = /* Stereo */Block.__(1, [
+                match$8[0],
+                match$8[1]
+              ]);
           }
+          break;
       
     }
   }
@@ -476,9 +492,17 @@ function drawLayer(ctx, width, height, state, layer) {
     if (maybeLayerRef !== undefined) {
       ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
     }
-    return undefined;
+    maybeValues = undefined;
   }
-  
+  setTimeout((function () {
+          var match = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey + "preview");
+          if (match !== undefined) {
+            return Curry._1(match, /* () */0);
+          } else {
+            return /* () */0;
+          }
+        }), 0);
+  return maybeValues;
 }
 
 function drawCanvas(canvasElement, width, height, state) {
@@ -486,28 +510,14 @@ function drawCanvas(canvasElement, width, height, state) {
     clearCanvas(canvasElement, width, height);
   }
   var ctx = canvasElement.getContext("2d");
-  var values = List.fold_left((function (acc, layer) {
-          var newMaybeValues = drawLayer(ctx, width, height, state, layer);
-          if (newMaybeValues !== undefined) {
-            return newMaybeValues;
-          } else {
-            return acc;
-          }
-        }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */14]);
-  List.iter((function (layer) {
-          var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
-          var match = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey);
-          if (match !== undefined) {
-            Curry._1(match, /* () */0);
-          }
-          var match$1 = Belt_MapString.get(state[/* tickFunctions */21][0], layerKey + "preview");
-          if (match$1 !== undefined) {
-            return Curry._1(match$1, /* () */0);
-          } else {
-            return /* () */0;
-          }
-        }), state[/* params */6][/* layers */14]);
-  return values;
+  return List.fold_left((function (acc, layer) {
+                var newMaybeValues = drawLayer(ctx, width, height, state, layer);
+                if (newMaybeValues !== undefined) {
+                  return newMaybeValues;
+                } else {
+                  return acc;
+                }
+              }), /* Mono */Block.__(0, [Caml_array.caml_make_vect(height, 0.0)]), state[/* params */6][/* layers */14]);
 }
 
 function getAnalysisInput(audioCtx, state, audioInput) {

@@ -29,7 +29,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                             position: "absolute"
                           }
                         }, $$Array.of_list(List.map((function (layer) {
-                                    var key = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
+                                    var key = Layer$Gayer.getLayerKey(layer);
                                     var match = layer[/* content */0];
                                     var maybeAudio;
                                     if (typeof match === "number") {
@@ -94,6 +94,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                       };
                                     }
                                     return React.createElement("div", {
+                                                key: key,
                                                 style: tmp
                                               }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, getReadAndWritePos, layer[/* content */0], /* array */[])));
                                   }), layers)));
