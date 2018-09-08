@@ -12,7 +12,7 @@ import * as LayerContent$Gayer from "./LayerContent.bs.js";
 
 var component = ReasonReact.statelessComponent("MediaProvider");
 
-function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, audioCtx, saveTick, millisPerAudioTick, _) {
+function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, audioCtx, layerRefs, saveTick, getReadAndWritePos, millisPerAudioTick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -95,7 +95,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     }
                                     return React.createElement("div", {
                                                 style: tmp
-                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, layer[/* content */0], /* array */[])));
+                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, getReadAndWritePos, layer[/* content */0], /* array */[])));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],

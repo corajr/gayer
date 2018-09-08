@@ -105,8 +105,15 @@ var defaultState = /* record */[
 ];
 
 function setCanvasRef(theRef, param) {
-  param[/* state */1][/* canvasRef */19][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-  return /* () */0;
+  var state = param[/* state */1];
+  var maybeRef = (theRef == null) ? undefined : Js_primitive.some(theRef);
+  state[/* canvasRef */19][0] = maybeRef;
+  if (theRef == null) {
+    return /* () */0;
+  } else {
+    state[/* layerRefs */16][0] = Belt_MapString.set(state[/* layerRefs */16][0], "root", theRef);
+    return /* () */0;
+  }
 }
 
 function setLayerRef(audioCtx, param, param$1) {
@@ -114,17 +121,12 @@ function setLayerRef(audioCtx, param, param$1) {
   var theRef = param[1];
   var layer = param[0];
   var layerKey = JSON.stringify(Layer$Gayer.EncodeLayer[/* layerContent */2](layer[/* content */0]));
+  if (!(theRef == null)) {
+    state[/* layerRefs */16][0] = Belt_MapString.set(state[/* layerRefs */16][0], layerKey, theRef);
+  }
   var match = layer[/* content */0];
-  var exit = 0;
   if (typeof match === "number") {
-    switch (match) {
-      case 0 : 
-      case 1 : 
-          exit = 1;
-          break;
-      default:
-        return /* () */0;
-    }
+    return /* () */0;
   } else {
     switch (match.tag | 0) {
       case 2 : 
@@ -142,11 +144,10 @@ function setLayerRef(audioCtx, param, param$1) {
             }
           }
       case 4 : 
+          var url = match[0];
           if (theRef == null) {
             return /* () */0;
           } else {
-            var url = match[0];
-            state[/* layerRefs */16][0] = Belt_MapString.set(state[/* layerRefs */16][0], layerKey, theRef);
             var readyState = theRef.readyState;
             if (readyState >= 3) {
               var match$2 = Belt_MapString.get(state[/* loadedAudio */18][0], url);
@@ -164,24 +165,10 @@ function setLayerRef(audioCtx, param, param$1) {
               return 0;
             }
           }
-      case 3 : 
-      case 5 : 
-      case 7 : 
-          exit = 1;
-          break;
       default:
         return /* () */0;
     }
   }
-  if (exit === 1) {
-    if (theRef == null) {
-      return /* () */0;
-    } else {
-      state[/* layerRefs */16][0] = Belt_MapString.set(state[/* layerRefs */16][0], layerKey, theRef);
-      return /* () */0;
-    }
-  }
-  
 }
 
 function changeLayer(oldLayer, newLayer, layers) {
@@ -321,6 +308,14 @@ function pushParamsState(newParams) {
   return ReasonReact.Router[/* push */0]("#" + newParamsJson);
 }
 
+function getReadAndWritePos(f, param) {
+  var state = param[/* state */1];
+  var width = state[/* params */6][/* width */0];
+  var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
+  var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+  return Curry._2(f, xToRead, xToWrite);
+}
+
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */1];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */2]);
@@ -345,15 +340,11 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           return undefined;
       case 2 : 
-          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
-          var slice = ctx.getImageData(xToRead, 0, 1, height);
-          var histogram = Canvas$Gayer.imageDataToHistogram(state[/* params */6][/* height */1], slice);
-          var revHistogram = $$Array.init(state[/* params */6][/* height */1], (function (i) {
-                  return Caml_array.caml_array_get(histogram, (state[/* params */6][/* height */1] - i | 0) - 1 | 0);
-                }));
-          var img = Canvas$Gayer.makeImageDataFromFloats(revHistogram, 1, state[/* params */6][/* height */1]);
-          ctx.putImageData(img, xToRead, 0);
-          return /* Mono */Block.__(0, [histogram]);
+          if (maybeLayerRef !== undefined) {
+            var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
+          }
+          return undefined;
       
     }
   } else {
@@ -376,9 +367,9 @@ function drawLayer(ctx, width, height, state, layer) {
               var match$3 = match$2;
               if (typeof match$3 === "number") {
                 if (match$3 === 0) {
-                  var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-                  var xToReadCamera = xToWrite * cameraWidthToCanvasWidth | 0;
-                  ctx.drawImage(input, xToReadCamera, 0, cameraWidthToCanvasWidth | 0, 480, xToWrite, 0, 1, height);
+                  var xToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+                  var xToReadCamera = xToWrite$1 * cameraWidthToCanvasWidth | 0;
+                  ctx.drawImage(input, xToReadCamera, 0, cameraWidthToCanvasWidth | 0, 480, xToWrite$1, 0, 1, height);
                 } else {
                   var yToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
                   var yToRead = yToWrite * cameraHeightToCanvasHeight | 0;
@@ -389,8 +380,8 @@ function drawLayer(ctx, width, height, state, layer) {
                 var yToReadCamera = match$3[0] * cameraHeightToCanvasHeight | 0;
                 ctx.drawImage(input, 0, yToReadCamera, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite$1, width, 1);
               } else {
-                var xToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-                ctx.drawImage(input, match$3[0], 0, 1, 480, xToWrite$1, 0, 1, height);
+                var xToWrite$2 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+                ctx.drawImage(input, match$3[0], 0, 1, 480, xToWrite$2, 0, 1, height);
               }
             } else {
               ctx.drawImage(input, 0, 0, width, height);
@@ -449,8 +440,8 @@ function drawLayer(ctx, width, height, state, layer) {
           return undefined;
       case 9 : 
           var channel = match[0];
-          var xToRead$1 = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
-          var slice$1 = ctx.getImageData(xToRead$1, 0, 1, height);
+          var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
+          var slice = ctx.getImageData(xToRead, 0, 1, height);
           var tmp;
           switch (channel) {
             case 0 : 
@@ -468,11 +459,11 @@ function drawLayer(ctx, width, height, state, layer) {
             
           }
           ctx.fillStyle = tmp;
-          ctx.fillRect(xToRead$1, 0, 1, height);
+          ctx.fillRect(xToRead, 0, 1, height);
           if (channel >= 3) {
-            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice$1, channel)]);
+            return /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$7 = Canvas$Gayer.imageDataToStereo(slice$1, channel, /* B */2);
+            var match$7 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
             return /* Stereo */Block.__(1, [
                       match$7[0],
                       match$7[1]
@@ -816,10 +807,10 @@ function make($staropt$star, _) {
                                                                           ]);
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
-                                                              }), self[/* state */1][/* audioGraph */9], audioCtx, (function (key, tickFn) {
+                                                              }), self[/* state */1][/* audioGraph */9], audioCtx, self[/* state */1][/* layerRefs */16], (function (key, tickFn) {
                                                                 self[/* state */1][/* tickFunctions */21][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */21][0], key, tickFn);
                                                                 return /* () */0;
-                                                              }), 16, /* array */[])), React.createElement("canvas", {
+                                                              }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                           style: {
                                                             transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
@@ -1017,6 +1008,7 @@ export {
   disconnectInputs ,
   clearCanvas ,
   pushParamsState ,
+  getReadAndWritePos ,
   drawLayer ,
   drawCanvas ,
   getAnalysisInput ,

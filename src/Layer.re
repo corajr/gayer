@@ -24,7 +24,7 @@ type layerContent =
   | MIDIKeyboard
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
-  | HistogramReader
+  | Histogram
   | Reader(channel);
 
 type layer = {
@@ -92,7 +92,7 @@ module DecodeLayer = {
         json |> map(o => RawAudioWriter(o), field("format", rawAudioFormat))
       | "raw-audio-reader" =>
         json |> map(o => RawAudioReader(o), field("format", rawAudioFormat))
-      | "histogram-reader" => HistogramReader
+      | "histogram" => Histogram
       | "reader" =>
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
@@ -213,7 +213,7 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
-      | HistogramReader => object_([("type", string("histogram-reader"))])
+      | Histogram => object_([("type", string("histogram"))])
       | RawAudioWriter(fmt) =>
         object_([
           ("type", string("raw-audio-writer")),

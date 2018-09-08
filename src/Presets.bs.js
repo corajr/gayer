@@ -52,22 +52,22 @@ var reader = /* record */[
   reader_006
 ];
 
-var histogramReader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+var histogram_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
-var histogramReader_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+var histogram_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
 
-var histogramReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+var histogram_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 
-var histogramReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
-var histogramReader = /* record */[
-  /* content : HistogramReader */2,
-  /* alpha */0.0,
+var histogram = /* record */[
+  /* content : Histogram */2,
+  /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
-  histogramReader_003,
-  histogramReader_004,
-  histogramReader_005,
-  histogramReader_006
+  histogram_003,
+  histogram_004,
+  histogram_005,
+  histogram_006
 ];
 
 var rawAudioFormat = /* record */[
@@ -1147,17 +1147,20 @@ var slitscanHistogramParams_014 = /* layers : :: */[
   slitscan,
   /* :: */[
     /* record */[
-      /* content : HistogramReader */2,
+      /* content : Histogram */2,
       /* alpha */0.75,
       /* compositeOperation : Multiply */11,
-      histogramReader_003,
-      histogramReader_004,
-      histogramReader_005,
-      histogramReader_006
+      histogram_003,
+      histogram_004,
+      histogram_005,
+      histogram_006
     ],
     /* :: */[
       historyLayer,
-      /* [] */0
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -2144,13 +2147,13 @@ var histogram_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
 var histogram_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var histogram_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+var histogram_003$1 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
 
-var histogram_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+var histogram_004$1 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
 
-var histogram_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+var histogram_005$1 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
 
-var histogram_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+var histogram_006$1 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
 var histogram_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
 
@@ -2171,20 +2174,20 @@ var histogram_014 = /* layers : :: */[
   /* :: */[
     pitchFilter(Music$Gayer.cMajor),
     /* :: */[
-      histogramReader,
+      histogram,
       /* [] */0
     ]
   ]
 ];
 
-var histogram = /* record */[
+var histogram$1 = /* record */[
   histogram_000,
   histogram_001,
   histogram_002,
-  histogram_003,
-  histogram_004,
-  histogram_005,
-  histogram_006,
+  histogram_003$1,
+  histogram_004$1,
+  histogram_005$1,
+  histogram_006$1,
   histogram_007,
   histogram_008,
   histogram_009,
@@ -2336,7 +2339,7 @@ var presetsWithoutLayerIds_001 = /* :: */[
     ],
     /* :: */[
       /* tuple */[
-        "Slitscan histogram",
+        "Slitscan (color histogram)",
         slitscanHistogramParams
       ],
       /* :: */[
@@ -2473,7 +2476,6 @@ export {
   tau ,
   img ,
   reader ,
-  histogramReader ,
   rawAudioFormat ,
   rawAudioWriter ,
   rawAudioReader ,
@@ -2526,7 +2528,7 @@ export {
   vinyl ,
   videoURL ,
   video$1 as video,
-  histogram ,
+  histogram$1 as histogram,
   rawAudio ,
   rawAudioAndSpacy ,
   presetsWithoutLayerIds ,

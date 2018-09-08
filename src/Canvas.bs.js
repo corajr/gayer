@@ -7,7 +7,6 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
-import * as Color$Gayer from "./Color.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as RList$Rationale from "rationale/src/RList.js";
@@ -313,21 +312,13 @@ function imageDataToStereo(imageData, channelL, channelR) {
         ];
 }
 
-function imageDataToHistogram(bins, imageData) {
-  var output = Caml_array.caml_make_vect(bins, 0.0);
+function imageDataToHistogram(binCount, binFn, imageData) {
+  var output = Caml_array.caml_make_vect(binCount, 0.0);
   var outputMax = /* record */[/* contents */0.0];
-  var octave = bins / 10 | 0;
-  var numOfOctaves = Caml_int32.div(bins, octave);
-  var binFn = function (h, _, v) {
-    var positionInOctave = h * (octave - 1 | 0) | 0;
-    var octaveOffset = Caml_int32.imul((numOfOctaves - 1.0) * v | 0, octave);
-    return octaveOffset + positionInOctave | 0;
-  };
-  $$Array.iteri((function (_, param) {
-          var match = Color$Gayer.rgbToHsvFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
-          var s = match[1];
-          var i = binFn(match[0], s, match[2]);
-          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + s);
+  $$Array.iter((function (pixel) {
+          var match = Curry._1(binFn, pixel);
+          var i = match[0];
+          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + match[1]);
           if (Caml_array.caml_array_get(output, i) > outputMax[0]) {
             outputMax[0] = Caml_array.caml_array_get(output, i);
             return /* () */0;

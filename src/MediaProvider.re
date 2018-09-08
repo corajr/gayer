@@ -14,7 +14,9 @@ let make =
       ~getAudio,
       ~audioGraph,
       ~audioCtx,
+      ~layerRefs,
       ~saveTick,
+      ~getReadAndWritePos,
       ~millisPerAudioTick,
       _children,
     ) => {
@@ -86,11 +88,13 @@ let make =
                 audioCtx
                 audioGraph
                 layerKey=key
+                layerRefs
                 setRef=(onSetRef(layer))
                 saveTick
                 millisPerTick=millisPerAudioTick
                 width=rootWidth
                 height=rootHeight
+                getReadAndWritePos
                 layerContent=layer.content
               />
             </div>;

@@ -9,11 +9,13 @@ let make =
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
+      ~layerRefs,
       ~setRef,
       ~saveTick,
       ~millisPerTick,
       ~width,
       ~height,
+      ~getReadAndWritePos,
       ~layerContent,
       _children,
     ) => {
@@ -74,11 +76,21 @@ let make =
             width=w
             height=h
           />
+        | Histogram =>
+          <HistogramCanvas
+            setRef
+            layerRefs
+            layerKey
+            width=1
+            rootHeight=height
+            height=120
+            getReadAndWritePos
+            saveTick
+          />
         | RawAudioReader(_)
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)
-        | HistogramReader
         | Reader(_) => ReasonReact.null
         }
       )

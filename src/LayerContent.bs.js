@@ -7,10 +7,11 @@ import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
 import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
+import * as HistogramCanvas$Gayer from "./HistogramCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
 
-function make(layerKey, audioCtx, audioGraph, setRef, saveTick, millisPerTick, width, height, layerContent, _) {
+function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, millisPerTick, width, height, getReadAndWritePos, layerContent, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -31,8 +32,10 @@ function make(layerKey, audioCtx, audioGraph, setRef, saveTick, millisPerTick, w
                   case 1 : 
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
-                  default:
-                    tmp = null;
+                  case 2 : 
+                      tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
+                      break;
+                  
                 }
               } else {
                 switch (layerContent.tag | 0) {

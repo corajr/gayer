@@ -477,25 +477,16 @@ let imageDataToStereo =
   (arrayL, arrayR);
 };
 
-let imageDataToHistogram: (int, imageData) => array(float) =
-  (bins, imageData) => {
+let imageDataToHistogram:
+  (int, pixel => (int, float), imageData) => array(float) =
+  (binCount, binFn, imageData) => {
     open Color;
-    let output = Array.make(bins, 0.0);
+    let output = Array.make(binCount, 0.0);
     let outputMax = ref(0.0);
-    let binsF = float_of_int(bins);
-    let octave = bins / 10;
-    let numOfOctaves = float_of_int(bins / octave);
-    let binFn = (h, s, v) : int => {
-      let positionInOctave = int_of_float(h *. float_of_int(octave - 1));
-      let octaveOffset = int_of_float((numOfOctaves -. 1.0) *. v) * octave;
-      octaveOffset + positionInOctave;
-    };
-
     mapImageData(imageData, rawDataToPixel)
-    |> Array.iteri((imageI, {r, g, b, a}) => {
-         let (h, s, v) = rgbToHsvFloat(r, g, b);
-         let i = binFn(h, s, v);
-         output[i] = output[i] +. s;
+    |> Array.iter(pixel => {
+         let (i, v) = binFn(pixel);
+         output[i] = output[i] +. v;
          if (output[i] > outputMax^) {
            outputMax := output[i];
          };

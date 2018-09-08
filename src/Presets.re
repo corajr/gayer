@@ -23,10 +23,10 @@ let reader = {
   compositeOperation: Multiply,
 };
 
-let histogramReader = {
+let histogram = {
   ...defaultLayer,
-  content: HistogramReader,
-  alpha: 0.0,
+  content: Histogram,
+  alpha: 1.0,
   compositeOperation: SourceOver,
 };
 
@@ -318,8 +318,9 @@ let slitscanHistogramParams = {
   ...slitscanParams,
   layers: [
     slitscan,
-    {...histogramReader, alpha: 0.75, compositeOperation: Multiply},
+    {...histogram, alpha: 0.75, compositeOperation: Multiply},
     historyLayer,
+    reader,
   ],
 };
 
@@ -468,7 +469,7 @@ let video = {
 
 let histogram = {
   ...defaultParams,
-  layers: [hubble, pitchFilter(cMajor), histogramReader],
+  layers: [hubble, pitchFilter(cMajor), histogram],
 };
 
 let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
@@ -483,7 +484,7 @@ let presetsWithoutLayerIds = [
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */
   ("Slitscan", slitscanParams),
-  ("Slitscan histogram", slitscanHistogramParams),
+  ("Slitscan (color histogram)", slitscanHistogramParams),
   /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */

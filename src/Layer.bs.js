@@ -115,8 +115,8 @@ function layerByType(type_, json) {
                     }), json);
     case "hand-drawn" : 
         return /* HandDrawn */0;
-    case "histogram-reader" : 
-        return /* HistogramReader */2;
+    case "histogram" : 
+        return /* Histogram */2;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -286,7 +286,7 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "histogram-reader"
+                        "histogram"
                       ],
                       /* [] */0
                     ]);

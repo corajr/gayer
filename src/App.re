@@ -86,23 +86,28 @@ type action =
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
 
-let setCanvasRef = (theRef, {ReasonReact.state}) =>
-  state.canvasRef := Js.Nullable.toOption(theRef);
+let setCanvasRef = (theRef, {ReasonReact.state}) => {
+  let maybeRef = Js.Nullable.toOption(theRef);
+  state.canvasRef := maybeRef;
+  switch (maybeRef) {
+  | None => ()
+  | Some(aRef) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, "root", aRef)
+  };
+};
 
 let setLayerRef =
     (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layer.content));
 
+  switch (maybeRef) {
+  | None => ()
+  | Some(aRef) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
+  };
+
   switch (layer.content, maybeRef) {
-  | (Analysis(source), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
-  | (MIDIKeyboard, Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
-  | (HandDrawn, Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
-  | (RawAudioWriter(_), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -111,11 +116,7 @@ let setLayerRef =
       state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     | None => ()
     }
-  | (Image(url), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Video(url), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
-
     let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
     if (readyState >= 3) {
       switch (Belt.Map.String.get(state.loadedAudio^, url)) {
@@ -129,7 +130,19 @@ let setLayerRef =
           Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
       };
     };
-  | _ => ()
+  | (Webcam(_), _)
+  | (Video(_), _)
+  | (Histogram, _)
+  | (HandDrawn, _)
+  | (Image(_), _)
+  | (Analysis(_), _)
+  | (MIDIKeyboard, _)
+  | (RawAudioWriter(_), _)
+  | (Fill(_), _)
+  | (Draw(_), _)
+  | (PitchClasses(_), _)
+  | (RawAudioReader(_), _)
+  | (Reader(_), _) => ()
   };
 };
 
@@ -204,6 +217,16 @@ let pushParamsState = newParams => {
   let newParamsJson =
     encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
   ReasonReact.Router.push("#" ++ newParamsJson);
+};
+
+let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => {
+  let width = state.params.width;
+
+  let xToRead =
+    wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+  let xToWrite =
+    wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+  f(xToRead, xToWrite);
 };
 
 let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
@@ -399,19 +422,17 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         );
       };
       None;
-    | HistogramReader =>
-      let xToRead =
-        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
-      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
-      let histogram = imageDataToHistogram(state.params.height, slice);
-      let revHistogram =
-        Array.init(state.params.height, i =>
-          histogram[state.params.height - i - 1]
-        );
-
-      let img = makeImageDataFromFloats(revHistogram, 1, state.params.height);
-      Ctx.putImageData(ctx, img, xToRead, 0);
-      Some(Mono(histogram));
+    | Histogram =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(histogram) =>
+        let xToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        let canvasElt = getFromReact(histogram);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
+      };
+      None;
     | Reader(channel) =>
       let xToRead =
         wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
@@ -985,9 +1006,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                     (layer, theRef) =>
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
+                  layerRefs=self.state.layerRefs
                   rootWidth=self.state.params.width
                   rootHeight=self.state.params.height
                   millisPerAudioTick=16
+                  getReadAndWritePos=(self.handle(getReadAndWritePos))
                   saveTick=(
                     (key, tickFn) =>
                       self.state.tickFunctions :=
