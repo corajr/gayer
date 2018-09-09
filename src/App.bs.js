@@ -29,7 +29,6 @@ import * as MaterialUi_List from "@jsiebern/bs-material-ui/src/MaterialUi_List.b
 import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
-import * as TypedArray$Gayer from "./TypedArray.bs.js";
 import * as MaterialUi_AppBar from "@jsiebern/bs-material-ui/src/MaterialUi_AppBar.bs.js";
 import * as MaterialUi_Button from "@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js";
 import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js";
@@ -432,25 +431,7 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 7 : 
-          maybeValues = undefined;
-          break;
       case 8 : 
-          var match$5 = match$1[0];
-          var h = match$5[/* h */3];
-          var w = match$5[/* w */2];
-          var imageData = ctx.getImageData(match$5[/* x */0], match$5[/* y */1], w, h);
-          var match$6 = AudioGraph$Gayer.getNode("compressor", state[/* audioGraph */9][0]);
-          if (match$6 !== undefined) {
-            var sink = match$6;
-            var audioCtx = sink.context;
-            var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), match$5[/* sampleRate */4]);
-            var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
-            buffer.copyToChannel(rawImgData, 0, 0);
-            var node = audioCtx.createBufferSource();
-            node.buffer = buffer;
-            node.connect(sink);
-            node.start();
-          }
           maybeValues = undefined;
           break;
       case 9 : 
@@ -478,10 +459,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$7 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            var match$5 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
             maybeValues = /* Stereo */Block.__(1, [
-                match$7[0],
-                match$7[1]
+                match$5[0],
+                match$5[1]
               ]);
           }
           break;

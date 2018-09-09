@@ -3,14 +3,7 @@ open CameraOptions;
 open Canvas;
 open MIDICanvas;
 open Music;
-
-type rawAudioFormat = {
-  x: int,
-  y: int,
-  w: int,
-  h: int,
-  sampleRate: int,
-};
+open RawAudio;
 
 type layerContent =
   | Fill(string)

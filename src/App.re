@@ -300,29 +300,13 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         /*   Ctx.putImageData(ctx, data, x, y); */
         /* }; */
         None
+      | RawAudioReader(_) => None
       | Regl =>
         switch (maybeLayerRef) {
         | None => ()
         | Some(canvas) =>
           let canvasSource = getCanvasAsSource(getFromReact(canvas));
           Ctx.drawImage(ctx, canvasSource, 0, 0);
-        };
-        None;
-      | RawAudioReader({x, y, w, h, sampleRate}) =>
-        open TypedArray;
-
-        let imageData = Ctx.getImageData(ctx, x, y, w, h);
-        switch (getNode("compressor", state.audioGraph^)) {
-        | None => ()
-        | Some(sink) =>
-          let audioCtx = getAudioContext(sink);
-          let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
-          let rawImgData = toFloat32Array(dataGet(imageData));
-          copyToChannel(buffer, rawImgData, 0, 0);
-          let node = createBufferSource(audioCtx);
-          bufferSet(node, buffer);
-          connect(node, sink);
-          startAudioBufferSourceNode(node);
         };
         None;
       | HandDrawn =>

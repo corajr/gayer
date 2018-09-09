@@ -7,6 +7,7 @@ import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as ReglCanvas$Gayer from "./ReglCanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
+import * as RawAudioReader$Gayer from "./RawAudioReader.bs.js";
 import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
 import * as HistogramCanvas$Gayer from "./HistogramCanvas.bs.js";
 
@@ -79,6 +80,9 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       var h = match[/* h */3];
                       var w = match[/* w */2];
                       tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, layerRefs, audioCtx, audioGraph, setRef, match[/* x */0], match[/* y */1], /* array */[]));
+                      break;
+                  case 8 : 
+                      tmp = ReasonReact.element(undefined, undefined, RawAudioReader$Gayer.make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, layerContent[0], /* array */[]));
                       break;
                   default:
                     tmp = null;

@@ -92,7 +92,15 @@ let make =
           />
         | Regl =>
           <ReglCanvas setRef layerRefs width height saveTick layerKey />
-        | RawAudioReader(_)
+        | RawAudioReader(rawAudioFormat) =>
+          <RawAudioReader
+            layerKey
+            layerRefs
+            saveTick
+            rawAudioFormat
+            audioCtx
+            audioGraph
+          />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)
