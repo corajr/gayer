@@ -186,6 +186,28 @@ var regl = /* record */[
   regl_006
 ];
 
+var sobel_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var sobel_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var sobel_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var sobel_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var sobel_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var sobel_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var sobel = /* record */[
+  /* content : Regl */3,
+  sobel_001,
+  sobel_002,
+  sobel_003,
+  sobel_004,
+  sobel_005,
+  sobel_006
+];
+
 var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */2]);
 
 var analyzer_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
@@ -2226,6 +2248,63 @@ var video$1 = /* record */[
   video_014
 ];
 
+var lesTresRichesHeures_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var lesTresRichesHeures_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var lesTresRichesHeures_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var lesTresRichesHeures_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var lesTresRichesHeures_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var lesTresRichesHeures_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var lesTresRichesHeures_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var lesTresRichesHeures_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var lesTresRichesHeures_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var lesTresRichesHeures_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var lesTresRichesHeures_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var lesTresRichesHeures_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var lesTresRichesHeures_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var lesTresRichesHeures_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var lesTresRichesHeures_014 = /* layers : :: */[
+  img("media/les_tres_riches_heures.jpg"),
+  /* :: */[
+    sobel,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var lesTresRichesHeures = /* record */[
+  lesTresRichesHeures_000,
+  lesTresRichesHeures_001,
+  lesTresRichesHeures_002,
+  lesTresRichesHeures_003,
+  lesTresRichesHeures_004,
+  lesTresRichesHeures_005,
+  lesTresRichesHeures_006,
+  lesTresRichesHeures_007,
+  lesTresRichesHeures_008,
+  lesTresRichesHeures_009,
+  lesTresRichesHeures_010,
+  lesTresRichesHeures_011,
+  lesTresRichesHeures_012,
+  lesTresRichesHeures_013,
+  lesTresRichesHeures_014
+];
+
 var histogram_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var histogram_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -2444,56 +2523,62 @@ var presetsWithoutLayerIds_001 = /* :: */[
             ],
             /* :: */[
               /* tuple */[
-                "Is it a crime?",
-                isItACrime
+                "Les Très Riches Heures",
+                lesTresRichesHeures
               ],
               /* :: */[
                 /* tuple */[
-                  "MIDI",
-                  midi
+                  "Is it a crime?",
+                  isItACrime
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Audio file",
-                    debussy
+                    "MIDI",
+                    midi
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Harmony",
-                      harmonyParams
+                      "Audio file",
+                      debussy
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Mic feedback (may be loud!)",
-                        feedback
+                        "Harmony",
+                        harmonyParams
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Raw audio (can feedback!)",
-                          rawAudio
+                          "Mic feedback (may be loud!)",
+                          feedback
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Empty",
-                            /* record */[
-                              /* width */Params$Gayer.defaultParams[/* width */0],
-                              /* height */Params$Gayer.defaultParams[/* height */1],
-                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                              /* q */Params$Gayer.defaultParams[/* q */10],
-                              /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                              /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                              /* layers : [] */0
-                            ]
+                            "Raw audio (can feedback!)",
+                            rawAudio
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "Empty",
+                              /* record */[
+                                /* width */Params$Gayer.defaultParams[/* width */0],
+                                /* height */Params$Gayer.defaultParams[/* height */1],
+                                /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                                /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                                /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                                /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                                /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                                /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                                /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                                /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                                /* q */Params$Gayer.defaultParams[/* q */10],
+                                /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                                /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                                /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                                /* layers : [] */0
+                              ]
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -2574,6 +2659,7 @@ export {
   fill ,
   draw ,
   regl ,
+  sobel ,
   analyzer ,
   webcam ,
   slitscan ,
@@ -2621,6 +2707,7 @@ export {
   vinyl ,
   videoURL ,
   video$1 as video,
+  lesTresRichesHeures ,
   histogram$1 as histogram,
   rawAudio ,
   rawAudioAndSpacy ,

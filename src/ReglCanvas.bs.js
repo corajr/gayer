@@ -6,10 +6,11 @@ import * as React from "react";
 import * as Regl$Gayer from "./Regl.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 
 var component = ReasonReact.reducerComponent("ReglCanvas-Gayer");
 
-function make(_, setRef, saveTick, layerKey, width, height, _$1) {
+function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
   var handleSetRef = function (aRef, param) {
     var state = param[/* state */1];
     Curry._1(setRef, aRef);
@@ -21,8 +22,14 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
     } else {
       var theRegl = Regl(aRef);
       state[/* reglRef */1][0] = Js_primitive.some(theRegl);
-      var triangleCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.triangleSpec);
-      state[/* drawCommandRef */2][0] = Js_primitive.some(triangleCommand);
+      var match$1 = Belt_MapString.get(layerRefs[0], "root");
+      if (match$1 !== undefined) {
+        var rootTexture = theRegl.texture(Js_primitive.valFromOption(match$1));
+        console.log(rootTexture);
+        state[/* rootTextureRef */2][0] = Js_primitive.some(rootTexture);
+      }
+      var drawCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec);
+      state[/* drawCommandRef */3][0] = Js_primitive.some(drawCommand);
       return /* () */0;
     }
   };
@@ -44,7 +51,7 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
                                     ],
                                     depth: 1.0
                                   });
-                              var match$1 = self[/* state */1][/* drawCommandRef */2][0];
+                              var match$1 = self[/* state */1][/* drawCommandRef */3][0];
                               if (match$1 !== undefined) {
                                 Js_primitive.valFromOption(match$1).draw({ });
                                 return /* () */0;
@@ -71,6 +78,7 @@ function make(_, setRef, saveTick, layerKey, width, height, _$1) {
               return /* record */[
                       /* canvasRef : record */[/* contents */undefined],
                       /* reglRef : record */[/* contents */undefined],
+                      /* rootTextureRef : record */[/* contents */undefined],
                       /* drawCommandRef : record */[/* contents */undefined]
                     ];
             }),

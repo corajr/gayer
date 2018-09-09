@@ -2,8 +2,38 @@
 
 
 var triangleSpec = {
-  frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = vec4(1, 0, 0, 1); /* color;*/\n     }\n  ",
+  frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = color;\n     }\n  ",
   vert: "\n     precision mediump float;\n     attribute vec2 position;\n     void main () {\n       gl_Position = vec4(position, 0, 1);\n     }\n  ",
+  attributes: {
+    position: /* array */[
+      /* array */[
+        -1,
+        0
+      ],
+      /* array */[
+        0,
+        -1
+      ],
+      /* array */[
+        1,
+        1
+      ]
+    ]
+  },
+  uniforms: {
+    color: /* array */[
+      1.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  count: 3
+};
+
+var sobelSpec = {
+  frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n     gl_FragColor = vec4(1, 0, 0, 1); /* color;*/\n     }\n     ",
+  vert: "\n     precision mediump float;\n     attribute vec2 position;\n     void main () {\n     gl_Position = vec4(position, 0, 1);\n     }\n     ",
   attributes: {
     position: /* array */[
       /* array */[
@@ -39,6 +69,7 @@ var makeDrawCommand = function (regl,spec){
 
 export {
   triangleSpec ,
+  sobelSpec ,
   makeDrawCommand ,
   
 }

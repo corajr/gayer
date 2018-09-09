@@ -57,6 +57,8 @@ let draw = (~alpha: float=1.0, cmds: list(command)) => {
 
 let regl = {...defaultLayer, content: Regl};
 
+let sobel = {...defaultLayer, content: Regl};
+
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
 let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
@@ -480,6 +482,11 @@ let video = {
   ],
 };
 
+let lesTresRichesHeures = {
+  ...defaultParams,
+  layers: [img("media/les_tres_riches_heures.jpg"), sobel, reader],
+};
+
 let histogram = {
   ...defaultParams,
   layers: [hubble, pitchFilter(cMajor), histogram],
@@ -507,6 +514,7 @@ let presetsWithoutLayerIds = [
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
   /* ("Four Seasons", fourSeasons), */
+  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),
   ("Audio file", debussy),
