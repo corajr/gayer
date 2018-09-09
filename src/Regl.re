@@ -18,6 +18,10 @@ external texture :
   texture =
   "";
 
+type prop;
+
+[@bs.send] external prop : (regl, string) => prop = "";
+
 let triangleSpec = {
   "frag": {|
      precision mediump float;
@@ -42,26 +46,51 @@ let triangleSpec = {
   "count": 3,
 };
 
-let sobelSpec = {
+let sobelSpec = regl => {
   "frag": {|
      precision mediump float;
-     uniform vec4 color;
+     uniform sampler2D texture;
+     uniform vec2 resolution;
+     varying vec2 uv;
+
      void main () {
-     gl_FragColor = vec4(1, 0, 0, 1); /* color;*/
+	float x = 1.0 / resolution.x;
+	float y = 1.0 / resolution.y;
+	vec4 horizEdge = vec4( 0.0 );
+	horizEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;
+	horizEdge -= texture2D(texture, vec2( uv.x - x, uv.y     ) ) * 2.0;
+	horizEdge -= texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;
+	horizEdge += texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;
+	horizEdge += texture2D(texture, vec2( uv.x + x, uv.y     ) ) * 2.0;
+	horizEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;
+	vec4 vertEdge = vec4( 0.0 );
+	vertEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;
+	vertEdge -= texture2D(texture, vec2( uv.x    , uv.y - y ) ) * 2.0;
+	vertEdge -= texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;
+	vertEdge += texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;
+	vertEdge += texture2D(texture, vec2( uv.x    , uv.y + y ) ) * 2.0;
+	vertEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;
+	vec3 edge = sqrt((horizEdge.rgb * horizEdge.rgb) + (vertEdge.rgb * vertEdge.rgb));
+
+	gl_FragColor = vec4( edge, texture2D(texture, uv ).a );
+
      }
      |},
   "vert": {|
      precision mediump float;
      attribute vec2 position;
+     varying vec2 uv;
      void main () {
-     gl_Position = vec4(position, 0, 1);
+     uv = position;
+     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);
      }
      |},
   "attributes": {
-    "position": [|[|(-1), 0|], [|0, (-1)|], [|1, 1|]|],
+    "position": [|[|(-2), 0|], [|0, (-2)|], [|2, 2|]|],
   },
   "uniforms": {
-    "color": [|1.0, 0.0, 0.0, 1.0|],
+    "resolution": prop(regl, "resolution"),
+    "texture": prop(regl, "texture"),
   },
   "count": 3,
 };

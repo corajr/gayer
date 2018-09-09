@@ -4,7 +4,6 @@ open Regl;
 type state = {
   canvasRef: ref(option(Dom.element)),
   reglRef: ref(option(regl)),
-  rootTextureRef: ref(option(texture)),
   drawCommandRef: ref(option(Regl.drawCommand)),
 };
 
@@ -22,15 +21,7 @@ let make =
       let theRegl = regl(el);
       state.reglRef := Some(theRegl);
 
-      switch (Belt.Map.String.get(layerRefs^, "root")) {
-      | Some(canvas) =>
-        let rootTexture = texture(theRegl, `Canvas(canvas));
-        Js.log(rootTexture);
-        state.rootTextureRef := Some(rootTexture);
-      | None => ()
-      };
-
-      let drawCommand = Regl.makeDrawCommand(theRegl, sobelSpec);
+      let drawCommand = Regl.makeDrawCommand(theRegl, sobelSpec(theRegl));
       state.drawCommandRef := Some(drawCommand);
     | _ => ()
     };
@@ -41,7 +32,6 @@ let make =
     initialState: () => {
       canvasRef: ref(None),
       drawCommandRef: ref(None),
-      rootTextureRef: ref(None),
       reglRef: ref(None),
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
@@ -52,9 +42,17 @@ let make =
         | Some(regl) =>
           clear(regl, {"color": [|0.0, 0.0, 0.0, 1.0|], "depth": 1.0});
 
-          switch (self.state.drawCommandRef^) {
-          | Some(f) => draw(f, Js.Obj.empty())
-          | None => ()
+          switch (
+            self.state.drawCommandRef^,
+            Belt.Map.String.get(layerRefs^, "root"),
+          ) {
+          | (Some(f), Some(canvas)) =>
+            let rootTexture = texture(regl, `Canvas(canvas));
+            draw(
+              f,
+              {"texture": rootTexture, "resolution": [|width, height|]},
+            );
+          | _ => ()
           };
         }
       ),

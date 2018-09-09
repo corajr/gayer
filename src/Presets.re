@@ -302,6 +302,11 @@ let webcamParams = {
   ],
 };
 
+let webcamEdgeDetect = {
+  ...defaultParams,
+  layers: [webcam, sobel, pitchFilter(cMajor), reader],
+};
+
 let slitscanParams = {
   ...defaultParams,
   readPosDelta: 0,
@@ -442,8 +447,9 @@ let fourSeasons = {
   ...defaultParams,
   layers: [
     img("media/four_seasons.jpg"),
-    histogram,
-    pitchFilter(cMajor),
+    sobel,
+    /* histogram, */
+    pitchFilter(cMinor),
     reader,
   ],
 };
@@ -485,7 +491,12 @@ let video = {
 
 let lesTresRichesHeures = {
   ...defaultParams,
-  layers: [img("media/les_tres_riches_heures.jpg"), sobel, reader],
+  layers: [
+    img("media/les_tres_riches_heures.jpg"),
+    sobel,
+    pitchFilter(majorHexatonic),
+    reader,
+  ],
 };
 
 let histogram = {
@@ -505,6 +516,7 @@ let presetsWithoutLayerIds = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */
+  ("Webcam (edge detection)", webcamEdgeDetect),
   ("Slitscan", slitscanParams),
   ("Slitscan (color histogram)", slitscanHistogramParams),
   /* ("Slitscan (moving)", slitscanMovingParams), */
@@ -514,7 +526,7 @@ let presetsWithoutLayerIds = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
-  /* ("Four Seasons", fourSeasons), */
+  ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI", midi),

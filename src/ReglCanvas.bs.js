@@ -22,14 +22,8 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
     } else {
       var theRegl = Regl(aRef);
       state[/* reglRef */1][0] = Js_primitive.some(theRegl);
-      var match$1 = Belt_MapString.get(layerRefs[0], "root");
-      if (match$1 !== undefined) {
-        var rootTexture = theRegl.texture(Js_primitive.valFromOption(match$1));
-        console.log(rootTexture);
-        state[/* rootTextureRef */2][0] = Js_primitive.some(rootTexture);
-      }
-      var drawCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec);
-      state[/* drawCommandRef */3][0] = Js_primitive.some(drawCommand);
+      var drawCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec(theRegl));
+      state[/* drawCommandRef */2][0] = Js_primitive.some(drawCommand);
       return /* () */0;
     }
   };
@@ -42,7 +36,8 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
               return Curry._2(saveTick, layerKey, (function () {
                             var match = self[/* state */1][/* reglRef */1][0];
                             if (match !== undefined) {
-                              Js_primitive.valFromOption(match).clear({
+                              var regl = Js_primitive.valFromOption(match);
+                              regl.clear({
                                     color: /* array */[
                                       0.0,
                                       0.0,
@@ -51,9 +46,17 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
                                     ],
                                     depth: 1.0
                                   });
-                              var match$1 = self[/* state */1][/* drawCommandRef */3][0];
-                              if (match$1 !== undefined) {
-                                Js_primitive.valFromOption(match$1).draw({ });
+                              var match$1 = self[/* state */1][/* drawCommandRef */2][0];
+                              var match$2 = Belt_MapString.get(layerRefs[0], "root");
+                              if (match$1 !== undefined && match$2 !== undefined) {
+                                var rootTexture = regl.texture(Js_primitive.valFromOption(match$2));
+                                Js_primitive.valFromOption(match$1).draw({
+                                      texture: rootTexture,
+                                      resolution: /* array */[
+                                        width,
+                                        height
+                                      ]
+                                    });
                                 return /* () */0;
                               } else {
                                 return /* () */0;
@@ -78,7 +81,6 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
               return /* record */[
                       /* canvasRef : record */[/* contents */undefined],
                       /* reglRef : record */[/* contents */undefined],
-                      /* rootTextureRef : record */[/* contents */undefined],
                       /* drawCommandRef : record */[/* contents */undefined]
                     ];
             }),
