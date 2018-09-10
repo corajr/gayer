@@ -374,20 +374,23 @@ var harmony_000 = /* record */[
 ];
 
 var harmony_001 = /* :: */[
-  /* record */[
-    /* content */init$1[/* content */0],
-    /* alpha */0.5,
-    /* compositeOperation : Difference */20,
-    /* rotation */init$1[/* rotation */3],
-    /* transformMatrix */init$1[/* transformMatrix */4],
-    /* filters */init$1[/* filters */5],
-    /* id */init$1[/* id */6]
-  ],
+  sobel,
   /* :: */[
-    pitchFilter(Music$Gayer.cMajor),
+    /* record */[
+      /* content */init$1[/* content */0],
+      /* alpha */0.5,
+      /* compositeOperation : Difference */20,
+      /* rotation */init$1[/* rotation */3],
+      /* transformMatrix */init$1[/* transformMatrix */4],
+      /* filters */init$1[/* filters */5],
+      /* id */init$1[/* id */6]
+    ],
     /* :: */[
-      reader,
-      /* [] */0
+      pitchFilter(Music$Gayer.cSharpMajor),
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -1224,6 +1227,60 @@ var slitscanParams = /* record */[
   slitscanParams_012,
   /* shouldClear */false,
   slitscanParams_014
+];
+
+var slitscanEdgeDetectParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var slitscanEdgeDetectParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var slitscanEdgeDetectParams_004 = /* readPosOffset */Canvas$Gayer.defaultSize - 1 | 0;
+
+var slitscanEdgeDetectParams_005 = /* writePosOffset */Canvas$Gayer.defaultSize - 1 | 0;
+
+var slitscanEdgeDetectParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var slitscanEdgeDetectParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var slitscanEdgeDetectParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var slitscanEdgeDetectParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var slitscanEdgeDetectParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var slitscanEdgeDetectParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var slitscanEdgeDetectParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var slitscanEdgeDetectParams_014 = /* layers : :: */[
+  slitscan,
+  /* :: */[
+    analyzer,
+    /* :: */[
+      historyLayer,
+      /* :: */[
+        reader,
+        /* [] */0
+      ]
+    ]
+  ]
+];
+
+var slitscanEdgeDetectParams = /* record */[
+  slitscanEdgeDetectParams_000,
+  slitscanEdgeDetectParams_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  slitscanEdgeDetectParams_004,
+  slitscanEdgeDetectParams_005,
+  slitscanEdgeDetectParams_006,
+  slitscanEdgeDetectParams_007,
+  slitscanEdgeDetectParams_008,
+  slitscanEdgeDetectParams_009,
+  slitscanEdgeDetectParams_010,
+  slitscanEdgeDetectParams_011,
+  slitscanEdgeDetectParams_012,
+  /* shouldClear */false,
+  slitscanEdgeDetectParams_014
 ];
 
 var slitscanHistogramParams_000 = slitscanParams_000;
@@ -2327,8 +2384,6 @@ var lesTresRichesHeures_007 = /* audioInputSetting */Params$Gayer.defaultParams[
 
 var lesTresRichesHeures_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
 
-var lesTresRichesHeures_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
-
 var lesTresRichesHeures_010 = /* q */Params$Gayer.defaultParams[/* q */10];
 
 var lesTresRichesHeures_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
@@ -2361,7 +2416,7 @@ var lesTresRichesHeures = /* record */[
   lesTresRichesHeures_006,
   lesTresRichesHeures_007,
   lesTresRichesHeures_008,
-  lesTresRichesHeures_009,
+  /* outputGain */0.05,
   lesTresRichesHeures_010,
   lesTresRichesHeures_011,
   lesTresRichesHeures_012,
@@ -2572,90 +2627,66 @@ var presetsWithoutLayerIds_001 = /* :: */[
       ],
       /* :: */[
         /* tuple */[
-          "Slitscan (color histogram)",
-          slitscanHistogramParams
+          "History",
+          history
         ],
         /* :: */[
           /* tuple */[
-            "History",
-            history
+            "Rotation",
+            vinyl
           ],
           /* :: */[
             /* tuple */[
-              "Rotation",
-              vinyl
+              "Tughra of Suleiman",
+              tughra
             ],
             /* :: */[
               /* tuple */[
-                "Tughra of Suleiman",
-                tughra
+                "Les Très Riches Heures",
+                lesTresRichesHeures
               ],
               /* :: */[
                 /* tuple */[
-                  "Four Seasons",
-                  fourSeasons
+                  "Is it a crime?",
+                  isItACrime
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Les Très Riches Heures",
-                    lesTresRichesHeures
+                    "MIDI (requires MIDI keyboard)",
+                    midi
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Is it a crime?",
-                      isItACrime
+                      "Audio file",
+                      debussy
                     ],
                     /* :: */[
                       /* tuple */[
-                        "MIDI",
-                        midi
+                        "Harmony",
+                        harmonyParams
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Audio file",
-                          debussy
-                        ],
-                        /* :: */[
-                          /* tuple */[
-                            "Harmony",
-                            harmonyParams
-                          ],
-                          /* :: */[
-                            /* tuple */[
-                              "Mic feedback (may be loud!)",
-                              feedback
-                            ],
-                            /* :: */[
-                              /* tuple */[
-                                "Raw audio (can feedback!)",
-                                rawAudio
-                              ],
-                              /* :: */[
-                                /* tuple */[
-                                  "Empty",
-                                  /* record */[
-                                    /* width */Params$Gayer.defaultParams[/* width */0],
-                                    /* height */Params$Gayer.defaultParams[/* height */1],
-                                    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                                    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                                    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                                    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                                    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                                    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                                    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                                    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                                    /* q */Params$Gayer.defaultParams[/* q */10],
-                                    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                                    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                                    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                                    /* layers : [] */0
-                                  ]
-                                ],
-                                /* [] */0
-                              ]
-                            ]
+                          "Empty",
+                          /* record */[
+                            /* width */Params$Gayer.defaultParams[/* width */0],
+                            /* height */Params$Gayer.defaultParams[/* height */1],
+                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                            /* q */Params$Gayer.defaultParams[/* q */10],
+                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                            /* layers : [] */0
                           ]
-                        ]
+                        ],
+                        /* [] */0
                       ]
                     ]
                   ]
@@ -2719,7 +2750,8 @@ var presets = List.map((function (param) {
 var exampleScore_000 = /* events */$$Array.map((function (param) {
         return /* record */[
                 /* params */param[1],
-                /* transition : Manual */0
+                /* transition : Manual */0,
+                /* eventTitle */param[0]
               ];
       }), $$Array.of_list(presets));
 
@@ -2784,6 +2816,7 @@ export {
   webcamParams ,
   webcamEdgeDetect ,
   slitscanParams ,
+  slitscanEdgeDetectParams ,
   slitscanHistogramParams ,
   slitscanMovingParams ,
   whiteboardParams ,

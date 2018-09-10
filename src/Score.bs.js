@@ -13,7 +13,10 @@ function transition(json) {
 function scoreEvent(json) {
   return /* record */[
           /* params */Json_decode.field("params", Params$Gayer.DecodeParams[/* params */0], json),
-          /* transition */Json_decode.field("transition", transition, json)
+          /* transition */Json_decode.field("transition", transition, json),
+          /* eventTitle */Json_decode.optional((function (param) {
+                  return Json_decode.field("eventTitle", Json_decode.string, param);
+                }), json)
         ];
 }
 

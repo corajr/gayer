@@ -6,6 +6,7 @@ type transition =
 type scoreEvent = {
   params,
   transition,
+  eventTitle: option(string),
 };
 
 type scoreMetadata = {
@@ -34,6 +35,7 @@ module DecodeScore = {
     Json.Decode.{
       params: json |> field("params", DecodeParams.params),
       transition: json |> field("transition", transition),
+      eventTitle: json |> optional(field("eventTitle", string)),
     };
 
   let scoreMetadata = json =>

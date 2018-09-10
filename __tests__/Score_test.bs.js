@@ -12,7 +12,8 @@ var exampleTransitions = /* :: */[
 
 var exampleScoreEvents_000 = /* record */[
   /* params */Params$Gayer.defaultParams,
-  /* transition : Manual */0
+  /* transition : Manual */0,
+  /* eventTitle */undefined
 ];
 
 var exampleScoreEvents = /* :: */[

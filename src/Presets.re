@@ -94,6 +94,7 @@ let harmony = [
     compositeOperation: SourceOver,
     filters: "blur(2px)",
   },
+  sobel,
   {
     ...
       draw([
@@ -109,7 +110,7 @@ let harmony = [
     compositeOperation: Difference,
     alpha: 0.5,
   },
-  pitchFilter(cMajor),
+  pitchFilter(cSharpMajor),
   reader,
 ];
 
@@ -325,6 +326,23 @@ let slitscanParams = {
   ],
 };
 
+let slitscanEdgeDetectParams = {
+  ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: defaultSize - 1,
+  writePosOffset: defaultSize - 1,
+  shouldClear: false,
+  layers: [
+    slitscan,
+    /* sobel, */
+    analyzer,
+    /* pitchFilter(cMajor), */
+    historyLayer,
+    reader,
+  ],
+};
+
 let slitscanHistogramParams = {
   ...slitscanParams,
   layers: [
@@ -492,6 +510,7 @@ let video = {
 
 let lesTresRichesHeures = {
   ...defaultParams,
+  outputGain: 0.05,
   layers: [
     img("media/les_tres_riches_heures.jpg"),
     sobel,
@@ -517,9 +536,11 @@ let presetsWithoutLayerIds = [
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */
+  /* ("Webcam", webcamEdgeDetect), */
   ("Webcam (edge detection)", webcamEdgeDetect),
   ("Slitscan", slitscanParams),
-  ("Slitscan (color histogram)", slitscanHistogramParams),
+  /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
+  /* ("Slitscan (color histogram)", slitscanHistogramParams), */
   /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */
@@ -527,16 +548,16 @@ let presetsWithoutLayerIds = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
-  ("Four Seasons", fourSeasons),
+  /* ("Four Seasons", fourSeasons), */
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
-  ("MIDI", midi),
+  ("MIDI (requires MIDI keyboard)", midi),
   ("Audio file", debussy),
   ("Harmony", harmonyParams),
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
-  ("Mic feedback (may be loud!)", feedback),
-  ("Raw audio (can feedback!)", rawAudio),
+  /* ("Mic feedback (may be loud!)", feedback), */
+  /* ("Raw audio (can feedback!)", rawAudio), */
   ("Empty", {...defaultParams, layers: []}),
 ];
 
@@ -561,7 +582,11 @@ let presets: list((string, params)) =
 let exampleScore: score = {
   events:
     Array.map(
-      ((_, params)) => {params, transition: Manual},
+      ((eventTitle, params)) => {
+        params,
+        transition: Manual,
+        eventTitle: Some(eventTitle),
+      },
       Array.of_list(presets),
     ),
   scoreMetadata: {

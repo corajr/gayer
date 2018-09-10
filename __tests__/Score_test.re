@@ -5,7 +5,9 @@ open Presets;
 open Score;
 
 let exampleTransitions = [Manual];
-let exampleScoreEvents = [{params: defaultParams, transition: Manual}];
+let exampleScoreEvents = [
+  {params: defaultParams, transition: Manual, eventTitle: None},
+];
 let exampleScores = [
   {
     events: Array.of_list(exampleScoreEvents),
