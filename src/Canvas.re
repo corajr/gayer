@@ -383,6 +383,8 @@ module Ctx = {
 
   [@bs.send] external beginPath : ctx => unit = "";
 
+  [@bs.send] external closePath : ctx => unit = "";
+
   [@bs.send] external stroke : ctx => unit = "";
 
   let line = (ctx, (x, y), (a, b)) => {
@@ -475,6 +477,31 @@ let imageDataToStereo =
   (arrayL, arrayR);
 };
 
+let imageDataToHistogram =
+    (
+      ~binCount: int,
+      ~binFn: pixel => (int, float),
+      ~divideBy: float=1.0,
+      imageData: imageData,
+    )
+    : array(float) => {
+  open Color;
+  let output = Array.make(binCount, 0.0);
+  let outputMax = ref(0.0);
+  mapImageData(imageData, rawDataToPixel)
+  |> Array.iter(pixel => {
+       let (i, v) = binFn(pixel);
+       output[i] = output[i] +. v;
+       if (output[i] > outputMax^) {
+         outputMax := output[i];
+       };
+     });
+
+  let divideByFinal = max(outputMax^, divideBy);
+
+  divideByFinal === 0.0 ? output : Array.map(x => x /. divideByFinal, output);
+};
+
 let makeUint8ClampedArray = [%bs.raw
   len => {|return new Uint8ClampedArray(len)|}
 ];
@@ -531,6 +558,9 @@ let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs
 }
      |}
 ];
+
+let clamp = (~minVal: int=0, ~maxVal: int=255, i: int) : int =>
+  min(maxVal, max(minVal, i));
 
 let wrapCoord: (int, int, int) => int =
   (index, delta, size) => {

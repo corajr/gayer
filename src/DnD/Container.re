@@ -92,6 +92,7 @@ let make =
               (~el, ~handle) => {
                 let obj = ReactDOMRe.domElementToObj(handle);
                 obj##tagName === "BUTTON"
+                || obj##tagName === "CANVAS"
                 || obj##getAttribute("role") === "slider";
               },
             (),
@@ -131,6 +132,7 @@ let make =
                    changeLayer=onChangeLayer
                    width=rootWidth
                    height=rootHeight
+                   onSetRef
                    saveTick
                    layerRefs
                  />

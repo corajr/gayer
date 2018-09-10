@@ -8,6 +8,7 @@ open Fscreen;
 open Layer;
 open Params;
 open Presets;
+open Score;
 open Timing;
 open UserMedia;
 open Video;
@@ -24,6 +25,7 @@ type state = {
   freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
+  score: option((score, ref(int))),
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
   audioGraph: ref(audioGraph),
@@ -54,6 +56,7 @@ let defaultState: state = {
   audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
+  score: Some((exampleScore, ref(0))),
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
@@ -72,9 +75,10 @@ type action =
   | Clear
   | Tick
   | TogglePresetDrawer
-  | LoadAudioFile(string)
   | SaveImage
   | ToggleFullscreen
+  | SetScoreEventIndex(int)
+  | AdjustScoreEventIndex(int)
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -87,26 +91,28 @@ type action =
 [@bs.val] external decodeURIComponent : string => string = "";
 [@bs.val] external encodeURIComponent : string => string = "";
 
-let setCanvasRef = (theRef, {ReasonReact.state}) =>
-  state.canvasRef := Js.Nullable.toOption(theRef);
+let setCanvasRef = (theRef, {ReasonReact.state}) => {
+  let maybeRef = Js.Nullable.toOption(theRef);
+  state.canvasRef := maybeRef;
+  switch (maybeRef) {
+  | None => ()
+  | Some(aRef) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, "root", aRef)
+  };
+};
 
 let setLayerRef =
     (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
-  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+  let layerKey = getLayerKey(layer);
+
+  switch (maybeRef) {
+  | None => ()
+  | Some(aRef) =>
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
+  };
 
   switch (layer.content, maybeRef) {
-  | (Analysis(source), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
-    switch (source) {
-    | AudioFile(url) =>
-      if (! Belt.Map.String.has(state.loadedAudio^, url)) {
-        send(LoadAudioFile(url));
-      }
-    | _ => ()
-    };
-  | (MIDIKeyboard, Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Webcam(_), Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
@@ -115,11 +121,7 @@ let setLayerRef =
       state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     | None => ()
     }
-  | (Image(url), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef)
   | (Video(url), Some(aRef)) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
-
     let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
     if (readyState >= 3) {
       switch (Belt.Map.String.get(state.loadedAudio^, url)) {
@@ -133,7 +135,20 @@ let setLayerRef =
           Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
       };
     };
-  | _ => ()
+  | (Webcam(_), _)
+  | (Video(_), _)
+  | (Histogram, _)
+  | (HandDrawn, _)
+  | (Regl, _)
+  | (Image(_), _)
+  | (Analysis(_), _)
+  | (MIDIKeyboard, _)
+  | (RawAudioWriter(_), _)
+  | (Fill(_), _)
+  | (Draw(_), _)
+  | (PitchClasses(_), _)
+  | (RawAudioReader(_), _)
+  | (Reader(_), _) => ()
   };
 };
 
@@ -147,6 +162,10 @@ let changeLayer = (oldLayer, newLayer, layers) =>
   "SizedDrawer"({
     paper: ReactDOMRe.Style.make(~position="relative", ~width="240px", ()),
   })
+];
+
+[%mui.withStyles
+  "GrowTitle"({grow: ReactDOMRe.Style.make(~flexGrow="1", ())})
 ];
 
 let component = ReasonReact.reducerComponent("App");
@@ -210,6 +229,16 @@ let pushParamsState = newParams => {
   ReasonReact.Router.push("#" ++ newParamsJson);
 };
 
+let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => {
+  let width = state.params.width;
+
+  let xToRead =
+    wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+  let xToWrite =
+    wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+  f(xToRead, xToWrite);
+};
+
 let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
@@ -224,173 +253,262 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
     Ctx.rotate(ctx, layer.rotation);
     Ctx._setFilter(ctx, layer.filters);
 
-    let layerKey =
-      Js.Json.stringify(EncodeLayer.layerContent(layer.content));
+    let layerKey = getLayerKey(layer);
+    switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
+    | None => ()
+    | Some(f) => f()
+    };
+
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
 
-    switch (layer.content) {
-    | Draw(cmds) =>
-      DrawCommand.drawCommands(ctx, cmds);
-      None;
-    | Fill(s) =>
-      Ctx.setFillStyle(ctx, s);
-      Ctx.fillRect(ctx, 0, 0, width, height);
-      None;
-    | Analysis(_) =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(analysisCanvas) =>
-        let canvasElt = getFromReact(analysisCanvas);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
-      };
-      None;
-    | MIDIKeyboard =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(midiCanvas) =>
-        let canvasElt = getFromReact(midiCanvas);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
-      };
-      None;
-    | Image(url)
-    | Video(url) =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(aRef) =>
-        let img = getElementAsImageSource(aRef);
-        Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
-      };
-      None;
-    | Webcam(opts) =>
-      let cameraWidth = 640;
-      let cameraHeight = 480;
+    let maybeValues =
+      switch (layer.content) {
+      | Draw(cmds) =>
+        DrawCommand.drawCommands(ctx, cmds);
+        None;
+      | Fill(s) =>
+        Ctx.setFillStyle(ctx, s);
+        Ctx.fillRect(ctx, 0, 0, width, height);
+        None;
+      | Analysis(_) =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(analysisCanvas) =>
+          let canvasElt = getFromReact(analysisCanvas);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          let x =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+        };
+        None;
+      | MIDIKeyboard =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(midiCanvas) =>
+          let canvasElt = getFromReact(midiCanvas);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          let x =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+        };
+        None;
+      | RawAudioWriter({x, y, w, h}) =>
+        /* switch (maybeLayerRef) { */
+        /* | None => () */
+        /* | Some(canvas) => */
+        /*   let otherCtx = getContext(getFromReact(canvas)); */
+        /*   let data = Ctx.getImageData(otherCtx, 0, 0, w, h); */
+        /*   Ctx.putImageData(ctx, data, x, y); */
+        /* }; */
+        None
+      | RawAudioReader(_) => None
+      | Regl =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(canvas) =>
+          let canvasSource = getCanvasAsSource(getFromReact(canvas));
+          Ctx.drawImage(ctx, canvasSource, 0, 0);
+        };
+        None;
+      | HandDrawn =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(handDrawn) =>
+          let canvasElt = getFromReact(handDrawn);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+        };
+        None;
+      | Image(url)
+      | Video(url) =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(aRef) =>
+          let img = getElementAsImageSource(aRef);
+          Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
+        };
+        None;
+      | Webcam(opts) =>
+        let cameraWidth = 640;
+        let cameraHeight = 480;
 
-      let cameraWidthToCanvasWidth =
-        float_of_int(cameraWidth) /. float_of_int(width);
-      let cameraHeightToCanvasHeight =
-        float_of_int(cameraHeight) /. float_of_int(height);
+        let cameraWidthToCanvasWidth =
+          float_of_int(cameraWidth) /. float_of_int(width);
+        let cameraHeightToCanvasHeight =
+          float_of_int(cameraHeight) /. float_of_int(height);
 
-      switch (state.cameraInput^, opts.slitscan) {
-      | (None, _) => ()
-      | (Some(input), None) =>
-        Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-      | (Some(input), Some(StaticX(xToRead))) =>
-        let xToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageSourceRectDestRect(
+        switch (state.cameraInput^, opts.slitscan) {
+        | (None, _) => ()
+        | (Some(input), None) =>
+          Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+        | (Some(input), Some(StaticX(xToRead))) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            xToRead,
+            0,
+            1,
+            cameraHeight,
+            xToWrite,
+            0,
+            1,
+            height,
+          );
+        | (Some(input), Some(ReadPosX)) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          let xToReadCamera =
+            int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            xToReadCamera,
+            0,
+            int_of_float(cameraWidthToCanvasWidth),
+            cameraHeight,
+            xToWrite,
+            0,
+            1,
+            height,
+          );
+        | (Some(input), Some(ReadPosY)) =>
+          let yToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              height,
+            );
+
+          let yToRead =
+            int_of_float(
+              float_of_int(yToWrite) *. cameraHeightToCanvasHeight,
+            );
+
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            0,
+            yToRead,
+            cameraWidth,
+            int_of_float(cameraHeightToCanvasHeight),
+            0,
+            yToWrite,
+            width,
+            1,
+          );
+        | (Some(input), Some(StaticY(yToRead))) =>
+          /* TODO: fix this :( */
+          let yToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              height,
+            );
+
+          let yToReadCamera =
+            int_of_float(
+              float_of_int(yToRead) *. cameraHeightToCanvasHeight,
+            );
+
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            input,
+            0,
+            yToReadCamera,
+            cameraWidth,
+            int_of_float(cameraHeightToCanvasHeight),
+            0,
+            yToWrite,
+            width,
+            1,
+          );
+        };
+        None;
+      | PitchClasses(classes) =>
+        let classList =
+          PitchSet.elements(PitchSet.diff(allPitches, classes));
+
+        Ctx.setFillStyle(ctx, "black");
+        let pixelsPerSemitone = binsPerSemitone(height);
+        for (i in 0 to height / 10) {
+          List.iter(
+            j => {
+              let y = (i * 12 + j) * pixelsPerSemitone;
+              Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
+            },
+            classList,
+          );
+        };
+        None;
+      | Histogram =>
+        switch (maybeLayerRef) {
+        | None => ()
+        | Some(histogram) =>
+          let xToWrite =
+            wrapCoord(
+              state.writePos^ + state.params.writePosOffset,
+              0,
+              width,
+            );
+          let canvasElt = getFromReact(histogram);
+          let canvasAsSource = getCanvasAsSource(canvasElt);
+          Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
+        };
+        None;
+      | Reader(channel) =>
+        let xToRead =
+          wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+        let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+        Ctx.setFillStyle(
           ctx,
-          input,
-          xToRead,
-          0,
-          1,
-          cameraHeight,
-          xToWrite,
-          0,
-          1,
-          height,
-        );
-      | (Some(input), Some(ReadPosX)) =>
-        let xToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        let xToReadCamera =
-          int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          xToReadCamera,
-          0,
-          int_of_float(cameraWidthToCanvasWidth),
-          cameraHeight,
-          xToWrite,
-          0,
-          1,
-          height,
-        );
-      | (Some(input), Some(ReadPosY)) =>
-        let yToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
-
-        let yToRead =
-          int_of_float(float_of_int(yToWrite) *. cameraHeightToCanvasHeight);
-
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          0,
-          yToRead,
-          cameraWidth,
-          int_of_float(cameraHeightToCanvasHeight),
-          0,
-          yToWrite,
-          width,
-          1,
-        );
-      | (Some(input), Some(StaticY(yToRead))) =>
-        /* TODO: fix this :( */
-        let yToWrite =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, height);
-
-        let yToReadCamera =
-          int_of_float(float_of_int(yToRead) *. cameraHeightToCanvasHeight);
-
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          0,
-          yToReadCamera,
-          cameraWidth,
-          int_of_float(cameraHeightToCanvasHeight),
-          0,
-          yToWrite,
-          width,
-          1,
-        );
-      };
-      None;
-    | PitchClasses(classes) =>
-      let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
-
-      Ctx.setFillStyle(ctx, "black");
-      let pixelsPerSemitone = binsPerSemitone(height);
-      for (i in 0 to height / 10) {
-        List.iter(
-          j => {
-            let y = (i * 12 + j) * pixelsPerSemitone;
-            Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
+          switch (channel) {
+          | R => rgba(127, 0, 0, 0.5)
+          | G => rgba(0, 127, 0, 0.5)
+          | B => rgba(0, 0, 127, 0.5)
+          | A => rgba(127, 127, 127, 0.5)
           },
-          classList,
         );
-      };
-      None;
-    | Reader(channel) =>
-      let xToRead =
-        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
-      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
-      Ctx.setFillStyle(
-        ctx,
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
         switch (channel) {
-        | R => rgba(127, 0, 0, 0.5)
-        | G => rgba(0, 127, 0, 0.5)
-        | B => rgba(0, 0, 127, 0.5)
-        | A => rgba(127, 127, 127, 0.5)
-        },
-      );
-      Ctx.fillRect(ctx, xToRead, 0, 1, height);
-      switch (channel) {
-      | R
-      | G
-      | B =>
-        let (l, r) = imageDataToStereo(slice, channel, B);
-        Some(Stereo(l, r));
-      | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+        | R
+        | G
+        | B =>
+          let (l, r) = imageDataToStereo(slice, channel, B);
+          Some(Stereo(l, r));
+        | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+        };
       };
-    };
+
+    Js.Global.setTimeout(
+      () =>
+        switch (
+          Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
+        ) {
+        | None => ()
+        | Some(f) => f()
+        },
+      0,
+    );
+
+    maybeValues;
   };
 
 let drawCanvas = (canvasElement, width, height, state) => {
@@ -420,8 +538,11 @@ let getAnalysisInput:
   (audioContext, option(audioNode)) =
   (audioCtx, state, audioInput) =>
     switch (audioInput) {
-    | AudioFromVideo(s)
-    | AudioFile(s) => (audioCtx, Belt.Map.String.get(state.loadedAudio^, s))
+    | AudioFromVideo(s) => (
+        audioCtx,
+        Belt.Map.String.get(state.loadedAudio^, s),
+      )
+    | AudioFile(_) => (audioCtx, None)
     | Oscillator(oType) => (
         audioCtx,
         switch (state.oscillatorBank^) {
@@ -468,7 +589,7 @@ let generateNewFilterBanks =
   /*   makeOscillatorBank( */
   /*     ~audioCtx, */
   /*     ~n=state.params.height, */
-  /*     ~type_=Sine, */
+  /*     ~type_=Square, */
   /*     ~freqFunc, */
   /*   ); */
   /* Array.iter(startOscillator, oscillators.nodes); */
@@ -537,22 +658,32 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
+    | SetScoreEventIndex(i) => ReasonReact.NoUpdate
+    | AdjustScoreEventIndex(i) =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            switch (state.score) {
+            | Some(({events}, eventIndexRef)) =>
+              eventIndexRef :=
+                clamp(
+                  ~minVal=0,
+                  ~maxVal=Array.length(events) - 1,
+                  eventIndexRef^ + i,
+                );
+              let eventIndex = eventIndexRef^;
+
+              pushParamsState(events[eventIndex].params);
+              Js.log({j|Adjusting score index; score now at $(eventIndex)|j});
+            | None => ()
+            }
+        ),
+      )
     | ToggleFullscreen =>
       ReasonReact.Update({
         ...state,
         fullscreenCanvas: ! state.fullscreenCanvas,
       })
-    | LoadAudioFile(url) =>
-      ReasonReact.SideEffects(
-        (
-          _self => {
-            let elt = makeAudioElt(url);
-            let mediaElementSource = createMediaElementSource(audioCtx, elt);
-            state.loadedAudio :=
-              Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
-          }
-        ),
-      )
     | SetParams(params) => ReasonReact.Update({...state, params})
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetMediaStream(stream) =>
@@ -691,8 +822,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     generateNewFilterBanks(audioCtx, self);
 
-    /* self.send(SetFilterInput(unwrapGain(oscillators.output))); */
-
     (
       switch (getAudioVisualStream()) {
       | None => ()
@@ -711,10 +840,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     self.send(Clear);
 
-    let sendTickFn = () => self.send(Tick);
-    self.state.tickFunctions :=
-      Belt.Map.String.set(self.state.tickFunctions^, "master", sendTickFn);
-
     let rec animationFn = timestamp => {
       /* let lastUpdated = self.state.animationLastUpdated^; */
       /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
@@ -730,10 +855,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
       /* Js.log(timeSinceLastUpdate); */
 
-      Array.iter(
-        f => f(),
-        Belt.Map.String.valuesToArray(self.state.tickFunctions^),
-      );
+      self.send(Tick);
       requestAnimationFrame(window, animationFn);
     };
 
@@ -741,11 +863,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     setTimer(
       self.state.timerId,
-      () =>
-        Array.iter(
-          f => f(),
-          Belt.Map.String.valuesToArray(self.state.tickFunctions^),
-        ),
+      () => self.send(Tick),
       self.state.params.millisPerTick,
     );
 
@@ -818,11 +936,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         != newSelf.state.params.millisPerTick) {
       setTimer(
         newSelf.state.timerId,
-        () =>
-          Array.iter(
-            f => f(),
-            Belt.Map.String.valuesToArray(newSelf.state.tickFunctions^),
-          ),
+        () => newSelf.send(Tick),
         newSelf.state.params.millisPerTick,
       );
     };
@@ -848,9 +962,33 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               color=`Inherit onClick=(_evt => self.send(TogglePresetDrawer))>
               <MaterialUIIcons.Menu />
             </IconButton>
-            <Typography variant=`Title color=`Inherit>
-              (ReasonReact.string("GAYER"))
-            </Typography>
+            <GrowTitle
+              render=(
+                classes =>
+                  <Typography
+                    variant=`Title
+                    color=`Inherit
+                    classes=[Title(classes.grow)]>
+                    (ReasonReact.string("GAYER"))
+                  </Typography>
+              )
+            />
+            (
+              Belt.Option.isSome(self.state.score) ?
+                <div>
+                  <IconButton
+                    color=`Inherit
+                    onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
+                    <MaterialUIIcons.SkipPrevious />
+                  </IconButton>
+                  <IconButton
+                    color=`Inherit
+                    onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
+                    <MaterialUIIcons.SkipNext />
+                  </IconButton>
+                </div> :
+                ReasonReact.null
+            )
           </Toolbar>
         </AppBar>
         <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
@@ -939,27 +1077,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
                     ~minHeight="480px",
+                    ~position="relative",
                     (),
                   )
                 )>
-                <canvas
-                  ref=(self.handle(setCanvasRef))
-                  onClick=(evt => Js.log(evt))
-                  width=(Js.Int.toString(self.state.params.width))
-                  height=(Js.Int.toString(self.state.params.height))
-                  style=(
-                    ReactDOMRe.Style.make(
-                      ~transform=
-                        "scale("
-                        ++ Js.Float.toString(
-                             480.0 /. float_of_int(self.state.params.height),
-                           )
-                        ++ ")",
-                      ~transformOrigin="top left",
-                      (),
-                    )
-                  )
-                />
                 <MediaProvider
                   audioCtx
                   audioGraph=self.state.audioGraph
@@ -968,9 +1089,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                     (layer, theRef) =>
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
+                  layerRefs=self.state.layerRefs
                   rootWidth=self.state.params.width
                   rootHeight=self.state.params.height
                   millisPerAudioTick=16
+                  getReadAndWritePos=(self.handle(getReadAndWritePos))
                   saveTick=(
                     (key, tickFn) =>
                       self.state.tickFunctions :=
@@ -981,6 +1104,24 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                         )
                   )
                   layers=(sortLayers(self.state.params.layers))
+                />
+                <canvas
+                  ref=(self.handle(setCanvasRef))
+                  width=(Js.Int.toString(self.state.params.width))
+                  height=(Js.Int.toString(self.state.params.height))
+                  style=(
+                    ReactDOMRe.Style.make(
+                      ~imageRendering="crisp-edges",
+                      ~transform=
+                        "scale("
+                        ++ Js.Float.toString(
+                             480.0 /. float_of_int(self.state.params.height),
+                           )
+                        ++ ")",
+                      ~transformOrigin="top left",
+                      (),
+                    )
+                  )
                 />
               </div>
               /* <Button */
@@ -1004,7 +1145,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
                   <Button
-                    variant=`Contained onClick=(evt => self.send(SaveImage))>
+                    variant=`Contained onClick=(_evt => self.send(SaveImage))>
                     <MaterialUIIcons.PhotoCamera />
                     (ReasonReact.string("Snapshot"))
                   </Button>

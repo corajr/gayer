@@ -1,69 +1,24 @@
 open Audio.AudioInput;
+open CameraOptions;
 open Canvas;
 open MIDICanvas;
 open Music;
-
-type slitscanOptions =
-  | ReadPosX
-  | ReadPosY
-  | StaticX(int)
-  | StaticY(int);
-
-type cameraOptions = {slitscan: option(slitscanOptions)};
-
-module DecodeCameraOptions = {
-  /* let slitscanOptions = json => Json.Decode.{x: }; */
-
-  let slitscanOptions = json =>
-    Json.Decode.(
-      json
-      |> (
-        field("type", string)
-        |> andThen((type_, json) =>
-             switch (type_) {
-             | "readPosX" => ReadPosX
-             | "readPosY" => ReadPosY
-             | "staticX" => json |> map(i => StaticX(i), field("x", int))
-             | "staticY" => json |> map(i => StaticY(i), field("y", int))
-             | _ => StaticX(320)
-             }
-           )
-      )
-    );
-
-  let cameraOptions = json =>
-    Json.Decode.{
-      slitscan: json |> optional(field("slitscan", slitscanOptions)),
-    };
-};
-
-module EncodeCameraOptions = {
-  let slitscanOptions: slitscanOptions => Js.Json.t =
-    Json.Encode.(
-      fun
-      | ReadPosX => object_([("type", string("readPosX"))])
-      | ReadPosY => object_([("type", string("readPosY"))])
-      | StaticX(i) =>
-        object_([("type", string("staticX")), ("x", int(i))])
-      | StaticY(i) =>
-        object_([("type", string("staticY")), ("y", int(i))])
-    );
-
-  let cameraOptions = r =>
-    Json.Encode.(
-      object_([("slitscan", nullable(slitscanOptions, r.slitscan))])
-    );
-};
+open RawAudio;
 
 type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
+  | HandDrawn
   | Webcam(cameraOptions)
   | Image(string)
   | Video(string)
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
+  | RawAudioWriter(rawAudioFormat)
+  | RawAudioReader(rawAudioFormat)
+  | Histogram
+  | Regl
   | Reader(channel);
 
 type layer = {
@@ -73,6 +28,7 @@ type layer = {
   rotation,
   transformMatrix,
   filters: string,
+  id: option(string),
 };
 
 let defaultLayer = {
@@ -82,6 +38,7 @@ let defaultLayer = {
   transformMatrix: defaultTransform,
   rotation: 0.0,
   filters: "none",
+  id: None,
 };
 
 let oneCompleteTurnAfterNTicks: int => rotation = n => tau /. float_of_int(n);
@@ -103,11 +60,21 @@ module DecodeLayer = {
     );
 
   let rotation = json => Json.Decode.(json |> float);
+  let rawAudioFormat = json =>
+    Json.Decode.{
+      x: json |> field("x", int),
+      y: json |> field("y", int),
+      w: json |> field("w", int),
+      h: json |> field("h", int),
+      sampleRate: json |> field("sampleRate", int),
+    };
 
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
+      | "hand-drawn" => HandDrawn
+      | "regl" => Regl
       | "webcam" =>
         json
         |> map(
@@ -116,6 +83,11 @@ module DecodeLayer = {
            )
       | "image" => json |> map(s => Image(s), field("url", string))
       | "video" => json |> map(s => Video(s), field("url", string))
+      | "raw-audio-writer" =>
+        json |> map(o => RawAudioWriter(o), field("format", rawAudioFormat))
+      | "raw-audio-reader" =>
+        json |> map(o => RawAudioReader(o), field("format", rawAudioFormat))
+      | "histogram" => Histogram
       | "reader" =>
         json
         |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
@@ -152,6 +124,7 @@ module DecodeLayer = {
 
   let layer = json =>
     Json.Decode.{
+      id: json |> field("id", optional(string)),
       content: json |> field("content", layerContent),
       alpha: json |> field("alpha", float),
       compositeOperation:
@@ -192,6 +165,17 @@ module EncodeLayer = {
       )
     );
 
+  let rawAudioFormat = r =>
+    Json.Encode.(
+      object_([
+        ("x", int(r.x)),
+        ("y", int(r.y)),
+        ("w", int(r.w)),
+        ("h", int(r.h)),
+        ("sampleRate", int(r.sampleRate)),
+      ])
+    );
+
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
@@ -224,6 +208,20 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
+      | Histogram => object_([("type", string("histogram"))])
+      | Regl => object_([("type", string("regl"))])
+      | RawAudioWriter(fmt) =>
+        object_([
+          ("type", string("raw-audio-writer")),
+          ("format", rawAudioFormat(fmt)),
+        ])
+
+      | RawAudioReader(fmt) =>
+        object_([
+          ("type", string("raw-audio-reader")),
+          ("format", rawAudioFormat(fmt)),
+        ])
+      | HandDrawn => object_([("type", string("hand-drawn"))])
       | Reader(channel) =>
         object_([
           ("type", string("reader")),
@@ -237,6 +235,7 @@ module EncodeLayer = {
   let layer = r =>
     Json.Encode.(
       object_([
+        ("id", nullable(string, r.id)),
         ("content", layerContent(r.content)),
         ("alpha", float(r.alpha)),
         (
@@ -250,9 +249,15 @@ module EncodeLayer = {
     );
 };
 
-let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
-  let layerKey = Js.Json.stringify(EncodeLayer.layerContent(layerContent));
+let getLayerKey: layer => string =
+  layer =>
+    Belt.Option.getWithDefault(
+      layer.id,
+      Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
+    );
 
+let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~layerRefs) => {
+  let layerKey = getLayerKey(layer);
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
     | Some(previewCanvas) =>
@@ -274,7 +279,7 @@ let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
         (
           ReasonReact.string(
             Js.Json.stringifyWithSpace(
-              EncodeLayer.layerContent(layerContent),
+              EncodeLayer.layerContent(layer.content),
               2,
             ),
           )
@@ -287,7 +292,16 @@ let renderLayerContent = (~layerContent, ~saveTick, ~layerRefs) => {
 let component = ReasonReact.statelessComponent("Layer");
 
 let make =
-    (~layer, ~layerRefs, ~saveTick, ~changeLayer, ~width, ~height, _children) => {
+    (
+      ~layer,
+      ~layerRefs,
+      ~onSetRef,
+      ~saveTick,
+      ~changeLayer,
+      ~width,
+      ~height,
+      _children,
+    ) => {
   ...component,
   render: self =>
     MaterialUi.(
@@ -301,9 +315,10 @@ let make =
         )>
         <CardMedia src="dummy">
           (
-            renderLayerContent(
-              ~layerContent=layer.content,
+            renderLayerPreview(
+              ~layer,
               ~saveTick,
+              ~setRef=onSetRef(layer),
               ~layerRefs,
             )
           )

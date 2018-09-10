@@ -93,6 +93,29 @@ var cMajor = Curry._1(PitchSet[/* of_list */25], /* :: */[
       ]
     ]);
 
+var cSharpMajor = Curry._1(PitchSet[/* of_list */25], /* :: */[
+      1,
+      /* :: */[
+        3,
+        /* :: */[
+          5,
+          /* :: */[
+            6,
+            /* :: */[
+              8,
+              /* :: */[
+                10,
+                /* :: */[
+                  0,
+                  /* [] */0
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]);
+
 var cMinor = Curry._1(PitchSet[/* of_list */25], /* :: */[
       0,
       /* :: */[
@@ -231,6 +254,7 @@ export {
   major7 ,
   minor7 ,
   cMajor ,
+  cSharpMajor ,
   cMinor ,
   pentatonic ,
   majorHexatonic ,

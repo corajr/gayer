@@ -20,13 +20,13 @@
 /* See https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/avf_showcqt.c */
 /* See common.js for usage example */
 
-function ShowCQTBar(rate, width, height, bar_v, sono_v, supersampling) {
+function ShowCQTBar(bits, rate, width, height, bar_v, sono_v, supersampling) {
     this.rate = rate;
     this.width = width;
     this.height = height;
     this.buffer = new ArrayBuffer(2048*1024);
     this.asm = this.emscripten(window, null, this.buffer);
-    this.fft_size = this.asm._init(rate, width, height, bar_v, sono_v, supersampling);
+    this.fft_size = this.asm._init(rate, bits, width, height, bar_v, sono_v, supersampling);
     if (!this.fft_size)
         throw ("Error initializing asm module");
     /* idx=0 : left, idx=1 : right */
@@ -691,8 +691,9 @@ function _fft_calc_16(i2) {
  return;
 }
 
-function _init(i1, i3, i4, f5, f6, i11) {
+function _init(i1, bits, i3, i4, f5, f6, i11) {
  i1 = i1 | 0;
+ bits = bits | 0;
  i3 = i3 | 0;
  i4 = i4 | 0;
  f5 = Math_fround(f5);
@@ -718,7 +719,8 @@ function _init(i1, i3, i4, f5, f6, i11) {
   return i18 | 0;
  }
  d19 = +(i1 | 0);
- i1 = ~~+Math_ceil(+(+Math_log(+(d19 * .33)) / .6931471805599453));
+ // i1 = ~~+Math_ceil(+(+Math_log(+(d19 * .33)) / .6931471805599453));
+ i1 = bits;
  if ((i1 + -10 | 0) >>> 0 > 10) {
   i18 = 0;
   return i18 | 0;

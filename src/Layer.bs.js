@@ -4,6 +4,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Audio$Gayer from "./Audio.bs.js";
+import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -13,113 +14,11 @@ import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
+import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
-
-function slitscanOptions(json) {
-  return Json_decode.andThen((function (type_, json) {
-                switch (type_) {
-                  case "readPosX" : 
-                      return /* ReadPosX */0;
-                  case "readPosY" : 
-                      return /* ReadPosY */1;
-                  case "staticX" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticX */Block.__(0, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("x", Json_decode.$$int, param);
-                                  }), json);
-                  case "staticY" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticY */Block.__(1, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("y", Json_decode.$$int, param);
-                                  }), json);
-                  default:
-                    return /* StaticX */Block.__(0, [320]);
-                }
-              }), (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), json);
-}
-
-function cameraOptions(json) {
-  return /* record */[/* slitscan */Json_decode.optional((function (param) {
-                  return Json_decode.field("slitscan", slitscanOptions, param);
-                }), json)];
-}
-
-var DecodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions,
-  /* cameraOptions */cameraOptions
-];
-
-function slitscanOptions$1(param) {
-  if (typeof param === "number") {
-    if (param === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosX"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosY"
-                  ],
-                  /* [] */0
-                ]);
-    }
-  } else if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticY"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "y",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticX"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "x",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  }
-}
-
-function cameraOptions$1(r) {
-  return Json_encode.object_(/* :: */[
-              /* tuple */[
-                "slitscan",
-                Json_encode.nullable(slitscanOptions$1, r[/* slitscan */0])
-              ],
-              /* [] */0
-            ]);
-}
-
-var EncodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions$1,
-  /* cameraOptions */cameraOptions$1
-];
 
 var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
 
@@ -129,7 +28,8 @@ var defaultLayer = /* record */[
   /* compositeOperation : SourceOver */0,
   /* rotation */0.0,
   /* transformMatrix */Canvas$Gayer.defaultTransform,
-  /* filters */"none"
+  /* filters */"none",
+  /* id */undefined
 ];
 
 function oneCompleteTurnAfterNTicks(n) {
@@ -179,6 +79,16 @@ function transformMatrix(json) {
 
 var rotation = Json_decode.$$float;
 
+function rawAudioFormat(json) {
+  return /* record */[
+          /* x */Json_decode.field("x", Json_decode.$$int, json),
+          /* y */Json_decode.field("y", Json_decode.$$int, json),
+          /* w */Json_decode.field("w", Json_decode.$$int, json),
+          /* h */Json_decode.field("h", Json_decode.$$int, json),
+          /* sampleRate */Json_decode.field("sampleRate", Json_decode.$$int, json)
+        ];
+}
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -204,6 +114,10 @@ function layerByType(type_, json) {
                     }), (function (param) {
                       return Json_decode.field("style", Json_decode.string, param);
                     }), json);
+    case "hand-drawn" : 
+        return /* HandDrawn */0;
+    case "histogram" : 
+        return /* Histogram */2;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -211,7 +125,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "midi-keyboard" : 
-        return /* MIDIKeyboard */0;
+        return /* MIDIKeyboard */1;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
                       return /* PitchClasses */Block.__(6, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
@@ -220,14 +134,28 @@ function layerByType(type_, json) {
                                     return Json_decode.list(Json_decode.$$int, param);
                                   }), param);
                     }), json);
+    case "raw-audio-reader" : 
+        return Json_decode.map((function (o) {
+                      return /* RawAudioReader */Block.__(8, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("format", rawAudioFormat, param);
+                    }), json);
+    case "raw-audio-writer" : 
+        return Json_decode.map((function (o) {
+                      return /* RawAudioWriter */Block.__(7, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("format", rawAudioFormat, param);
+                    }), json);
     case "reader" : 
         return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(7, [i]);
+                      return /* Reader */Block.__(9, [i]);
                     }), (function (param) {
                       return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
                                     return Json_decode.field("channel", Json_decode.$$int, param);
                                   }), param);
                     }), json);
+    case "regl" : 
+        return /* Regl */3;
     case "video" : 
         return Json_decode.map((function (s) {
                       return /* Video */Block.__(4, [s]);
@@ -235,10 +163,11 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "webcam" : 
+        var partial_arg$3 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
                       return /* Webcam */Block.__(2, [s]);
                     }), (function (param) {
-                      return Json_decode.field("options", cameraOptions, param);
+                      return Json_decode.field("options", partial_arg$3, param);
                     }), json);
     default:
       throw [
@@ -263,13 +192,17 @@ function layer(json) {
                 }), json),
           /* rotation */Json_decode.field("rotation", rotation, json),
           /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json),
-          /* filters */Json_decode.field("filters", Json_decode.string, json)
+          /* filters */Json_decode.field("filters", Json_decode.string, json),
+          /* id */Json_decode.field("id", (function (param) {
+                  return Json_decode.optional(Json_decode.string, param);
+                }), json)
         ];
 }
 
 var DecodeLayer = /* module */[
   /* transformMatrix */transformMatrix,
   /* rotation */rotation,
+  /* rawAudioFormat */rawAudioFormat,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
@@ -299,15 +232,77 @@ function transformMatrix$1(param) {
             ]);
 }
 
+function rawAudioFormat$1(r) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "x",
+                r[/* x */0]
+              ],
+              /* :: */[
+                /* tuple */[
+                  "y",
+                  r[/* y */1]
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "w",
+                    r[/* w */2]
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "h",
+                      r[/* h */3]
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "sampleRate",
+                        r[/* sampleRate */4]
+                      ],
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]
+            ]);
+}
+
 function layerContent$1(r) {
   if (typeof r === "number") {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "midi-keyboard"
-                ],
-                /* [] */0
-              ]);
+    switch (r) {
+      case 0 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "hand-drawn"
+                      ],
+                      /* [] */0
+                    ]);
+      case 1 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "midi-keyboard"
+                      ],
+                      /* [] */0
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "histogram"
+                      ],
+                      /* [] */0
+                    ]);
+      case 3 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "regl"
+                      ],
+                      /* [] */0
+                    ]);
+      
+    }
   } else {
     switch (r.tag | 0) {
       case 0 : 
@@ -347,7 +342,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "options",
-                          cameraOptions$1(r[0])
+                          CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */1](r[0])
                         ],
                         /* [] */0
                       ]
@@ -414,6 +409,34 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "raw-audio-writer"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "format",
+                          rawAudioFormat$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 8 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "raw-audio-reader"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "format",
+                          rawAudioFormat$1(r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 9 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "reader"
                       ],
                       /* :: */[
@@ -436,35 +459,43 @@ function rotation$1(prim) {
 function layer$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "content",
-                layerContent$1(r[/* content */0])
+                "id",
+                Json_encode.nullable((function (prim) {
+                        return prim;
+                      }), r[/* id */6])
               ],
               /* :: */[
                 /* tuple */[
-                  "alpha",
-                  r[/* alpha */1]
+                  "content",
+                  layerContent$1(r[/* content */0])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "compositeOperation",
-                    Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
+                    "alpha",
+                    r[/* alpha */1]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "transformMatrix",
-                      transformMatrix$1(r[/* transformMatrix */4])
+                      "compositeOperation",
+                      Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
                     ],
                     /* :: */[
                       /* tuple */[
-                        "rotation",
-                        r[/* rotation */3]
+                        "transformMatrix",
+                        transformMatrix$1(r[/* transformMatrix */4])
                       ],
                       /* :: */[
                         /* tuple */[
-                          "filters",
-                          r[/* filters */5]
+                          "rotation",
+                          r[/* rotation */3]
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "filters",
+                            r[/* filters */5]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -475,13 +506,18 @@ function layer$1(r) {
 
 var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
+  /* rawAudioFormat */rawAudioFormat$1,
   /* layerContent */layerContent$1,
   /* rotation */rotation$1,
   /* layer */layer$1
 ];
 
-function renderLayerContent(layerContent$2, saveTick, layerRefs) {
-  var layerKey = JSON.stringify(layerContent$1(layerContent$2));
+function getLayerKey(layer) {
+  return Belt_Option.getWithDefault(layer[/* id */6], JSON.stringify(layerContent$1(layer[/* content */0])));
+}
+
+function renderLayerPreview(layer, _, saveTick, layerRefs) {
+  var layerKey = getLayerKey(layer);
   var savePreviewRef = function (aRef) {
     if (aRef == null) {
       return /* () */0;
@@ -506,12 +542,12 @@ function renderLayerContent(layerContent$2, saveTick, layerRefs) {
                       ref: savePreviewRef,
                       height: "120",
                       width: "120"
-                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layerContent$2), null, 2)]))));
+                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layer[/* content */0]), null, 2)]))));
 }
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
+function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -527,7 +563,7 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerContent(layer[/* content */0], saveTick, layerRefs)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, Curry._1(onSetRef, layer), saveTick, layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
@@ -538,7 +574,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                 /* compositeOperation */layer[/* compositeOperation */2],
                                                                 /* rotation */layer[/* rotation */3],
                                                                 /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5]
+                                                                /* filters */layer[/* filters */5],
+                                                                /* id */layer[/* id */6]
                                                               ]);
                                                   }), /* array */[])),
                                         ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-0.5 * Canvas$Gayer.tau, 0.5 * Canvas$Gayer.tau, "Rotation", layer[/* rotation */3], 0.01, (function (value) {
@@ -548,7 +585,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                 /* compositeOperation */layer[/* compositeOperation */2],
                                                                 /* rotation */value,
                                                                 /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5]
+                                                                /* filters */layer[/* filters */5],
+                                                                /* id */layer[/* id */6]
                                                               ]);
                                                   }), /* array */[])),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
@@ -558,7 +596,8 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
                                                                     /* compositeOperation */newOperation,
                                                                     /* rotation */layer[/* rotation */3],
                                                                     /* transformMatrix */layer[/* transformMatrix */4],
-                                                                    /* filters */layer[/* filters */5]
+                                                                    /* filters */layer[/* filters */5],
+                                                                    /* id */layer[/* id */6]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))
@@ -573,13 +612,12 @@ function make(layer, layerRefs, saveTick, changeLayer, _, _$1, _$2) {
 }
 
 export {
-  DecodeCameraOptions ,
-  EncodeCameraOptions ,
   defaultLayer ,
   oneCompleteTurnAfterNTicks ,
   DecodeLayer ,
   EncodeLayer ,
-  renderLayerContent ,
+  getLayerKey ,
+  renderLayerPreview ,
   component ,
   make ,
   

@@ -2,6 +2,7 @@ open Jest;
 open Expect;
 open Layer;
 open Presets;
+open CameraOptions;
 
 let slitscan = StaticX(320);
 

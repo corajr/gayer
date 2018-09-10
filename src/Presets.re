@@ -3,6 +3,8 @@ open Canvas.DrawCommand;
 open Layer;
 open Music;
 open Params;
+open Score;
+open RawAudio;
 
 let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
@@ -23,6 +25,24 @@ let reader = {
   compositeOperation: Multiply,
 };
 
+let histogram = {
+  ...defaultLayer,
+  content: Histogram,
+  alpha: 1.0,
+  compositeOperation: SourceOver,
+};
+
+let rawAudioFormat = {x: 0, y: 0, w: 64, h: 32, sampleRate: 44100};
+
+let rawAudioWriter = {
+  ...defaultLayer,
+  content: RawAudioWriter(rawAudioFormat),
+};
+let rawAudioReader = {
+  ...defaultLayer,
+  content: RawAudioReader(rawAudioFormat),
+};
+
 let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
 
 let fill = (~alpha: float=1.0, fillStyle: string) => {
@@ -36,6 +56,10 @@ let draw = (~alpha: float=1.0, cmds: list(command)) => {
   content: Draw(cmds),
   alpha,
 };
+
+let regl = {...defaultLayer, content: Regl};
+
+let sobel = {...defaultLayer, content: Regl};
 
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
@@ -70,6 +94,7 @@ let harmony = [
     compositeOperation: SourceOver,
     filters: "blur(2px)",
   },
+  sobel,
   {
     ...
       draw([
@@ -85,7 +110,7 @@ let harmony = [
     compositeOperation: Difference,
     alpha: 0.5,
   },
-  pitchFilter(cMajor),
+  pitchFilter(cSharpMajor),
   reader,
 ];
 
@@ -209,17 +234,31 @@ let drosteLayer = {
     "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
 };
 
+let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
+
+/* TODO: think of a more elegant way to do this */
+let midiColors = {
+  ...defaultLayer,
+  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
+  compositeOperation: Multiply,
+};
+
+let handDrawn = {...defaultLayer, content: HandDrawn};
+
 let allLayerTypes = [
   hubble,
   analyzer,
   webcam,
   slitscan,
+  handDrawn,
   fill(~alpha=0.0125, "white"),
   pitchFilter(cMajor),
   blurLayer,
   rotateLayer,
   squareColumnLayer,
   squareLayer,
+  rawAudioWriter,
+  rawAudioReader,
   reader,
 ];
 
@@ -248,8 +287,26 @@ let feedback = {
 
 let webcamParams = {
   ...defaultParams,
-  shouldClear: false,
-  layers: [webcam, {...analyzer, compositeOperation: Multiply}, reader],
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: 0,
+  writePosOffset: 0,
+  layers: [
+    {
+      ...analyzer,
+      transformMatrix: {
+        ...defaultTransform,
+        horizontalScaling: float_of_int(defaultSize),
+      },
+    },
+    {...webcam, compositeOperation: Multiply},
+    reader,
+  ],
+};
+
+let webcamEdgeDetect = {
+  ...defaultParams,
+  layers: [webcam, sobel, pitchFilter(cMajor), reader],
 };
 
 let slitscanParams = {
@@ -260,9 +317,38 @@ let slitscanParams = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    slitscan,
-    {...analyzer, compositeOperation: Multiply, alpha: 0.9},
+    analyzer,
+    /* squareColumnLayer, */
+    {...slitscan, compositeOperation: Overlay},
     /* pitchFilter(cMajor), */
+    historyLayer,
+    reader,
+  ],
+};
+
+let slitscanEdgeDetectParams = {
+  ...defaultParams,
+  readPosDelta: 0,
+  writePosDelta: 0,
+  readPosOffset: defaultSize - 1,
+  writePosOffset: defaultSize - 1,
+  shouldClear: false,
+  layers: [
+    slitscan,
+    /* sobel, */
+    analyzer,
+    /* pitchFilter(cMajor), */
+    historyLayer,
+    reader,
+  ],
+};
+
+let slitscanHistogramParams = {
+  ...slitscanParams,
+  layers: [
+    slitscan,
+    histogram,
+    {...analyzer, compositeOperation: Screen},
     historyLayer,
     reader,
   ],
@@ -317,8 +403,9 @@ let history = {
     analyzer,
     /* squareLayer, */
     /* blurLayer, */
+    /* {...squareColumnLayer, alpha: 1.0}, */
     historyLayer,
-    /* pitchFilter(majorHexatonic), */
+    /* {...pitchFilter(cMajor), alpha: 0.01}, */
     {...reader, alpha: 0.0},
   ],
 };
@@ -362,16 +449,33 @@ let droste = {
   readPosDelta: 0,
   writePosDelta: 0,
   shouldClear: false,
-  layers: [analyzer, drosteLayer, reader],
+  layers: [
+    {
+      ...analyzer,
+      transformMatrix: {
+        ...defaultTransform,
+        horizontalScaling: float_of_int(defaultSize),
+      },
+    },
+    drosteLayer,
+    reader,
+  ],
 };
 
-let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
+let fourSeasons = {
+  ...defaultParams,
+  layers: [
+    img("media/four_seasons.jpg"),
+    sobel,
+    /* histogram, */
+    pitchFilter(cMinor),
+    reader,
+  ],
+};
 
-/* TODO: think of a more elegant way to do this */
-let midiColors = {
-  ...defaultLayer,
-  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
-  compositeOperation: Multiply,
+let handDrawnParams = {
+  ...defaultParams,
+  layers: [fill("black"), handDrawn, reader],
 };
 
 let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
@@ -404,11 +508,39 @@ let video = {
   ],
 };
 
-let presets = [
+let lesTresRichesHeures = {
+  ...defaultParams,
+  outputGain: 0.05,
+  layers: [
+    img("media/les_tres_riches_heures.jpg"),
+    sobel,
+    pitchFilter(majorHexatonic),
+    reader,
+  ],
+};
+
+let histogram = {
+  ...defaultParams,
+  layers: [hubble, pitchFilter(cMajor), histogram],
+};
+
+let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
+
+let rawAudioAndSpacy = {
+  ...defaultParams,
+  layers: List.append(spacy, [rawAudioWriter, rawAudioReader]),
+};
+
+let presetsWithoutLayerIds = [
+  /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
-  /* ("Webcam", webcamParams), */
+  /* ("Hand-drawn", handDrawnParams), */
+  /* ("Webcam", webcamEdgeDetect), */
+  ("Webcam (edge detection)", webcamEdgeDetect),
   ("Slitscan", slitscanParams),
+  /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
+  /* ("Slitscan (color histogram)", slitscanHistogramParams), */
   /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */
@@ -416,12 +548,49 @@ let presets = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
+  /* ("Four Seasons", fourSeasons), */
+  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
-  ("MIDI", midi),
-  /* ("Audio file", debussy), */
-  /* ("Harmony", harmonyParams), */
+  ("MIDI (requires MIDI keyboard)", midi),
+  ("Audio file", debussy),
+  ("Harmony", harmonyParams),
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
-  ("Mic feedback (may be loud!)", feedback),
+  /* ("Mic feedback (may be loud!)", feedback), */
+  /* ("Raw audio (can feedback!)", rawAudio), */
   ("Empty", {...defaultParams, layers: []}),
 ];
+
+let idCounter = ref(0);
+
+let addIds =
+  List.map(layer => {
+    let nextId = idCounter^;
+    idCounter := nextId + 1;
+    {...layer, id: Some(string_of_int(nextId))};
+  });
+
+let presets: list((string, params)) =
+  List.map(
+    ((name, preset)) => (
+      name,
+      {...preset, layers: addIds(preset.layers)},
+    ),
+    presetsWithoutLayerIds,
+  );
+
+let exampleScore: score = {
+  events:
+    Array.map(
+      ((eventTitle, params)) => {
+        params,
+        transition: Manual,
+        eventTitle: Some(eventTitle),
+      },
+      Array.of_list(presets),
+    ),
+  scoreMetadata: {
+    title: "Example",
+    authors: ["@cora_jr"],
+  },
+};

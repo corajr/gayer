@@ -9,11 +9,13 @@ let make =
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
+      ~layerRefs,
       ~setRef,
       ~saveTick,
       ~millisPerTick,
       ~width,
       ~height,
+      ~getReadAndWritePos,
       ~layerContent,
       _children,
     ) => {
@@ -62,6 +64,43 @@ let make =
             saveRef=setRef
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
+        | HandDrawn => <HandDrawnCanvas setRef width height />
+        | RawAudioWriter({x, y, w, h}) =>
+          <RawAudioCanvas
+            layerKey
+            layerRefs
+            audioCtx
+            audioGraph
+            setRef
+            saveTick
+            samples=(w * h)
+            width=w
+            height=h
+            x
+            y
+          />
+        | Histogram =>
+          <HistogramCanvas
+            setRef
+            layerRefs
+            layerKey
+            width=1
+            rootHeight=height
+            height=120
+            getReadAndWritePos
+            saveTick
+          />
+        | Regl =>
+          <ReglCanvas setRef layerRefs width height saveTick layerKey />
+        | RawAudioReader(rawAudioFormat) =>
+          <RawAudioReader
+            layerKey
+            layerRefs
+            saveTick
+            rawAudioFormat
+            audioCtx
+            audioGraph
+          />
         | Draw(_)
         | PitchClasses(_)
         | Fill(_)
