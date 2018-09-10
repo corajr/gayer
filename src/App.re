@@ -8,6 +8,7 @@ open Fscreen;
 open Layer;
 open Params;
 open Presets;
+open Score;
 open Timing;
 open UserMedia;
 open Video;
@@ -24,6 +25,7 @@ type state = {
   freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
+  score: option((score, ref(int))),
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
   audioGraph: ref(audioGraph),
@@ -54,6 +56,7 @@ let defaultState: state = {
   audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
+  score: Some((exampleScore, ref(0))),
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
@@ -74,6 +77,8 @@ type action =
   | TogglePresetDrawer
   | SaveImage
   | ToggleFullscreen
+  | SetScoreEventIndex(int)
+  | AdjustScoreEventIndex(int)
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -157,6 +162,10 @@ let changeLayer = (oldLayer, newLayer, layers) =>
   "SizedDrawer"({
     paper: ReactDOMRe.Style.make(~position="relative", ~width="240px", ()),
   })
+];
+
+[%mui.withStyles
+  "GrowTitle"({grow: ReactDOMRe.Style.make(~flexGrow="1", ())})
 ];
 
 let component = ReasonReact.reducerComponent("App");
@@ -649,6 +658,27 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
+    | SetScoreEventIndex(i) => ReasonReact.NoUpdate
+    | AdjustScoreEventIndex(i) =>
+      ReasonReact.SideEffects(
+        (
+          self =>
+            switch (state.score) {
+            | Some(({events}, eventIndexRef)) =>
+              eventIndexRef :=
+                clamp(
+                  ~minVal=0,
+                  ~maxVal=Array.length(events) - 1,
+                  eventIndexRef^ + i,
+                );
+              let eventIndex = eventIndexRef^;
+
+              pushParamsState(events[eventIndex].params);
+              Js.log({j|Adjusting score index; score now at $(eventIndex)|j});
+            | None => ()
+            }
+        ),
+      )
     | ToggleFullscreen =>
       ReasonReact.Update({
         ...state,
@@ -932,9 +962,33 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               color=`Inherit onClick=(_evt => self.send(TogglePresetDrawer))>
               <MaterialUIIcons.Menu />
             </IconButton>
-            <Typography variant=`Title color=`Inherit>
-              (ReasonReact.string("GAYER"))
-            </Typography>
+            <GrowTitle
+              render=(
+                classes =>
+                  <Typography
+                    variant=`Title
+                    color=`Inherit
+                    classes=[Title(classes.grow)]>
+                    (ReasonReact.string("GAYER"))
+                  </Typography>
+              )
+            />
+            (
+              Belt.Option.isSome(self.state.score) ?
+                <div>
+                  <IconButton
+                    color=`Inherit
+                    onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
+                    <MaterialUIIcons.SkipPrevious />
+                  </IconButton>
+                  <IconButton
+                    color=`Inherit
+                    onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
+                    <MaterialUIIcons.SkipNext />
+                  </IconButton>
+                </div> :
+                ReasonReact.null
+            )
           </Toolbar>
         </AppBar>
         <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
@@ -1091,7 +1145,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               <div>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
                   <Button
-                    variant=`Contained onClick=(evt => self.send(SaveImage))>
+                    variant=`Contained onClick=(_evt => self.send(SaveImage))>
                     <MaterialUIIcons.PhotoCamera />
                     (ReasonReact.string("Snapshot"))
                   </Button>

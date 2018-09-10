@@ -3,6 +3,7 @@ open Canvas.DrawCommand;
 open Layer;
 open Music;
 open Params;
+open Score;
 open RawAudio;
 
 let defaultSize = Canvas.defaultSize;
@@ -556,3 +557,15 @@ let presets: list((string, params)) =
     ),
     presetsWithoutLayerIds,
   );
+
+let exampleScore: score = {
+  events:
+    Array.map(
+      ((_, params)) => {params, transition: Manual},
+      Array.of_list(presets),
+    ),
+  scoreMetadata: {
+    title: "Example",
+    authors: ["@cora_jr"],
+  },
+};

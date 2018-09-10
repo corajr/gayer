@@ -7,7 +7,13 @@ open Score;
 let exampleTransitions = [Manual];
 let exampleScoreEvents = [{params: defaultParams, transition: Manual}];
 let exampleScores = [
-  {eventIndex: 0, events: Array.of_list(exampleScoreEvents)},
+  {
+    events: Array.of_list(exampleScoreEvents),
+    scoreMetadata: {
+      title: "Example 1",
+      authors: [],
+    },
+  },
 ];
 
 describe("EncodeScore <=> DecodeScore", () => {

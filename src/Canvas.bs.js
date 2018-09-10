@@ -388,6 +388,12 @@ var loadImage = function (src,onLoad){
 }
      };
 
+function clamp($staropt$star, $staropt$star$1, i) {
+  var minVal = $staropt$star !== undefined ? $staropt$star : 0;
+  var maxVal = $staropt$star$1 !== undefined ? $staropt$star$1 : 255;
+  return Caml_primitive.caml_int_min(maxVal, minVal > i ? minVal : i);
+}
+
 function wrapCoord(index, delta, size) {
   var newCoord = index + delta | 0;
   if (newCoord >= 0 && newCoord < size) {
@@ -998,6 +1004,7 @@ export {
   makeImageData ,
   makeImageDataFromFloats ,
   loadImage ,
+  clamp ,
   wrapCoord ,
   binsPerSemitone ,
   DrawCommand ,

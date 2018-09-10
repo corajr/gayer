@@ -21,8 +21,11 @@ var exampleScoreEvents = /* :: */[
 ];
 
 var exampleScores_000 = /* record */[
-  /* eventIndex */0,
-  /* events */$$Array.of_list(exampleScoreEvents)
+  /* events */$$Array.of_list(exampleScoreEvents),
+  /* scoreMetadata : record */[
+    /* title */"Example 1",
+    /* authors : [] */0
+  ]
 ];
 
 var exampleScores = /* :: */[
@@ -42,7 +45,7 @@ describe("EncodeScore <=> DecodeScore", (function () {
                             }));
               }));
         return Jest.testAll("decode inverts encode", exampleScores, (function (score) {
-                      return Jest.Expect[/* toEqual */12](score, Jest.Expect[/* expect */0](Score$Gayer.DecodeScore[/* score */2](Score$Gayer.EncodeScore[/* score */2](score))));
+                      return Jest.Expect[/* toEqual */12](score, Jest.Expect[/* expect */0](Score$Gayer.DecodeScore[/* score */3](Score$Gayer.EncodeScore[/* score */3](score))));
                     }));
       }));
 

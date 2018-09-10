@@ -17,18 +17,28 @@ function scoreEvent(json) {
         ];
 }
 
+function scoreMetadata(json) {
+  return /* record */[
+          /* title */Json_decode.field("title", Json_decode.string, json),
+          /* authors */Json_decode.field("authors", (function (param) {
+                  return Json_decode.list(Json_decode.string, param);
+                }), json)
+        ];
+}
+
 function score(json) {
   return /* record */[
-          /* eventIndex */Json_decode.field("eventIndex", Json_decode.$$int, json),
           /* events */Json_decode.field("events", (function (param) {
                   return Json_decode.array(scoreEvent, param);
-                }), json)
+                }), json),
+          /* scoreMetadata */Json_decode.field("meta", scoreMetadata, json)
         ];
 }
 
 var DecodeScore = /* module */[
   /* transition */transition,
   /* scoreEvent */scoreEvent,
+  /* scoreMetadata */scoreMetadata,
   /* score */score
 ];
 
@@ -52,16 +62,34 @@ function scoreEvent$1(r) {
             ]);
 }
 
-function score$1(r) {
+function scoreMetadata$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "eventIndex",
-                r[/* eventIndex */0]
+                "title",
+                r[/* title */0]
               ],
               /* :: */[
                 /* tuple */[
-                  "events",
-                  Json_encode.array(scoreEvent$1, r[/* events */1])
+                  "authors",
+                  Json_encode.list((function (prim) {
+                          return prim;
+                        }), r[/* authors */1])
+                ],
+                /* [] */0
+              ]
+            ]);
+}
+
+function score$1(r) {
+  return Json_encode.object_(/* :: */[
+              /* tuple */[
+                "events",
+                Json_encode.array(scoreEvent$1, r[/* events */0])
+              ],
+              /* :: */[
+                /* tuple */[
+                  "meta",
+                  scoreMetadata$1(r[/* scoreMetadata */1])
                 ],
                 /* [] */0
               ]
@@ -71,6 +99,7 @@ function score$1(r) {
 var EncodeScore = /* module */[
   /* transition */transition$1,
   /* scoreEvent */scoreEvent$1,
+  /* scoreMetadata */scoreMetadata$1,
   /* score */score$1
 ];
 

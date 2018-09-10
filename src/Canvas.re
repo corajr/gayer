@@ -559,6 +559,9 @@ let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs
      |}
 ];
 
+let clamp = (~minVal: int=0, ~maxVal: int=255, i: int) : int =>
+  min(maxVal, max(minVal, i));
+
 let wrapCoord: (int, int, int) => int =
   (index, delta, size) => {
     let newCoord = index + delta;

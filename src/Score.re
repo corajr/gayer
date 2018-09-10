@@ -8,9 +8,14 @@ type scoreEvent = {
   transition,
 };
 
+type scoreMetadata = {
+  title: string,
+  authors: list(string),
+};
+
 type score = {
-  eventIndex: int,
   events: array(scoreEvent),
+  scoreMetadata,
 };
 
 module DecodeScore = {
@@ -31,10 +36,16 @@ module DecodeScore = {
       transition: json |> field("transition", transition),
     };
 
+  let scoreMetadata = json =>
+    Json.Decode.{
+      title: json |> field("title", string),
+      authors: json |> field("authors", list(string)),
+    };
+
   let score = json =>
     Json.Decode.{
-      eventIndex: json |> field("eventIndex", int),
       events: json |> field("events", array(scoreEvent)),
+      scoreMetadata: json |> field("meta", scoreMetadata),
     };
 };
 
@@ -53,11 +64,19 @@ module EncodeScore = {
       ])
     );
 
+  let scoreMetadata = r =>
+    Json.Encode.(
+      object_([
+        ("title", string(r.title)),
+        ("authors", list(string, r.authors)),
+      ])
+    );
+
   let score = r =>
     Json.Encode.(
       object_([
-        ("eventIndex", int(r.eventIndex)),
         ("events", array(scoreEvent, r.events)),
+        ("meta", scoreMetadata(r.scoreMetadata)),
       ])
     );
 };
