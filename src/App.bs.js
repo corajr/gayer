@@ -143,7 +143,6 @@ function setLayerRef(audioCtx, param, param$1) {
             if (match$1 !== undefined) {
               var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
               state[/* cameraInput */12][0] = Js_primitive.some(video);
-              state[/* layerRefs */17][0] = Belt_MapString.set(state[/* layerRefs */17][0], layerKey, theRef);
               return /* () */0;
             } else {
               return /* () */0;
@@ -237,14 +236,6 @@ function maybeUpdateCanvas(maybeEl, f) {
   var match = maybeEl[0];
   if (match !== undefined) {
     return Curry._1(f, Js_primitive.valFromOption(match));
-  } else {
-    return /* () */0;
-  }
-}
-
-function maybeMapFilterBank(f, maybeFilterBank) {
-  if (maybeFilterBank !== undefined) {
-    return Curry._1(f, maybeFilterBank);
   } else {
     return /* () */0;
   }
@@ -659,11 +650,6 @@ function make($staropt$star, _) {
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              var animationFn = function () {
-                Curry._1(self[/* send */3], /* Tick */1);
-                window.requestAnimationFrame(animationFn);
-                return /* () */0;
-              };
               Timing$Gayer.setTimer(self[/* state */1][/* timerId */23], (function () {
                       return Curry._1(self[/* send */3], /* Tick */1);
                     }), self[/* state */1][/* params */6][/* millisPerTick */6]);
@@ -1059,7 +1045,6 @@ export {
   GrowTitle ,
   component ,
   maybeUpdateCanvas ,
-  maybeMapFilterBank ,
   connectInputs ,
   disconnectInputs ,
   clearCanvas ,

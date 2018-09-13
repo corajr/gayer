@@ -1,5 +1,4 @@
 open Audio;
-open Audio.AudioInput;
 open AudioGraph;
 open Music;
 
@@ -15,6 +14,7 @@ open Video;
 
 module RList = Rationale.RList;
 
+type audioInputSetting = AudioInput.audioInputSetting;
 type filterInput = audioNode;
 
 type state = {
@@ -101,8 +101,7 @@ let setCanvasRef = (theRef, {ReasonReact.state}) => {
   };
 };
 
-let setLayerRef =
-    (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
+let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   let layerKey = getLayerKey(layer);
 
@@ -118,10 +117,10 @@ let setLayerRef =
     | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
       state.cameraInput := Some(video);
-      state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     | None => ()
     }
   | (Video(url), Some(aRef)) =>
+    /* TODO: move this logic onto its own VideoFile component and use the audioGraph instead.*/
     let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
     if (readyState >= 3) {
       switch (Belt.Map.String.get(state.loadedAudio^, url)) {
@@ -176,14 +175,6 @@ let maybeUpdateCanvas:
     switch (maybeEl^) {
     | None => ()
     | Some(canvas) => f(getFromReact(canvas))
-    };
-
-/* why can't I just use Js.Option.map here? */
-let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
-  (f, maybeFilterBank) =>
-    switch (maybeFilterBank) {
-    | None => ()
-    | Some(filterBank) => f(filterBank)
     };
 
 let connectInputs: state => unit =
@@ -300,15 +291,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
         };
         None;
-      | RawAudioWriter({x, y, w, h}) =>
-        /* switch (maybeLayerRef) { */
-        /* | None => () */
-        /* | Some(canvas) => */
-        /*   let otherCtx = getContext(getFromReact(canvas)); */
-        /*   let data = Ctx.getImageData(otherCtx, 0, 0, w, h); */
-        /*   Ctx.putImageData(ctx, data, x, y); */
-        /* }; */
-        None
+      | RawAudioWriter(_) => None
       | RawAudioReader(_) => None
       | Regl =>
         switch (maybeLayerRef) {
@@ -327,8 +310,8 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
         };
         None;
-      | Image(url)
-      | Video(url) =>
+      | Image(_)
+      | Video(_) =>
         switch (maybeLayerRef) {
         | None => ()
         | Some(aRef) =>
@@ -497,15 +480,17 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         };
       };
 
-    Js.Global.setTimeout(
-      () =>
-        switch (
-          Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
-        ) {
-        | None => ()
-        | Some(f) => f()
-        },
-      0,
+    ignore(
+      Js.Global.setTimeout(
+        () =>
+          switch (
+            Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
+          ) {
+          | None => ()
+          | Some(f) => f()
+          },
+        0,
+      ),
     );
 
     maybeValues;
@@ -543,7 +528,7 @@ let getAnalysisInput:
         Belt.Map.String.get(state.loadedAudio^, s),
       )
     | AudioFile(_) => (audioCtx, None)
-    | Oscillator(oType) => (
+    | Oscillator(_) => (
         audioCtx,
         switch (state.oscillatorBank^) {
         | None => None
@@ -662,7 +647,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     | AdjustScoreEventIndex(i) =>
       ReasonReact.SideEffects(
         (
-          self =>
+          _self =>
             switch (state.score) {
             | Some(({events}, eventIndexRef)) =>
               eventIndexRef :=
@@ -774,9 +759,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 switch (self.state.oscillatorBank^) {
                 | Some(bank) =>
                   switch (filterValues) {
-                  | Mono(filterValues) => updateBankGains(bank, filterValues)
+                  | Mono(filterValues) =>
+                    updateBankGains(~bank, ~gainValues=filterValues)
                   | Stereo(filterValuesL, _) =>
-                    updateBankGains(bank, filterValuesL)
+                    updateBankGains(~bank, ~gainValues=filterValuesL)
                   }
                 | None => ()
                 };
@@ -840,24 +826,27 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     self.send(Clear);
 
-    let rec animationFn = timestamp => {
-      /* let lastUpdated = self.state.animationLastUpdated^; */
-      /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
+    /* NOTE: requestAnimationFrame cannot be used in the audio path, because we
+       need a more consistent tick as provided by Js.Global.setInterval (wrapped in
+       the `setTimer` function). */
+    /* let rec animationFn = timestamp => { */
+    /* let lastUpdated = self.state.animationLastUpdated^; */
+    /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
 
-      /* self.state.animationLastUpdated := timestamp; */
+    /* self.state.animationLastUpdated := timestamp; */
 
-      /* Time since beginning; Don't need to know yet, but maybe we would? */
+    /* Time since beginning; Don't need to know yet, but maybe we would? */
 
-      /* if (self.state.animationStartTime^ === 0.0) { */
-      /*   self.state.animationStartTime := timestamp; */
-      /* }; */
-      /* let timeSinceBeginning = timestamp -. self.state.animationStartTime^; */
+    /* if (self.state.animationStartTime^ === 0.0) { */
+    /*   self.state.animationStartTime := timestamp; */
+    /* }; */
+    /* let timeSinceBeginning = timestamp -. self.state.animationStartTime^; */
 
-      /* Js.log(timeSinceLastUpdate); */
+    /* Js.log(timeSinceLastUpdate); */
 
-      self.send(Tick);
-      requestAnimationFrame(window, animationFn);
-    };
+    /*   self.send(Tick); */
+    /*   requestAnimationFrame(window, animationFn); */
+    /* }; */
 
     /* requestAnimationFrame(window, animationFn); */
 
