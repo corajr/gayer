@@ -24,7 +24,7 @@ function make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, rawAudioForma
               var x = rawAudioFormat[/* x */0];
               var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), rawAudioFormat[/* sampleRate */4]);
               self[/* state */1][/* audioBuffer */0][0] = Js_primitive.some(buffer);
-              return Curry._2(saveTick, layerKey, (function () {
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                             var match = self[/* state */1][/* audioBuffer */0][0];
                             var match$1 = AudioGraph$Gayer.getNode("compressor", audioGraph[0]);
                             var match$2 = Belt_MapString.get(layerRefs[0], "root");

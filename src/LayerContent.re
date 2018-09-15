@@ -61,6 +61,7 @@ let make =
             audioGraph
             input=source
             millisPerTick
+            saveTick
             saveRef=setRef
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />

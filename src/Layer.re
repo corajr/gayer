@@ -256,12 +256,12 @@ let getLayerKey: layer => string =
       Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
     );
 
-let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~layerRefs) => {
+let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) => {
   let layerKey = getLayerKey(layer);
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
     | Some(previewCanvas) =>
-      saveTick(layerKey ++ "preview", () =>
+      saveTick(onUnmount, layerKey ++ "preview", () =>
         switch (Belt.Map.String.get(layerRefs^, layerKey)) {
         | Some(layer) =>
           let ctx = getContext(getFromReact(previewCanvas));
@@ -318,6 +318,7 @@ let make =
             renderLayerPreview(
               ~layer,
               ~saveTick,
+              ~onUnmount=self.onUnmount,
               ~setRef=onSetRef(layer),
               ~layerRefs,
             )

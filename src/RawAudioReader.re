@@ -26,7 +26,7 @@ let make =
     let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
     self.state.audioBuffer := Some(buffer);
 
-    saveTick(layerKey, () =>
+    saveTick(self.onUnmount, layerKey, () =>
       switch (
         self.state.audioBuffer^,
         getNode("compressor", audioGraph^),

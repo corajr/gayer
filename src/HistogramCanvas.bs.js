@@ -25,7 +25,7 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              return Curry._2(saveTick, layerKey, (function (param) {
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function (param) {
                             var param$1 = self;
                             var match = Belt_MapString.get(layerRefs[0], "root");
                             var match$1 = param$1[/* state */1][/* canvasRef */0][0];

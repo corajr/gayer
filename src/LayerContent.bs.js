@@ -73,7 +73,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                           });
                       break;
                   case 5 : 
-                      tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, layerKey, audioCtx, audioGraph, layerContent[0], millisPerTick, setRef, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, layerKey, audioCtx, audioGraph, layerContent[0], millisPerTick, setRef, saveTick, /* array */[]));
                       break;
                   case 7 : 
                       var match = layerContent[0];

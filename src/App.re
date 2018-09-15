@@ -273,7 +273,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
               0,
               width,
             );
-          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+          Ctx.drawImage(ctx, canvasAsSource, 0, 0);
         };
         None;
       | MIDIKeyboard =>
@@ -614,6 +614,14 @@ let generateNewFilterBanks =
 
     send(SetFilterBanks(MonoBank(filterBank)));
   };
+};
+
+let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
+  state.tickFunctions :=
+    Belt.Map.String.set(state.tickFunctions^, key, tickFn);
+  onUnmount(() =>
+    state.tickFunctions := Belt.Map.String.remove(state.tickFunctions^, key)
+  );
 };
 
 let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
@@ -1047,15 +1055,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 layerRefs=self.state.layerRefs
                 onSetParams=(newParams => pushParamsState(newParams))
                 millisPerAudioTick=16
-                saveTick=(
-                  (key, tickFn) =>
-                    self.state.tickFunctions :=
-                      Belt.Map.String.set(
-                        self.state.tickFunctions^,
-                        key,
-                        tickFn,
-                      )
-                )
+                saveTick=(saveTick(self))
                 getAudio=(getAnalysisInput(audioCtx, self.state))
               />
             </Grid>
@@ -1083,15 +1083,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   rootHeight=self.state.params.height
                   millisPerAudioTick=16
                   getReadAndWritePos=(self.handle(getReadAndWritePos))
-                  saveTick=(
-                    (key, tickFn) =>
-                      self.state.tickFunctions :=
-                        Belt.Map.String.set(
-                          self.state.tickFunctions^,
-                          key,
-                          tickFn,
-                        )
-                  )
+                  saveTick=(saveTick(self))
                   layers=(sortLayers(self.state.params.layers))
                 />
                 <canvas

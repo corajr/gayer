@@ -56,10 +56,11 @@ let make =
       ~y,
       _children,
     ) => {
-  let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
+  let setCanvasRef =
+      (theRef, {ReasonReact.state, ReasonReact.send, ReasonReact.onUnmount}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     setRef(theRef);
-    saveTick(layerKey, () =>
+    saveTick(onUnmount, layerKey, () =>
       drawRawAudio(layerRefs, state, x, y, width, height)
     );
   };

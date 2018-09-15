@@ -67,7 +67,7 @@ let make =
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     didMount: self =>
-      saveTick(layerKey, () =>
+      saveTick(self.onUnmount, layerKey, () =>
         switch (self.state.reglRef^) {
         | None => ()
         | Some(regl) =>

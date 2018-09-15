@@ -430,8 +430,8 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
-            var x$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x$1, 0, 1, height);
+            Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
           maybeValues = undefined;
           break;
@@ -603,6 +603,15 @@ function generateNewFilterBanks(audioCtx, param) {
     var filterBank = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], state[/* params */6][/* q */10], freqFunc);
     return Curry._1(send, /* SetFilterBanks */Block.__(6, [/* MonoBank */Block.__(0, [filterBank])]));
   }
+}
+
+function saveTick(param, onUnmount, key, tickFn) {
+  var state = param[/* state */1];
+  state[/* tickFunctions */22][0] = Belt_MapString.set(state[/* tickFunctions */22][0], key, tickFn);
+  return Curry._1(onUnmount, (function () {
+                state[/* tickFunctions */22][0] = Belt_MapString.remove(state[/* tickFunctions */22][0], key);
+                return /* () */0;
+              }));
 }
 
 function make($staropt$star, _) {
@@ -807,9 +816,8 @@ function make($staropt$star, _) {
                                                                         ]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
-                                                          }), (function (key, tickFn) {
-                                                            self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], key, tickFn);
-                                                            return /* () */0;
+                                                          }), (function (param, param$1, param$2) {
+                                                            return saveTick(self, param, param$1, param$2);
                                                           }), 16, /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
@@ -828,9 +836,8 @@ function make($staropt$star, _) {
                                                                           ]);
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
-                                                              }), self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */17], (function (key, tickFn) {
-                                                                self[/* state */1][/* tickFunctions */22][0] = Belt_MapString.set(self[/* state */1][/* tickFunctions */22][0], key, tickFn);
-                                                                return /* () */0;
+                                                              }), self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */17], (function (param, param$1, param$2) {
+                                                                return saveTick(self, param, param$1, param$2);
                                                               }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                           style: {
@@ -1056,6 +1063,7 @@ export {
   makeAudioElt ,
   sortLayers ,
   generateNewFilterBanks ,
+  saveTick ,
   make ,
   
 }

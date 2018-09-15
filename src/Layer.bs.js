@@ -516,13 +516,13 @@ function getLayerKey(layer) {
   return Belt_Option.getWithDefault(layer[/* id */6], JSON.stringify(layerContent$1(layer[/* content */0])));
 }
 
-function renderLayerPreview(layer, _, saveTick, layerRefs) {
+function renderLayerPreview(layer, _, saveTick, onUnmount, layerRefs) {
   var layerKey = getLayerKey(layer);
   var savePreviewRef = function (aRef) {
     if (aRef == null) {
       return /* () */0;
     } else {
-      return Curry._2(saveTick, layerKey + "preview", (function () {
+      return Curry._3(saveTick, onUnmount, layerKey + "preview", (function () {
                     var match = Belt_MapString.get(layerRefs[0], layerKey);
                     if (match !== undefined) {
                       var ctx = aRef.getContext("2d");
@@ -558,12 +558,12 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
-          /* render */(function () {
+          /* render */(function (self) {
               return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, Curry._1(onSetRef, layer), saveTick, layerRefs)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[

@@ -72,7 +72,7 @@ let make =
     ...component,
     initialState: () => {canvasRef: ref(None)},
     reducer: ((), _state) => ReasonReact.NoUpdate,
-    didMount: self => saveTick(layerKey, onTick(self)),
+    didMount: self => saveTick(self.onUnmount, layerKey, onTick(self)),
     render: self =>
       <canvas
         style=(ReactDOMRe.Style.make(~opacity="0.0", ()))

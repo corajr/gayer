@@ -29,7 +29,7 @@ function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, a
     var state = param[/* state */1];
     state[/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     Curry._1(setRef, theRef);
-    return Curry._2(saveTick, layerKey, (function () {
+    return Curry._3(saveTick, param[/* onUnmount */4], layerKey, (function () {
                   return drawRawAudio(layerRefs, state, x, y, width, height);
                 }));
   };

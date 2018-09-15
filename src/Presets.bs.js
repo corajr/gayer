@@ -1682,19 +1682,16 @@ var history_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var history_014 = /* layers : :: */[
   analyzer,
   /* :: */[
-    historyLayer,
-    /* :: */[
-      /* record */[
-        /* content : Reader */Block.__(9, [/* R */0]),
-        /* alpha */0.0,
-        /* compositeOperation : Multiply */11,
-        reader_003,
-        reader_004,
-        reader_005,
-        reader_006
-      ],
-      /* [] */0
-    ]
+    /* record */[
+      /* content : Reader */Block.__(9, [/* R */0]),
+      /* alpha */0.0,
+      /* compositeOperation : Multiply */11,
+      reader_003,
+      reader_004,
+      reader_005,
+      reader_006
+    ],
+    /* [] */0
   ]
 ];
 

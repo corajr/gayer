@@ -404,7 +404,6 @@ let history = {
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */
-    historyLayer,
     /* {...pitchFilter(cMajor), alpha: 0.01}, */
     {...reader, alpha: 0.0},
   ],

@@ -62,7 +62,7 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              return Curry._2(saveTick, layerKey, (function () {
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                             var match = self[/* state */1][/* reglRef */1][0];
                             if (match !== undefined) {
                               Js_primitive.valFromOption(match).clear({
