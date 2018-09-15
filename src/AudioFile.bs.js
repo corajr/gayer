@@ -31,7 +31,12 @@ function make(audioCtx, audioGraph, audioKey, url, _) {
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
-          /* didMount */component[/* didMount */4],
+          /* didMount */(function (self) {
+              return Curry._1(self[/* onUnmount */4], (function () {
+                            audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(audioKey, AudioGraph$Gayer.removeNode(audioKey, audioGraph[0])));
+                            return /* () */0;
+                          }));
+            }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */component[/* willUpdate */7],

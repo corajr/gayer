@@ -26,6 +26,14 @@ let make = (~audioCtx, ~audioGraph, ~audioKey, ~url, _children) => {
     ...component,
     initialState: () => {audioRef: ref(None), audioNode: ref(None)},
     reducer: ((), _state) => ReasonReact.NoUpdate,
+    didMount: self =>
+      self.onUnmount(() =>
+        audioGraph :=
+          audioGraph^
+          |> removeNode(audioKey)
+          |> removeAllEdgesInvolvingNode(audioKey)
+          |> updateConnections
+      ),
     render: self =>
       <audio
         ref=(self.handle(setAudioRef))

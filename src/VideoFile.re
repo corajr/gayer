@@ -28,6 +28,10 @@ let make = (~audioCtx, ~audioGraph, ~layerKey, ~setRef, ~url, _children) => {
     ...component,
     initialState: () => {videoRef: ref(None), audioNode: ref(None)},
     reducer: ((), _state) => ReasonReact.NoUpdate,
+    didMount: self =>
+      self.onUnmount(() =>
+        audioGraph := audioGraph^ |> removeNode(url) |> updateConnections
+      ),
     render: self =>
       <video
         ref=(self.handle(setVideoRef))
