@@ -32,7 +32,14 @@ let histogram = {
   compositeOperation: SourceOver,
 };
 
-let rawAudioFormat = {x: 0, y: 0, w: 64, h: 32, sampleRate: 44100};
+let rawAudioFormat = {
+  x: 0,
+  y: 0,
+  w: 64,
+  h: 32,
+  encoding: Int8(R),
+  sampleRate: 44100,
+};
 
 let rawAudioWriter = {
   ...defaultLayer,
@@ -557,6 +564,7 @@ let presetsWithoutLayerIds = [
   /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
   /* ("Raw audio (can feedback!)", rawAudio), */
+  /* ("Raw audio and spacy", rawAudioAndSpacy), */
   ("Empty", {...defaultParams, layers: []}),
 ];
 

@@ -2,16 +2,18 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as TypedArray$Gayer from "./TypedArray.bs.js";
 
-function drawRawAudio(layerRefs, state, x, y, width, height) {
-  state[/* analyser */0][0].getFloatTimeDomainData(state[/* audioData */1][0]);
-  var outputImageData = new ImageData(TypedArray$Gayer.float32toUint8ClampedArray(state[/* audioData */1][0]), width, height);
+function drawRawAudioFloat(layerRefs, state, x, y, width, height) {
+  state[/* analyser */0][0].getFloatTimeDomainData(state[/* audioDataFloat */1][0]);
+  var outputImageData = new ImageData(TypedArray$Gayer.float32toUint8ClampedArray(state[/* audioDataFloat */1][0]), width, height);
   var match = Belt_MapString.get(layerRefs[0], "root");
   if (match !== undefined) {
     var ctx = Js_primitive.valFromOption(match).getContext("2d");
@@ -22,15 +24,40 @@ function drawRawAudio(layerRefs, state, x, y, width, height) {
   }
 }
 
+function drawRawAudioUint8(_, channel, state, _$1, _$2, width, height) {
+  var audioDataByte = state[/* audioDataByte */2][0];
+  var n = audioDataByte.length;
+  var audioDataByteForImage = state[/* audioDataByteForImage */3][0];
+  state[/* analyser */0][0].getByteTimeDomainData(audioDataByte);
+  var channelOffset = Canvas$Gayer.int_of_channel(channel);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    Caml_array.caml_array_set(audioDataByteForImage, (i << 2) + channelOffset | 0, Caml_array.caml_array_get(audioDataByte, i));
+    Caml_array.caml_array_set(audioDataByteForImage, (i << 2) + 3 | 0, 255);
+  }
+  var outputImageData = new ImageData(audioDataByteForImage, width, height);
+  var match = state[/* canvasRef */4][0];
+  if (match !== undefined) {
+    var ctx = Js_primitive.valFromOption(match).getContext("2d");
+    ctx.putImageData(outputImageData, 0, 0);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, audioGraph, setRef, x, y, _) {
+function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, encoding, audioGraph, setRef, x, y, _) {
   var setCanvasRef = function (theRef, param) {
     var state = param[/* state */1];
-    state[/* canvasRef */2][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    state[/* canvasRef */4][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     Curry._1(setRef, theRef);
     return Curry._3(saveTick, param[/* onUnmount */4], layerKey, (function () {
-                  return drawRawAudio(layerRefs, state, x, y, width, height);
+                  if (encoding) {
+                    return drawRawAudioUint8(layerRefs, encoding[0], state, x, y, width, height);
+                  } else {
+                    return drawRawAudioFloat(layerRefs, state, x, y, width, height);
+                  }
                 }));
   };
   return /* record */[
@@ -73,7 +100,9 @@ function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, a
               var analyser = Audio$Gayer.makeAnalyser(audioCtx, samples, undefined, undefined, undefined, /* () */0);
               return /* record */[
                       /* analyser : record */[/* contents */analyser],
-                      /* audioData : record */[/* contents */new Float32Array(samples)],
+                      /* audioDataFloat : record */[/* contents */new Float32Array(samples)],
+                      /* audioDataByte : record */[/* contents */new Uint8Array(samples)],
+                      /* audioDataByteForImage : record */[/* contents */new Uint8ClampedArray((samples << 2))],
                       /* canvasRef : record */[/* contents */undefined],
                       /* timerId : record */[/* contents */undefined]
                     ];
@@ -88,7 +117,8 @@ function make(samples, width, height, saveTick, layerKey, layerRefs, audioCtx, a
 }
 
 export {
-  drawRawAudio ,
+  drawRawAudioFloat ,
+  drawRawAudioUint8 ,
   component ,
   make ,
   

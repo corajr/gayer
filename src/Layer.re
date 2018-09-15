@@ -60,12 +60,29 @@ module DecodeLayer = {
     );
 
   let rotation = json => Json.Decode.(json |> float);
+
+  let rawAudioEncodingByType = (type_, json) =>
+    Json.Decode.(
+      switch (type_) {
+      | "float" => Float
+      | "int8" =>
+        json |> map(c => Int8(channel_of_int(c)), field("channel", int))
+      | _ => Int8(R)
+      }
+    );
+
+  let rawAudioEncoding = json =>
+    Json.Decode.(
+      json |> (field("type", string) |> andThen(rawAudioEncodingByType))
+    );
+
   let rawAudioFormat = json =>
     Json.Decode.{
       x: json |> field("x", int),
       y: json |> field("y", int),
       w: json |> field("w", int),
       h: json |> field("h", int),
+      encoding: json |> field("encoding", rawAudioEncoding),
       sampleRate: json |> field("sampleRate", int),
     };
 
@@ -165,6 +182,16 @@ module EncodeLayer = {
       )
     );
 
+  let rawAudioEncoding =
+    Json.Encode.(
+      fun
+      | Float => object_([("type", string("float"))])
+      | Int8(channel) =>
+        object_([
+          ("type", string("int8")),
+          ("channel", int(int_of_channel(channel))),
+        ])
+    );
   let rawAudioFormat = r =>
     Json.Encode.(
       object_([
@@ -172,6 +199,7 @@ module EncodeLayer = {
         ("y", int(r.y)),
         ("w", int(r.w)),
         ("h", int(r.h)),
+        ("encoding", rawAudioEncoding(r.encoding)),
         ("sampleRate", int(r.sampleRate)),
       ])
     );

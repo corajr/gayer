@@ -276,7 +276,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
         };
         None;
-      | RawAudioWriter(_) => None
+      | RawAudioWriter({x, y, w, h, encoding}) =>
+        switch (encoding, maybeLayerRef) {
+        | (Int8(_), Some(canvas)) =>
+          let canvasSource = getCanvasAsSource(getFromReact(canvas));
+          Ctx.drawImageDestRect(ctx, canvasSource, x, y, w, h);
+        | _ => ()
+        };
+        None;
       | RawAudioReader(_) => None
       | Regl =>
         switch (maybeLayerRef) {

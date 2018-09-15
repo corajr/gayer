@@ -5,9 +5,12 @@ var toFloat32Array = function (t){return new Float32Array(t.buffer);};
 
 var float32toUint8ClampedArray = function (t){return new Uint8ClampedArray(t.buffer);};
 
+var toUint8ClampedArray = function (t){return new Uint8ClampedArray(t.buffer);};
+
 export {
   toFloat32Array ,
   float32toUint8ClampedArray ,
+  toUint8ClampedArray ,
   
 }
 /* No side effect */

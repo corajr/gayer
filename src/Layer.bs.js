@@ -79,12 +79,34 @@ function transformMatrix(json) {
 
 var rotation = Json_decode.$$float;
 
+function rawAudioEncodingByType(type_, json) {
+  switch (type_) {
+    case "float" : 
+        return /* Float */0;
+    case "int8" : 
+        return Json_decode.map((function (c) {
+                      return /* Int8 */[Canvas$Gayer.channel_of_int(c)];
+                    }), (function (param) {
+                      return Json_decode.field("channel", Json_decode.$$int, param);
+                    }), json);
+    default:
+      return /* Int8 */[/* R */0];
+  }
+}
+
+function rawAudioEncoding(json) {
+  return Json_decode.andThen(rawAudioEncodingByType, (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
+}
+
 function rawAudioFormat(json) {
   return /* record */[
           /* x */Json_decode.field("x", Json_decode.$$int, json),
           /* y */Json_decode.field("y", Json_decode.$$int, json),
           /* w */Json_decode.field("w", Json_decode.$$int, json),
           /* h */Json_decode.field("h", Json_decode.$$int, json),
+          /* encoding */Json_decode.field("encoding", rawAudioEncoding, json),
           /* sampleRate */Json_decode.field("sampleRate", Json_decode.$$int, json)
         ];
 }
@@ -202,6 +224,8 @@ function layer(json) {
 var DecodeLayer = /* module */[
   /* transformMatrix */transformMatrix,
   /* rotation */rotation,
+  /* rawAudioEncodingByType */rawAudioEncodingByType,
+  /* rawAudioEncoding */rawAudioEncoding,
   /* rawAudioFormat */rawAudioFormat,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
@@ -232,6 +256,32 @@ function transformMatrix$1(param) {
             ]);
 }
 
+function rawAudioEncoding$1(param) {
+  if (param) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "int8"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "channel",
+                    Canvas$Gayer.int_of_channel(param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "float"
+                ],
+                /* [] */0
+              ]);
+  }
+}
+
 function rawAudioFormat$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
@@ -255,10 +305,16 @@ function rawAudioFormat$1(r) {
                     ],
                     /* :: */[
                       /* tuple */[
-                        "sampleRate",
-                        r[/* sampleRate */4]
+                        "encoding",
+                        rawAudioEncoding$1(r[/* encoding */4])
                       ],
-                      /* [] */0
+                      /* :: */[
+                        /* tuple */[
+                          "sampleRate",
+                          r[/* sampleRate */5]
+                        ],
+                        /* [] */0
+                      ]
                     ]
                   ]
                 ]
@@ -506,6 +562,7 @@ function layer$1(r) {
 
 var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
+  /* rawAudioEncoding */rawAudioEncoding$1,
   /* rawAudioFormat */rawAudioFormat$1,
   /* layerContent */layerContent$1,
   /* rotation */rotation$1,

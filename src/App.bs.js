@@ -420,6 +420,15 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 7 : 
+          var match$5 = match$1[0];
+          if (match$5[/* encoding */4]) {
+            if (maybeLayerRef !== undefined) {
+              ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), match$5[/* x */0], match$5[/* y */1], match$5[/* w */2], match$5[/* h */3]);
+            }
+            
+          }
+          maybeValues = undefined;
+          break;
       case 8 : 
           maybeValues = undefined;
           break;
@@ -448,10 +457,10 @@ function drawLayer(ctx, width, height, state, layer) {
           if (channel >= 3) {
             maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
           } else {
-            var match$5 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+            var match$6 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
             maybeValues = /* Stereo */Block.__(1, [
-                match$5[0],
-                match$5[1]
+                match$6[0],
+                match$6[1]
               ]);
           }
           break;

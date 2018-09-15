@@ -76,6 +76,7 @@ var rawAudioFormat = /* record */[
   /* y */0,
   /* w */64,
   /* h */32,
+  /* encoding : Int8 */[/* R */0],
   /* sampleRate */44100
 ];
 

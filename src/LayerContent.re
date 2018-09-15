@@ -57,7 +57,7 @@ let make =
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | HandDrawn => <HandDrawnCanvas setRef width height />
-        | RawAudioWriter({x, y, w, h}) =>
+        | RawAudioWriter({x, y, w, h, encoding}) =>
           <RawAudioCanvas
             layerKey
             layerRefs
@@ -65,6 +65,7 @@ let make =
             audioGraph
             setRef
             saveTick
+            encoding
             samples=(w * h)
             width=w
             height=h
