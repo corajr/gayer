@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as VideoFile$Gayer from "./VideoFile.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as ReglCanvas$Gayer from "./ReglCanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
@@ -62,15 +63,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                           });
                       break;
                   case 4 : 
-                      tmp = React.createElement("video", {
-                            ref: setRef,
-                            autoPlay: true,
-                            height: "120",
-                            loop: true,
-                            muted: true,
-                            src: layerContent[0],
-                            width: "120"
-                          });
+                      tmp = ReasonReact.element(undefined, undefined, VideoFile$Gayer.make(audioCtx, audioGraph, layerKey, setRef, layerContent[0], /* array */[]));
                       break;
                   case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(height, layerKey, audioCtx, audioGraph, layerContent[0], millisPerTick, setRef, saveTick, /* array */[]));

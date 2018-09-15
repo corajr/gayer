@@ -39,10 +39,29 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                         case 5 : 
                                             var source = match[0];
                                             var exit = 0;
-                                            if (typeof source === "number" || source.tag) {
+                                            if (typeof source === "number") {
                                               exit = 1;
                                             } else {
-                                              maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
+                                              switch (source.tag | 0) {
+                                                case 0 : 
+                                                    maybeAudio = ReasonReact.element(undefined, undefined, AudioFile$Gayer.make(audioCtx, audioGraph, key + "input", source[0], /* array */[]));
+                                                    break;
+                                                case 1 : 
+                                                    var input = audioCtx.createGain();
+                                                    audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addEdge(/* tuple */[
+                                                              source[0],
+                                                              key + "input",
+                                                              0,
+                                                              0
+                                                            ], AudioGraph$Gayer.addNode(/* tuple */[
+                                                                  key + "input",
+                                                                  input
+                                                                ], audioGraph[0])));
+                                                    maybeAudio = null;
+                                                    break;
+                                                default:
+                                                  exit = 1;
+                                              }
                                             }
                                             if (exit === 1) {
                                               var match$1 = Curry._1(getAudio, source);

@@ -43,16 +43,7 @@ let make =
             /* width=(Js.Int.toString(width)) */
             /* height=(Js.Int.toString(height)) */
           />
-        | Video(url) =>
-          <video
-            ref=setRef
-            src=url
-            width="120"
-            height="120"
-            autoPlay=true
-            loop=true
-            muted=true
-          />
+        | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
         | Analysis(source) =>
           <AnalysisCanvas
             layerKey

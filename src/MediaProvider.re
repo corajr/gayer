@@ -38,6 +38,14 @@ let make =
                     audioKey=(key ++ "input")
                     url
                   />
+                | AudioFromVideo(url) =>
+                  let input = unwrapGain(createGain(audioCtx));
+                  audioGraph :=
+                    audioGraph^
+                    |> addNode((key ++ "input", input))
+                    |> addEdge((url, key ++ "input", 0, 0))
+                    |> updateConnections;
+                  ReasonReact.null;
                 | _ =>
                   let (_, maybeInput) = getAudio(source);
                   switch (maybeInput) {

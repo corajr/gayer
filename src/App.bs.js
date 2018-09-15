@@ -122,7 +122,7 @@ function setCanvasRef(theRef, param) {
   }
 }
 
-function setLayerRef(audioCtx, param, param$1) {
+function setLayerRef(_, param, param$1) {
   var state = param$1[/* state */1];
   var theRef = param[1];
   var layer = param[0];
@@ -131,47 +131,16 @@ function setLayerRef(audioCtx, param, param$1) {
     state[/* layerRefs */17][0] = Belt_MapString.set(state[/* layerRefs */17][0], layerKey, theRef);
   }
   var match = layer[/* content */0];
-  if (typeof match === "number") {
+  if (typeof match === "number" || !(match.tag === 2 && !(theRef == null))) {
     return /* () */0;
   } else {
-    switch (match.tag | 0) {
-      case 2 : 
-          if (theRef == null) {
-            return /* () */0;
-          } else {
-            var match$1 = state[/* mediaStream */9];
-            if (match$1 !== undefined) {
-              var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
-              state[/* cameraInput */12][0] = Js_primitive.some(video);
-              return /* () */0;
-            } else {
-              return /* () */0;
-            }
-          }
-      case 4 : 
-          var url = match[0];
-          if (theRef == null) {
-            return /* () */0;
-          } else {
-            var readyState = theRef.readyState;
-            if (readyState >= 3) {
-              var match$2 = Belt_MapString.get(state[/* loadedAudio */19][0], url);
-              if (match$2 !== undefined) {
-                return /* () */0;
-              } else {
-                Video$Gayer.unmute(theRef);
-                var mediaElementSource = audioCtx.createMediaElementSource(theRef);
-                console.log("adding element source");
-                console.log(mediaElementSource);
-                state[/* loadedAudio */19][0] = Belt_MapString.set(state[/* loadedAudio */19][0], url, mediaElementSource);
-                return /* () */0;
-              }
-            } else {
-              return 0;
-            }
-          }
-      default:
-        return /* () */0;
+    var match$1 = state[/* mediaStream */9];
+    if (match$1 !== undefined) {
+      var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
+      state[/* cameraInput */12][0] = Js_primitive.some(video);
+      return /* () */0;
+    } else {
+      return /* () */0;
     }
   }
 }

@@ -119,21 +119,6 @@ let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
       state.cameraInput := Some(video);
     | None => ()
     }
-  | (Video(url), Some(aRef)) =>
-    /* TODO: move this logic onto its own VideoFile component and use the audioGraph instead.*/
-    let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
-    if (readyState >= 3) {
-      switch (Belt.Map.String.get(state.loadedAudio^, url)) {
-      | Some(_) => ()
-      | None =>
-        unmute(aRef);
-        let mediaElementSource = createMediaElementSource(audioCtx, aRef);
-        Js.log("adding element source");
-        Js.log(mediaElementSource);
-        state.loadedAudio :=
-          Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
-      };
-    };
   | (Webcam(_), _)
   | (Video(_), _)
   | (Histogram, _)
