@@ -313,7 +313,8 @@ let getLayerKey: layer => string =
       Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
     );
 
-let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) => {
+let renderLayerPreview =
+    (~layer, ~changeLayer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) => {
   let layerKey = getLayerKey(layer);
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
@@ -332,16 +333,37 @@ let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) =>
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
     <div>
-      <MaterialUi.Typography>
-        (
-          ReasonReact.string(
-            Js.Json.stringifyWithSpace(
-              EncodeLayer.layerContent(layer.content),
-              2,
-            ),
-          )
-        )
-      </MaterialUi.Typography>
+      (
+        switch (layer.content) {
+        | PitchClasses(xs) =>
+          <div>
+            <MaterialUi.Typography>
+              (ReasonReact.string("Pitch classes:"))
+            </MaterialUi.Typography>
+            <PitchSetSelector
+              pitchSet=xs
+              onChangeSetting=(
+                newPitches =>
+                  changeLayer(
+                    layer,
+                    {...layer, content: PitchClasses(newPitches)},
+                  )
+              )
+            />
+          </div>
+        | _ =>
+          <MaterialUi.Typography>
+            (
+              ReasonReact.string(
+                Js.Json.stringifyWithSpace(
+                  EncodeLayer.layerContent(layer.content),
+                  2,
+                ),
+              )
+            )
+          </MaterialUi.Typography>
+        }
+      )
     </div>
   </div>;
 };
@@ -377,6 +399,7 @@ let make =
               ~saveTick,
               ~onUnmount=self.onUnmount,
               ~setRef=onSetRef(layer),
+              ~changeLayer,
               ~layerRefs,
             )
           )

@@ -18,6 +18,7 @@ import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
+import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
 var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
@@ -621,7 +622,7 @@ function getLayerKey(layer) {
   return Belt_Option.getWithDefault(layer[/* id */6], JSON.stringify(layerContent$1(layer[/* content */0])));
 }
 
-function renderLayerPreview(layer, _, saveTick, onUnmount, layerRefs) {
+function renderLayerPreview(layer, changeLayer, _, saveTick, onUnmount, layerRefs) {
   var layerKey = getLayerKey(layer);
   var savePreviewRef = function (aRef) {
     if (aRef == null) {
@@ -639,6 +640,27 @@ function renderLayerPreview(layer, _, saveTick, onUnmount, layerRefs) {
                   }));
     }
   };
+  var match = layer[/* content */0];
+  var tmp;
+  var exit = 0;
+  if (typeof match === "number" || match.tag !== 6) {
+    exit = 1;
+  } else {
+    tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Pitch classes:"])), ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
+                    return Curry._2(changeLayer, layer, /* record */[
+                                /* content : PitchClasses */Block.__(6, [newPitches]),
+                                /* alpha */layer[/* alpha */1],
+                                /* compositeOperation */layer[/* compositeOperation */2],
+                                /* rotation */layer[/* rotation */3],
+                                /* transformMatrix */layer[/* transformMatrix */4],
+                                /* filters */layer[/* filters */5],
+                                /* id */layer[/* id */6]
+                              ]);
+                  }), /* array */[])));
+  }
+  if (exit === 1) {
+    tmp = ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layer[/* content */0]), null, 2)]));
+  }
   return React.createElement("div", {
               style: {
                 display: "flex"
@@ -647,7 +669,7 @@ function renderLayerPreview(layer, _, saveTick, onUnmount, layerRefs) {
                       ref: savePreviewRef,
                       height: "120",
                       width: "120"
-                    })), React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layer[/* content */0]), null, 2)]))));
+                    })), React.createElement("div", undefined, tmp));
 }
 
 var component = ReasonReact.statelessComponent("Layer");
@@ -668,7 +690,7 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                               display: "flex",
                               justifyContent: "space-between"
                             }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])),
+                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, changeLayer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])),
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[

@@ -34,3 +34,12 @@ let harmonicSeriesInSemitones = n =>
   Array.init(n, i => Js.Math.log2(float_of_int(i + 1)) *. 12.0);
 
 let partials = n => Array.map(int_of_float, harmonicSeriesInSemitones(n));
+
+module DecodePitchSet = {
+  let pitchSet = json =>
+    Json.Decode.(json |> map(xs => PitchSet.of_list(xs), list(int)));
+};
+
+module EncodePitchSet = {
+  let pitchSet = r => Json.Encode.(list(int, PitchSet.elements(r)));
+};

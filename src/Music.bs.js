@@ -4,6 +4,8 @@ import * as $$Set from "bs-platform/lib/es6/set.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
+import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
+import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 
 var compare = Caml_obj.caml_compare;
 
@@ -246,6 +248,24 @@ function partials(n) {
               }), harmonicSeriesInSemitones(n));
 }
 
+function pitchSet(json) {
+  return Json_decode.map((function (xs) {
+                return Curry._1(PitchSet[/* of_list */25], xs);
+              }), (function (param) {
+                return Json_decode.list(Json_decode.$$int, param);
+              }), json);
+}
+
+var DecodePitchSet = /* module */[/* pitchSet */pitchSet];
+
+function pitchSet$1(r) {
+  return Json_encode.list((function (prim) {
+                return prim;
+              }), Curry._1(PitchSet[/* elements */19], r));
+}
+
+var EncodePitchSet = /* module */[/* pitchSet */pitchSet$1];
+
 export {
   PitchSet ,
   filterByPitchSet ,
@@ -262,6 +282,8 @@ export {
   allPitches ,
   harmonicSeriesInSemitones ,
   partials ,
+  DecodePitchSet ,
+  EncodePitchSet ,
   
 }
 /* PitchSet Not a pure module */
