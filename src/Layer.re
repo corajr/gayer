@@ -5,6 +5,10 @@ open MIDICanvas;
 open Music;
 open RawAudio;
 
+type readerType =
+  | Channel(channel)
+  | Saturation;
+
 type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
@@ -19,7 +23,7 @@ type layerContent =
   | RawAudioReader(rawAudioFormat)
   | Histogram
   | Regl
-  | Reader(channel);
+  | Reader(readerType);
 
 type layer = {
   content: layerContent,
@@ -86,6 +90,21 @@ module DecodeLayer = {
       sampleRate: json |> field("sampleRate", int),
     };
 
+  let readerTypeByType = (type_, json) =>
+    Json.Decode.(
+      switch (type_) {
+      | "saturation" => Saturation
+      | "channel" =>
+        json |> map(c => Channel(channel_of_int(c)), field("channel", int))
+      | _ => Channel(R)
+      }
+    );
+
+  let readerType = json =>
+    Json.Decode.(
+      json |> (field("type", string) |> andThen(readerTypeByType))
+    );
+
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
@@ -106,8 +125,7 @@ module DecodeLayer = {
         json |> map(o => RawAudioReader(o), field("format", rawAudioFormat))
       | "histogram" => Histogram
       | "reader" =>
-        json
-        |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
+        json |> map(t => Reader(t), field("readerType", readerType))
       | "analysis" =>
         json
         |> map(
@@ -204,6 +222,17 @@ module EncodeLayer = {
       ])
     );
 
+  let readerType =
+    Json.Encode.(
+      fun
+      | Saturation => object_([("type", string("saturation"))])
+      | Channel(c) =>
+        object_([
+          ("type", string("channel")),
+          ("channel", int(int_of_channel(c))),
+        ])
+    );
+
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
@@ -250,10 +279,10 @@ module EncodeLayer = {
           ("format", rawAudioFormat(fmt)),
         ])
       | HandDrawn => object_([("type", string("hand-drawn"))])
-      | Reader(channel) =>
+      | Reader(t) =>
         object_([
           ("type", string("reader")),
-          ("channel", int(int_of_channel(channel))),
+          ("readerType", readerType(t)),
         ])
       }
     );

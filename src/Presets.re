@@ -20,9 +20,15 @@ let video = url => {...defaultLayer, content: Video(url)};
 
 let reader = {
   ...defaultLayer,
-  content: Reader(R),
+  content: Reader(Channel(R)),
   alpha: 1.0,
   compositeOperation: Multiply,
+};
+
+let saturationReader = {
+  ...defaultLayer,
+  content: Reader(Saturation),
+  alpha: 1.0,
 };
 
 let histogram = {
@@ -266,6 +272,7 @@ let allLayerTypes = [
   squareLayer,
   rawAudioWriter,
   rawAudioReader,
+  saturationReader,
   reader,
 ];
 
@@ -385,7 +392,7 @@ let isItACrime = {
   ...defaultParams,
   layers: [
     img("media/is_it_a_crime_large.png"),
-    {...reader, content: Reader(A)},
+    {...reader, content: Reader(Channel(A))},
   ],
 };
 
@@ -472,10 +479,11 @@ let fourSeasons = {
   ...defaultParams,
   layers: [
     img("media/four_seasons.jpg"),
-    sobel,
+    /* sobel, */
     /* histogram, */
     pitchFilter(cMinor),
-    reader,
+    saturationReader,
+    /* reader, */
   ],
 };
 
@@ -554,7 +562,7 @@ let presetsWithoutLayerIds = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
-  /* ("Four Seasons", fourSeasons), */
+  ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI (requires MIDI keyboard)", midi),

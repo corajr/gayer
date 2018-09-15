@@ -111,6 +111,27 @@ function rawAudioFormat(json) {
         ];
 }
 
+function readerTypeByType(type_, json) {
+  switch (type_) {
+    case "channel" : 
+        return Json_decode.map((function (c) {
+                      return /* Channel */[Canvas$Gayer.channel_of_int(c)];
+                    }), (function (param) {
+                      return Json_decode.field("channel", Json_decode.$$int, param);
+                    }), json);
+    case "saturation" : 
+        return /* Saturation */0;
+    default:
+      return /* Channel */[/* R */0];
+  }
+}
+
+function readerType(json) {
+  return Json_decode.andThen(readerTypeByType, (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
+}
+
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -169,12 +190,10 @@ function layerByType(type_, json) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "reader" : 
-        return Json_decode.map((function (i) {
-                      return /* Reader */Block.__(9, [i]);
+        return Json_decode.map((function (t) {
+                      return /* Reader */Block.__(9, [t]);
                     }), (function (param) {
-                      return Json_decode.map(Canvas$Gayer.channel_of_int, (function (param) {
-                                    return Json_decode.field("channel", Json_decode.$$int, param);
-                                  }), param);
+                      return Json_decode.field("readerType", readerType, param);
                     }), json);
     case "regl" : 
         return /* Regl */3;
@@ -227,6 +246,8 @@ var DecodeLayer = /* module */[
   /* rawAudioEncodingByType */rawAudioEncodingByType,
   /* rawAudioEncoding */rawAudioEncoding,
   /* rawAudioFormat */rawAudioFormat,
+  /* readerTypeByType */readerTypeByType,
+  /* readerType */readerType,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
@@ -320,6 +341,32 @@ function rawAudioFormat$1(r) {
                 ]
               ]
             ]);
+}
+
+function readerType$1(param) {
+  if (param) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "channel"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "channel",
+                    Canvas$Gayer.int_of_channel(param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "saturation"
+                ],
+                /* [] */0
+              ]);
+  }
 }
 
 function layerContent$1(r) {
@@ -497,8 +544,8 @@ function layerContent$1(r) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "channel",
-                          Canvas$Gayer.int_of_channel(r[0])
+                          "readerType",
+                          readerType$1(r[0])
                         ],
                         /* [] */0
                       ]
@@ -564,6 +611,7 @@ var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
   /* rawAudioEncoding */rawAudioEncoding$1,
   /* rawAudioFormat */rawAudioFormat$1,
+  /* readerType */readerType$1,
   /* layerContent */layerContent$1,
   /* rotation */rotation$1,
   /* layer */layer$1

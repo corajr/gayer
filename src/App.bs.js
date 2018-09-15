@@ -13,6 +13,7 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
+import * as Color$Gayer from "./Color.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -433,35 +434,45 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 9 : 
-          var channel = match$1[0];
+          var readerType = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
-          var tmp;
-          switch (channel) {
-            case 0 : 
-                tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
-                break;
-            case 1 : 
-                tmp = Canvas$Gayer.rgba(0, 127, 0, 0.5);
-                break;
-            case 2 : 
-                tmp = Canvas$Gayer.rgba(0, 0, 127, 0.5);
-                break;
-            case 3 : 
-                tmp = Canvas$Gayer.rgba(127, 127, 127, 0.5);
-                break;
-            
-          }
-          ctx.fillStyle = tmp;
-          ctx.fillRect(xToRead, 0, 1, height);
-          if (channel >= 3) {
-            maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
+          if (readerType) {
+            var channel = readerType[0];
+            var tmp;
+            switch (channel) {
+              case 0 : 
+                  tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
+                  break;
+              case 1 : 
+                  tmp = Canvas$Gayer.rgba(0, 127, 0, 0.5);
+                  break;
+              case 2 : 
+                  tmp = Canvas$Gayer.rgba(0, 0, 127, 0.5);
+                  break;
+              case 3 : 
+                  tmp = Canvas$Gayer.rgba(127, 127, 127, 0.5);
+                  break;
+              
+            }
+            ctx.fillStyle = tmp;
+            ctx.fillRect(xToRead, 0, 1, height);
+            if (channel >= 3) {
+              maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
+            } else {
+              var match$6 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+              maybeValues = /* Stereo */Block.__(1, [
+                  match$6[0],
+                  match$6[1]
+                ]);
+            }
           } else {
-            var match$6 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
-            maybeValues = /* Stereo */Block.__(1, [
-                match$6[0],
-                match$6[1]
-              ]);
+            ctx.fillStyle = Canvas$Gayer.rgba(255, 255, 255, 0.5);
+            ctx.fillRect(xToRead, 0, 1, height);
+            var saturations = $$Array.map((function (param) {
+                    return Color$Gayer.rgbToHslFloat(param[/* r */0], param[/* g */1], param[/* b */2])[1];
+                  }), Canvas$Gayer.imageDataToPixels(slice));
+            maybeValues = /* Mono */Block.__(0, [saturations]);
           }
           break;
       

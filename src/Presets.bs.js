@@ -33,7 +33,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(9, [/* R */0]);
+var reader_000 = /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]);
 
 var reader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
@@ -51,6 +51,28 @@ var reader = /* record */[
   reader_004,
   reader_005,
   reader_006
+];
+
+var saturationReader_000 = /* content : Reader */Block.__(9, [/* Saturation */0]);
+
+var saturationReader_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var saturationReader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var saturationReader_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var saturationReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var saturationReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var saturationReader = /* record */[
+  saturationReader_000,
+  /* alpha */1.0,
+  saturationReader_002,
+  saturationReader_003,
+  saturationReader_004,
+  saturationReader_005,
+  saturationReader_006
 ];
 
 var histogram_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
@@ -853,8 +875,11 @@ var allLayerTypes_001 = /* :: */[
                       /* :: */[
                         rawAudioReader,
                         /* :: */[
-                          reader,
-                          /* [] */0
+                          saturationReader,
+                          /* :: */[
+                            reader,
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -1389,7 +1414,7 @@ var slitscanMovingParams_014 = /* layers : :: */[
     ],
     /* :: */[
       /* record */[
-        /* content : Reader */Block.__(9, [/* R */0]),
+        /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
         /* alpha */0.0,
         /* compositeOperation : Multiply */11,
         reader_003,
@@ -1517,7 +1542,7 @@ var isItACrime_014 = /* layers : :: */[
   img("media/is_it_a_crime_large.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(9, [/* A */3]),
+      /* content : Reader */Block.__(9, [/* Channel */[/* A */3]]),
       /* alpha */1.0,
       /* compositeOperation : Multiply */11,
       reader_003,
@@ -1684,7 +1709,7 @@ var history_014 = /* layers : :: */[
   analyzer,
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(9, [/* R */0]),
+      /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
       /* alpha */0.0,
       /* compositeOperation : Multiply */11,
       reader_003,
@@ -1760,7 +1785,7 @@ var historyHalving_014 = /* layers : :: */[
             ]),
         /* :: */[
           /* record */[
-            /* content : Reader */Block.__(9, [/* R */0]),
+            /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
             /* alpha */0.0,
             /* compositeOperation : Multiply */11,
             reader_003,
@@ -1965,13 +1990,10 @@ var fourSeasons_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear
 var fourSeasons_014 = /* layers : :: */[
   img("media/four_seasons.jpg"),
   /* :: */[
-    sobel,
+    pitchFilter(Music$Gayer.cMinor),
     /* :: */[
-      pitchFilter(Music$Gayer.cMinor),
-      /* :: */[
-        reader,
-        /* [] */0
-      ]
+      saturationReader,
+      /* [] */0
     ]
   ]
 ];
@@ -2640,51 +2662,57 @@ var presetsWithoutLayerIds_001 = /* :: */[
             ],
             /* :: */[
               /* tuple */[
-                "Les Très Riches Heures",
-                lesTresRichesHeures
+                "Four Seasons",
+                fourSeasons
               ],
               /* :: */[
                 /* tuple */[
-                  "Is it a crime?",
-                  isItACrime
+                  "Les Très Riches Heures",
+                  lesTresRichesHeures
                 ],
                 /* :: */[
                   /* tuple */[
-                    "MIDI (requires MIDI keyboard)",
-                    midi
+                    "Is it a crime?",
+                    isItACrime
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Audio file",
-                      debussy
+                      "MIDI (requires MIDI keyboard)",
+                      midi
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Harmony",
-                        harmonyParams
+                        "Audio file",
+                        debussy
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Empty",
-                          /* record */[
-                            /* width */Params$Gayer.defaultParams[/* width */0],
-                            /* height */Params$Gayer.defaultParams[/* height */1],
-                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                            /* q */Params$Gayer.defaultParams[/* q */10],
-                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                            /* layers : [] */0
-                          ]
+                          "Harmony",
+                          harmonyParams
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "Empty",
+                            /* record */[
+                              /* width */Params$Gayer.defaultParams[/* width */0],
+                              /* height */Params$Gayer.defaultParams[/* height */1],
+                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                              /* q */Params$Gayer.defaultParams[/* q */10],
+                              /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                              /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                              /* layers : [] */0
+                            ]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -2778,6 +2806,7 @@ export {
   tau ,
   img ,
   reader ,
+  saturationReader ,
   rawAudioFormat ,
   rawAudioWriter ,
   rawAudioReader ,
