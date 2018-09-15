@@ -4,10 +4,7 @@ open Canvas;
 open MIDICanvas;
 open Music;
 open RawAudio;
-
-type readerType =
-  | Channel(channel)
-  | Saturation;
+open ReaderType;
 
 type layerContent =
   | Fill(string)
@@ -90,21 +87,6 @@ module DecodeLayer = {
       sampleRate: json |> field("sampleRate", int),
     };
 
-  let readerTypeByType = (type_, json) =>
-    Json.Decode.(
-      switch (type_) {
-      | "saturation" => Saturation
-      | "channel" =>
-        json |> map(c => Channel(channel_of_int(c)), field("channel", int))
-      | _ => Channel(R)
-      }
-    );
-
-  let readerType = json =>
-    Json.Decode.(
-      json |> (field("type", string) |> andThen(readerTypeByType))
-    );
-
   let layerByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
@@ -125,7 +107,11 @@ module DecodeLayer = {
         json |> map(o => RawAudioReader(o), field("format", rawAudioFormat))
       | "histogram" => Histogram
       | "reader" =>
-        json |> map(t => Reader(t), field("readerType", readerType))
+        json
+        |> map(
+             t => Reader(t),
+             field("readerType", DecodeReaderType.readerType),
+           )
       | "analysis" =>
         json
         |> map(
@@ -222,17 +208,6 @@ module EncodeLayer = {
       ])
     );
 
-  let readerType =
-    Json.Encode.(
-      fun
-      | Saturation => object_([("type", string("saturation"))])
-      | Channel(c) =>
-        object_([
-          ("type", string("channel")),
-          ("channel", int(int_of_channel(c))),
-        ])
-    );
-
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
@@ -282,7 +257,7 @@ module EncodeLayer = {
       | Reader(t) =>
         object_([
           ("type", string("reader")),
-          ("readerType", readerType(t)),
+          ("readerType", EncodeReaderType.readerType(t)),
         ])
       }
     );
@@ -347,6 +322,22 @@ let renderLayerPreview =
                   changeLayer(
                     layer,
                     {...layer, content: PitchClasses(newPitches)},
+                  )
+              )
+            />
+          </div>
+        | Reader(readerType) =>
+          <div>
+            <MaterialUi.Typography>
+              (ReasonReact.string("Reader:"))
+            </MaterialUi.Typography>
+            <ReaderType
+              readerType
+              onChangeSetting=(
+                newReaderType =>
+                  changeLayer(
+                    layer,
+                    {...layer, content: Reader(newReaderType)},
                   )
               )
             />

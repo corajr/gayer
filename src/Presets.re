@@ -18,18 +18,9 @@ let tau = Canvas.tau;
 let img = url => {...defaultLayer, content: Image(url)};
 let video = url => {...defaultLayer, content: Video(url)};
 
-let reader = {
-  ...defaultLayer,
-  content: Reader(Channel(R)),
-  alpha: 1.0,
-  compositeOperation: Multiply,
-};
+let reader = {...defaultLayer, content: Reader(Channel(R))};
 
-let saturationReader = {
-  ...defaultLayer,
-  content: Reader(Saturation),
-  alpha: 1.0,
-};
+let saturationReader = {...defaultLayer, content: Reader(Saturation)};
 
 let histogram = {
   ...defaultLayer,

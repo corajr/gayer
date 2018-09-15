@@ -22,7 +22,7 @@ var allPitchSets = /* array */[
   Music$Gayer.allPitches
 ];
 
-var component = ReasonReact.statelessComponent("CompositeOperationSelect");
+var component = ReasonReact.statelessComponent("PitchSetSelector-Gayer");
 
 function make(pitchSet, onChangeSetting, _) {
   return /* record */[

@@ -13,6 +13,7 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
+import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
@@ -112,27 +113,6 @@ function rawAudioFormat(json) {
         ];
 }
 
-function readerTypeByType(type_, json) {
-  switch (type_) {
-    case "channel" : 
-        return Json_decode.map((function (c) {
-                      return /* Channel */[Canvas$Gayer.channel_of_int(c)];
-                    }), (function (param) {
-                      return Json_decode.field("channel", Json_decode.$$int, param);
-                    }), json);
-    case "saturation" : 
-        return /* Saturation */0;
-    default:
-      return /* Channel */[/* R */0];
-  }
-}
-
-function readerType(json) {
-  return Json_decode.andThen(readerTypeByType, (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), json);
-}
-
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
@@ -191,10 +171,11 @@ function layerByType(type_, json) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "reader" : 
+        var partial_arg$3 = ReaderType$Gayer.DecodeReaderType[/* readerType */1];
         return Json_decode.map((function (t) {
                       return /* Reader */Block.__(9, [t]);
                     }), (function (param) {
-                      return Json_decode.field("readerType", readerType, param);
+                      return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
         return /* Regl */3;
@@ -205,11 +186,11 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "webcam" : 
-        var partial_arg$3 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
+        var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
                       return /* Webcam */Block.__(2, [s]);
                     }), (function (param) {
-                      return Json_decode.field("options", partial_arg$3, param);
+                      return Json_decode.field("options", partial_arg$4, param);
                     }), json);
     default:
       throw [
@@ -247,8 +228,6 @@ var DecodeLayer = /* module */[
   /* rawAudioEncodingByType */rawAudioEncodingByType,
   /* rawAudioEncoding */rawAudioEncoding,
   /* rawAudioFormat */rawAudioFormat,
-  /* readerTypeByType */readerTypeByType,
-  /* readerType */readerType,
   /* layerByType */layerByType,
   /* layerContent */layerContent,
   /* layer */layer
@@ -342,32 +321,6 @@ function rawAudioFormat$1(r) {
                 ]
               ]
             ]);
-}
-
-function readerType$1(param) {
-  if (param) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "channel"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "channel",
-                    Canvas$Gayer.int_of_channel(param[0])
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "saturation"
-                ],
-                /* [] */0
-              ]);
-  }
 }
 
 function layerContent$1(r) {
@@ -546,7 +499,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "readerType",
-                          readerType$1(r[0])
+                          ReaderType$Gayer.EncodeReaderType[/* readerType */0](r[0])
                         ],
                         /* [] */0
                       ]
@@ -612,7 +565,6 @@ var EncodeLayer = /* module */[
   /* transformMatrix */transformMatrix$1,
   /* rawAudioEncoding */rawAudioEncoding$1,
   /* rawAudioFormat */rawAudioFormat$1,
-  /* readerType */readerType$1,
   /* layerContent */layerContent$1,
   /* rotation */rotation$1,
   /* layer */layer$1
@@ -643,20 +595,39 @@ function renderLayerPreview(layer, changeLayer, _, saveTick, onUnmount, layerRef
   var match = layer[/* content */0];
   var tmp;
   var exit = 0;
-  if (typeof match === "number" || match.tag !== 6) {
+  if (typeof match === "number") {
     exit = 1;
   } else {
-    tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Pitch classes:"])), ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
-                    return Curry._2(changeLayer, layer, /* record */[
-                                /* content : PitchClasses */Block.__(6, [newPitches]),
-                                /* alpha */layer[/* alpha */1],
-                                /* compositeOperation */layer[/* compositeOperation */2],
-                                /* rotation */layer[/* rotation */3],
-                                /* transformMatrix */layer[/* transformMatrix */4],
-                                /* filters */layer[/* filters */5],
-                                /* id */layer[/* id */6]
-                              ]);
-                  }), /* array */[])));
+    switch (match.tag | 0) {
+      case 6 : 
+          tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Pitch classes:"])), ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
+                          return Curry._2(changeLayer, layer, /* record */[
+                                      /* content : PitchClasses */Block.__(6, [newPitches]),
+                                      /* alpha */layer[/* alpha */1],
+                                      /* compositeOperation */layer[/* compositeOperation */2],
+                                      /* rotation */layer[/* rotation */3],
+                                      /* transformMatrix */layer[/* transformMatrix */4],
+                                      /* filters */layer[/* filters */5],
+                                      /* id */layer[/* id */6]
+                                    ]);
+                        }), /* array */[])));
+          break;
+      case 9 : 
+          tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Reader:"])), ReasonReact.element(undefined, undefined, ReaderType$Gayer.make(match[0], (function (newReaderType) {
+                          return Curry._2(changeLayer, layer, /* record */[
+                                      /* content : Reader */Block.__(9, [newReaderType]),
+                                      /* alpha */layer[/* alpha */1],
+                                      /* compositeOperation */layer[/* compositeOperation */2],
+                                      /* rotation */layer[/* rotation */3],
+                                      /* transformMatrix */layer[/* transformMatrix */4],
+                                      /* filters */layer[/* filters */5],
+                                      /* id */layer[/* id */6]
+                                    ]);
+                        }), /* array */[])));
+          break;
+      default:
+        exit = 1;
+    }
   }
   if (exit === 1) {
     tmp = ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[JSON.stringify(layerContent$1(layer[/* content */0]), null, 2)]));

@@ -35,6 +35,10 @@ function video(url) {
 
 var reader_000 = /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]);
 
+var reader_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var reader_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
 var reader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
 var reader_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
@@ -45,8 +49,8 @@ var reader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var reader = /* record */[
   reader_000,
-  /* alpha */1.0,
-  /* compositeOperation : Multiply */11,
+  reader_001,
+  reader_002,
   reader_003,
   reader_004,
   reader_005,
@@ -54,6 +58,8 @@ var reader = /* record */[
 ];
 
 var saturationReader_000 = /* content : Reader */Block.__(9, [/* Saturation */0]);
+
+var saturationReader_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var saturationReader_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
 
@@ -67,7 +73,7 @@ var saturationReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var saturationReader = /* record */[
   saturationReader_000,
-  /* alpha */1.0,
+  saturationReader_001,
   saturationReader_002,
   saturationReader_003,
   saturationReader_004,
@@ -1416,7 +1422,7 @@ var slitscanMovingParams_014 = /* layers : :: */[
       /* record */[
         /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
         /* alpha */0.0,
-        /* compositeOperation : Multiply */11,
+        reader_002,
         reader_003,
         reader_004,
         reader_005,
@@ -1543,8 +1549,8 @@ var isItACrime_014 = /* layers : :: */[
   /* :: */[
     /* record */[
       /* content : Reader */Block.__(9, [/* Channel */[/* A */3]]),
-      /* alpha */1.0,
-      /* compositeOperation : Multiply */11,
+      reader_001,
+      reader_002,
       reader_003,
       reader_004,
       reader_005,
@@ -1711,7 +1717,7 @@ var history_014 = /* layers : :: */[
     /* record */[
       /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
       /* alpha */0.0,
-      /* compositeOperation : Multiply */11,
+      reader_002,
       reader_003,
       reader_004,
       reader_005,
@@ -1787,7 +1793,7 @@ var historyHalving_014 = /* layers : :: */[
           /* record */[
             /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
             /* alpha */0.0,
-            /* compositeOperation : Multiply */11,
+            reader_002,
             reader_003,
             reader_004,
             reader_005,

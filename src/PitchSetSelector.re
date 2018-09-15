@@ -14,7 +14,7 @@ let allPitchSets = [|
   allPitches,
 |];
 
-let component = ReasonReact.statelessComponent("CompositeOperationSelect");
+let component = ReasonReact.statelessComponent(__MODULE__);
 
 let make = (~pitchSet, ~onChangeSetting, _children) => {
   ...component,
