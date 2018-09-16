@@ -4,6 +4,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
@@ -18,13 +19,14 @@ function make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, rawAudioForma
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
+              var encoding = rawAudioFormat[/* encoding */4];
               var h = rawAudioFormat[/* h */3];
               var w = rawAudioFormat[/* w */2];
               var y = rawAudioFormat[/* y */1];
               var x = rawAudioFormat[/* x */0];
-              var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), rawAudioFormat[/* sampleRate */4]);
+              var buffer = audioCtx.createBuffer(1, Caml_int32.imul(w, h), rawAudioFormat[/* sampleRate */5]);
               self[/* state */1][/* audioBuffer */0][0] = Js_primitive.some(buffer);
-              return Curry._2(saveTick, layerKey, (function () {
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                             var match = self[/* state */1][/* audioBuffer */0][0];
                             var match$1 = AudioGraph$Gayer.getNode("compressor", audioGraph[0]);
                             var match$2 = Belt_MapString.get(layerRefs[0], "root");
@@ -32,8 +34,13 @@ function make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, rawAudioForma
                               var buffer = Js_primitive.valFromOption(match);
                               var ctx = Js_primitive.valFromOption(match$2).getContext("2d");
                               var imageData = ctx.getImageData(x, y, w, h);
-                              var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
-                              buffer.copyToChannel(rawImgData, 0, 0);
+                              if (encoding) {
+                                var floats = Canvas$Gayer.imageDataToFloat32Array(imageData, encoding[0]);
+                                buffer.copyToChannel(floats, 0, 0);
+                              } else {
+                                var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);
+                                buffer.copyToChannel(rawImgData, 0, 0);
+                              }
                               var node = audioCtx.createBufferSource();
                               node.buffer = buffer;
                               node.connect(match$1);

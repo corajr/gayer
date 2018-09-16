@@ -3,22 +3,26 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as Video$Gayer from "./Video.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 
-var component = ReasonReact.reducerComponent("AudioFile");
+var component = ReasonReact.reducerComponent("VideoFile-Gayer");
 
-function make(audioCtx, audioGraph, audioKey, url, _) {
-  var setAudioRef = function (theRef, param) {
+function make(audioCtx, audioGraph, _, setRef, url, _$1) {
+  var setVideoRef = function (theRef, param) {
     var state = param[/* state */1];
-    state[/* audioRef */0][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    var match = state[/* audioRef */0][0];
+    state[/* videoRef */0][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
+    Curry._1(setRef, theRef);
+    var match = state[/* videoRef */0][0];
     var match$1 = state[/* audioNode */1][0];
     if (match !== undefined && match$1 === undefined) {
-      var node = audioCtx.createMediaElementSource(Js_primitive.valFromOption(match));
+      var video = Js_primitive.valFromOption(match);
+      Video$Gayer.unmute(video);
+      var node = audioCtx.createMediaElementSource(video);
       state[/* audioNode */1][0] = node;
       audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addNode(/* tuple */[
-                audioKey,
+                url,
                 node
               ], audioGraph[0]));
       return /* () */0;
@@ -33,7 +37,7 @@ function make(audioCtx, audioGraph, audioKey, url, _) {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               return Curry._1(self[/* onUnmount */4], (function () {
-                            audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(audioKey, AudioGraph$Gayer.removeNode(audioKey, audioGraph[0])));
+                            audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeNode(url, audioGraph[0]));
                             return /* () */0;
                           }));
             }),
@@ -42,17 +46,17 @@ function make(audioCtx, audioGraph, audioKey, url, _) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
-              return React.createElement("audio", {
-                          ref: Curry._1(self[/* handle */0], setAudioRef),
+              return React.createElement("video", {
+                          ref: Curry._1(self[/* handle */0], setVideoRef),
                           autoPlay: true,
-                          controls: true,
                           loop: true,
+                          muted: true,
                           src: url
                         });
             }),
           /* initialState */(function () {
               return /* record */[
-                      /* audioRef : record */[/* contents */undefined],
+                      /* videoRef : record */[/* contents */undefined],
                       /* audioNode : record */[/* contents */undefined]
                     ];
             }),

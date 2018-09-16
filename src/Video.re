@@ -1,7 +1,7 @@
 open Canvas;
 open UserMedia;
 
-let attachVideoStream = [%bs.raw
+let attachVideoStream: (Dom.element, mediaStream) => canvasImageSource = [%bs.raw
   (video, stream) => {|
   video.srcObject = stream;
   return video;

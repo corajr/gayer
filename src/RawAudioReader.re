@@ -22,11 +22,11 @@ let make =
   initialState: () => {audioBuffer: ref(None)},
   reducer: ((), _state: state) => ReasonReact.NoUpdate,
   didMount: self => {
-    let {x, y, w, h, sampleRate} = rawAudioFormat;
+    let {x, y, w, h, encoding, sampleRate} = rawAudioFormat;
     let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
     self.state.audioBuffer := Some(buffer);
 
-    saveTick(layerKey, () =>
+    saveTick(self.onUnmount, layerKey, () =>
       switch (
         self.state.audioBuffer^,
         getNode("compressor", audioGraph^),
@@ -35,8 +35,14 @@ let make =
       | (Some(buffer), Some(sink), Some(canvas)) =>
         let ctx = getContext(getFromReact(canvas));
         let imageData = Ctx.getImageData(ctx, x, y, w, h);
-        let rawImgData = toFloat32Array(dataGet(imageData));
-        copyToChannel(buffer, rawImgData, 0, 0);
+        switch (encoding) {
+        | Float =>
+          let rawImgData = toFloat32Array(dataGet(imageData));
+          copyToChannel(buffer, rawImgData, 0, 0);
+        | Int8(c) =>
+          let floats = imageDataToFloat32Array(imageData, c);
+          copyToChannel(buffer, floats, 0, 0);
+        };
         let node = createBufferSource(audioCtx);
         bufferSet(node, buffer);
         connect(node, sink);

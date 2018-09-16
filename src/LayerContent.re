@@ -43,16 +43,7 @@ let make =
             /* width=(Js.Int.toString(width)) */
             /* height=(Js.Int.toString(height)) */
           />
-        | Video(url) =>
-          <video
-            ref=setRef
-            src=url
-            width="120"
-            height="120"
-            autoPlay=true
-            loop=true
-            muted=true
-          />
+        | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
         | Analysis(source) =>
           <AnalysisCanvas
             layerKey
@@ -61,11 +52,12 @@ let make =
             audioGraph
             input=source
             millisPerTick
+            saveTick
             saveRef=setRef
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | HandDrawn => <HandDrawnCanvas setRef width height />
-        | RawAudioWriter({x, y, w, h}) =>
+        | RawAudioWriter({x, y, w, h, encoding}) =>
           <RawAudioCanvas
             layerKey
             layerRefs
@@ -73,6 +65,7 @@ let make =
             audioGraph
             setRef
             saveTick
+            encoding
             samples=(w * h)
             width=w
             height=h

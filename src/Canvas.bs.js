@@ -297,6 +297,17 @@ function imageDataToFloatArray(imageData, channel) {
   return mapRawData(imageData.data, f);
 }
 
+function imageDataToFloat32Array(imageData, channel) {
+  var rawData = imageData.data;
+  var n = rawData.length / 4 | 0;
+  var output = new Float32Array(n);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var v = Caml_array.caml_array_get(rawData, (i << 2) + channel | 0) / 255.0;
+    Caml_array.caml_array_set(output, i, 2.0 * v - 1.0);
+  }
+  return output;
+}
+
 function imageDataToStereo(imageData, channelL, channelR) {
   var rawData = imageData.data;
   var n = rawData.length / 4 | 0;
@@ -998,6 +1009,7 @@ export {
   imageDataToPixels ,
   rawDataToFloatArray ,
   imageDataToFloatArray ,
+  imageDataToFloat32Array ,
   imageDataToStereo ,
   imageDataToHistogram ,
   makeUint8ClampedArray ,

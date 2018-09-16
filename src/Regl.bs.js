@@ -33,19 +33,19 @@ var triangleSpec = {
 
 function sobelSpec(regl) {
   return {
-          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform vec2 resolution;\n     varying vec2 uv;\n\n     void main () {\n\tfloat x = 1.0 / resolution.x;\n\tfloat y = 1.0 / resolution.y;\n\tvec4 horizEdge = vec4( 0.0 );\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y     ) ) * 2.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y     ) ) * 2.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec4 vertEdge = vec4( 0.0 );\n\tvertEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x    , uv.y - y ) ) * 2.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x    , uv.y + y ) ) * 2.0;\n\tvertEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec3 edge = sqrt((horizEdge.rgb * horizEdge.rgb) + (vertEdge.rgb * vertEdge.rgb));\n\n\tgl_FragColor = vec4( edge, texture2D(texture, uv ).a );\n\n     }\n     ",
+          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform vec2 resolution;\n     varying vec2 uv;\n\n     void main () {\n\tfloat x = 1.0 / resolution.x;\n\tfloat y = 1.0 / resolution.y;\n\tvec4 horizEdge = vec4( 0.0 );\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y     ) ) * 2.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y     ) ) * 2.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec4 vertEdge = vec4( 0.0 );\n\tvertEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x    , uv.y - y ) ) * 2.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x    , uv.y + y ) ) * 2.0;\n\tvertEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec3 edge = sqrt((horizEdge.rgb * horizEdge.rgb) + (vertEdge.rgb * vertEdge.rgb));\n\n\tgl_FragColor = vec4( edge, texture2D(texture, uv ).a );\n     }\n     ",
           vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);\n     }\n     ",
           attributes: {
             position: /* array */[
-              /* array */[
+              /* tuple */[
                 -2,
                 0
               ],
-              /* array */[
+              /* tuple */[
                 0,
                 -2
               ],
-              /* array */[
+              /* tuple */[
                 2,
                 2
               ]

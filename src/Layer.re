@@ -4,6 +4,7 @@ open Canvas;
 open MIDICanvas;
 open Music;
 open RawAudio;
+open ReaderType;
 
 type layerContent =
   | Fill(string)
@@ -19,7 +20,7 @@ type layerContent =
   | RawAudioReader(rawAudioFormat)
   | Histogram
   | Regl
-  | Reader(channel);
+  | Reader(readerType);
 
 type layer = {
   content: layerContent,
@@ -60,12 +61,29 @@ module DecodeLayer = {
     );
 
   let rotation = json => Json.Decode.(json |> float);
+
+  let rawAudioEncodingByType = (type_, json) =>
+    Json.Decode.(
+      switch (type_) {
+      | "float" => Float
+      | "int8" =>
+        json |> map(c => Int8(channel_of_int(c)), field("channel", int))
+      | _ => Int8(R)
+      }
+    );
+
+  let rawAudioEncoding = json =>
+    Json.Decode.(
+      json |> (field("type", string) |> andThen(rawAudioEncodingByType))
+    );
+
   let rawAudioFormat = json =>
     Json.Decode.{
       x: json |> field("x", int),
       y: json |> field("y", int),
       w: json |> field("w", int),
       h: json |> field("h", int),
+      encoding: json |> field("encoding", rawAudioEncoding),
       sampleRate: json |> field("sampleRate", int),
     };
 
@@ -90,7 +108,10 @@ module DecodeLayer = {
       | "histogram" => Histogram
       | "reader" =>
         json
-        |> map(i => Reader(i), map(channel_of_int, field("channel", int)))
+        |> map(
+             t => Reader(t),
+             field("readerType", DecodeReaderType.readerType),
+           )
       | "analysis" =>
         json
         |> map(
@@ -165,6 +186,16 @@ module EncodeLayer = {
       )
     );
 
+  let rawAudioEncoding =
+    Json.Encode.(
+      fun
+      | Float => object_([("type", string("float"))])
+      | Int8(channel) =>
+        object_([
+          ("type", string("int8")),
+          ("channel", int(int_of_channel(channel))),
+        ])
+    );
   let rawAudioFormat = r =>
     Json.Encode.(
       object_([
@@ -172,6 +203,7 @@ module EncodeLayer = {
         ("y", int(r.y)),
         ("w", int(r.w)),
         ("h", int(r.h)),
+        ("encoding", rawAudioEncoding(r.encoding)),
         ("sampleRate", int(r.sampleRate)),
       ])
     );
@@ -222,10 +254,10 @@ module EncodeLayer = {
           ("format", rawAudioFormat(fmt)),
         ])
       | HandDrawn => object_([("type", string("hand-drawn"))])
-      | Reader(channel) =>
+      | Reader(t) =>
         object_([
           ("type", string("reader")),
-          ("channel", int(int_of_channel(channel))),
+          ("readerType", EncodeReaderType.readerType(t)),
         ])
       }
     );
@@ -256,12 +288,13 @@ let getLayerKey: layer => string =
       Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
     );
 
-let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~layerRefs) => {
+let renderLayerPreview =
+    (~layer, ~changeLayer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) => {
   let layerKey = getLayerKey(layer);
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
     | Some(previewCanvas) =>
-      saveTick(layerKey ++ "preview", () =>
+      saveTick(onUnmount, layerKey ++ "preview", () =>
         switch (Belt.Map.String.get(layerRefs^, layerKey)) {
         | Some(layer) =>
           let ctx = getContext(getFromReact(previewCanvas));
@@ -275,16 +308,53 @@ let renderLayerPreview = (~layer, ~setRef, ~saveTick, ~layerRefs) => {
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
     <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
     <div>
-      <MaterialUi.Typography>
-        (
-          ReasonReact.string(
-            Js.Json.stringifyWithSpace(
-              EncodeLayer.layerContent(layer.content),
-              2,
-            ),
-          )
-        )
-      </MaterialUi.Typography>
+      (
+        switch (layer.content) {
+        | PitchClasses(xs) =>
+          <div>
+            <MaterialUi.Typography>
+              (ReasonReact.string("Pitch classes:"))
+            </MaterialUi.Typography>
+            <PitchSetSelector
+              pitchSet=xs
+              onChangeSetting=(
+                newPitches =>
+                  changeLayer(
+                    layer,
+                    {...layer, content: PitchClasses(newPitches)},
+                  )
+              )
+            />
+          </div>
+        | Reader(readerType) =>
+          <div>
+            <MaterialUi.Typography>
+              (ReasonReact.string("Reader:"))
+            </MaterialUi.Typography>
+            <ReaderType
+              readerType
+              onChangeSetting=(
+                newReaderType =>
+                  changeLayer(
+                    layer,
+                    {...layer, content: Reader(newReaderType)},
+                  )
+              )
+            />
+          </div>
+        | _ =>
+          <MaterialUi.Typography>
+            (
+              ReasonReact.string(
+                Js.Json.stringifyWithSpace(
+                  EncodeLayer.layerContent(layer.content),
+                  2,
+                ),
+              )
+            )
+          </MaterialUi.Typography>
+        }
+      )
     </div>
   </div>;
 };
@@ -318,7 +388,9 @@ let make =
             renderLayerPreview(
               ~layer,
               ~saveTick,
+              ~onUnmount=self.onUnmount,
               ~setRef=onSetRef(layer),
+              ~changeLayer,
               ~layerRefs,
             )
           )

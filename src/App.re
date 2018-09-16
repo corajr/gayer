@@ -1,5 +1,4 @@
 open Audio;
-open Audio.AudioInput;
 open AudioGraph;
 open Music;
 
@@ -15,6 +14,7 @@ open Video;
 
 module RList = Rationale.RList;
 
+type audioInputSetting = AudioInput.audioInputSetting;
 type filterInput = audioNode;
 
 type state = {
@@ -101,8 +101,7 @@ let setCanvasRef = (theRef, {ReasonReact.state}) => {
   };
 };
 
-let setLayerRef =
-    (audioCtx, (layer, theRef), {ReasonReact.send, ReasonReact.state}) => {
+let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
   let layerKey = getLayerKey(layer);
 
@@ -118,23 +117,8 @@ let setLayerRef =
     | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
       state.cameraInput := Some(video);
-      state.layerRefs := Belt.Map.String.set(state.layerRefs^, layerKey, aRef);
     | None => ()
     }
-  | (Video(url), Some(aRef)) =>
-    let readyState = ReactDOMRe.domElementToObj(aRef)##readyState;
-    if (readyState >= 3) {
-      switch (Belt.Map.String.get(state.loadedAudio^, url)) {
-      | Some(_) => ()
-      | None =>
-        unmute(aRef);
-        let mediaElementSource = createMediaElementSource(audioCtx, aRef);
-        Js.log("adding element source");
-        Js.log(mediaElementSource);
-        state.loadedAudio :=
-          Belt.Map.String.set(state.loadedAudio^, url, mediaElementSource);
-      };
-    };
   | (Webcam(_), _)
   | (Video(_), _)
   | (Histogram, _)
@@ -176,14 +160,6 @@ let maybeUpdateCanvas:
     switch (maybeEl^) {
     | None => ()
     | Some(canvas) => f(getFromReact(canvas))
-    };
-
-/* why can't I just use Js.Option.map here? */
-let maybeMapFilterBank: (filterBank => unit, option(filterBank)) => unit =
-  (f, maybeFilterBank) =>
-    switch (maybeFilterBank) {
-    | None => ()
-    | Some(filterBank) => f(filterBank)
     };
 
 let connectInputs: state => unit =
@@ -282,7 +258,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
               0,
               width,
             );
-          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+          Ctx.drawImage(ctx, canvasAsSource, 0, 0);
         };
         None;
       | MIDIKeyboard =>
@@ -300,15 +276,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
         };
         None;
-      | RawAudioWriter({x, y, w, h}) =>
-        /* switch (maybeLayerRef) { */
-        /* | None => () */
-        /* | Some(canvas) => */
-        /*   let otherCtx = getContext(getFromReact(canvas)); */
-        /*   let data = Ctx.getImageData(otherCtx, 0, 0, w, h); */
-        /*   Ctx.putImageData(ctx, data, x, y); */
-        /* }; */
-        None
+      | RawAudioWriter({x, y, w, h, encoding}) =>
+        switch (encoding, maybeLayerRef) {
+        | (Int8(_), Some(canvas)) =>
+          let canvasSource = getCanvasAsSource(getFromReact(canvas));
+          Ctx.drawImageDestRect(ctx, canvasSource, x, y, w, h);
+        | _ => ()
+        };
+        None;
       | RawAudioReader(_) => None
       | Regl =>
         switch (maybeLayerRef) {
@@ -327,8 +302,8 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
         };
         None;
-      | Image(url)
-      | Video(url) =>
+      | Image(_)
+      | Video(_) =>
         switch (maybeLayerRef) {
         | None => ()
         | Some(aRef) =>
@@ -473,39 +448,56 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
         };
         None;
-      | Reader(channel) =>
+      | Reader(readerType) =>
         let xToRead =
           wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
         let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
-        Ctx.setFillStyle(
-          ctx,
+        switch (readerType) {
+        | Channel(channel) =>
+          Ctx.setFillStyle(
+            ctx,
+            switch (channel) {
+            | R => rgba(127, 0, 0, 0.5)
+            | G => rgba(0, 127, 0, 0.5)
+            | B => rgba(0, 0, 127, 0.5)
+            | A => rgba(127, 127, 127, 0.5)
+            },
+          );
+          Ctx.fillRect(ctx, xToRead, 0, 1, height);
           switch (channel) {
-          | R => rgba(127, 0, 0, 0.5)
-          | G => rgba(0, 127, 0, 0.5)
-          | B => rgba(0, 0, 127, 0.5)
-          | A => rgba(127, 127, 127, 0.5)
-          },
-        );
-        Ctx.fillRect(ctx, xToRead, 0, 1, height);
-        switch (channel) {
-        | R
-        | G
-        | B =>
-          let (l, r) = imageDataToStereo(slice, channel, B);
-          Some(Stereo(l, r));
-        | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+          | R
+          | G
+          | B =>
+            let (l, r) = imageDataToStereo(slice, channel, B);
+            Some(Stereo(l, r));
+          | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+          };
+        | Saturation =>
+          Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
+          Ctx.fillRect(ctx, xToRead, 0, 1, height);
+          let saturations =
+            Array.map(
+              ({r, g, b}) => {
+                let (_, s, _) = Color.rgbToHslFloat(r, g, b);
+                s;
+              },
+              imageDataToPixels(slice),
+            );
+          Some(Mono(saturations));
         };
       };
 
-    Js.Global.setTimeout(
-      () =>
-        switch (
-          Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
-        ) {
-        | None => ()
-        | Some(f) => f()
-        },
-      0,
+    ignore(
+      Js.Global.setTimeout(
+        () =>
+          switch (
+            Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
+          ) {
+          | None => ()
+          | Some(f) => f()
+          },
+        0,
+      ),
     );
 
     maybeValues;
@@ -543,7 +535,7 @@ let getAnalysisInput:
         Belt.Map.String.get(state.loadedAudio^, s),
       )
     | AudioFile(_) => (audioCtx, None)
-    | Oscillator(oType) => (
+    | Oscillator(_) => (
         audioCtx,
         switch (state.oscillatorBank^) {
         | None => None
@@ -631,6 +623,14 @@ let generateNewFilterBanks =
   };
 };
 
+let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
+  state.tickFunctions :=
+    Belt.Map.String.set(state.tickFunctions^, key, tickFn);
+  onUnmount(() =>
+    state.tickFunctions := Belt.Map.String.remove(state.tickFunctions^, key)
+  );
+};
+
 let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
   initialState: () => defaultState,
@@ -662,7 +662,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     | AdjustScoreEventIndex(i) =>
       ReasonReact.SideEffects(
         (
-          self =>
+          _self =>
             switch (state.score) {
             | Some(({events}, eventIndexRef)) =>
               eventIndexRef :=
@@ -774,9 +774,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 switch (self.state.oscillatorBank^) {
                 | Some(bank) =>
                   switch (filterValues) {
-                  | Mono(filterValues) => updateBankGains(bank, filterValues)
+                  | Mono(filterValues) =>
+                    updateBankGains(~bank, ~gainValues=filterValues)
                   | Stereo(filterValuesL, _) =>
-                    updateBankGains(bank, filterValuesL)
+                    updateBankGains(~bank, ~gainValues=filterValuesL)
                   }
                 | None => ()
                 };
@@ -840,24 +841,27 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     self.send(Clear);
 
-    let rec animationFn = timestamp => {
-      /* let lastUpdated = self.state.animationLastUpdated^; */
-      /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
+    /* NOTE: requestAnimationFrame cannot be used in the audio path, because we
+       need a more consistent tick as provided by Js.Global.setInterval (wrapped in
+       the `setTimer` function). */
+    /* let rec animationFn = timestamp => { */
+    /* let lastUpdated = self.state.animationLastUpdated^; */
+    /* let timeSinceLastUpdate = timestamp -. lastUpdated; */
 
-      /* self.state.animationLastUpdated := timestamp; */
+    /* self.state.animationLastUpdated := timestamp; */
 
-      /* Time since beginning; Don't need to know yet, but maybe we would? */
+    /* Time since beginning; Don't need to know yet, but maybe we would? */
 
-      /* if (self.state.animationStartTime^ === 0.0) { */
-      /*   self.state.animationStartTime := timestamp; */
-      /* }; */
-      /* let timeSinceBeginning = timestamp -. self.state.animationStartTime^; */
+    /* if (self.state.animationStartTime^ === 0.0) { */
+    /*   self.state.animationStartTime := timestamp; */
+    /* }; */
+    /* let timeSinceBeginning = timestamp -. self.state.animationStartTime^; */
 
-      /* Js.log(timeSinceLastUpdate); */
+    /* Js.log(timeSinceLastUpdate); */
 
-      self.send(Tick);
-      requestAnimationFrame(window, animationFn);
-    };
+    /*   self.send(Tick); */
+    /*   requestAnimationFrame(window, animationFn); */
+    /* }; */
 
     /* requestAnimationFrame(window, animationFn); */
 
@@ -1058,15 +1062,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 layerRefs=self.state.layerRefs
                 onSetParams=(newParams => pushParamsState(newParams))
                 millisPerAudioTick=16
-                saveTick=(
-                  (key, tickFn) =>
-                    self.state.tickFunctions :=
-                      Belt.Map.String.set(
-                        self.state.tickFunctions^,
-                        key,
-                        tickFn,
-                      )
-                )
+                saveTick=(saveTick(self))
                 getAudio=(getAnalysisInput(audioCtx, self.state))
               />
             </Grid>
@@ -1094,15 +1090,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   rootHeight=self.state.params.height
                   millisPerAudioTick=16
                   getReadAndWritePos=(self.handle(getReadAndWritePos))
-                  saveTick=(
-                    (key, tickFn) =>
-                      self.state.tickFunctions :=
-                        Belt.Map.String.set(
-                          self.state.tickFunctions^,
-                          key,
-                          tickFn,
-                        )
-                  )
+                  saveTick=(saveTick(self))
                   layers=(sortLayers(self.state.params.layers))
                 />
                 <canvas

@@ -13,7 +13,7 @@ type state = {
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let drawCQTBar = (canvasRenderingContext2D, state) => {
+let drawCQTBar = (ctx, state, width, height) => {
   let audioDataL = CQT.getInputArray(state.cqt^, 0);
   let audioDataR = CQT.getInputArray(state.cqt^, 1);
   getFloatTimeDomainData(state.analyserL^, audioDataL);
@@ -23,7 +23,7 @@ let drawCQTBar = (canvasRenderingContext2D, state) => {
   let cqtLine = CQT.getOutputArray(state.cqt^);
   let outputImageData = makeImageData(~cqtLine);
 
-  Ctx.putImageData(canvasRenderingContext2D, outputImageData, 0, 0);
+  Ctx.putImageData(ctx, outputImageData, width - 1, 0);
 };
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
@@ -37,12 +37,12 @@ let make =
       ~input,
       ~millisPerTick,
       ~saveRef,
+      ~saveTick,
       _children,
     ) => {
   let setCanvasRef = (theRef, {ReasonReact.state, ReasonReact.send}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     saveRef(theRef);
-    /* saveTick(() => send(Draw)); */
   };
 
   {
@@ -96,6 +96,17 @@ let make =
           |> updateConnections
       );
 
+      saveTick(self.onUnmount, layerKey, () =>
+        switch (self.state.canvasRef^) {
+        | Some(canvas) =>
+          let canvasElement = getFromReact(canvas);
+          let ctx = getContext(canvasElement);
+
+          Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
+        | None => ()
+        }
+      );
+
       setTimer(
         self.state.timerId,
         () =>
@@ -103,7 +114,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state);
+            drawCQTBar(ctx, self.state, size, size);
           | None => ()
           },
         millisPerTick,
@@ -114,7 +125,7 @@ let make =
     render: self =>
       <canvas
         ref=(self.handle(setCanvasRef))
-        width="1"
+        width=(Js.Int.toString(size))
         height=(Js.Int.toString(size))
         style=(
           ReactDOMRe.Style.make(

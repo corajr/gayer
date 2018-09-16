@@ -18,12 +18,9 @@ let tau = Canvas.tau;
 let img = url => {...defaultLayer, content: Image(url)};
 let video = url => {...defaultLayer, content: Video(url)};
 
-let reader = {
-  ...defaultLayer,
-  content: Reader(R),
-  alpha: 1.0,
-  compositeOperation: Multiply,
-};
+let reader = {...defaultLayer, content: Reader(Channel(R))};
+
+let saturationReader = {...defaultLayer, content: Reader(Saturation)};
 
 let histogram = {
   ...defaultLayer,
@@ -32,7 +29,14 @@ let histogram = {
   compositeOperation: SourceOver,
 };
 
-let rawAudioFormat = {x: 0, y: 0, w: 64, h: 32, sampleRate: 44100};
+let rawAudioFormat = {
+  x: 0,
+  y: 0,
+  w: 64,
+  h: 32,
+  encoding: Int8(R),
+  sampleRate: 44100,
+};
 
 let rawAudioWriter = {
   ...defaultLayer,
@@ -259,6 +263,7 @@ let allLayerTypes = [
   squareLayer,
   rawAudioWriter,
   rawAudioReader,
+  saturationReader,
   reader,
 ];
 
@@ -378,7 +383,7 @@ let isItACrime = {
   ...defaultParams,
   layers: [
     img("media/is_it_a_crime_large.png"),
-    {...reader, content: Reader(A)},
+    {...reader, content: Reader(Channel(A))},
   ],
 };
 
@@ -404,7 +409,6 @@ let history = {
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */
-    historyLayer,
     /* {...pitchFilter(cMajor), alpha: 0.01}, */
     {...reader, alpha: 0.0},
   ],
@@ -466,10 +470,11 @@ let fourSeasons = {
   ...defaultParams,
   layers: [
     img("media/four_seasons.jpg"),
-    sobel,
+    /* sobel, */
     /* histogram, */
     pitchFilter(cMinor),
-    reader,
+    saturationReader,
+    /* reader, */
   ],
 };
 
@@ -548,7 +553,7 @@ let presetsWithoutLayerIds = [
   ("Rotation", vinyl),
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
-  /* ("Four Seasons", fourSeasons), */
+  ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI (requires MIDI keyboard)", midi),
@@ -558,6 +563,7 @@ let presetsWithoutLayerIds = [
   /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
   /* ("Raw audio (can feedback!)", rawAudio), */
+  /* ("Raw audio and spacy", rawAudioAndSpacy), */
   ("Empty", {...defaultParams, layers: []}),
 ];
 

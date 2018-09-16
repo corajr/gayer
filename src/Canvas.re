@@ -458,6 +458,20 @@ let imageDataToFloatArray: (imageData, channel) => array(float) =
   (imageData, channel) =>
     mapImageData(imageData, rawDataToFloatArray(channel, channel === A));
 
+let imageDataToFloat32Array: (imageData, channel) => TypedArray.float32Array =
+  (imageData, channel) => {
+    let channelOffset = int_of_channel(channel);
+    let rawData = imageData |. dataGet;
+    let n = Array.length(rawData) / 4;
+    let output =
+      TypedArray.floatArrayAsArray(TypedArray.createFloat32Array(n));
+    for (i in 0 to n - 1) {
+      let v = float_of_int(rawData[i * 4 + channelOffset]) /. 255.0;
+      output[i] = 2.0 *. v -. 1.0;
+    };
+    TypedArray.arrayFloatAsFloat32Array(output);
+  };
+
 let imageDataToStereo =
     (imageData, channelL, channelR)
     : (array(float), array(float)) => {

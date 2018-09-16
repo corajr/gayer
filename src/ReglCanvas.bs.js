@@ -8,6 +8,35 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 
+function copyLayerToTexture(maybeRegl, textureRefs, layerRefs, layerKey, textureKey) {
+  var match = maybeRegl[0];
+  var match$1 = Belt_MapString.get(layerRefs[0], layerKey);
+  if (match !== undefined && match$1 !== undefined) {
+    var aTexture = Js_primitive.valFromOption(match).texture(Js_primitive.valFromOption(match$1));
+    textureRefs[0] = Belt_MapString.set(textureRefs[0], textureKey, aTexture);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
+function applyWithTexture(drawCommandRef, textureRefs, key, width, height) {
+  var match = drawCommandRef[0];
+  var match$1 = Belt_MapString.get(textureRefs[0], key);
+  if (match !== undefined && match$1 !== undefined) {
+    Js_primitive.valFromOption(match).draw({
+          texture: Js_primitive.valFromOption(match$1),
+          resolution: /* array */[
+            width,
+            height
+          ]
+        });
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
 var component = ReasonReact.reducerComponent("ReglCanvas-Gayer");
 
 function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
@@ -23,7 +52,7 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
       var theRegl = Regl(aRef);
       state[/* reglRef */1][0] = Js_primitive.some(theRegl);
       var drawCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec(theRegl));
-      state[/* drawCommandRef */2][0] = Js_primitive.some(drawCommand);
+      state[/* drawCommandRef */3][0] = Js_primitive.some(drawCommand);
       return /* () */0;
     }
   };
@@ -33,11 +62,10 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              return Curry._2(saveTick, layerKey, (function () {
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                             var match = self[/* state */1][/* reglRef */1][0];
                             if (match !== undefined) {
-                              var regl = Js_primitive.valFromOption(match);
-                              regl.clear({
+                              Js_primitive.valFromOption(match).clear({
                                     color: /* array */[
                                       0.0,
                                       0.0,
@@ -46,21 +74,8 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
                                     ],
                                     depth: 1.0
                                   });
-                              var match$1 = self[/* state */1][/* drawCommandRef */2][0];
-                              var match$2 = Belt_MapString.get(layerRefs[0], "root");
-                              if (match$1 !== undefined && match$2 !== undefined) {
-                                var rootTexture = regl.texture(Js_primitive.valFromOption(match$2));
-                                Js_primitive.valFromOption(match$1).draw({
-                                      texture: rootTexture,
-                                      resolution: /* array */[
-                                        width,
-                                        height
-                                      ]
-                                    });
-                                return /* () */0;
-                              } else {
-                                return /* () */0;
-                              }
+                              copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, "root", "root");
+                              return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], "root", width, height);
                             } else {
                               return /* () */0;
                             }
@@ -81,6 +96,7 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
               return /* record */[
                       /* canvasRef : record */[/* contents */undefined],
                       /* reglRef : record */[/* contents */undefined],
+                      /* textureRefs : record */[/* contents */Belt_MapString.empty],
                       /* drawCommandRef : record */[/* contents */undefined]
                     ];
             }),
@@ -94,6 +110,8 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
 }
 
 export {
+  copyLayerToTexture ,
+  applyWithTexture ,
   component ,
   make ,
   

@@ -73,7 +73,6 @@ let sobelSpec = regl => {
 	vec3 edge = sqrt((horizEdge.rgb * horizEdge.rgb) + (vertEdge.rgb * vertEdge.rgb));
 
 	gl_FragColor = vec4( edge, texture2D(texture, uv ).a );
-
      }
      |},
   "vert": {|
@@ -86,7 +85,7 @@ let sobelSpec = regl => {
      }
      |},
   "attributes": {
-    "position": [|[|(-2), 0|], [|0, (-2)|], [|2, 2|]|],
+    "position": [|((-2), 0), (0, (-2)), (2, 2)|],
   },
   "uniforms": {
     "resolution": prop(regl, "resolution"),
