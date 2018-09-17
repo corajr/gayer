@@ -120,21 +120,7 @@ let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
       state.layerRefs := Belt.Map.String.set(state.layerRefs^, "webcam", aRef);
     | None => ()
     }
-  | (Webcam, _)
-  | (Slitscan(_), _)
-  | (Video(_), _)
-  | (Histogram, _)
-  | (HandDrawn, _)
-  | (Regl, _)
-  | (Image(_), _)
-  | (Analysis(_), _)
-  | (MIDIKeyboard, _)
-  | (RawAudioWriter(_), _)
-  | (Fill(_), _)
-  | (Draw(_), _)
-  | (PitchClasses(_), _)
-  | (RawAudioReader(_), _)
-  | (Reader(_), _) => ()
+  | _ => ()
   };
 };
 
@@ -337,6 +323,14 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           );
         };
         None;
+      | KeycodeWriter =>
+        switch (maybeLayerRef) {
+        | None => None
+        | Some(canvasEl) =>
+          let canvasAsSource = getCanvasAsSource(getFromReact(canvasEl));
+          Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+          None;
+        }
       | Histogram =>
         switch (maybeLayerRef) {
         | None => ()

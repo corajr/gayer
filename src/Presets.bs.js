@@ -81,6 +81,28 @@ var saturationReader = /* record */[
   saturationReader_006
 ];
 
+var keycodeWriter_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var keycodeWriter_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var keycodeWriter_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var keycodeWriter_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var keycodeWriter_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var keycodeWriter_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var keycodeWriter = /* record */[
+  /* content : KeycodeWriter */3,
+  keycodeWriter_001,
+  keycodeWriter_002,
+  keycodeWriter_003,
+  keycodeWriter_004,
+  keycodeWriter_005,
+  keycodeWriter_006
+];
+
 var histogram_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
 
 var histogram_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
@@ -90,7 +112,7 @@ var histogram_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogram = /* record */[
-  /* content : Histogram */3,
+  /* content : Histogram */4,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
   histogram_003,
@@ -254,7 +276,7 @@ var regl_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var regl_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var regl = /* record */[
-  /* content : Regl */4,
+  /* content : Regl */5,
   regl_001,
   regl_002,
   regl_003,
@@ -276,7 +298,7 @@ var sobel_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var sobel_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var sobel = /* record */[
-  /* content : Regl */4,
+  /* content : Regl */5,
   sobel_001,
   sobel_002,
   sobel_003,
@@ -2582,6 +2604,63 @@ var rawAudioAndSpacy = /* record */[
   rawAudioAndSpacy_014
 ];
 
+var keycodeParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var keycodeParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var keycodeParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var keycodeParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var keycodeParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var keycodeParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var keycodeParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var keycodeParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var keycodeParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var keycodeParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var keycodeParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var keycodeParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var keycodeParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var keycodeParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var keycodeParams_014 = /* layers : :: */[
+  fill(undefined, "black"),
+  /* :: */[
+    keycodeWriter,
+    /* :: */[
+      reader,
+      /* [] */0
+    ]
+  ]
+];
+
+var keycodeParams = /* record */[
+  keycodeParams_000,
+  keycodeParams_001,
+  keycodeParams_002,
+  keycodeParams_003,
+  keycodeParams_004,
+  keycodeParams_005,
+  keycodeParams_006,
+  keycodeParams_007,
+  keycodeParams_008,
+  keycodeParams_009,
+  keycodeParams_010,
+  keycodeParams_011,
+  keycodeParams_012,
+  keycodeParams_013,
+  keycodeParams_014
+];
+
 var init$4 = fill(undefined, "red");
 
 var presetsWithoutLayerIds_000 = /* tuple */[
@@ -2855,6 +2934,7 @@ export {
   img ,
   reader ,
   saturationReader ,
+  keycodeWriter ,
   rawAudioFormat ,
   rawAudioWriter ,
   rawAudioReader ,
@@ -2915,6 +2995,7 @@ export {
   histogram$1 as histogram,
   rawAudio ,
   rawAudioAndSpacy ,
+  keycodeParams ,
   presetsWithoutLayerIds ,
   idCounter ,
   addIds ,

@@ -17,6 +17,7 @@ type layerContent =
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
+  | KeycodeWriter
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
   | Histogram
@@ -92,6 +93,7 @@ module DecodeLayer = {
     Json.Decode.(
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
+      | "keycode-writer" => KeycodeWriter
       | "hand-drawn" => HandDrawn
       | "regl" => Regl
       | "webcam" => Webcam
@@ -243,6 +245,7 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
+      | KeycodeWriter => object_([("type", string("keycode-writer"))])
       | Histogram => object_([("type", string("histogram"))])
       | Regl => object_([("type", string("regl"))])
       | RawAudioWriter(fmt) =>

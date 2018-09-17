@@ -141,13 +141,15 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram" : 
-        return /* Histogram */3;
+        return /* Histogram */4;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
+    case "keycode-writer" : 
+        return /* KeycodeWriter */3;
     case "midi-keyboard" : 
         return /* MIDIKeyboard */2;
     case "pitchClasses" : 
@@ -178,7 +180,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
-        return /* Regl */4;
+        return /* Regl */5;
     case "slitscan" : 
         var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
@@ -356,11 +358,19 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "histogram"
+                        "keycode-writer"
                       ],
                       /* [] */0
                     ]);
       case 4 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "histogram"
+                      ],
+                      /* [] */0
+                    ]);
+      case 5 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",

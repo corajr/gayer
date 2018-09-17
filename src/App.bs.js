@@ -344,12 +344,20 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 3 : 
           if (maybeLayerRef !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+            maybeValues = undefined;
+          } else {
+            maybeValues = undefined;
+          }
+          break;
+      case 4 : 
+          if (maybeLayerRef !== undefined) {
             var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
           }
           maybeValues = undefined;
           break;
-      case 4 : 
+      case 5 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }

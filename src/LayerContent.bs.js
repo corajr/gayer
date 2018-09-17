@@ -6,6 +6,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as VideoFile$Gayer from "./VideoFile.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as ReglCanvas$Gayer from "./ReglCanvas.bs.js";
+import * as KeycodeCanvas$Gayer from "./KeycodeCanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
 import * as RawAudioReader$Gayer from "./RawAudioReader.bs.js";
@@ -44,9 +45,12 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
                   case 3 : 
-                      tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, setRef, undefined, undefined, /* array */[]));
                       break;
                   case 4 : 
+                      tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
+                      break;
+                  case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, setRef, saveTick, layerKey, width, height, /* array */[]));
                       break;
                   
