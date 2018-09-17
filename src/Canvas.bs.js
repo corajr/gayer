@@ -614,6 +614,48 @@ function command(param) {
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
+                      "SetFont"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "font",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 1 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "SetTextAlign"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "textAlign",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "SetTextBaseline"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "textBaseline",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 3 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
                       "SetFillStyle"
                     ],
                     /* :: */[
@@ -624,7 +666,21 @@ function command(param) {
                       /* [] */0
                     ]
                   ]);
-    case 1 : 
+    case 4 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "SetStrokeStyle"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "style",
+                        param[0]
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    case 5 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -638,7 +694,59 @@ function command(param) {
                       /* [] */0
                     ]
                   ]);
-    case 2 : 
+    case 6 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "FillText"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "text",
+                        param[0]
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "x",
+                          length(param[1])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "y",
+                            length(param[2])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]
+                  ]);
+    case 7 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "StrokeText"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "text",
+                        param[0]
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "x",
+                          length(param[1])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "y",
+                            length(param[2])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]
+                  ]);
+    case 8 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -652,7 +760,7 @@ function command(param) {
                       /* [] */0
                     ]
                   ]);
-    case 3 : 
+    case 9 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -672,7 +780,7 @@ function command(param) {
                       ]
                     ]
                   ]);
-    case 4 : 
+    case 10 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -692,7 +800,7 @@ function command(param) {
                       ]
                     ]
                   ]);
-    case 5 : 
+    case 11 : 
         return Json_encode.object_(/* :: */[
                     /* tuple */[
                       "type",
@@ -813,7 +921,7 @@ function commandByType(type_, json) {
         return Json_decode.andThen((function (src) {
                       return (function (param) {
                           return Json_decode.map((function (rect_) {
-                                        return /* DrawImage */Block.__(4, [
+                                        return /* DrawImage */Block.__(10, [
                                                   src,
                                                   rect_
                                                 ]);
@@ -830,7 +938,7 @@ function commandByType(type_, json) {
                           return Json_decode.andThen((function (srcR) {
                                         return (function (param) {
                                             return Json_decode.map((function (destR) {
-                                                          return /* DrawImageSourceDest */Block.__(5, [
+                                                          return /* DrawImageSourceDest */Block.__(11, [
                                                                     src,
                                                                     srcR,
                                                                     destR
@@ -848,27 +956,95 @@ function commandByType(type_, json) {
                     }), json);
     case "FillRect" : 
         return Json_decode.map((function (r) {
-                      return /* FillRect */Block.__(1, [r]);
+                      return /* FillRect */Block.__(5, [r]);
                     }), (function (param) {
                       return Json_decode.field("rect", rect$1, param);
                     }), json);
+    case "FillText" : 
+        return Json_decode.andThen((function (s) {
+                      return (function (param) {
+                          return Json_decode.andThen((function (x) {
+                                        return (function (param) {
+                                            return Json_decode.map((function (y) {
+                                                          return /* FillText */Block.__(6, [
+                                                                    s,
+                                                                    x,
+                                                                    y
+                                                                  ]);
+                                                        }), (function (param) {
+                                                          return Json_decode.field("y", length$1, param);
+                                                        }), param);
+                                          });
+                                      }), (function (param) {
+                                        return Json_decode.field("x", length$1, param);
+                                      }), param);
+                        });
+                    }), (function (param) {
+                      return Json_decode.field("text", Json_decode.string, param);
+                    }), json);
     case "Rotate" : 
         return Json_decode.map((function (r) {
-                      return /* Rotate */Block.__(2, [r]);
+                      return /* Rotate */Block.__(8, [r]);
                     }), (function (param) {
                       return Json_decode.field("rad", Json_decode.$$float, param);
                     }), json);
     case "SetFillStyle" : 
         return Json_decode.map((function (s) {
-                      return /* SetFillStyle */Block.__(0, [s]);
+                      return /* SetFillStyle */Block.__(3, [s]);
                     }), (function (param) {
                       return Json_decode.field("style", Json_decode.string, param);
+                    }), json);
+    case "SetFont" : 
+        return Json_decode.map((function (s) {
+                      return /* SetFont */Block.__(0, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("font", Json_decode.string, param);
+                    }), json);
+    case "SetStrokeStyle" : 
+        return Json_decode.map((function (s) {
+                      return /* SetFillStyle */Block.__(3, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("style", Json_decode.string, param);
+                    }), json);
+    case "SetTextAlign" : 
+        return Json_decode.map((function (s) {
+                      return /* SetTextAlign */Block.__(1, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("textAlign", Json_decode.string, param);
+                    }), json);
+    case "SetTextBaseline" : 
+        return Json_decode.map((function (s) {
+                      return /* SetTextBaseline */Block.__(2, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("textBaseline", Json_decode.string, param);
+                    }), json);
+    case "StrokeText" : 
+        return Json_decode.andThen((function (s) {
+                      return (function (param) {
+                          return Json_decode.andThen((function (x) {
+                                        return (function (param) {
+                                            return Json_decode.map((function (y) {
+                                                          return /* StrokeText */Block.__(7, [
+                                                                    s,
+                                                                    x,
+                                                                    y
+                                                                  ]);
+                                                        }), (function (param) {
+                                                          return Json_decode.field("y", length$1, param);
+                                                        }), param);
+                                          });
+                                      }), (function (param) {
+                                        return Json_decode.field("x", length$1, param);
+                                      }), param);
+                        });
+                    }), (function (param) {
+                      return Json_decode.field("text", Json_decode.string, param);
                     }), json);
     case "Translate" : 
         return Json_decode.andThen((function (x) {
                       return (function (param) {
                           return Json_decode.map((function (y) {
-                                        return /* Translate */Block.__(3, [
+                                        return /* Translate */Block.__(9, [
                                                   x,
                                                   y
                                                 ]);
@@ -933,16 +1109,34 @@ function getLength(ctx, len) {
 function drawCommand(ctx, cmd) {
   switch (cmd.tag | 0) {
     case 0 : 
-        ctx.fillStyle = cmd[0];
+        ctx.font = cmd[0];
         return /* () */0;
     case 1 : 
+        ctx.textAlign = cmd[0];
+        return /* () */0;
+    case 2 : 
+        ctx.textBaseline = cmd[0];
+        return /* () */0;
+    case 3 : 
+        ctx.fillStyle = cmd[0];
+        return /* () */0;
+    case 4 : 
+        ctx.strokeStyle = cmd[0];
+        return /* () */0;
+    case 5 : 
         var match = cmd[0];
         ctx.fillRect(getLength(ctx, match[/* x */0]), getLength(ctx, match[/* y */1]), getLength(ctx, match[/* w */2]), getLength(ctx, match[/* h */3]));
         return /* () */0;
-    case 2 : 
+    case 6 : 
+        ctx.fillText(cmd[0], getLength(ctx, cmd[1]), getLength(ctx, cmd[2]));
+        return /* () */0;
+    case 7 : 
+        ctx.strokeText(cmd[0], getLength(ctx, cmd[1]), getLength(ctx, cmd[2]));
+        return /* () */0;
+    case 8 : 
         ctx.rotate(cmd[0]);
         return /* () */0;
-    case 3 : 
+    case 9 : 
         return transform(ctx, /* record */[
                     /* horizontalScaling */1.0,
                     /* horizontalSkewing */0.0,
@@ -951,11 +1145,11 @@ function drawCommand(ctx, cmd) {
                     /* horizontalMoving */getLength(ctx, cmd[0]),
                     /* verticalMoving */getLength(ctx, cmd[1])
                   ]);
-    case 4 : 
+    case 10 : 
         var match$1 = cmd[1];
         ctx.drawImage(ctx.canvas, getLength(ctx, match$1[/* x */0]), getLength(ctx, match$1[/* y */1]), getLength(ctx, match$1[/* w */2]), getLength(ctx, match$1[/* h */3]));
         return /* () */0;
-    case 5 : 
+    case 11 : 
         var match$2 = cmd[2];
         var match$3 = cmd[1];
         ctx.drawImage(ctx.canvas, getLength(ctx, match$3[/* x */0]), getLength(ctx, match$3[/* y */1]), getLength(ctx, match$3[/* w */2]), getLength(ctx, match$3[/* h */3]), getLength(ctx, match$2[/* x */0]), getLength(ctx, match$2[/* y */1]), getLength(ctx, match$2[/* w */2]), getLength(ctx, match$2[/* h */3]));

@@ -8,16 +8,14 @@ import * as CameraOptions$Gayer from "../src/CameraOptions.bs.js";
 
 var slitscan = /* StaticX */Block.__(0, [320]);
 
-var cameraOptExamples_000 = /* record */[/* slitscan */undefined];
-
-var cameraOptExamples_001 = /* :: */[
-  /* record */[/* slitscan */slitscan],
-  /* [] */0
+var cameraOptExamples_000 = /* record */[
+  /* sourceLayerKey */"blah",
+  /* slitscan */slitscan
 ];
 
 var cameraOptExamples = /* :: */[
   cameraOptExamples_000,
-  cameraOptExamples_001
+  /* [] */0
 ];
 
 describe("EncodeCameraOptions <=> DecodeCameraOptions", (function () {

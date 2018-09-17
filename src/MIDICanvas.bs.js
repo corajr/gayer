@@ -29,14 +29,14 @@ function makeNoteColors(getFillStyleForNumber) {
   var noteDrawCommands = /* [] */0;
   for(var i = 127; i >= 0; --i){
     noteDrawCommands = /* :: */[
-      /* FillRect */Block.__(1, [/* record */[
+      /* FillRect */Block.__(5, [/* record */[
             /* x : Pixels */Block.__(1, [0]),
             /* y : Pixels */Block.__(1, [i]),
             /* w : Pixels */Block.__(1, [1]),
             /* h : Pixels */Block.__(1, [1])
           ]]),
       /* :: */[
-        /* SetFillStyle */Block.__(0, [Curry._1(getFillStyleForNumber, i)]),
+        /* SetFillStyle */Block.__(3, [Curry._1(getFillStyleForNumber, i)]),
         noteDrawCommands
       ]
     ];

@@ -10,7 +10,8 @@ type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
   | HandDrawn
-  | Webcam(cameraOptions)
+  | Webcam
+  | Slitscan(cameraOptions)
   | Image(string)
   | Video(string)
   | Analysis(audioInputSetting)
@@ -93,10 +94,11 @@ module DecodeLayer = {
       | "midi-keyboard" => MIDIKeyboard
       | "hand-drawn" => HandDrawn
       | "regl" => Regl
-      | "webcam" =>
+      | "webcam" => Webcam
+      | "slitscan" =>
         json
         |> map(
-             s => Webcam(s),
+             s => Slitscan(s),
              field("options", DecodeCameraOptions.cameraOptions),
            )
       | "image" => json |> map(s => Image(s), field("url", string))
@@ -211,9 +213,10 @@ module EncodeLayer = {
   let layerContent = r =>
     Json.Encode.(
       switch (r) {
-      | Webcam(s) =>
+      | Webcam => object_([("type", string("webcam"))])
+      | Slitscan(s) =>
         object_([
-          ("type", string("webcam")),
+          ("type", string("slitscan")),
           ("options", EncodeCameraOptions.cameraOptions(s)),
         ])
       | Image(url) =>

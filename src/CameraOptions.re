@@ -4,7 +4,10 @@ type slitscanOptions =
   | StaticX(int)
   | StaticY(int);
 
-type cameraOptions = {slitscan: option(slitscanOptions)};
+type cameraOptions = {
+  sourceLayerKey: string,
+  slitscan: slitscanOptions,
+};
 
 module DecodeCameraOptions = {
   let slitscanOptions = json =>
@@ -26,7 +29,8 @@ module DecodeCameraOptions = {
 
   let cameraOptions = json =>
     Json.Decode.{
-      slitscan: json |> optional(field("slitscan", slitscanOptions)),
+      sourceLayerKey: json |> field("source", string),
+      slitscan: json |> field("slitscan", slitscanOptions),
     };
 };
 
@@ -44,6 +48,9 @@ module EncodeCameraOptions = {
 
   let cameraOptions = r =>
     Json.Encode.(
-      object_([("slitscan", nullable(slitscanOptions, r.slitscan))])
+      object_([
+        ("source", string(r.sourceLayerKey)),
+        ("slitscan", slitscanOptions(r.slitscan)),
+      ])
     );
 };

@@ -61,22 +61,46 @@ let draw = (~alpha: float=1.0, cmds: list(command)) => {
   alpha,
 };
 
+type fillOrStroke =
+  | Fill
+  | Stroke;
+
+let text =
+    (
+      ~x: length=Divide(Width, Constant(2)),
+      ~y: length=Divide(Height, Constant(2)),
+      ~font: string="48px monospace",
+      ~align: string="center",
+      ~baseline: string="middle",
+      ~color: string="white",
+      ~fillOrStroke: fillOrStroke=Fill,
+      s: string,
+    ) => {
+  let drawTextCommands =
+    switch (fillOrStroke) {
+    | Fill => [SetFillStyle(color), FillText(s, x, y)]
+    | Stroke => [SetStrokeStyle(color), StrokeText(s, x, y)]
+    };
+
+  draw([
+    SetFont(font),
+    SetTextAlign(align),
+    SetTextBaseline(baseline),
+    ...drawTextCommands,
+  ]);
+};
+
 let regl = {...defaultLayer, content: Regl};
 
 let sobel = {...defaultLayer, content: Regl};
 
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
-let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
+let webcam = {...defaultLayer, content: Webcam};
 
 let slitscan = {
   ...defaultLayer,
-  content: Webcam({slitscan: Some(StaticX(320))}),
-};
-
-let slitscanMoving = {
-  ...defaultLayer,
-  content: Webcam({slitscan: Some(ReadPosX)}),
+  content: Slitscan({sourceLayerKey: "webcam", slitscan: StaticX(320)}),
 };
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -324,6 +348,7 @@ let slitscanParams = {
   layers: [
     analyzer,
     /* squareColumnLayer, */
+    {...webcam, alpha: 0.0},
     {...slitscan, compositeOperation: Overlay},
     /* pitchFilter(cMajor), */
     historyLayer,
@@ -358,18 +383,6 @@ let slitscanHistogramParams = {
     reader,
   ],
 };
-
-let slitscanMovingParams = {
-  ...defaultParams,
-  shouldClear: false,
-  layers: [
-    slitscanMoving,
-    {...analyzer, compositeOperation: Multiply, alpha: 0.5},
-    /* pitchFilter(cMajor), */
-    {...reader, alpha: 0.0},
-  ],
-};
-
 let whiteboardParams = {
   ...defaultParams,
   layers: [
@@ -537,6 +550,20 @@ let rawAudioAndSpacy = {
 };
 
 let presetsWithoutLayerIds = [
+  ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
+  (
+    "Welcome (Audio)",
+    {
+      ...defaultParams,
+      layers: [
+        fill("black"),
+        text("GAYER"),
+        {...fill("red"), compositeOperation: Color},
+        pitchFilter(cMajor),
+        saturationReader,
+      ],
+    },
+  ),
   /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
@@ -546,7 +573,6 @@ let presetsWithoutLayerIds = [
   ("Slitscan", slitscanParams),
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
   /* ("Slitscan (color histogram)", slitscanHistogramParams), */
-  /* ("Slitscan (moving)", slitscanMovingParams), */
   ("History", history),
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */

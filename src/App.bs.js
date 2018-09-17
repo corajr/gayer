@@ -132,17 +132,18 @@ function setLayerRef(_, param, param$1) {
     state[/* layerRefs */17][0] = Belt_MapString.set(state[/* layerRefs */17][0], layerKey, theRef);
   }
   var match = layer[/* content */0];
-  if (typeof match === "number" || !(match.tag === 2 && !(theRef == null))) {
-    return /* () */0;
-  } else {
+  if (typeof match === "number" && !(match !== 1 || (theRef == null))) {
     var match$1 = state[/* mediaStream */9];
     if (match$1 !== undefined) {
       var video = Video$Gayer.attachVideoStream(theRef, Js_primitive.valFromOption(match$1));
       state[/* cameraInput */12][0] = Js_primitive.some(video);
+      state[/* layerRefs */17][0] = Belt_MapString.set(state[/* layerRefs */17][0], "webcam", theRef);
       return /* () */0;
     } else {
       return /* () */0;
     }
+  } else {
+    return /* () */0;
   }
 }
 
@@ -319,7 +320,6 @@ function drawLayer(ctx, width, height, state, layer) {
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */17][0], layerKey);
   var match$1 = layer[/* content */0];
   var maybeValues;
-  var exit = 0;
   if (typeof match$1 === "number") {
     switch (match$1) {
       case 0 : 
@@ -329,20 +329,27 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 1 : 
+          var match$2 = state[/* cameraInput */12][0];
+          if (match$2 !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(match$2), 0, 0, width, height);
+          }
+          maybeValues = undefined;
+          break;
+      case 2 : 
           if (maybeLayerRef !== undefined) {
             var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
           }
           maybeValues = undefined;
           break;
-      case 2 : 
+      case 3 : 
           if (maybeLayerRef !== undefined) {
             var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
           }
           maybeValues = undefined;
           break;
-      case 3 : 
+      case 4 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
@@ -360,43 +367,6 @@ function drawLayer(ctx, width, height, state, layer) {
       case 1 : 
           Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match$1[0]);
           maybeValues = undefined;
-          break;
-      case 2 : 
-          var cameraWidthToCanvasWidth = 640 / width;
-          var cameraHeightToCanvasHeight = 480 / height;
-          var match$2 = state[/* cameraInput */12][0];
-          var match$3 = match$1[0][/* slitscan */0];
-          if (match$2 !== undefined) {
-            var input = Js_primitive.valFromOption(match$2);
-            if (match$3 !== undefined) {
-              var match$4 = match$3;
-              if (typeof match$4 === "number") {
-                if (match$4 === 0) {
-                  var xToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-                  var xToReadCamera = xToWrite$1 * cameraWidthToCanvasWidth | 0;
-                  ctx.drawImage(input, xToReadCamera, 0, cameraWidthToCanvasWidth | 0, 480, xToWrite$1, 0, 1, height);
-                } else {
-                  var yToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
-                  var yToRead = yToWrite * cameraHeightToCanvasHeight | 0;
-                  ctx.drawImage(input, 0, yToRead, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite, width, 1);
-                }
-              } else if (match$4.tag) {
-                var yToWrite$1 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, height);
-                var yToReadCamera = match$4[0] * cameraHeightToCanvasHeight | 0;
-                ctx.drawImage(input, 0, yToReadCamera, 640, cameraHeightToCanvasHeight | 0, 0, yToWrite$1, width, 1);
-              } else {
-                var xToWrite$2 = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-                ctx.drawImage(input, match$4[0], 0, 1, 480, xToWrite$2, 0, 1, height);
-              }
-            } else {
-              ctx.drawImage(input, 0, 0, width, height);
-            }
-          }
-          maybeValues = undefined;
-          break;
-      case 3 : 
-      case 4 : 
-          exit = 1;
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
@@ -421,10 +391,10 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 7 : 
-          var match$5 = match$1[0];
-          if (match$5[/* encoding */4]) {
+          var match$3 = match$1[0];
+          if (match$3[/* encoding */4]) {
             if (maybeLayerRef !== undefined) {
-              ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), match$5[/* x */0], match$5[/* y */1], match$5[/* w */2], match$5[/* h */3]);
+              ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), match$3[/* x */0], match$3[/* y */1], match$3[/* w */2], match$3[/* h */3]);
             }
             
           }
@@ -460,10 +430,10 @@ function drawLayer(ctx, width, height, state, layer) {
             if (channel >= 3) {
               maybeValues = /* Mono */Block.__(0, [Canvas$Gayer.imageDataToFloatArray(slice, channel)]);
             } else {
-              var match$6 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
+              var match$4 = Canvas$Gayer.imageDataToStereo(slice, channel, /* B */2);
               maybeValues = /* Stereo */Block.__(1, [
-                  match$6[0],
-                  match$6[1]
+                  match$4[0],
+                  match$4[1]
                 ]);
             }
           } else {
@@ -475,14 +445,12 @@ function drawLayer(ctx, width, height, state, layer) {
             maybeValues = /* Mono */Block.__(0, [saturations]);
           }
           break;
-      
+      default:
+        if (maybeLayerRef !== undefined) {
+          ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+        }
+        maybeValues = undefined;
     }
-  }
-  if (exit === 1) {
-    if (maybeLayerRef !== undefined) {
-      ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-    }
-    maybeValues = undefined;
   }
   setTimeout((function () {
           var match = Belt_MapString.get(state[/* tickFunctions */22][0], layerKey + "preview");

@@ -269,6 +269,10 @@ module Ctx = {
 
   [@bs.set] external setFont : (ctx, string) => unit = "font";
 
+  [@bs.set] external setTextAlign : (ctx, string) => unit = "textAlign";
+
+  [@bs.set] external setTextBaseline : (ctx, string) => unit = "textBaseline";
+
   [@bs.set] external _setFilter : (ctx, string) => unit = "filter";
 
   let setFilter: (ctx, list(filter)) => unit =
@@ -352,6 +356,8 @@ module Ctx = {
   [@bs.send] external fillRect : (ctx, dim, dim, dim, dim) => unit = "";
 
   [@bs.send] external fillText : (ctx, string, dim, dim) => unit = "";
+
+  [@bs.send] external strokeText : (ctx, string, dim, dim) => unit = "";
 
   [@bs.send] external strokeRect : (ctx, dim, dim, dim, dim) => unit = "";
 
@@ -613,8 +619,14 @@ module DrawCommand = {
   };
 
   type command =
+    | SetFont(string)
+    | SetTextAlign(string)
+    | SetTextBaseline(string)
     | SetFillStyle(string)
+    | SetStrokeStyle(string)
     | FillRect(rect)
+    | FillText(string, length, length)
+    | StrokeText(string, length, length)
     | Rotate(rotation)
     | Translate(length, length)
     | DrawImage(imgSource, rect)
@@ -673,14 +685,44 @@ module DrawCommand = {
     let command =
       Json.Encode.(
         fun
+        | SetFont(s) =>
+          object_([("type", string("SetFont")), ("font", string(s))])
+        | SetTextAlign(s) =>
+          object_([
+            ("type", string("SetTextAlign")),
+            ("textAlign", string(s)),
+          ])
+        | SetTextBaseline(s) =>
+          object_([
+            ("type", string("SetTextBaseline")),
+            ("textBaseline", string(s)),
+          ])
         | SetFillStyle(s) =>
           object_([
             ("type", string("SetFillStyle")),
             ("style", string(s)),
           ])
+        | SetStrokeStyle(s) =>
+          object_([
+            ("type", string("SetStrokeStyle")),
+            ("style", string(s)),
+          ])
         | FillRect(r) =>
           object_([("type", string("FillRect")), ("rect", rect(r))])
-
+        | FillText(s, x, y) =>
+          object_([
+            ("type", string("FillText")),
+            ("text", string(s)),
+            ("x", length(x)),
+            ("y", length(y)),
+          ])
+        | StrokeText(s, x, y) =>
+          object_([
+            ("type", string("StrokeText")),
+            ("text", string(s)),
+            ("x", length(x)),
+            ("y", length(y)),
+          ])
         | Rotate(r) =>
           object_([("type", string("Rotate")), ("rad", float(r))])
         | Translate(x, y) =>
@@ -756,6 +798,36 @@ module DrawCommand = {
           switch (type_) {
           | "SetFillStyle" =>
             json |> map(s => SetFillStyle(s), field("style", string))
+          | "SetFont" => json |> map(s => SetFont(s), field("font", string))
+          | "SetTextAlign" =>
+            json |> map(s => SetTextAlign(s), field("textAlign", string))
+          | "SetTextBaseline" =>
+            json
+            |> map(s => SetTextBaseline(s), field("textBaseline", string))
+          | "SetStrokeStyle" =>
+            json |> map(s => SetFillStyle(s), field("style", string))
+          | "FillText" =>
+            json
+            |> (
+              field("text", string)
+              |> andThen(s =>
+                   field("x", length)
+                   |> andThen(x =>
+                        map(y => FillText(s, x, y), field("y", length))
+                      )
+                 )
+            )
+          | "StrokeText" =>
+            json
+            |> (
+              field("text", string)
+              |> andThen(s =>
+                   field("x", length)
+                   |> andThen(x =>
+                        map(y => StrokeText(s, x, y), field("y", length))
+                      )
+                 )
+            )
           | "DrawImage" =>
             json
             |> (
@@ -823,7 +895,12 @@ module DrawCommand = {
   let drawCommand: (ctx, command) => unit =
     (ctx, cmd) =>
       switch (cmd) {
+      | SetFont(font) => Ctx.setFont(ctx, font)
+      | SetTextAlign(textAlign) => Ctx.setTextAlign(ctx, textAlign)
+      | SetTextBaseline(textBaseline) =>
+        Ctx.setTextBaseline(ctx, textBaseline)
       | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
+      | SetStrokeStyle(style) => Ctx.setStrokeStyle(ctx, style)
       | Translate(x, y) =>
         Ctx.transform(
           ctx,
@@ -842,6 +919,10 @@ module DrawCommand = {
           getLength(ctx, w),
           getLength(ctx, h),
         )
+      | FillText(s, x, y) =>
+        Ctx.fillText(ctx, s, getLength(ctx, x), getLength(ctx, y))
+      | StrokeText(s, x, y) =>
+        Ctx.strokeText(ctx, s, getLength(ctx, x), getLength(ctx, y))
       | DrawImage(src, {x, y, w, h}) =>
         switch (src) {
         | Self =>

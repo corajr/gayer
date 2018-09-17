@@ -112,14 +112,16 @@ let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
   };
 
   switch (layer.content, maybeRef) {
-  | (Webcam(_), Some(aRef)) =>
+  | (Webcam, Some(aRef)) =>
     switch (state.mediaStream) {
     | Some(stream) =>
       let video = attachVideoStream(aRef, stream);
       state.cameraInput := Some(video);
+      state.layerRefs := Belt.Map.String.set(state.layerRefs^, "webcam", aRef);
     | None => ()
     }
-  | (Webcam(_), _)
+  | (Webcam, _)
+  | (Slitscan(_), _)
   | (Video(_), _)
   | (Histogram, _)
   | (HandDrawn, _)
@@ -302,6 +304,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
         };
         None;
+      | Slitscan(_)
       | Image(_)
       | Video(_) =>
         switch (maybeLayerRef) {
@@ -311,110 +314,11 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
         };
         None;
-      | Webcam(opts) =>
-        let cameraWidth = 640;
-        let cameraHeight = 480;
-
-        let cameraWidthToCanvasWidth =
-          float_of_int(cameraWidth) /. float_of_int(width);
-        let cameraHeightToCanvasHeight =
-          float_of_int(cameraHeight) /. float_of_int(height);
-
-        switch (state.cameraInput^, opts.slitscan) {
-        | (None, _) => ()
-        | (Some(input), None) =>
+      | Webcam =>
+        switch (state.cameraInput^) {
+        | None => ()
+        | Some(input) =>
           Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-        | (Some(input), Some(StaticX(xToRead))) =>
-          let xToWrite =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              width,
-            );
-          Ctx.drawImageSourceRectDestRect(
-            ctx,
-            input,
-            xToRead,
-            0,
-            1,
-            cameraHeight,
-            xToWrite,
-            0,
-            1,
-            height,
-          );
-        | (Some(input), Some(ReadPosX)) =>
-          let xToWrite =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              width,
-            );
-          let xToReadCamera =
-            int_of_float(float_of_int(xToWrite) *. cameraWidthToCanvasWidth);
-          Ctx.drawImageSourceRectDestRect(
-            ctx,
-            input,
-            xToReadCamera,
-            0,
-            int_of_float(cameraWidthToCanvasWidth),
-            cameraHeight,
-            xToWrite,
-            0,
-            1,
-            height,
-          );
-        | (Some(input), Some(ReadPosY)) =>
-          let yToWrite =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              height,
-            );
-
-          let yToRead =
-            int_of_float(
-              float_of_int(yToWrite) *. cameraHeightToCanvasHeight,
-            );
-
-          Ctx.drawImageSourceRectDestRect(
-            ctx,
-            input,
-            0,
-            yToRead,
-            cameraWidth,
-            int_of_float(cameraHeightToCanvasHeight),
-            0,
-            yToWrite,
-            width,
-            1,
-          );
-        | (Some(input), Some(StaticY(yToRead))) =>
-          /* TODO: fix this :( */
-          let yToWrite =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              height,
-            );
-
-          let yToReadCamera =
-            int_of_float(
-              float_of_int(yToRead) *. cameraHeightToCanvasHeight,
-            );
-
-          Ctx.drawImageSourceRectDestRect(
-            ctx,
-            input,
-            0,
-            yToReadCamera,
-            cameraWidth,
-            int_of_float(cameraHeightToCanvasHeight),
-            0,
-            yToWrite,
-            width,
-            1,
-          );
         };
         None;
       | PitchClasses(classes) =>

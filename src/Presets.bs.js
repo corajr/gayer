@@ -90,7 +90,7 @@ var histogram_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogram = /* record */[
-  /* content : Histogram */2,
+  /* content : Histogram */3,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
   histogram_003,
@@ -194,6 +194,53 @@ function draw($staropt$star, cmds) {
         ];
 }
 
+function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, $staropt$star$5, $staropt$star$6, s) {
+  var x = $staropt$star !== undefined ? $staropt$star : /* Divide */Block.__(5, [
+        /* Width */0,
+        /* Constant */Block.__(0, [2])
+      ]);
+  var y = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Divide */Block.__(5, [
+        /* Height */1,
+        /* Constant */Block.__(0, [2])
+      ]);
+  var font = $staropt$star$2 !== undefined ? $staropt$star$2 : "48px monospace";
+  var align = $staropt$star$3 !== undefined ? $staropt$star$3 : "center";
+  var baseline = $staropt$star$4 !== undefined ? $staropt$star$4 : "middle";
+  var color = $staropt$star$5 !== undefined ? $staropt$star$5 : "white";
+  var fillOrStroke = $staropt$star$6 !== undefined ? $staropt$star$6 : /* Fill */0;
+  var drawTextCommands = fillOrStroke ? /* :: */[
+      /* SetStrokeStyle */Block.__(4, [color]),
+      /* :: */[
+        /* StrokeText */Block.__(7, [
+            s,
+            x,
+            y
+          ]),
+        /* [] */0
+      ]
+    ] : /* :: */[
+      /* SetFillStyle */Block.__(3, [color]),
+      /* :: */[
+        /* FillText */Block.__(6, [
+            s,
+            x,
+            y
+          ]),
+        /* [] */0
+      ]
+    ];
+  return draw(undefined, /* :: */[
+              /* SetFont */Block.__(0, [font]),
+              /* :: */[
+                /* SetTextAlign */Block.__(1, [align]),
+                /* :: */[
+                  /* SetTextBaseline */Block.__(2, [baseline]),
+                  drawTextCommands
+                ]
+              ]
+            ]);
+}
+
 var regl_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var regl_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
@@ -207,7 +254,7 @@ var regl_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var regl_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var regl = /* record */[
-  /* content : Regl */3,
+  /* content : Regl */4,
   regl_001,
   regl_002,
   regl_003,
@@ -229,7 +276,7 @@ var sobel_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var sobel_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var sobel = /* record */[
-  /* content : Regl */3,
+  /* content : Regl */4,
   sobel_001,
   sobel_002,
   sobel_003,
@@ -262,8 +309,6 @@ var analyzer = /* record */[
   analyzer_006
 ];
 
-var webcam_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]);
-
 var webcam_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var webcam_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
@@ -277,7 +322,7 @@ var webcam_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var webcam_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var webcam = /* record */[
-  webcam_000,
+  /* content : Webcam */1,
   webcam_001,
   webcam_002,
   webcam_003,
@@ -286,7 +331,10 @@ var webcam = /* record */[
   webcam_006
 ];
 
-var slitscan_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* StaticX */Block.__(0, [320])]]);
+var slitscan_000 = /* content : Slitscan */Block.__(2, [/* record */[
+      /* sourceLayerKey */"webcam",
+      /* slitscan : StaticX */Block.__(0, [320])
+    ]]);
 
 var slitscan_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
@@ -310,30 +358,6 @@ var slitscan = /* record */[
   slitscan_006
 ];
 
-var slitscanMoving_000 = /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* ReadPosX */0]]);
-
-var slitscanMoving_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
-
-var slitscanMoving_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
-
-var slitscanMoving_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
-
-var slitscanMoving_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
-
-var slitscanMoving_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
-
-var slitscanMoving_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
-
-var slitscanMoving = /* record */[
-  slitscanMoving_000,
-  slitscanMoving_001,
-  slitscanMoving_002,
-  slitscanMoving_003,
-  slitscanMoving_004,
-  slitscanMoving_005,
-  slitscanMoving_006
-];
-
 var hubble = img("media/hubble_ultra_deep_field.jpg");
 
 var spacy_001 = /* :: */[
@@ -349,7 +373,7 @@ var spacy = /* :: */[
   spacy_001
 ];
 
-var drawSelfFullScreen = /* DrawImage */Block.__(4, [
+var drawSelfFullScreen = /* DrawImage */Block.__(10, [
     /* Self */0,
     /* record */[
       /* x : Pixels */Block.__(1, [0]),
@@ -362,7 +386,7 @@ var drawSelfFullScreen = /* DrawImage */Block.__(4, [
 var init = img("media/harmony.png");
 
 var init$1 = draw(undefined, /* :: */[
-      /* DrawImage */Block.__(4, [
+      /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
             /* x : Pixels */Block.__(1, [0]),
@@ -372,7 +396,7 @@ var init$1 = draw(undefined, /* :: */[
           ]
         ]),
       /* :: */[
-        /* DrawImage */Block.__(4, [
+        /* DrawImage */Block.__(10, [
             /* Self */0,
             /* record */[
               /* x : Pixels */Block.__(1, [0]),
@@ -430,14 +454,14 @@ var harmony = /* :: */[
 ];
 
 var rotateLayer = draw(undefined, /* :: */[
-      /* Translate */Block.__(3, [
+      /* Translate */Block.__(9, [
           /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0]),
           /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])
         ]),
       /* :: */[
-        /* Rotate */Block.__(2, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
+        /* Rotate */Block.__(8, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
         /* :: */[
-          /* Translate */Block.__(3, [
+          /* Translate */Block.__(9, [
               /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])]),
               /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])])
             ]),
@@ -477,7 +501,7 @@ var blurLayer = /* record */[
 ];
 
 var init$3 = draw(undefined, /* :: */[
-      /* DrawImageSourceDest */Block.__(5, [
+      /* DrawImageSourceDest */Block.__(11, [
           /* Self */0,
           /* record */[
             /* x : Add */Block.__(4, [
@@ -522,7 +546,7 @@ var squareColumnLayer = /* record */[
 ];
 
 var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImage */Block.__(4, [
+      /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
             /* x : Pixels */Block.__(1, [0]),
@@ -556,9 +580,9 @@ var squareLayer = /* record */[
 
 function singleNoteDrawCommands() {
   return /* :: */[
-          /* SetFillStyle */Block.__(0, ["red"]),
+          /* SetFillStyle */Block.__(3, ["red"]),
           /* :: */[
-            /* FillRect */Block.__(1, [/* record */[
+            /* FillRect */Block.__(5, [/* record */[
                   /* x : Pixels */Block.__(1, [0]),
                   /* y : Note */Block.__(2, [60]),
                   /* w : Width */0,
@@ -636,7 +660,7 @@ var singleNote = /* record */[
 ];
 
 var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImage */Block.__(4, [
+      /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
             /* x : Pixels */Block.__(1, [-1]),
@@ -671,7 +695,7 @@ var historyLayer = /* record */[
 ];
 
 var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImageSourceDest */Block.__(5, [
+      /* DrawImageSourceDest */Block.__(11, [
           /* Self */0,
           /* record */[
             /* x : Divide */Block.__(5, [
@@ -702,7 +726,7 @@ var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
           ]
         ]),
       /* :: */[
-        /* DrawImageSourceDest */Block.__(5, [
+        /* DrawImageSourceDest */Block.__(11, [
             /* Self */0,
             /* record */[
               /* x : Pixels */Block.__(1, [1]),
@@ -750,7 +774,7 @@ var historyBackAndForthLayer = /* record */[
 ];
 
 var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
-      /* DrawImage */Block.__(4, [
+      /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
             /* x : Pixels */Block.__(1, [1]),
@@ -803,7 +827,7 @@ var midiKeyboard_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var midiKeyboard_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var midiKeyboard = /* record */[
-  /* content : MIDIKeyboard */1,
+  /* content : MIDIKeyboard */2,
   midiKeyboard_001,
   midiKeyboard_002,
   midiKeyboard_003,
@@ -1106,7 +1130,7 @@ var webcamParams_014 = /* layers : :: */[
   ],
   /* :: */[
     /* record */[
-      /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]),
+      /* content : Webcam */1,
       webcam_001,
       /* compositeOperation : Multiply */11,
       webcam_003,
@@ -1225,19 +1249,33 @@ var slitscanParams_014 = /* layers : :: */[
   analyzer,
   /* :: */[
     /* record */[
-      /* content : Webcam */Block.__(2, [/* record */[/* slitscan *//* StaticX */Block.__(0, [320])]]),
-      slitscan_001,
-      /* compositeOperation : Overlay */13,
-      slitscan_003,
-      slitscan_004,
-      slitscan_005,
-      slitscan_006
+      /* content : Webcam */1,
+      /* alpha */0.0,
+      webcam_002,
+      webcam_003,
+      webcam_004,
+      webcam_005,
+      webcam_006
     ],
     /* :: */[
-      historyLayer,
+      /* record */[
+        /* content : Slitscan */Block.__(2, [/* record */[
+              /* sourceLayerKey */"webcam",
+              /* slitscan : StaticX */Block.__(0, [320])
+            ]]),
+        slitscan_001,
+        /* compositeOperation : Overlay */13,
+        slitscan_003,
+        slitscan_004,
+        slitscan_005,
+        slitscan_006
+      ],
       /* :: */[
-        reader,
-        /* [] */0
+        historyLayer,
+        /* :: */[
+          reader,
+          /* [] */0
+        ]
       ]
     ]
   ]
@@ -1380,77 +1418,6 @@ var slitscanHistogramParams = /* record */[
   slitscanHistogramParams_014
 ];
 
-var slitscanMovingParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
-
-var slitscanMovingParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
-
-var slitscanMovingParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
-
-var slitscanMovingParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
-
-var slitscanMovingParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
-
-var slitscanMovingParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
-
-var slitscanMovingParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
-
-var slitscanMovingParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
-
-var slitscanMovingParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
-
-var slitscanMovingParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
-
-var slitscanMovingParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
-
-var slitscanMovingParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
-
-var slitscanMovingParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
-
-var slitscanMovingParams_014 = /* layers : :: */[
-  slitscanMoving,
-  /* :: */[
-    /* record */[
-      /* content : Analysis */Block.__(5, [/* Mic */2]),
-      /* alpha */0.5,
-      /* compositeOperation : Multiply */11,
-      analyzer_003,
-      analyzer_004,
-      analyzer_005,
-      analyzer_006
-    ],
-    /* :: */[
-      /* record */[
-        /* content : Reader */Block.__(9, [/* Channel */[/* R */0]]),
-        /* alpha */0.0,
-        reader_002,
-        reader_003,
-        reader_004,
-        reader_005,
-        reader_006
-      ],
-      /* [] */0
-    ]
-  ]
-];
-
-var slitscanMovingParams = /* record */[
-  slitscanMovingParams_000,
-  slitscanMovingParams_001,
-  slitscanMovingParams_002,
-  slitscanMovingParams_003,
-  slitscanMovingParams_004,
-  slitscanMovingParams_005,
-  slitscanMovingParams_006,
-  slitscanMovingParams_007,
-  slitscanMovingParams_008,
-  slitscanMovingParams_009,
-  slitscanMovingParams_010,
-  slitscanMovingParams_011,
-  slitscanMovingParams_012,
-  /* shouldClear */false,
-  slitscanMovingParams_014
-];
-
 var whiteboardParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var whiteboardParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -1481,7 +1448,7 @@ var whiteboardParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* should
 
 var whiteboardParams_014 = /* layers : :: */[
   /* record */[
-    /* content : Webcam */Block.__(2, [/* record */[/* slitscan */undefined]]),
+    /* content : Webcam */1,
     webcam_001,
     webcam_002,
     webcam_003,
@@ -1775,7 +1742,7 @@ var historyHalving_014 = /* layers : :: */[
       historyLayer,
       /* :: */[
         draw(undefined, /* :: */[
-              /* DrawImage */Block.__(4, [
+              /* DrawImage */Block.__(10, [
                   /* Self */0,
                   /* record */[
                     /* x : Pixels */Block.__(1, [0]),
@@ -2615,8 +2582,10 @@ var rawAudioAndSpacy = /* record */[
   rawAudioAndSpacy_014
 ];
 
+var init$4 = fill(undefined, "red");
+
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Spacy",
+  "Welcome",
   /* record */[
     /* width */Params$Gayer.defaultParams[/* width */0],
     /* height */Params$Gayer.defaultParams[/* height */1],
@@ -2632,92 +2601,165 @@ var presetsWithoutLayerIds_000 = /* tuple */[
     /* transpose */Params$Gayer.defaultParams[/* transpose */11],
     /* stereo */Params$Gayer.defaultParams[/* stereo */12],
     /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-    /* layers */spacy
+    /* layers : :: */[
+      fill(undefined, "black"),
+      /* :: */[
+        text(undefined, undefined, undefined, undefined, undefined, undefined, undefined, "GAYER"),
+        /* [] */0
+      ]
+    ]
   ]
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
   /* tuple */[
-    "Single note",
-    singleNote
+    "Welcome (Audio)",
+    /* record */[
+      /* width */Params$Gayer.defaultParams[/* width */0],
+      /* height */Params$Gayer.defaultParams[/* height */1],
+      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+      /* q */Params$Gayer.defaultParams[/* q */10],
+      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+      /* layers : :: */[
+        fill(undefined, "black"),
+        /* :: */[
+          text(undefined, undefined, undefined, undefined, undefined, undefined, undefined, "GAYER"),
+          /* :: */[
+            /* record */[
+              /* content */init$4[/* content */0],
+              /* alpha */init$4[/* alpha */1],
+              /* compositeOperation : Color */24,
+              /* rotation */init$4[/* rotation */3],
+              /* transformMatrix */init$4[/* transformMatrix */4],
+              /* filters */init$4[/* filters */5],
+              /* id */init$4[/* id */6]
+            ],
+            /* :: */[
+              pitchFilter(Music$Gayer.cMajor),
+              /* :: */[
+                saturationReader,
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
+      ]
+    ]
   ],
   /* :: */[
     /* tuple */[
-      "Webcam (edge detection)",
-      webcamEdgeDetect
+      "Spacy",
+      /* record */[
+        /* width */Params$Gayer.defaultParams[/* width */0],
+        /* height */Params$Gayer.defaultParams[/* height */1],
+        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+        /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+        /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+        /* q */Params$Gayer.defaultParams[/* q */10],
+        /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+        /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+        /* layers */spacy
+      ]
     ],
     /* :: */[
       /* tuple */[
-        "Slitscan",
-        slitscanParams
+        "Single note",
+        singleNote
       ],
       /* :: */[
         /* tuple */[
-          "History",
-          history
+          "Webcam (edge detection)",
+          webcamEdgeDetect
         ],
         /* :: */[
           /* tuple */[
-            "Rotation",
-            vinyl
+            "Slitscan",
+            slitscanParams
           ],
           /* :: */[
             /* tuple */[
-              "Tughra of Suleiman",
-              tughra
+              "History",
+              history
             ],
             /* :: */[
               /* tuple */[
-                "Four Seasons",
-                fourSeasons
+                "Rotation",
+                vinyl
               ],
               /* :: */[
                 /* tuple */[
-                  "Les Très Riches Heures",
-                  lesTresRichesHeures
+                  "Tughra of Suleiman",
+                  tughra
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Is it a crime?",
-                    isItACrime
+                    "Four Seasons",
+                    fourSeasons
                   ],
                   /* :: */[
                     /* tuple */[
-                      "MIDI (requires MIDI keyboard)",
-                      midi
+                      "Les Très Riches Heures",
+                      lesTresRichesHeures
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Audio file",
-                        debussy
+                        "Is it a crime?",
+                        isItACrime
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Harmony",
-                          harmonyParams
+                          "MIDI (requires MIDI keyboard)",
+                          midi
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Empty",
-                            /* record */[
-                              /* width */Params$Gayer.defaultParams[/* width */0],
-                              /* height */Params$Gayer.defaultParams[/* height */1],
-                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                              /* q */Params$Gayer.defaultParams[/* q */10],
-                              /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                              /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                              /* layers : [] */0
-                            ]
+                            "Audio file",
+                            debussy
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "Harmony",
+                              harmonyParams
+                            ],
+                            /* :: */[
+                              /* tuple */[
+                                "Empty",
+                                /* record */[
+                                  /* width */Params$Gayer.defaultParams[/* width */0],
+                                  /* height */Params$Gayer.defaultParams[/* height */1],
+                                  /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                                  /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                                  /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                                  /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                                  /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                                  /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                                  /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                                  /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                                  /* q */Params$Gayer.defaultParams[/* q */10],
+                                  /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                                  /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                                  /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                                  /* layers : [] */0
+                                ]
+                              ],
+                              /* [] */0
+                            ]
+                          ]
                         ]
                       ]
                     ]
@@ -2819,12 +2861,12 @@ export {
   pitchFilter ,
   fill ,
   draw ,
+  text ,
   regl ,
   sobel ,
   analyzer ,
   webcam ,
   slitscan ,
-  slitscanMoving ,
   hubble ,
   spacy ,
   drawSelfFullScreen ,
@@ -2851,7 +2893,6 @@ export {
   slitscanParams ,
   slitscanEdgeDetectParams ,
   slitscanHistogramParams ,
-  slitscanMovingParams ,
   whiteboardParams ,
   isItACrime ,
   tughra ,

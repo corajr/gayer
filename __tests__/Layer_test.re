@@ -6,7 +6,7 @@ open CameraOptions;
 
 let slitscan = StaticX(320);
 
-let cameraOptExamples = [{slitscan: None}, {slitscan: Some(slitscan)}];
+let cameraOptExamples = [{sourceLayerKey: "blah", slitscan}];
 
 describe("EncodeCameraOptions <=> DecodeCameraOptions", () =>
   testAll("decode inverts encode", cameraOptExamples, cameraOptions =>

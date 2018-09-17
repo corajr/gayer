@@ -141,7 +141,7 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram" : 
-        return /* Histogram */2;
+        return /* Histogram */3;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
@@ -149,7 +149,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "midi-keyboard" : 
-        return /* MIDIKeyboard */1;
+        return /* MIDIKeyboard */2;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
                       return /* PitchClasses */Block.__(6, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
@@ -178,7 +178,14 @@ function layerByType(type_, json) {
                       return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
-        return /* Regl */3;
+        return /* Regl */4;
+    case "slitscan" : 
+        var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
+        return Json_decode.map((function (s) {
+                      return /* Slitscan */Block.__(2, [s]);
+                    }), (function (param) {
+                      return Json_decode.field("options", partial_arg$4, param);
+                    }), json);
     case "video" : 
         return Json_decode.map((function (s) {
                       return /* Video */Block.__(4, [s]);
@@ -186,12 +193,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "webcam" : 
-        var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
-        return Json_decode.map((function (s) {
-                      return /* Webcam */Block.__(2, [s]);
-                    }), (function (param) {
-                      return Json_decode.field("options", partial_arg$4, param);
-                    }), json);
+        return /* Webcam */1;
     default:
       throw [
             Json_decode.DecodeError,
@@ -338,7 +340,7 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "midi-keyboard"
+                        "webcam"
                       ],
                       /* [] */0
                     ]);
@@ -346,11 +348,19 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "histogram"
+                        "midi-keyboard"
                       ],
                       /* [] */0
                     ]);
       case 3 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "histogram"
+                      ],
+                      /* [] */0
+                    ]);
+      case 4 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -394,7 +404,7 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "webcam"
+                        "slitscan"
                       ],
                       /* :: */[
                         /* tuple */[

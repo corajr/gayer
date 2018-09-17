@@ -30,6 +30,7 @@
     "error": "+8"
   },
   "bs-dependencies": [
+    "bs-webapi",
     "reason-react",
     "rationale",
     "@glennsl/bs-json",

@@ -24,15 +24,16 @@ let make =
     <div key=layerKey>
       (
         switch (layerContent) {
-        | Webcam(_) =>
-          <video
-            ref=setRef
-            autoPlay=true
-            muted=true
-            width="120"
-            height="120"
-            /* width=(Js.Int.toString(width)) */
-            /* height=(Js.Int.toString(height)) */
+        | Webcam => <video ref=setRef autoPlay=true muted=true />
+        | Slitscan(opts) =>
+          <SlitscanCanvas
+            layerKey
+            layerRefs
+            sourceKey=opts.sourceLayerKey
+            setRef
+            saveTick
+            width
+            height
           />
         | Image(url) =>
           <img
