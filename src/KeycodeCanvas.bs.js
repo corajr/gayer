@@ -11,10 +11,18 @@ function keyCodeToY(height, keyCodeN) {
 }
 
 function makeKeyDownCallback(param, width, height, e) {
-  e.preventDefault();
-  var match = param[/* state */1][/* canvasRef */0][0];
-  if (match !== undefined) {
-    var ctx = Js_primitive.valFromOption(match).getContext("2d");
+  var match = KeyboardManager$Gayer.key(e);
+  switch (match) {
+    case "Ctrl" : 
+    case "Escape" : 
+        e.preventDefault();
+        break;
+    default:
+      e.preventDefault();
+  }
+  var match$1 = param[/* state */1][/* canvasRef */0][0];
+  if (match$1 !== undefined) {
+    var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
     ctx.fillStyle = "white";
     var keyCodeN = KeyboardManager$Gayer.keyCode(e);
     if (keyCodeN === 32) {

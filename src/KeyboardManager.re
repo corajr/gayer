@@ -44,7 +44,7 @@ let removeKeyListenersFromBody = (keyboardManagerState: keyboardManagerState) =>
   };
 };
 
-[@bs.get] external keyCode : Dom.keyboardEvent => int = "";
+let key: Dom.keyboardEvent => string = e => KeyboardEvent.key(e);
 
 let keyCode: Dom.keyboardEvent => int =
   e => {

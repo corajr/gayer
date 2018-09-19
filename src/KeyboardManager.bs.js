@@ -44,6 +44,10 @@ function removeKeyListenersFromBody(keyboardManagerState) {
   }
 }
 
+function key(e) {
+  return e.key;
+}
+
 function keyCode(e) {
   var k = e.key;
   if (k.length === 1) {
@@ -56,6 +60,7 @@ function keyCode(e) {
 export {
   addKeyListenersToBody ,
   removeKeyListenersFromBody ,
+  key ,
   keyCode ,
   
 }
