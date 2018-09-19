@@ -141,15 +141,17 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram" : 
-        return /* Histogram */4;
+        return /* Histogram */5;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(3, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
+    case "keycode-reader" : 
+        return /* KeycodeReader */3;
     case "keycode-writer" : 
-        return /* KeycodeWriter */3;
+        return /* KeycodeWriter */4;
     case "midi-keyboard" : 
         return /* MIDIKeyboard */2;
     case "pitchClasses" : 
@@ -180,7 +182,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
-        return /* Regl */5;
+        return /* Regl */6;
     case "slitscan" : 
         var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
@@ -358,7 +360,7 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "keycode-writer"
+                        "keycode-reader"
                       ],
                       /* [] */0
                     ]);
@@ -366,11 +368,19 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "histogram"
+                        "keycode-writer"
                       ],
                       /* [] */0
                     ]);
       case 5 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "histogram"
+                      ],
+                      /* [] */0
+                    ]);
+      case 6 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",

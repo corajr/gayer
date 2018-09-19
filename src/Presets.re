@@ -22,6 +22,8 @@ let reader = {...defaultLayer, content: Reader(Channel(R))};
 
 let saturationReader = {...defaultLayer, content: Reader(Saturation)};
 
+let keycodeReader = {...defaultLayer, content: KeycodeReader};
+
 let keycodeWriter = {...defaultLayer, content: KeycodeWriter};
 
 let histogram = {
@@ -553,7 +555,12 @@ let rawAudioAndSpacy = {
 
 let keycodeParams = {
   ...defaultParams,
-  layers: [fill("black"), keycodeWriter, reader],
+  layers: [
+    fill("black"),
+    keycodeWriter,
+    reader,
+    {...keycodeReader, alpha: 0.5},
+  ],
 };
 
 let presetsWithoutLayerIds = [

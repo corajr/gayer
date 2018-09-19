@@ -320,6 +320,7 @@ function drawLayer(ctx, width, height, state, layer) {
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */17][0], layerKey);
   var match$1 = layer[/* content */0];
   var maybeValues;
+  var exit = 0;
   if (typeof match$1 === "number") {
     switch (match$1) {
       case 0 : 
@@ -343,21 +344,17 @@ function drawLayer(ctx, width, height, state, layer) {
           maybeValues = undefined;
           break;
       case 3 : 
-          if (maybeLayerRef !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-            maybeValues = undefined;
-          } else {
-            maybeValues = undefined;
-          }
-          break;
       case 4 : 
+          exit = 1;
+          break;
+      case 5 : 
           if (maybeLayerRef !== undefined) {
             var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
           }
           maybeValues = undefined;
           break;
-      case 5 : 
+      case 6 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
@@ -458,6 +455,14 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
         }
         maybeValues = undefined;
+    }
+  }
+  if (exit === 1) {
+    if (maybeLayerRef !== undefined) {
+      ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+      maybeValues = undefined;
+    } else {
+      maybeValues = undefined;
     }
   }
   setTimeout((function () {

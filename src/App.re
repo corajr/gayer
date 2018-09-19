@@ -323,6 +323,7 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           );
         };
         None;
+      | KeycodeReader
       | KeycodeWriter =>
         switch (maybeLayerRef) {
         | None => None

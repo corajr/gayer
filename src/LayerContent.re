@@ -58,6 +58,7 @@ let make =
           />
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
+        | KeycodeReader => <KeycodeReaderCanvas layerKey layerRefs setRef />
         | HandDrawn => <HandDrawnCanvas setRef width height />
         | RawAudioWriter({x, y, w, h, encoding}) =>
           <RawAudioCanvas

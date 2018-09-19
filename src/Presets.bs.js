@@ -81,6 +81,28 @@ var saturationReader = /* record */[
   saturationReader_006
 ];
 
+var keycodeReader_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
+
+var keycodeReader_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
+
+var keycodeReader_003 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */3];
+
+var keycodeReader_004 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */4];
+
+var keycodeReader_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
+
+var keycodeReader_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
+
+var keycodeReader = /* record */[
+  /* content : KeycodeReader */3,
+  keycodeReader_001,
+  keycodeReader_002,
+  keycodeReader_003,
+  keycodeReader_004,
+  keycodeReader_005,
+  keycodeReader_006
+];
+
 var keycodeWriter_001 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */1];
 
 var keycodeWriter_002 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */2];
@@ -94,7 +116,7 @@ var keycodeWriter_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var keycodeWriter_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var keycodeWriter = /* record */[
-  /* content : KeycodeWriter */3,
+  /* content : KeycodeWriter */4,
   keycodeWriter_001,
   keycodeWriter_002,
   keycodeWriter_003,
@@ -112,7 +134,7 @@ var histogram_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var histogram_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var histogram = /* record */[
-  /* content : Histogram */4,
+  /* content : Histogram */5,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
   histogram_003,
@@ -276,7 +298,7 @@ var regl_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var regl_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var regl = /* record */[
-  /* content : Regl */5,
+  /* content : Regl */6,
   regl_001,
   regl_002,
   regl_003,
@@ -298,7 +320,7 @@ var sobel_005 = /* filters */Layer$Gayer.defaultLayer[/* filters */5];
 var sobel_006 = /* id */Layer$Gayer.defaultLayer[/* id */6];
 
 var sobel = /* record */[
-  /* content : Regl */5,
+  /* content : Regl */6,
   sobel_001,
   sobel_002,
   sobel_003,
@@ -2638,7 +2660,18 @@ var keycodeParams_014 = /* layers : :: */[
     keycodeWriter,
     /* :: */[
       reader,
-      /* [] */0
+      /* :: */[
+        /* record */[
+          /* content : KeycodeReader */3,
+          /* alpha */0.5,
+          keycodeReader_002,
+          keycodeReader_003,
+          keycodeReader_004,
+          keycodeReader_005,
+          keycodeReader_006
+        ],
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -2927,6 +2960,7 @@ export {
   img ,
   reader ,
   saturationReader ,
+  keycodeReader ,
   keycodeWriter ,
   rawAudioFormat ,
   rawAudioWriter ,

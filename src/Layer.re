@@ -17,6 +17,7 @@ type layerContent =
   | Analysis(audioInputSetting)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
+  | KeycodeReader
   | KeycodeWriter
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
@@ -94,6 +95,7 @@ module DecodeLayer = {
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
       | "keycode-writer" => KeycodeWriter
+      | "keycode-reader" => KeycodeReader
       | "hand-drawn" => HandDrawn
       | "regl" => Regl
       | "webcam" => Webcam
@@ -246,6 +248,7 @@ module EncodeLayer = {
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
       | KeycodeWriter => object_([("type", string("keycode-writer"))])
+      | KeycodeReader => object_([("type", string("keycode-reader"))])
       | Histogram => object_([("type", string("histogram"))])
       | Regl => object_([("type", string("regl"))])
       | RawAudioWriter(fmt) =>
