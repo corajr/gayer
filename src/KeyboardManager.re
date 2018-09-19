@@ -2,34 +2,56 @@ open Webapi.Dom;
 
 type keyboardEventCallback = Dom.keyboardEvent => unit;
 
-type keyboardManagerState = {listener: ref(option(keyboardEventCallback))};
+type keyboardManagerState = {
+  keyDownListener: ref(option(keyboardEventCallback)),
+  keyUpListener: ref(option(keyboardEventCallback)),
+};
 
 open Rationale.Option.Infix;
 
-let addKeyDownListenerToBody =
+let addKeyListenersToBody =
     (
+      ~keyDownListener: keyboardEventCallback,
+      ~keyUpListener: keyboardEventCallback,
       keyboardManagerState: keyboardManagerState,
-      keyboardEventCallback: keyboardEventCallback,
     ) => {
   let maybeBody: option(Element.t) =
     document |> Document.asHtmlDocument >>= HtmlDocument.body;
   switch (maybeBody) {
   | None => ()
   | Some(bodyEl) =>
-    Element.addKeyDownEventListener(keyboardEventCallback, bodyEl);
-    keyboardManagerState.listener := Some(keyboardEventCallback);
+    Element.addKeyDownEventListener(keyDownListener, bodyEl);
+    keyboardManagerState.keyDownListener := Some(keyDownListener);
+    Element.addKeyUpEventListener(keyUpListener, bodyEl);
+    keyboardManagerState.keyUpListener := Some(keyUpListener);
   };
 };
 
-let removeKeyDownListenerFromBody =
-    (keyboardManagerState: keyboardManagerState) => {
+let removeKeyListenersFromBody = (keyboardManagerState: keyboardManagerState) => {
   let maybeBody: option(Element.t) =
     document |> Document.asHtmlDocument >>= HtmlDocument.body;
-  switch (maybeBody, keyboardManagerState.listener^) {
-  | (Some(bodyEl), Some(callback)) =>
-    Element.removeKeyDownEventListener(callback, bodyEl)
-  | _ => ()
+  switch (maybeBody) {
+  | None => ()
+  | Some(bodyEl) =>
+    switch (keyboardManagerState.keyDownListener^) {
+    | None => ()
+    | Some(callback) => Element.removeKeyDownEventListener(callback, bodyEl)
+    };
+    switch (keyboardManagerState.keyUpListener^) {
+    | None => ()
+    | Some(callback) => Element.removeKeyUpEventListener(callback, bodyEl)
+    };
   };
 };
 
 [@bs.get] external keyCode : Dom.keyboardEvent => int = "";
+
+let keyCode: Dom.keyboardEvent => int =
+  e => {
+    let k = KeyboardEvent.key(e);
+    if (String.length(k) == 1) {
+      Char.code(k.[0]);
+    } else {
+      0;
+    };
+  };

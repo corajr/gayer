@@ -6,18 +6,34 @@ type state = {
   keyboardManagerState,
 };
 
-let makeCallback = ({ReasonReact.state}, width, height, e) => {
-  Js.log(e);
+let keyCodeToY = (height, keyCodeN) => height - (keyCodeN - 8) * 2 - 1;
+
+let makeKeyDownCallback = ({ReasonReact.state}, width, height, e) => {
+  KeyboardEventRe.preventDefault(e);
   switch (state.canvasRef^) {
   | None => ()
   | Some(canvas) =>
     let canvasElement = getFromReact(canvas);
     let ctx = getContext(canvasElement);
-    Ctx.clearRect(ctx, 0, 0, width, height);
     Ctx.setFillStyle(ctx, "white");
     let keyCodeN = keyCode(e);
-    let keyCodeY = height - keyCodeN - 1;
+    if (keyCodeN === 32) {
+      Ctx.clearRect(ctx, 0, 0, width, height);
+    };
+    let keyCodeY = keyCodeToY(height, keyCodeN);
     Ctx.fillRect(ctx, 0, keyCodeY, 1, 1);
+  };
+};
+
+let makeKeyUpCallback = ({ReasonReact.state}, width, height, e) => {
+  KeyboardEventRe.preventDefault(e);
+  switch (state.canvasRef^) {
+  | None => ()
+  | Some(canvas) =>
+    let canvasElement = getFromReact(canvas);
+    let ctx = getContext(canvasElement);
+    let keyCodeY = keyCodeToY(height, keyCode(e));
+    Ctx.clearRect(ctx, 0, keyCodeY, width, 1);
   };
 };
 
@@ -34,16 +50,25 @@ let make = (~layerKey, ~layerRefs, ~setRef, ~width=1, ~height=240, _children) =>
     initialState: () => {
       canvasRef: ref(None),
       keyboardManagerState: {
-        listener: ref(None),
+        keyDownListener: ref(None),
+        keyUpListener: ref(None),
       },
     },
     didMount: self => {
-      let callback: keyboardEventCallback = makeCallback(self, width, height);
+      let keyDownCallback: keyboardEventCallback =
+        makeKeyDownCallback(self, width, height);
 
-      addKeyDownListenerToBody(self.state.keyboardManagerState, callback);
+      let keyUpCallback: keyboardEventCallback =
+        makeKeyUpCallback(self, width, height);
+
+      addKeyListenersToBody(
+        self.state.keyboardManagerState,
+        ~keyDownListener=keyDownCallback,
+        ~keyUpListener=keyUpCallback,
+      );
       self.onUnmount(()
         /* remove */
-        => removeKeyDownListenerFromBody(self.state.keyboardManagerState));
+        => removeKeyListenersFromBody(self.state.keyboardManagerState));
     },
     reducer: ((), _state: state) => ReasonReact.NoUpdate,
     render: self =>

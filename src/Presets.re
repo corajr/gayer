@@ -557,7 +557,7 @@ let keycodeParams = {
 };
 
 let presetsWithoutLayerIds = [
-  /* ("Keycode", keycodeParams), */
+  ("Keycode", keycodeParams),
   ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
   (
     "Welcome (Audio)",
@@ -565,8 +565,7 @@ let presetsWithoutLayerIds = [
       ...defaultParams,
       layers: [
         fill("black"),
-        text("GAYER"),
-        {...fill("red"), compositeOperation: Color},
+        text("GAYER", ~color="red", ~fillOrStroke=Stroke),
         pitchFilter(cMajor),
         saturationReader,
       ],

@@ -6,16 +6,35 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as KeyboardManager$Gayer from "./KeyboardManager.bs.js";
 
-function makeCallback(param, width, height, e) {
-  console.log(e);
+function keyCodeToY(height, keyCodeN) {
+  return (height - ((keyCodeN - 8 | 0) << 1) | 0) - 1 | 0;
+}
+
+function makeKeyDownCallback(param, width, height, e) {
+  e.preventDefault();
   var match = param[/* state */1][/* canvasRef */0][0];
   if (match !== undefined) {
     var ctx = Js_primitive.valFromOption(match).getContext("2d");
-    ctx.clearRect(0, 0, width, height);
     ctx.fillStyle = "white";
-    var keyCodeN = e.keyCode;
-    var keyCodeY = (height - keyCodeN | 0) - 1 | 0;
+    var keyCodeN = KeyboardManager$Gayer.keyCode(e);
+    if (keyCodeN === 32) {
+      ctx.clearRect(0, 0, width, height);
+    }
+    var keyCodeY = keyCodeToY(height, keyCodeN);
     ctx.fillRect(0, keyCodeY, 1, 1);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
+}
+
+function makeKeyUpCallback(param, width, height, e) {
+  e.preventDefault();
+  var match = param[/* state */1][/* canvasRef */0][0];
+  if (match !== undefined) {
+    var ctx = Js_primitive.valFromOption(match).getContext("2d");
+    var keyCodeY = keyCodeToY(height, KeyboardManager$Gayer.keyCode(e));
+    ctx.clearRect(0, keyCodeY, width, 1);
     return /* () */0;
   } else {
     return /* () */0;
@@ -37,12 +56,15 @@ function make(_, _$1, setRef, $staropt$star, $staropt$star$1, _$2) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              var callback = function (param) {
-                return makeCallback(self, width, height, param);
+              var keyDownCallback = function (param) {
+                return makeKeyDownCallback(self, width, height, param);
               };
-              KeyboardManager$Gayer.addKeyDownListenerToBody(self[/* state */1][/* keyboardManagerState */1], callback);
+              var keyUpCallback = function (param) {
+                return makeKeyUpCallback(self, width, height, param);
+              };
+              KeyboardManager$Gayer.addKeyListenersToBody(keyDownCallback, keyUpCallback, self[/* state */1][/* keyboardManagerState */1]);
               return Curry._1(self[/* onUnmount */4], (function () {
-                            return KeyboardManager$Gayer.removeKeyDownListenerFromBody(self[/* state */1][/* keyboardManagerState */1]);
+                            return KeyboardManager$Gayer.removeKeyListenersFromBody(self[/* state */1][/* keyboardManagerState */1]);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -59,7 +81,10 @@ function make(_, _$1, setRef, $staropt$star, $staropt$star$1, _$2) {
           /* initialState */(function () {
               return /* record */[
                       /* canvasRef : record */[/* contents */undefined],
-                      /* keyboardManagerState : record */[/* listener : record */[/* contents */undefined]]
+                      /* keyboardManagerState : record */[
+                        /* keyDownListener : record */[/* contents */undefined],
+                        /* keyUpListener : record */[/* contents */undefined]
+                      ]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
@@ -72,7 +97,9 @@ function make(_, _$1, setRef, $staropt$star, $staropt$star$1, _$2) {
 }
 
 export {
-  makeCallback ,
+  keyCodeToY ,
+  makeKeyDownCallback ,
+  makeKeyUpCallback ,
   component ,
   make ,
   

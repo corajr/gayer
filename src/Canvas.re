@@ -805,7 +805,7 @@ module DrawCommand = {
             json
             |> map(s => SetTextBaseline(s), field("textBaseline", string))
           | "SetStrokeStyle" =>
-            json |> map(s => SetFillStyle(s), field("style", string))
+            json |> map(s => SetStrokeStyle(s), field("style", string))
           | "FillText" =>
             json
             |> (

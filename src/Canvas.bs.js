@@ -1002,7 +1002,7 @@ function commandByType(type_, json) {
                     }), json);
     case "SetStrokeStyle" : 
         return Json_decode.map((function (s) {
-                      return /* SetFillStyle */Block.__(3, [s]);
+                      return /* SetStrokeStyle */Block.__(4, [s]);
                     }), (function (param) {
                       return Json_decode.field("style", Json_decode.string, param);
                     }), json);

@@ -570,6 +570,11 @@ function generateNewFilterBanks(audioCtx, param) {
   }
 }
 
+function updateBank(param, values, filterBank) {
+  var state = param[/* state */1];
+  return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */8], state[/* params */6][/* outputGain */9], filterBank, values);
+}
+
 function saveTick(param, onUnmount, key, tickFn) {
   var state = param[/* state */1];
   state[/* tickFunctions */22][0] = Belt_MapString.set(state[/* tickFunctions */22][0], key, tickFn);
@@ -846,13 +851,10 @@ function make($staropt$star, _) {
                                   })]);
                   case 1 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    self[/* state */1][/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */2], self[/* state */1][/* params */6][/* width */0]);
-                                    self[/* state */1][/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */3], self[/* state */1][/* params */6][/* width */0]);
+                                    self[/* state */1][/* readPos */2][0] = Canvas$Gayer.wrapCoord(self[/* state */1][/* readPos */2][0], self[/* state */1][/* params */6][/* readPosDelta */2], self[/* state */1][/* params */6][/* width */0]);
+                                    self[/* state */1][/* writePos */3][0] = Canvas$Gayer.wrapCoord(self[/* state */1][/* writePos */3][0], self[/* state */1][/* params */6][/* writePosDelta */3], self[/* state */1][/* params */6][/* width */0]);
                                     return maybeUpdateCanvas(self[/* state */1][/* canvasRef */20], (function (canvas) {
-                                                  var filterValues = drawCanvas(canvas, self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], state);
-                                                  var updateBank = function (values, filterBank) {
-                                                    return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */8], state[/* params */6][/* outputGain */9], filterBank, values);
-                                                  };
+                                                  var filterValues = drawCanvas(canvas, self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], self[/* state */1]);
                                                   var match = self[/* state */1][/* filterBanks */14];
                                                   if (match !== undefined) {
                                                     var match$1 = match;
@@ -860,15 +862,15 @@ function make($staropt$star, _) {
                                                       var filterBankR = match$1[1];
                                                       var filterBankL = match$1[0];
                                                       if (filterValues.tag) {
-                                                        updateBank(filterValues[0], filterBankL);
-                                                        updateBank(filterValues[1], filterBankR);
+                                                        updateBank(self, filterValues[0], filterBankL);
+                                                        updateBank(self, filterValues[1], filterBankR);
                                                       } else {
                                                         var filterValues$1 = filterValues[0];
-                                                        updateBank(filterValues$1, filterBankL);
-                                                        updateBank(filterValues$1, filterBankR);
+                                                        updateBank(self, filterValues$1, filterBankL);
+                                                        updateBank(self, filterValues$1, filterBankR);
                                                       }
                                                     } else {
-                                                      updateBank(filterValues[0], match$1[0]);
+                                                      updateBank(self, filterValues[0], match$1[0]);
                                                     }
                                                   }
                                                   var match$2 = self[/* state */1][/* oscillatorBank */13][0];
@@ -1028,6 +1030,7 @@ export {
   makeAudioElt ,
   sortLayers ,
   generateNewFilterBanks ,
+  updateBank ,
   saveTick ,
   make ,
   

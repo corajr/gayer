@@ -2661,38 +2661,14 @@ var keycodeParams = /* record */[
   keycodeParams_014
 ];
 
-var init$4 = fill(undefined, "red");
-
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Welcome",
-  /* record */[
-    /* width */Params$Gayer.defaultParams[/* width */0],
-    /* height */Params$Gayer.defaultParams[/* height */1],
-    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-    /* q */Params$Gayer.defaultParams[/* q */10],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-    /* layers : :: */[
-      fill(undefined, "black"),
-      /* :: */[
-        text(undefined, undefined, undefined, undefined, undefined, undefined, undefined, "GAYER"),
-        /* [] */0
-      ]
-    ]
-  ]
+  "Keycode",
+  keycodeParams
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
   /* tuple */[
-    "Welcome (Audio)",
+    "Welcome",
     /* record */[
       /* width */Params$Gayer.defaultParams[/* width */0],
       /* height */Params$Gayer.defaultParams[/* height */1],
@@ -2712,31 +2688,14 @@ var presetsWithoutLayerIds_001 = /* :: */[
         fill(undefined, "black"),
         /* :: */[
           text(undefined, undefined, undefined, undefined, undefined, undefined, undefined, "GAYER"),
-          /* :: */[
-            /* record */[
-              /* content */init$4[/* content */0],
-              /* alpha */init$4[/* alpha */1],
-              /* compositeOperation : Color */24,
-              /* rotation */init$4[/* rotation */3],
-              /* transformMatrix */init$4[/* transformMatrix */4],
-              /* filters */init$4[/* filters */5],
-              /* id */init$4[/* id */6]
-            ],
-            /* :: */[
-              pitchFilter(Music$Gayer.cMajor),
-              /* :: */[
-                saturationReader,
-                /* [] */0
-              ]
-            ]
-          ]
+          /* [] */0
         ]
       ]
     ]
   ],
   /* :: */[
     /* tuple */[
-      "Spacy",
+      "Welcome (Audio)",
       /* record */[
         /* width */Params$Gayer.defaultParams[/* width */0],
         /* height */Params$Gayer.defaultParams[/* height */1],
@@ -2752,91 +2711,125 @@ var presetsWithoutLayerIds_001 = /* :: */[
         /* transpose */Params$Gayer.defaultParams[/* transpose */11],
         /* stereo */Params$Gayer.defaultParams[/* stereo */12],
         /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-        /* layers */spacy
+        /* layers : :: */[
+          fill(undefined, "black"),
+          /* :: */[
+            text(undefined, undefined, undefined, undefined, undefined, "red", /* Stroke */1, "GAYER"),
+            /* :: */[
+              pitchFilter(Music$Gayer.cMajor),
+              /* :: */[
+                saturationReader,
+                /* [] */0
+              ]
+            ]
+          ]
+        ]
       ]
     ],
     /* :: */[
       /* tuple */[
-        "Single note",
-        singleNote
+        "Spacy",
+        /* record */[
+          /* width */Params$Gayer.defaultParams[/* width */0],
+          /* height */Params$Gayer.defaultParams[/* height */1],
+          /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+          /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+          /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+          /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+          /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+          /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+          /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+          /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+          /* q */Params$Gayer.defaultParams[/* q */10],
+          /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+          /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+          /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+          /* layers */spacy
+        ]
       ],
       /* :: */[
         /* tuple */[
-          "Webcam (edge detection)",
-          webcamEdgeDetect
+          "Single note",
+          singleNote
         ],
         /* :: */[
           /* tuple */[
-            "Slitscan",
-            slitscanParams
+            "Webcam (edge detection)",
+            webcamEdgeDetect
           ],
           /* :: */[
             /* tuple */[
-              "History",
-              history
+              "Slitscan",
+              slitscanParams
             ],
             /* :: */[
               /* tuple */[
-                "Rotation",
-                vinyl
+                "History",
+                history
               ],
               /* :: */[
                 /* tuple */[
-                  "Tughra of Suleiman",
-                  tughra
+                  "Rotation",
+                  vinyl
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Four Seasons",
-                    fourSeasons
+                    "Tughra of Suleiman",
+                    tughra
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Les Très Riches Heures",
-                      lesTresRichesHeures
+                      "Four Seasons",
+                      fourSeasons
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Is it a crime?",
-                        isItACrime
+                        "Les Très Riches Heures",
+                        lesTresRichesHeures
                       ],
                       /* :: */[
                         /* tuple */[
-                          "MIDI (requires MIDI keyboard)",
-                          midi
+                          "Is it a crime?",
+                          isItACrime
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Audio file",
-                            debussy
+                            "MIDI (requires MIDI keyboard)",
+                            midi
                           ],
                           /* :: */[
                             /* tuple */[
-                              "Harmony",
-                              harmonyParams
+                              "Audio file",
+                              debussy
                             ],
                             /* :: */[
                               /* tuple */[
-                                "Empty",
-                                /* record */[
-                                  /* width */Params$Gayer.defaultParams[/* width */0],
-                                  /* height */Params$Gayer.defaultParams[/* height */1],
-                                  /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                                  /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                                  /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                                  /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                                  /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                                  /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                                  /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                                  /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                                  /* q */Params$Gayer.defaultParams[/* q */10],
-                                  /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                                  /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                                  /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                                  /* layers : [] */0
-                                ]
+                                "Harmony",
+                                harmonyParams
                               ],
-                              /* [] */0
+                              /* :: */[
+                                /* tuple */[
+                                  "Empty",
+                                  /* record */[
+                                    /* width */Params$Gayer.defaultParams[/* width */0],
+                                    /* height */Params$Gayer.defaultParams[/* height */1],
+                                    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                                    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                                    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                                    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                                    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                                    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                                    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                                    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                                    /* q */Params$Gayer.defaultParams[/* q */10],
+                                    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                                    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                                    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                                    /* layers : [] */0
+                                  ]
+                                ],
+                                /* [] */0
+                              ]
                             ]
                           ]
                         ]

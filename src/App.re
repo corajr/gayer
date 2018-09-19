@@ -350,6 +350,10 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         let xToRead =
           wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
         let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+        /* let slice = */
+        /*   Ctx.getImageData(ctx, width / 2, height / 2, height / 10, 10); */
+        /* Ctx.strokeRect(ctx, width / 2, height / 2, height / 10, 10); */
+
         switch (readerType) {
         | Channel(channel) =>
           Ctx.setFillStyle(
@@ -521,6 +525,14 @@ let generateNewFilterBanks =
   };
 };
 
+let updateBank = ({ReasonReact.state}, values, filterBank) =>
+  updateFilterBank(
+    ~filterBank,
+    ~filterValues=values,
+    ~inputGain=state.params.inputGain,
+    ~outputGain=state.params.outputGain,
+  );
+
 let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
   state.tickFunctions :=
     Belt.Map.String.set(state.tickFunctions^, key, tickFn);
@@ -619,15 +631,15 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
             /* Js.log("heartbeat"); */
             self.state.readPos :=
               wrapCoord(
-                state.readPos^,
-                state.params.readPosDelta,
+                self.state.readPos^,
+                self.state.params.readPosDelta,
                 self.state.params.width,
               );
 
             self.state.writePos :=
               wrapCoord(
-                state.writePos^,
-                state.params.writePosDelta,
+                self.state.writePos^,
+                self.state.params.writePosDelta,
                 self.state.params.width,
               );
 
@@ -639,14 +651,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                     canvas,
                     self.state.params.width,
                     self.state.params.height,
-                    state,
-                  );
-                let updateBank = (values, filterBank) =>
-                  updateFilterBank(
-                    ~filterBank,
-                    ~filterValues=values,
-                    ~inputGain=state.params.inputGain,
-                    ~outputGain=state.params.outputGain,
+                    self.state,
                   );
 
                 switch (self.state.filterBanks) {
@@ -654,18 +659,18 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 | Some(MonoBank(filterBank)) =>
                   switch (filterValues) {
                   | Mono(filterValues) =>
-                    updateBank(filterValues, filterBank)
+                    updateBank(self, filterValues, filterBank)
                   | Stereo(filterValuesL, _) =>
-                    updateBank(filterValuesL, filterBank)
+                    updateBank(self, filterValuesL, filterBank)
                   }
                 | Some(StereoBanks(filterBankL, filterBankR)) =>
                   switch (filterValues) {
                   | Mono(filterValues) =>
-                    updateBank(filterValues, filterBankL);
-                    updateBank(filterValues, filterBankR);
+                    updateBank(self, filterValues, filterBankL);
+                    updateBank(self, filterValues, filterBankR);
                   | Stereo(filterValuesL, filterValuesR) =>
-                    updateBank(filterValuesL, filterBankL);
-                    updateBank(filterValuesR, filterBankR);
+                    updateBank(self, filterValuesL, filterBankL);
+                    updateBank(self, filterValuesR, filterBankR);
                   }
                 };
 
