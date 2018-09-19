@@ -559,6 +559,7 @@ let keycodeParams = {
 let presetsWithoutLayerIds = [
   ("Keycode", keycodeParams),
   ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
+  /* ("Spectrogram", {...defaultParams, layers: [analyzer]}), */
   (
     "Welcome (Audio)",
     {

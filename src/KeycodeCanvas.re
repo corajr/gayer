@@ -10,11 +10,11 @@ let keyCodeToY = (height, keyCodeN) => height - (keyCodeN - 8) * 2 - 1;
 
 let makeKeyDownCallback = ({ReasonReact.state}, width, height, e) => {
   switch (key(e)) {
-  | "Ctrl"
-  | "Escape"
-  | _ =>
-    ();
-    KeyboardEventRe.preventDefault(e);
+  | "Alt"
+  | "AltGraph"
+  | "Meta"
+  | "Ctrl" => ()
+  | _ => KeyboardEventRe.preventDefault(e)
   };
   switch (state.canvasRef^) {
   | None => ()

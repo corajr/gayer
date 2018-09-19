@@ -13,9 +13,10 @@ function keyCodeToY(height, keyCodeN) {
 function makeKeyDownCallback(param, width, height, e) {
   var match = KeyboardManager$Gayer.key(e);
   switch (match) {
+    case "Alt" : 
+    case "AltGraph" : 
     case "Ctrl" : 
-    case "Escape" : 
-        e.preventDefault();
+    case "Meta" : 
         break;
     default:
       e.preventDefault();
