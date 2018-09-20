@@ -46,7 +46,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
                   case 3 : 
-                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, setRef, undefined, undefined, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, setRef, saveTick, undefined, undefined, undefined, /* array */[]));
                       break;
                   case 4 : 
                       tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, setRef, undefined, undefined, /* array */[]));

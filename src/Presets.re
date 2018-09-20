@@ -563,22 +563,20 @@ let keycodeParams = {
   ],
 };
 
+let welcomeAudio = {
+  ...defaultParams,
+  layers: [
+    fill("black"),
+    text("GAYER", ~color="red", ~fillOrStroke=Stroke),
+    saturationReader,
+  ],
+};
+
 let presetsWithoutLayerIds = [
   ("Keycode", keycodeParams),
   ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
   /* ("Spectrogram", {...defaultParams, layers: [analyzer]}), */
-  (
-    "Welcome (Audio)",
-    {
-      ...defaultParams,
-      layers: [
-        fill("black"),
-        text("GAYER", ~color="red", ~fillOrStroke=Stroke),
-        pitchFilter(cMajor),
-        saturationReader,
-      ],
-    },
-  ),
+  ("Welcome (Audio)", welcomeAudio),
   /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),

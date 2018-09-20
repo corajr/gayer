@@ -2694,6 +2694,63 @@ var keycodeParams = /* record */[
   keycodeParams_014
 ];
 
+var welcomeAudio_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var welcomeAudio_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var welcomeAudio_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var welcomeAudio_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var welcomeAudio_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var welcomeAudio_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var welcomeAudio_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var welcomeAudio_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var welcomeAudio_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var welcomeAudio_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var welcomeAudio_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var welcomeAudio_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var welcomeAudio_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var welcomeAudio_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var welcomeAudio_014 = /* layers : :: */[
+  fill(undefined, "black"),
+  /* :: */[
+    text(undefined, undefined, undefined, undefined, undefined, "red", /* Stroke */1, "GAYER"),
+    /* :: */[
+      saturationReader,
+      /* [] */0
+    ]
+  ]
+];
+
+var welcomeAudio = /* record */[
+  welcomeAudio_000,
+  welcomeAudio_001,
+  welcomeAudio_002,
+  welcomeAudio_003,
+  welcomeAudio_004,
+  welcomeAudio_005,
+  welcomeAudio_006,
+  welcomeAudio_007,
+  welcomeAudio_008,
+  welcomeAudio_009,
+  welcomeAudio_010,
+  welcomeAudio_011,
+  welcomeAudio_012,
+  welcomeAudio_013,
+  welcomeAudio_014
+];
+
 var presetsWithoutLayerIds_000 = /* tuple */[
   "Keycode",
   keycodeParams
@@ -2729,35 +2786,7 @@ var presetsWithoutLayerIds_001 = /* :: */[
   /* :: */[
     /* tuple */[
       "Welcome (Audio)",
-      /* record */[
-        /* width */Params$Gayer.defaultParams[/* width */0],
-        /* height */Params$Gayer.defaultParams[/* height */1],
-        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-        /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-        /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-        /* q */Params$Gayer.defaultParams[/* q */10],
-        /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-        /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-        /* layers : :: */[
-          fill(undefined, "black"),
-          /* :: */[
-            text(undefined, undefined, undefined, undefined, undefined, "red", /* Stroke */1, "GAYER"),
-            /* :: */[
-              pitchFilter(Music$Gayer.cMajor),
-              /* :: */[
-                saturationReader,
-                /* [] */0
-              ]
-            ]
-          ]
-        ]
-      ]
+      welcomeAudio
     ],
     /* :: */[
       /* tuple */[
@@ -3023,6 +3052,7 @@ export {
   rawAudio ,
   rawAudioAndSpacy ,
   keycodeParams ,
+  welcomeAudio ,
   presetsWithoutLayerIds ,
   idCounter ,
   addIds ,

@@ -3,13 +3,17 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as RotJs from "rot-js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as RotDisplay$Gayer from "./RotDisplay.bs.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 
 var component = ReasonReact.reducerComponent("KeycodeReaderCanvas-Gayer");
 
-function make(_, _$1, setRef, _$2, _$3, _$4) {
+function make(layerKey, layerRefs, setRef, saveTick, $staropt$star, $staropt$star$1, $staropt$star$2, _) {
+  var width = $staropt$star !== undefined ? $staropt$star : 240;
+  var height = $staropt$star$1 !== undefined ? $staropt$star$1 : 240;
+  var fontSize = $staropt$star$2 !== undefined ? $staropt$star$2 : 8;
   var setUpRot = function (theRef, param) {
     var state = param[/* state */1];
     var maybeParent = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -18,27 +22,48 @@ function make(_, _$1, setRef, _$2, _$3, _$4) {
     if (match !== undefined && !(theRef == null)) {
       var canvas = Js_primitive.valFromOption(match);
       canvas.appendChild(theRef);
-      return Curry._1(setRef, Js_primitive.some(canvas));
+      return Curry._1(setRef, canvas);
     } else {
       return /* () */0;
     }
   };
+  var textHeight = Caml_int32.div(height, fontSize);
+  var textWidth = Caml_int32.div(width, fontSize);
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              var display = new RotJs.Display(RotDisplay$Gayer.defaultOptions);
-              display.drawText(0, 0, "Press keys to play!");
-              display.drawText(0, 8, "(SPC to clear)");
+              var display = new RotJs.Display({
+                    width: textWidth,
+                    height: textHeight,
+                    fontSize: 8,
+                    forceSquareRatio: true
+                  });
+              self[/* state */1][/* rotDisplayRef */2][0] = Js_primitive.some(display);
               self[/* state */1][/* canvasRef */0][0] = Js_primitive.some(display.getContainer());
+              Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
+                      var match = Belt_MapString.get(layerRefs[0], "root");
+                      var match$1 = self[/* state */1][/* rotDisplayRef */2][0];
+                      if (match !== undefined && match$1 !== undefined) {
+                        Js_primitive.valFromOption(match).getContext("2d");
+                        return /* () */0;
+                      } else {
+                        return /* () */0;
+                      }
+                    }));
               return Curry._1(self[/* onUnmount */4], (function () {
                             var match = self[/* state */1][/* canvasRef */0][0];
                             var match$1 = self[/* state */1][/* parentElRef */1][0];
                             if (match !== undefined && match$1 !== undefined) {
-                              Js_primitive.valFromOption(match).removeChild(Js_primitive.valFromOption(match$1));
-                              return /* () */0;
+                              try {
+                                Js_primitive.valFromOption(match).removeChild(Js_primitive.valFromOption(match$1));
+                                return /* () */0;
+                              }
+                              catch (exn){
+                                return /* () */0;
+                              }
                             } else {
                               return /* () */0;
                             }
@@ -56,7 +81,8 @@ function make(_, _$1, setRef, _$2, _$3, _$4) {
           /* initialState */(function () {
               return /* record */[
                       /* canvasRef : record */[/* contents */undefined],
-                      /* parentElRef : record */[/* contents */undefined]
+                      /* parentElRef : record */[/* contents */undefined],
+                      /* rotDisplayRef : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],
