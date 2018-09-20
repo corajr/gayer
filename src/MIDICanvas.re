@@ -1,5 +1,6 @@
 open Canvas;
 open MIDI;
+open ImageDataUtil;
 open WebMIDI;
 
 type action =

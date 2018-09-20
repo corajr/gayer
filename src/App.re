@@ -35,6 +35,7 @@ type state = {
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
   merger: ref(option(channelMerger)),
+  currentFilterValues: ref(filterValues),
   layerRefs: ref(Belt.Map.String.t(Dom.element)),
   savedImages: list(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
@@ -60,6 +61,7 @@ let defaultState: state = {
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
+  currentFilterValues: ref(Mono([||])),
   compressor: ref(None),
   merger: ref(None),
   savedImages: [],
@@ -203,7 +205,7 @@ let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => 
   f(xToRead, xToWrite);
 };
 
-let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
+let drawLayer: (ctx, int, int, state, layer) => unit =
   (ctx, width, height, state, layer) => {
     Ctx.setGlobalAlpha(ctx, layer.alpha);
     Ctx.setGlobalCompositeOperation(ctx, layer.compositeOperation);
@@ -225,136 +227,108 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
 
-    let maybeValues =
-      switch (layer.content) {
-      | Draw(cmds) =>
-        DrawCommand.drawCommands(ctx, cmds);
-        None;
-      | Fill(s) =>
-        Ctx.setFillStyle(ctx, s);
-        Ctx.fillRect(ctx, 0, 0, width, height);
-        None;
-      | Analysis(_) =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(analysisCanvas) =>
-          let canvasElt = getFromReact(analysisCanvas);
-          let canvasAsSource = getCanvasAsSource(canvasElt);
-          let x =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              width,
-            );
-          Ctx.drawImage(ctx, canvasAsSource, 0, 0);
-        };
-        None;
-      | MIDIKeyboard =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(midiCanvas) =>
-          let canvasElt = getFromReact(midiCanvas);
-          let canvasAsSource = getCanvasAsSource(canvasElt);
-          let x =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              width,
-            );
-          Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
-        };
-        None;
-      | RawAudioWriter({x, y, w, h, encoding}) =>
-        switch (encoding, maybeLayerRef) {
-        | (Int8(_), Some(canvas)) =>
-          let canvasSource = getCanvasAsSource(getFromReact(canvas));
-          Ctx.drawImageDestRect(ctx, canvasSource, x, y, w, h);
-        | _ => ()
-        };
-        None;
-      | RawAudioReader(_) => None
-      | Regl =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(canvas) =>
-          let canvasSource = getCanvasAsSource(getFromReact(canvas));
-          Ctx.drawImage(ctx, canvasSource, 0, 0);
-        };
-        None;
-      | HandDrawn =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(handDrawn) =>
-          let canvasElt = getFromReact(handDrawn);
-          let canvasAsSource = getCanvasAsSource(canvasElt);
-          Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
-        };
-        None;
-      | Slitscan(_)
-      | Image(_)
-      | Video(_) =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(aRef) =>
-          let img = getElementAsImageSource(aRef);
-          Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
-        };
-        None;
-      | Webcam =>
-        switch (state.cameraInput^) {
-        | None => ()
-        | Some(input) =>
-          Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
-        };
-        None;
-      | PitchClasses(classes) =>
-        let classList =
-          PitchSet.elements(PitchSet.diff(allPitches, classes));
+    switch (layer.content) {
+    | Draw(cmds) => DrawCommand.drawCommands(ctx, cmds)
+    | Fill(s) =>
+      Ctx.setFillStyle(ctx, s);
+      Ctx.fillRect(ctx, 0, 0, width, height);
+    | Analysis(_) =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(analysisCanvas) =>
+        let canvasElt = getFromReact(analysisCanvas);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        let x =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        Ctx.drawImage(ctx, canvasAsSource, 0, 0);
+      }
+    | MIDIKeyboard =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(midiCanvas) =>
+        let canvasElt = getFromReact(midiCanvas);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        let x =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+      }
+    | RawAudioWriter({x, y, w, h, encoding}) =>
+      switch (encoding, maybeLayerRef) {
+      | (Int8(_), Some(canvas)) =>
+        let canvasSource = getCanvasAsSource(getFromReact(canvas));
+        Ctx.drawImageDestRect(ctx, canvasSource, x, y, w, h);
+      | _ => ()
+      }
+    | RawAudioReader(_) => ()
+    | Regl =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(canvas) =>
+        let canvasSource = getCanvasAsSource(getFromReact(canvas));
+        Ctx.drawImage(ctx, canvasSource, 0, 0);
+      }
+    | HandDrawn =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(handDrawn) =>
+        let canvasElt = getFromReact(handDrawn);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+      }
+    | Slitscan(_)
+    | Image(_)
+    | Video(_) =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(aRef) =>
+        let img = getElementAsImageSource(aRef);
+        Ctx.drawImageDestRect(ctx, img, 0, 0, width, height);
+      }
+    | Webcam =>
+      switch (state.cameraInput^) {
+      | None => ()
+      | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+      }
+    | PitchClasses(classes) =>
+      let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
 
-        Ctx.setFillStyle(ctx, "black");
-        let pixelsPerSemitone = binsPerSemitone(height);
-        for (i in 0 to height / 10) {
-          List.iter(
-            j => {
-              let y = (i * 12 + j) * pixelsPerSemitone;
-              Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
-            },
-            classList,
-          );
-        };
-        None;
-      | KeycodeReader
-      | KeycodeWriter =>
-        switch (maybeLayerRef) {
-        | None => None
-        | Some(canvasEl) =>
-          let canvasAsSource = getCanvasAsSource(getFromReact(canvasEl));
-          Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
-          None;
-        }
-      | Histogram =>
-        switch (maybeLayerRef) {
-        | None => ()
-        | Some(histogram) =>
-          let xToWrite =
-            wrapCoord(
-              state.writePos^ + state.params.writePosOffset,
-              0,
-              width,
-            );
-          let canvasElt = getFromReact(histogram);
-          let canvasAsSource = getCanvasAsSource(canvasElt);
-          Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
-        };
-        None;
-      | Reader(readerType) =>
-        let xToRead =
-          wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
-        let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
-        /* let slice = */
-        /*   Ctx.getImageData(ctx, width / 2, height / 2, height / 10, 10); */
-        /* Ctx.strokeRect(ctx, width / 2, height / 2, height / 10, 10); */
-
+      Ctx.setFillStyle(ctx, "black");
+      let pixelsPerSemitone = binsPerSemitone(height);
+      for (i in 0 to height / 10) {
+        List.iter(
+          j => {
+            let y = (i * 12 + j) * pixelsPerSemitone;
+            Ctx.fillRect(ctx, 0, y, width, pixelsPerSemitone);
+          },
+          classList,
+        );
+      };
+    | KeycodeReader
+    | KeycodeWriter =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(canvasEl) =>
+        let canvasAsSource = getCanvasAsSource(getFromReact(canvasEl));
+        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+      }
+    | Histogram =>
+      switch (maybeLayerRef) {
+      | None => ()
+      | Some(histogram) =>
+        let xToWrite =
+          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
+        let canvasElt = getFromReact(histogram);
+        let canvasAsSource = getCanvasAsSource(canvasElt);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, xToWrite, 0, 1, height);
+      }
+    | Reader(readerType) =>
+      let xToRead =
+        wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
+      let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+      /* let slice = */
+      /*   Ctx.getImageData(ctx, width / 2, height / 2, height / 10, 10); */
+      /* Ctx.strokeRect(ctx, width / 2, height / 2, height / 10, 10); */
+      ImageDataUtil.(
         switch (readerType) {
         | Channel(channel) =>
           Ctx.setFillStyle(
@@ -372,8 +346,10 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
           | G
           | B =>
             let (l, r) = imageDataToStereo(slice, channel, B);
-            Some(Stereo(l, r));
-          | A => Some(Mono(imageDataToFloatArray(slice, channel)))
+            state.currentFilterValues := Stereo(l, r);
+          | A =>
+            state.currentFilterValues :=
+              Mono(imageDataToFloatArray(slice, channel))
           };
         | Saturation =>
           Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
@@ -386,9 +362,11 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
               },
               imageDataToPixels(slice),
             );
-          Some(Mono(saturations));
-        };
-      };
+
+          state.currentFilterValues := Mono(saturations);
+        }
+      );
+    };
 
     ignore(
       Js.Global.setTimeout(
@@ -402,8 +380,6 @@ let drawLayer: (ctx, int, int, state, layer) => option(filterValues) =
         0,
       ),
     );
-
-    maybeValues;
   };
 
 let drawCanvas = (canvasElement, width, height, state) => {
@@ -412,20 +388,10 @@ let drawCanvas = (canvasElement, width, height, state) => {
   };
   let ctx = getContext(canvasElement);
 
-  let values =
-    List.fold_left(
-      (acc, layer) => {
-        let newMaybeValues = drawLayer(ctx, width, height, state, layer);
-        switch (newMaybeValues) {
-        | None => acc
-        | Some(newValues) => newValues
-        };
-      },
-      Mono(Array.make(height, 0.0)),
-      state.params.layers,
-    );
-
-  values;
+  List.iter(
+    layer => drawLayer(ctx, width, height, state, layer),
+    state.params.layers,
+  );
 };
 
 let getAnalysisInput:
@@ -512,6 +478,11 @@ let generateNewFilterBanks =
         ~freqFunc,
       );
 
+    state.currentFilterValues :=
+      Stereo(
+        Array.make(state.params.height, 0.0),
+        Array.make(state.params.height, 0.0),
+      );
     send(SetFilterBanks(StereoBanks(filterBankL, filterBankR)));
   } else {
     let filterBank =
@@ -522,6 +493,7 @@ let generateNewFilterBanks =
         ~freqFunc,
       );
 
+    state.currentFilterValues := Mono(Array.make(state.params.height, 0.0));
     send(SetFilterBanks(MonoBank(filterBank)));
   };
 };
@@ -647,25 +619,24 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
             maybeUpdateCanvas(
               self.state.canvasRef,
               canvas => {
-                let filterValues =
-                  drawCanvas(
-                    canvas,
-                    self.state.params.width,
-                    self.state.params.height,
-                    self.state,
-                  );
+                drawCanvas(
+                  canvas,
+                  self.state.params.width,
+                  self.state.params.height,
+                  self.state,
+                );
 
                 switch (self.state.filterBanks) {
                 | None => ()
                 | Some(MonoBank(filterBank)) =>
-                  switch (filterValues) {
+                  switch (self.state.currentFilterValues^) {
                   | Mono(filterValues) =>
                     updateBank(self, filterValues, filterBank)
                   | Stereo(filterValuesL, _) =>
                     updateBank(self, filterValuesL, filterBank)
                   }
                 | Some(StereoBanks(filterBankL, filterBankR)) =>
-                  switch (filterValues) {
+                  switch (self.state.currentFilterValues^) {
                   | Mono(filterValues) =>
                     updateBank(self, filterValues, filterBankL);
                     updateBank(self, filterValues, filterBankR);
@@ -677,7 +648,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
                 switch (self.state.oscillatorBank^) {
                 | Some(bank) =>
-                  switch (filterValues) {
+                  switch (self.state.currentFilterValues^) {
                   | Mono(filterValues) =>
                     updateBankGains(~bank, ~gainValues=filterValues)
                   | Stereo(filterValuesL, _) =>

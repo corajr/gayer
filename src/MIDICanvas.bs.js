@@ -10,9 +10,9 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as MIDI$Gayer from "./MIDI.bs.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as WebMIDI$Gayer from "./WebMIDI.bs.js";
+import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 function defaultState() {
   return /* record */[
@@ -45,7 +45,7 @@ function makeNoteColors(getFillStyleForNumber) {
 }
 
 function drawMidiNotesImg(canvasRenderingContext2D, state) {
-  var outputImageData = Canvas$Gayer.makeImageDataFromFloats(state[/* midiState */1][0][/* notesOn */0], 1, 128);
+  var outputImageData = ImageDataUtil$Gayer.makeImageDataFromFloats(state[/* midiState */1][0][/* notesOn */0], 1, 128);
   canvasRenderingContext2D.putImageData(outputImageData, 0, 0);
   return /* () */0;
 }

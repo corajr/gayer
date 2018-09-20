@@ -589,6 +589,14 @@ let disconnectFilterBank = (noise, filterBank, merger) => {
   disconnect(filterBank.output, compressor);
 };
 
+type filterValues =
+  | Mono(array(float))
+  | Stereo(array(float), array(float));
+
+type filterBanks =
+  | MonoBank(filterBank)
+  | StereoBanks(filterBank, filterBank);
+
 let updateBankGains = (~bank: bank('a), ~gainValues: array(float)) => {
   let t = currentTime(bank.audioCtx);
   let n = Array.length(gainValues);
@@ -631,14 +639,6 @@ let updateFilterBankDefinition =
     filterBank.nodes,
   );
 };
-
-type filterValues =
-  | Mono(array(float))
-  | Stereo(array(float), array(float));
-
-type filterBanks =
-  | MonoBank(filterBank)
-  | StereoBanks(filterBank, filterBank);
 
 module AudioInput = {
   type audioInputSetting =

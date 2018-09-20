@@ -5,10 +5,10 @@ import * as React from "react";
 import * as CQT$Gayer from "./CQT.bs.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
+import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 function drawCQTBar(ctx, state, width, _) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
@@ -18,7 +18,7 @@ function drawCQTBar(ctx, state, width, _) {
   state[/* cqt */4][0].calc();
   state[/* cqt */4][0].render_line(1);
   var cqtLine = state[/* cqt */4][0].get_output_array();
-  var outputImageData = Canvas$Gayer.makeImageData(cqtLine);
+  var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
   ctx.putImageData(outputImageData, width - 1 | 0, 0);
   return /* () */0;
 }

@@ -1,5 +1,6 @@
 open Canvas;
 open Color;
+open ImageDataUtil;
 
 type state = {canvasRef: ref(option(Dom.element))};
 

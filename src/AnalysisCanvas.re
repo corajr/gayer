@@ -1,6 +1,7 @@
 open Audio;
 open AudioGraph;
 open Canvas;
+open ImageDataUtil;
 open Timing;
 
 type state = {

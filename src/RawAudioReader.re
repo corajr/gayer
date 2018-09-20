@@ -1,6 +1,7 @@
 open Audio;
 open AudioGraph;
 open Canvas;
+open ImageDataUtil;
 open RawAudio;
 open TypedArray;
 

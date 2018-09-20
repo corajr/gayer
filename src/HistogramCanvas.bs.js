@@ -6,9 +6,9 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Color$Gayer from "./Color.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("HistogramCanvas");
 
@@ -48,7 +48,7 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                                         match[1]
                                       ];
                               };
-                              var histogram = Canvas$Gayer.imageDataToHistogram(120, binFn, 10.0, slice);
+                              var histogram = ImageDataUtil$Gayer.imageDataToHistogram(120, binFn, 10.0, slice);
                               var n = height / 120 | 0;
                               for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
                                 var offset = Caml_int32.imul((n - i | 0) - 1 | 0, 120);
