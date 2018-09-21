@@ -25,6 +25,26 @@ type layerContent =
   | Regl
   | Reader(readerType);
 
+let string_type_of_layerContent =
+  fun
+  | Fill(_) => "fill"
+  | Draw(_) => "draw-command"
+  | HandDrawn => "hand-drawn"
+  | Webcam => "webcam"
+  | Slitscan(_) => "slitscan"
+  | Image(_) => "image"
+  | Video(_) => "video"
+  | Analysis(_) => "analysis"
+  | PitchClasses(_) => "pitch-classes"
+  | MIDIKeyboard => "midi-keyboard"
+  | KeycodeReader => "keycode-reader"
+  | KeycodeWriter => "keycode-writer"
+  | RawAudioWriter(_) => "raw-audio-writer"
+  | RawAudioReader(_) => "raw-audio-reader"
+  | Histogram => "histogram"
+  | Regl => "regl"
+  | Reader(_) => "reader";
+
 type layer = {
   content: layerContent,
   alpha: float,

@@ -57,11 +57,21 @@ function keyCode(e) {
   }
 }
 
+function keyCodeToY(height, keyCodeN) {
+  return (height - ((keyCodeN - 8 | 0) << 1) | 0) - 1 | 0;
+}
+
+function yToKeyCode(height, keyCodeY) {
+  return ((height - (keyCodeY + 1 | 0) | 0) / 2 | 0) + 8 | 0;
+}
+
 export {
   addKeyListenersToBody ,
   removeKeyListenersFromBody ,
   key ,
   keyCode ,
+  keyCodeToY ,
+  yToKeyCode ,
   
 }
 /* DocumentRe Not a pure module */

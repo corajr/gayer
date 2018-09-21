@@ -35,7 +35,7 @@ type state = {
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
   merger: ref(option(channelMerger)),
-  currentFilterValues: ref(filterValues),
+  currentFilterValues: ref(option(filterValues)),
   layerRefs: ref(Belt.Map.String.t(Dom.element)),
   savedImages: list(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
@@ -61,7 +61,7 @@ let defaultState: state = {
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
-  currentFilterValues: ref(Mono([||])),
+  currentFilterValues: ref(None),
   compressor: ref(None),
   merger: ref(None),
   savedImages: [],
@@ -346,10 +346,10 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
           | G
           | B =>
             let (l, r) = imageDataToStereo(slice, channel, B);
-            state.currentFilterValues := Stereo(l, r);
+            state.currentFilterValues := Some(Stereo(l, r));
           | A =>
             state.currentFilterValues :=
-              Mono(imageDataToFloatArray(slice, channel))
+              Some(Mono(imageDataToFloatArray(slice, channel)))
           };
         | Saturation =>
           Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
@@ -363,7 +363,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
               imageDataToPixels(slice),
             );
 
-          state.currentFilterValues := Mono(saturations);
+          state.currentFilterValues := Some(Mono(saturations));
         }
       );
     };
@@ -479,9 +479,11 @@ let generateNewFilterBanks =
       );
 
     state.currentFilterValues :=
-      Stereo(
-        Array.make(state.params.height, 0.0),
-        Array.make(state.params.height, 0.0),
+      Some(
+        Stereo(
+          Array.make(state.params.height, 0.0),
+          Array.make(state.params.height, 0.0),
+        ),
       );
     send(SetFilterBanks(StereoBanks(filterBankL, filterBankR)));
   } else {
@@ -493,7 +495,8 @@ let generateNewFilterBanks =
         ~freqFunc,
       );
 
-    state.currentFilterValues := Mono(Array.make(state.params.height, 0.0));
+    state.currentFilterValues :=
+      Some(Mono(Array.make(state.params.height, 0.0)));
     send(SetFilterBanks(MonoBank(filterBank)));
   };
 };
@@ -630,29 +633,32 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 | None => ()
                 | Some(MonoBank(filterBank)) =>
                   switch (self.state.currentFilterValues^) {
-                  | Mono(filterValues) =>
+                  | Some(Mono(filterValues)) =>
                     updateBank(self, filterValues, filterBank)
-                  | Stereo(filterValuesL, _) =>
+                  | Some(Stereo(filterValuesL, _)) =>
                     updateBank(self, filterValuesL, filterBank)
+                  | None => ()
                   }
                 | Some(StereoBanks(filterBankL, filterBankR)) =>
                   switch (self.state.currentFilterValues^) {
-                  | Mono(filterValues) =>
+                  | Some(Mono(filterValues)) =>
                     updateBank(self, filterValues, filterBankL);
                     updateBank(self, filterValues, filterBankR);
-                  | Stereo(filterValuesL, filterValuesR) =>
+                  | Some(Stereo(filterValuesL, filterValuesR)) =>
                     updateBank(self, filterValuesL, filterBankL);
                     updateBank(self, filterValuesR, filterBankR);
+                  | None => ()
                   }
                 };
 
                 switch (self.state.oscillatorBank^) {
                 | Some(bank) =>
                   switch (self.state.currentFilterValues^) {
-                  | Mono(filterValues) =>
+                  | Some(Mono(filterValues)) =>
                     updateBankGains(~bank, ~gainValues=filterValues)
-                  | Stereo(filterValuesL, _) =>
+                  | Some(Stereo(filterValuesL, _)) =>
                     updateBankGains(~bank, ~gainValues=filterValuesL)
+                  | None => ()
                   }
                 | None => ()
                 };
@@ -961,6 +967,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
                   layerRefs=self.state.layerRefs
+                  currentFilterValues=self.state.currentFilterValues
                   rootWidth=self.state.params.width
                   rootHeight=self.state.params.height
                   millisPerAudioTick=16

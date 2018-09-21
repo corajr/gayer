@@ -22,6 +22,52 @@ import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
+function string_type_of_layerContent(param) {
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return "hand-drawn";
+      case 1 : 
+          return "webcam";
+      case 2 : 
+          return "midi-keyboard";
+      case 3 : 
+          return "keycode-reader";
+      case 4 : 
+          return "keycode-writer";
+      case 5 : 
+          return "histogram";
+      case 6 : 
+          return "regl";
+      
+    }
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          return "fill";
+      case 1 : 
+          return "draw-command";
+      case 2 : 
+          return "slitscan";
+      case 3 : 
+          return "image";
+      case 4 : 
+          return "video";
+      case 5 : 
+          return "analysis";
+      case 6 : 
+          return "pitch-classes";
+      case 7 : 
+          return "raw-audio-writer";
+      case 8 : 
+          return "raw-audio-reader";
+      case 9 : 
+          return "reader";
+      
+    }
+  }
+}
+
 var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
 
 var defaultLayer = /* record */[
@@ -740,6 +786,7 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
 }
 
 export {
+  string_type_of_layerContent ,
   defaultLayer ,
   oneCompleteTurnAfterNTicks ,
   DecodeLayer ,

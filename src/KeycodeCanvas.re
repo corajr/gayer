@@ -6,8 +6,6 @@ type state = {
   keyboardManagerState,
 };
 
-let keyCodeToY = (height, keyCodeN) => height - (keyCodeN - 8) * 2 - 1;
-
 let makeKeyDownCallback = ({ReasonReact.state}, width, height, e) => {
   switch (key(e)) {
   | "Alt"

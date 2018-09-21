@@ -16,6 +16,7 @@ let make =
       ~width,
       ~height,
       ~getReadAndWritePos,
+      ~currentFilterValues,
       ~layerContent,
       _children,
     ) => {
@@ -59,7 +60,14 @@ let make =
         | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
         | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
         | KeycodeReader =>
-          <KeycodeReaderCanvas layerKey layerRefs setRef saveTick />
+          <KeycodeReaderCanvas
+            layerKey
+            layerRefs
+            setRef
+            saveTick
+            currentFilterValues
+            getReadAndWritePos
+          />
         | HandDrawn => <HandDrawnCanvas setRef width height />
         | RawAudioWriter({x, y, w, h, encoding}) =>
           <RawAudioCanvas

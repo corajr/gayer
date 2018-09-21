@@ -17,7 +17,7 @@ import * as KeycodeReaderCanvas$Gayer from "./KeycodeReaderCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
 
-function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, millisPerTick, width, height, getReadAndWritePos, layerContent, _) {
+function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, millisPerTick, width, height, getReadAndWritePos, currentFilterValues, layerContent, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -46,7 +46,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
                   case 3 : 
-                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, setRef, saveTick, undefined, undefined, undefined, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, setRef, saveTick, currentFilterValues, getReadAndWritePos, undefined, undefined, undefined, /* array */[]));
                       break;
                   case 4 : 
                       tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, setRef, undefined, undefined, /* array */[]));

@@ -1,11 +1,8 @@
 open Canvas;
-open RotDisplay;
 
-type state = {
-  canvasRef: ref(option(Dom.element)),
-  parentElRef: ref(option(Dom.element)),
-  rotDisplayRef: ref(option(RotDisplay.t)),
-};
+let yToKeyCode = KeyboardManager.yToKeyCode;
+
+type state = {canvasRef: ref(option(Dom.element))};
 let component = ReasonReact.reducerComponent(__MODULE__);
 
 let make =
@@ -14,69 +11,52 @@ let make =
       ~layerRefs,
       ~setRef,
       ~saveTick,
+      ~currentFilterValues,
+      ~getReadAndWritePos,
       ~width=240,
       ~height=240,
-      ~fontSize=8,
+      ~fontSize=12,
       _children,
     ) => {
-  let setUpRot = (theRef, {ReasonReact.state}) => {
-    let maybeParent = Js.Nullable.toOption(theRef);
-    state.parentElRef := maybeParent;
-
-    switch (state.canvasRef^, maybeParent) {
-    | (Some(canvas), Some(parentEl)) =>
-      ElementRe.appendChild(parentEl, canvas);
-      setRef(Js.Nullable.return(canvas));
-    | _ => ()
-    };
+  let setCanvasRef = (theRef, {ReasonReact.state}) => {
+    let maybeCanvas = Js.Nullable.toOption(theRef);
+    state.canvasRef := maybeCanvas;
+    setRef(theRef);
   };
-
-  let textHeight = height / fontSize;
-  let textWidth = width / fontSize;
 
   {
     ...component,
     reducer: ((), _state: state) => ReasonReact.NoUpdate,
-    initialState: () => {
-      canvasRef: ref(None),
-      parentElRef: ref(None),
-      rotDisplayRef: ref(None),
-    },
-    didMount: self => {
-      let fontSize = 8;
-      let display =
-        rotDisplay(
-          options(
-            ~width=textWidth,
-            ~height=textHeight,
-            ~fontSize,
-            ~forceSquareRatio=true,
-          ),
-        );
-      self.state.rotDisplayRef := Some(display);
-      self.state.canvasRef := Some(getContainer(display));
+    initialState: () => {canvasRef: ref(None)},
+    didMount: self =>
       saveTick(self.onUnmount, layerKey, () =>
-        switch (
-          Belt.Map.String.get(layerRefs^, "root"),
-          self.state.rotDisplayRef^,
-        ) {
-        | (Some(canvas), Some(display)) =>
+        switch (currentFilterValues^, self.state.canvasRef^) {
+        | (Some(Audio.Stereo(values, _)), Some(canvas))
+        | (Some(Audio.Mono(values)), Some(canvas)) =>
+          let writePos = ref(0);
+          getReadAndWritePos((_, w) => writePos := w);
           let ctx = getContext(getFromReact(canvas));
-          ();
+          Ctx.setFillStyle(ctx, rgba(0, 0, 0, 0.008));
+          Ctx.fillRect(ctx, 0, 0, width, height);
+          Ctx.setFont(ctx, Js.Int.toString(fontSize) ++ "px monospace");
+          let n = Array.length(values);
+          for (i in 0 to n - 1) {
+            let v = values[i];
+            if (v > 0.1) {
+              let keyCodeN = yToKeyCode(height, i);
+              let s = String.make(1, Char.chr(keyCodeN));
+              Ctx.setFillStyle(ctx, rgba(255, 255, 255, v));
+              Ctx.fillText(ctx, s, writePos^, i);
+            };
+          };
         | _ => ()
         }
-      );
-
-      self.onUnmount(() =>
-        switch (self.state.canvasRef^, self.state.parentElRef^) {
-        | (Some(canvas), Some(parentEl)) =>
-          try (ignore(ElementRe.removeChild(parentEl, canvas))) {
-          | _ => ()
-          }
-        | _ => ()
-        }
-      );
-    },
-    render: self => <div ref=(self.handle(setUpRot)) />,
+      ),
+    render: self =>
+      <canvas
+        ref=(self.handle(setCanvasRef))
+        width=(Js.Int.toString(width))
+        height=(Js.Int.toString(height))
+      />,
   };
 };

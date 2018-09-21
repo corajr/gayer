@@ -75,7 +75,7 @@ var defaultState_015 = /* compressor : record */[/* contents */undefined];
 
 var defaultState_016 = /* merger : record */[/* contents */undefined];
 
-var defaultState_017 = /* currentFilterValues : record */[/* contents : Mono */Block.__(0, [/* array */[]])];
+var defaultState_017 = /* currentFilterValues : record */[/* contents */undefined];
 
 var defaultState_018 = /* layerRefs : record */[/* contents */Belt_MapString.empty];
 
@@ -801,7 +801,7 @@ function make($staropt$star, _) {
                                                                           ]);
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
-                                                              }), self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], (function (param, param$1, param$2) {
+                                                              }), self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], self[/* state */1][/* currentFilterValues */17], (function (param, param$1, param$2) {
                                                                 return saveTick(self, param, param$1, param$2);
                                                               }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
@@ -857,23 +857,34 @@ function make($staropt$star, _) {
                                                       var filterBankR = match$1[1];
                                                       var filterBankL = match$1[0];
                                                       var match$2 = self[/* state */1][/* currentFilterValues */17][0];
-                                                      if (match$2.tag) {
-                                                        updateBank(self, match$2[0], filterBankL);
-                                                        updateBank(self, match$2[1], filterBankR);
-                                                      } else {
-                                                        var filterValues = match$2[0];
-                                                        updateBank(self, filterValues, filterBankL);
-                                                        updateBank(self, filterValues, filterBankR);
+                                                      if (match$2 !== undefined) {
+                                                        var match$3 = match$2;
+                                                        if (match$3.tag) {
+                                                          updateBank(self, match$3[0], filterBankL);
+                                                          updateBank(self, match$3[1], filterBankR);
+                                                        } else {
+                                                          var filterValues = match$3[0];
+                                                          updateBank(self, filterValues, filterBankL);
+                                                          updateBank(self, filterValues, filterBankR);
+                                                        }
                                                       }
+                                                      
                                                     } else {
-                                                      var match$3 = self[/* state */1][/* currentFilterValues */17][0];
-                                                      updateBank(self, match$3[0], match$1[0]);
+                                                      var match$4 = self[/* state */1][/* currentFilterValues */17][0];
+                                                      if (match$4 !== undefined) {
+                                                        updateBank(self, match$4[0], match$1[0]);
+                                                      }
+                                                      
                                                     }
                                                   }
-                                                  var match$4 = self[/* state */1][/* oscillatorBank */13][0];
-                                                  if (match$4 !== undefined) {
-                                                    var match$5 = self[/* state */1][/* currentFilterValues */17][0];
-                                                    return Audio$Gayer.updateBankGains(match$4, match$5[0]);
+                                                  var match$5 = self[/* state */1][/* oscillatorBank */13][0];
+                                                  if (match$5 !== undefined) {
+                                                    var match$6 = self[/* state */1][/* currentFilterValues */17][0];
+                                                    if (match$6 !== undefined) {
+                                                      return Audio$Gayer.updateBankGains(match$5, match$6[0]);
+                                                    } else {
+                                                      return /* () */0;
+                                                    }
                                                   } else {
                                                     return /* () */0;
                                                   }

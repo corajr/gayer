@@ -6,10 +6,6 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as KeyboardManager$Gayer from "./KeyboardManager.bs.js";
 
-function keyCodeToY(height, keyCodeN) {
-  return (height - ((keyCodeN - 8 | 0) << 1) | 0) - 1 | 0;
-}
-
 function makeKeyDownCallback(param, width, height, e) {
   var match = KeyboardManager$Gayer.key(e);
   switch (match) {
@@ -29,7 +25,7 @@ function makeKeyDownCallback(param, width, height, e) {
     if (keyCodeN === 32) {
       ctx.clearRect(0, 0, width, height);
     }
-    var keyCodeY = keyCodeToY(height, keyCodeN);
+    var keyCodeY = KeyboardManager$Gayer.keyCodeToY(height, keyCodeN);
     ctx.fillRect(0, keyCodeY, 1, 1);
     return /* () */0;
   } else {
@@ -42,7 +38,7 @@ function makeKeyUpCallback(param, width, height, e) {
   var match = param[/* state */1][/* canvasRef */0][0];
   if (match !== undefined) {
     var ctx = Js_primitive.valFromOption(match).getContext("2d");
-    var keyCodeY = keyCodeToY(height, KeyboardManager$Gayer.keyCode(e));
+    var keyCodeY = KeyboardManager$Gayer.keyCodeToY(height, KeyboardManager$Gayer.keyCode(e));
     ctx.clearRect(0, keyCodeY, width, 1);
     return /* () */0;
   } else {
@@ -106,7 +102,6 @@ function make(_, _$1, setRef, $staropt$star, $staropt$star$1, _$2) {
 }
 
 export {
-  keyCodeToY ,
   makeKeyDownCallback ,
   makeKeyUpCallback ,
   component ,

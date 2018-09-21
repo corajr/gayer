@@ -14,10 +14,12 @@ import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Container$Gayer from "./DnD/Container.bs.js";
 import * as IntSlider$Gayer from "./IntSlider.bs.js";
 import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
+import * as MaterialUi_Grid from "@jsiebern/bs-material-ui/src/MaterialUi_Grid.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as MaterialUi_Switch from "@jsiebern/bs-material-ui/src/MaterialUi_Switch.bs.js";
 import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
 import * as MaterialUi_FormLabel from "@jsiebern/bs-material-ui/src/MaterialUi_FormLabel.bs.js";
+import * as NewLayerButton$Gayer from "./NewLayerButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as AudioInputSelect$Gayer from "./AudioInputSelect.bs.js";
 import * as MaterialUi_FormControl from "@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js";
@@ -183,264 +185,288 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
-                                  marginBottom: "12px"
-                                }, /* array */[
-                                  ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelSummary.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, /* Subheading */148169314, undefined, undefined, /* array */["Global Settings"]))])),
-                                  ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelDetails.make(undefined, undefined, undefined, /* array */[
-                                            ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
-                                                      -976970511,
-                                                      "fieldset"
-                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormLabel.make(undefined, /* `String */[
-                                                                -976970511,
-                                                                "legend"
-                                                              ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Graphics"])),
-                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
-                                                                                      737456202,
-                                                                                      params[/* shouldClear */13]
-                                                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
-                                                                                        return Curry._1(onSetParams, /* record */[
-                                                                                                    /* width */params[/* width */0],
-                                                                                                    /* height */params[/* height */1],
-                                                                                                    /* readPosDelta */params[/* readPosDelta */2],
-                                                                                                    /* writePosDelta */params[/* writePosDelta */3],
-                                                                                                    /* readPosOffset */params[/* readPosOffset */4],
-                                                                                                    /* writePosOffset */params[/* writePosOffset */5],
-                                                                                                    /* millisPerTick */params[/* millisPerTick */6],
-                                                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                                                    /* inputGain */params[/* inputGain */8],
-                                                                                                    /* outputGain */params[/* outputGain */9],
-                                                                                                    /* q */params[/* q */10],
-                                                                                                    /* transpose */params[/* transpose */11],
-                                                                                                    /* stereo */params[/* stereo */12],
-                                                                                                    /* shouldClear */value,
-                                                                                                    /* layers */params[/* layers */14]
-                                                                                                  ]);
-                                                                                      }), undefined, "shouldClear", undefined, undefined, /* array */[]))), undefined, undefined, "Clear between frames", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Read position offset", params[/* readPosOffset */4], 1, (function (readPosOffset) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */readPosOffset,
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Write position offset", params[/* writePosOffset */5], undefined, (function (writePosOffset) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */writePosOffset,
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Read position delta", params[/* readPosDelta */2], undefined, (function (readPosDelta) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */readPosDelta,
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Write position delta", params[/* writePosDelta */3], undefined, (function (writePosDelta) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */writePosDelta,
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[]))
-                                                    ])),
-                                            ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
-                                                      -976970511,
-                                                      "fieldset"
-                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormLabel.make(undefined, /* `String */[
-                                                                -976970511,
-                                                                "legend"
-                                                              ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Audio"])),
-                                                      ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
-                                                                                      737456202,
-                                                                                      params[/* stereo */12]
-                                                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
-                                                                                        return Curry._1(onSetParams, /* record */[
-                                                                                                    /* width */params[/* width */0],
-                                                                                                    /* height */params[/* height */1],
-                                                                                                    /* readPosDelta */params[/* readPosDelta */2],
-                                                                                                    /* writePosDelta */params[/* writePosDelta */3],
-                                                                                                    /* readPosOffset */params[/* readPosOffset */4],
-                                                                                                    /* writePosOffset */params[/* writePosOffset */5],
-                                                                                                    /* millisPerTick */params[/* millisPerTick */6],
-                                                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                                                    /* inputGain */params[/* inputGain */8],
-                                                                                                    /* outputGain */params[/* outputGain */9],
-                                                                                                    /* q */params[/* q */10],
-                                                                                                    /* transpose */params[/* transpose */11],
-                                                                                                    /* stereo */value,
-                                                                                                    /* shouldClear */params[/* shouldClear */13],
-                                                                                                    /* layers */params[/* layers */14]
-                                                                                                  ]);
-                                                                                      }), undefined, "stereo", undefined, undefined, /* array */[]))), undefined, undefined, "Stereo (red=L, blue=R)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
-                                                      ReasonReact.element(undefined, undefined, AudioInputSelect$Gayer.make(params[/* audioInputSetting */7], (function (audioInputSetting) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */audioInputSetting,
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */8], undefined, (function (inputGain) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */inputGain,
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */9], undefined, (function (outputGain) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */outputGain,
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */10], undefined, (function (q) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */q,
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(-119, 119, undefined, "Transpose", params[/* transpose */11], undefined, (function (transpose) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */params[/* millisPerTick */6],
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */transpose,
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[])),
-                                                      ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(10, 100, undefined, "Milliseconds per tick", params[/* millisPerTick */6], undefined, (function (millisPerTick) {
-                                                                  return Curry._1(onSetParams, /* record */[
-                                                                              /* width */params[/* width */0],
-                                                                              /* height */params[/* height */1],
-                                                                              /* readPosDelta */params[/* readPosDelta */2],
-                                                                              /* writePosDelta */params[/* writePosDelta */3],
-                                                                              /* readPosOffset */params[/* readPosOffset */4],
-                                                                              /* writePosOffset */params[/* writePosOffset */5],
-                                                                              /* millisPerTick */millisPerTick,
-                                                                              /* audioInputSetting */params[/* audioInputSetting */7],
-                                                                              /* inputGain */params[/* inputGain */8],
-                                                                              /* outputGain */params[/* outputGain */9],
-                                                                              /* q */params[/* q */10],
-                                                                              /* transpose */params[/* transpose */11],
-                                                                              /* stereo */params[/* stereo */12],
-                                                                              /* shouldClear */params[/* shouldClear */13],
-                                                                              /* layers */params[/* layers */14]
-                                                                            ]);
-                                                                }), /* array */[]))
-                                                    ]))
-                                          ]))
+              return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* V24 */3, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                  ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V10 */9, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanel.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
+                                                      marginBottom: "12px"
+                                                    }, /* array */[
+                                                      ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelSummary.make(undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, /* Subheading */148169314, undefined, undefined, /* array */["Global Settings"]))])),
+                                                      ReasonReact.element(undefined, undefined, MaterialUi_ExpansionPanelDetails.make(undefined, undefined, undefined, /* array */[
+                                                                ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
+                                                                          -976970511,
+                                                                          "fieldset"
+                                                                        ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                          ReasonReact.element(undefined, undefined, MaterialUi_FormLabel.make(undefined, /* `String */[
+                                                                                    -976970511,
+                                                                                    "legend"
+                                                                                  ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Graphics"])),
+                                                                          ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                                                          737456202,
+                                                                                                          params[/* shouldClear */13]
+                                                                                                        ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
+                                                                                                            return Curry._1(onSetParams, /* record */[
+                                                                                                                        /* width */params[/* width */0],
+                                                                                                                        /* height */params[/* height */1],
+                                                                                                                        /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                                        /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                                        /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                                        /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                                        /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                                        /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                                        /* inputGain */params[/* inputGain */8],
+                                                                                                                        /* outputGain */params[/* outputGain */9],
+                                                                                                                        /* q */params[/* q */10],
+                                                                                                                        /* transpose */params[/* transpose */11],
+                                                                                                                        /* stereo */params[/* stereo */12],
+                                                                                                                        /* shouldClear */value,
+                                                                                                                        /* layers */params[/* layers */14]
+                                                                                                                      ]);
+                                                                                                          }), undefined, "shouldClear", undefined, undefined, /* array */[]))), undefined, undefined, "Clear between frames", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Read position offset", params[/* readPosOffset */4], 1, (function (readPosOffset) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */readPosOffset,
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Write position offset", params[/* writePosOffset */5], undefined, (function (writePosOffset) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */writePosOffset,
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Read position delta", params[/* readPosDelta */2], undefined, (function (readPosDelta) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */readPosDelta,
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make((-params[/* width */0] | 0) + 1 | 0, params[/* width */0] - 1 | 0, undefined, "Write position delta", params[/* writePosDelta */3], undefined, (function (writePosDelta) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */writePosDelta,
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[]))
+                                                                        ])),
+                                                                ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
+                                                                          -976970511,
+                                                                          "fieldset"
+                                                                        ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                                          ReasonReact.element(undefined, undefined, MaterialUi_FormLabel.make(undefined, /* `String */[
+                                                                                    -976970511,
+                                                                                    "legend"
+                                                                                  ], undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Audio"])),
+                                                                          ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                                                          737456202,
+                                                                                                          params[/* stereo */12]
+                                                                                                        ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
+                                                                                                            return Curry._1(onSetParams, /* record */[
+                                                                                                                        /* width */params[/* width */0],
+                                                                                                                        /* height */params[/* height */1],
+                                                                                                                        /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                                        /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                                        /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                                        /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                                        /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                                        /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                                        /* inputGain */params[/* inputGain */8],
+                                                                                                                        /* outputGain */params[/* outputGain */9],
+                                                                                                                        /* q */params[/* q */10],
+                                                                                                                        /* transpose */params[/* transpose */11],
+                                                                                                                        /* stereo */value,
+                                                                                                                        /* shouldClear */params[/* shouldClear */13],
+                                                                                                                        /* layers */params[/* layers */14]
+                                                                                                                      ]);
+                                                                                                          }), undefined, "stereo", undefined, undefined, /* array */[]))), undefined, undefined, "Stereo (red=L, blue=R)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                                          ReasonReact.element(undefined, undefined, AudioInputSelect$Gayer.make(params[/* audioInputSetting */7], (function (audioInputSetting) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */audioInputSetting,
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Input gain", params[/* inputGain */8], undefined, (function (inputGain) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */inputGain,
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Output gain", params[/* outputGain */9], undefined, (function (outputGain) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */outputGain,
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(1.0, 200.0, "Q", params[/* q */10], undefined, (function (q) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */q,
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(-119, 119, undefined, "Transpose", params[/* transpose */11], undefined, (function (transpose) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */params[/* millisPerTick */6],
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */transpose,
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[])),
+                                                                          ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(10, 100, undefined, "Milliseconds per tick", params[/* millisPerTick */6], undefined, (function (millisPerTick) {
+                                                                                      return Curry._1(onSetParams, /* record */[
+                                                                                                  /* width */params[/* width */0],
+                                                                                                  /* height */params[/* height */1],
+                                                                                                  /* readPosDelta */params[/* readPosDelta */2],
+                                                                                                  /* writePosDelta */params[/* writePosDelta */3],
+                                                                                                  /* readPosOffset */params[/* readPosOffset */4],
+                                                                                                  /* writePosOffset */params[/* writePosOffset */5],
+                                                                                                  /* millisPerTick */millisPerTick,
+                                                                                                  /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                                  /* inputGain */params[/* inputGain */8],
+                                                                                                  /* outputGain */params[/* outputGain */9],
+                                                                                                  /* q */params[/* q */10],
+                                                                                                  /* transpose */params[/* transpose */11],
+                                                                                                  /* stereo */params[/* stereo */12],
+                                                                                                  /* shouldClear */params[/* shouldClear */13],
+                                                                                                  /* layers */params[/* layers */14]
+                                                                                                ]);
+                                                                                    }), /* array */[]))
+                                                                        ]))
+                                                              ]))
+                                                    ]))])),
+                                  ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V1 */0, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, NewLayerButton$Gayer.make((function (layer) {
+                                                        return Curry._1(onSetParams, /* record */[
+                                                                    /* width */params[/* width */0],
+                                                                    /* height */params[/* height */1],
+                                                                    /* readPosDelta */params[/* readPosDelta */2],
+                                                                    /* writePosDelta */params[/* writePosDelta */3],
+                                                                    /* readPosOffset */params[/* readPosOffset */4],
+                                                                    /* writePosOffset */params[/* writePosOffset */5],
+                                                                    /* millisPerTick */params[/* millisPerTick */6],
+                                                                    /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                    /* inputGain */params[/* inputGain */8],
+                                                                    /* outputGain */params[/* outputGain */9],
+                                                                    /* q */params[/* q */10],
+                                                                    /* transpose */params[/* transpose */11],
+                                                                    /* stereo */params[/* stereo */12],
+                                                                    /* shouldClear */params[/* shouldClear */13],
+                                                                    /* layers : :: */[
+                                                                      layer,
+                                                                      params[/* layers */14]
+                                                                    ]
+                                                                  ]);
+                                                      }), /* array */[]))]))
                                 ])), ReasonReact.element(undefined, undefined, Container$Gayer.make(List.map((function (layer) {
                                         var match = layer[/* id */6];
                                         var id = "card" + (

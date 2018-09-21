@@ -15,6 +15,7 @@ let make =
       ~audioGraph,
       ~audioCtx,
       ~layerRefs,
+      ~currentFilterValues,
       ~saveTick,
       ~getReadAndWritePos,
       ~millisPerAudioTick,
@@ -103,6 +104,7 @@ let make =
                 width=rootWidth
                 height=rootHeight
                 getReadAndWritePos
+                currentFilterValues
                 layerContent=layer.content
               />
             </div>;
