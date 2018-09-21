@@ -57,7 +57,7 @@ let make =
             saveTick
             saveRef=setRef
           />
-        | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
+        | MIDIKeyboard => <MIDICanvas setRef height />
         | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
         | KeycodeReader =>
           <KeycodeReaderCanvas

@@ -889,8 +889,27 @@ var allLayerTypes = /* array */[
     slitscan
   ],
   /* tuple */[
+    "midi-keyboard",
+    midiKeyboard
+  ],
+  /* tuple */[
+    "computer keyboard",
+    keycodeWriter
+  ],
+  /* tuple */[
+    "ASCII",
+    keycodeReader
+  ],
+  /* tuple */[
     "mouse-draw",
     handDrawn
+  ],
+  /* tuple */[
+    "draw (commands)",
+    draw(undefined, /* :: */[
+          /* SetFillStyle */Block.__(3, ["red"]),
+          /* [] */0
+        ])
   ],
   /* tuple */[
     "fill",

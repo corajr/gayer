@@ -776,7 +776,7 @@ var history_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
 var history_004 = /* readPosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
 
-var history_005 = /* writePosOffset */LayerGenerator$Gayer.defaultSize - 20 | 0;
+var history_005 = /* writePosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
 
 var history_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
@@ -804,10 +804,7 @@ var history_014 = /* layers : :: */[
       /* filters */LayerGenerator$Gayer.reader[/* filters */5],
       /* id */LayerGenerator$Gayer.reader[/* id */6]
     ],
-    /* :: */[
-      LayerGenerator$Gayer.keycodeReader,
-      /* [] */0
-    ]
+    /* [] */0
   ]
 ];
 
@@ -1186,11 +1183,19 @@ var midi_011 = history_011;
 var midi_012 = history_012;
 
 var midi_014 = /* layers : :: */[
-  LayerGenerator$Gayer.midiKeyboard,
+  LayerGenerator$Gayer.fill(undefined, "black"),
   /* :: */[
-    LayerGenerator$Gayer.historyLayer,
+    LayerGenerator$Gayer.midiKeyboard,
     /* :: */[
-      LayerGenerator$Gayer.reader,
+      /* record */[
+        /* content */LayerGenerator$Gayer.reader[/* content */0],
+        /* alpha */0.0,
+        /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */2],
+        /* rotation */LayerGenerator$Gayer.reader[/* rotation */3],
+        /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */4],
+        /* filters */LayerGenerator$Gayer.reader[/* filters */5],
+        /* id */LayerGenerator$Gayer.reader[/* id */6]
+      ],
       /* [] */0
     ]
   ]

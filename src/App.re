@@ -248,9 +248,10 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
       | Some(midiCanvas) =>
         let canvasElt = getFromReact(midiCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
+      /* let x = */
+      /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
+      /* Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height); */
       }
     | RawAudioWriter({x, y, w, h, encoding}) =>
       switch (encoding, maybeLayerRef) {

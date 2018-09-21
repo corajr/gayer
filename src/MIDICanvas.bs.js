@@ -50,8 +50,8 @@ function drawMidiNotesImg(canvasRenderingContext2D, state) {
   return /* () */0;
 }
 
-function drawMidiNotes(ctx, _, noteToY, state) {
-  var notesOn = state[/* midiState */1][0][/* notesOn */0];
+function drawMidiNotes(ctx, _, noteToY, midiState) {
+  var notesOn = midiState[0][/* notesOn */0];
   for(var i = 127; i >= 0; --i){
     var v = Caml_array.caml_array_get(notesOn, i);
     if (v > 0.0) {
@@ -65,14 +65,14 @@ function drawMidiNotes(ctx, _, noteToY, state) {
 
 var component = ReasonReact.reducerComponent("MIDICanvas");
 
-function make(height, saveRef, _) {
+function make(height, setRef, _) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */0][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
-    return Curry._1(saveRef, theRef);
+    return Curry._1(setRef, theRef);
   };
   var noteToY = function (note) {
     var pixelsPerNote = height / 120 | 0;
-    return Caml_int32.imul(124 - note | 0, pixelsPerNote);
+    return Caml_int32.imul(124 - note | 0, pixelsPerNote) - 1 | 0;
   };
   return /* record */[
           /* debugName */component[/* debugName */0],
@@ -95,8 +95,12 @@ function make(height, saveRef, _) {
                       WebMIDI$Gayer.addListener(input, /* NoteOn */0, /* All */0, (function (e) {
                               return Curry._1(self[/* send */3], /* MIDIEventReceived */[e]);
                             }));
-                      return WebMIDI$Gayer.addListener(input, /* NoteOff */1, /* All */0, (function (e) {
-                                    return Curry._1(self[/* send */3], /* MIDIEventReceived */[e]);
+                      WebMIDI$Gayer.addListener(input, /* NoteOff */1, /* All */0, (function (e) {
+                              return Curry._1(self[/* send */3], /* MIDIEventReceived */[e]);
+                            }));
+                      return Curry._1(self[/* onUnmount */4], (function () {
+                                    WebMIDI$Gayer.removeListener(input, /* NoteOn */0);
+                                    return WebMIDI$Gayer.removeListener(input, /* NoteOff */1);
                                   }));
                     }));
               return /* () */0;
@@ -123,7 +127,7 @@ function make(height, saveRef, _) {
                               MIDI$Gayer.update(state[/* midiState */1][0], $$event);
                               var ctx = canvas.getContext("2d");
                               ctx.clearRect(0, 0, 1, height);
-                              return drawMidiNotes(ctx, height, noteToY, state);
+                              return drawMidiNotes(ctx, height, noteToY, state[/* midiState */1]);
                             })]);
               } else {
                 return /* NoUpdate */0;

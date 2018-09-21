@@ -128,7 +128,7 @@ let history = {
   readPosDelta: 0,
   writePosDelta: 0,
   readPosOffset: defaultSize - 1,
-  writePosOffset: defaultSize - 20,
+  writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
     analyzer,
@@ -137,7 +137,6 @@ let history = {
     /* {...squareColumnLayer, alpha: 1.0}, */
     /* {...pitchFilter(cMajor), alpha: 0.01}, */
     {...reader, alpha: 0.0},
-    keycodeReader,
   ],
 };
 
@@ -210,7 +209,10 @@ let handDrawnParams = {
   layers: [fill("black"), handDrawn, reader],
 };
 
-let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
+let midi = {
+  ...history,
+  layers: [fill("black"), midiKeyboard, {...reader, alpha: 0.0}],
+};
 
 let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
 

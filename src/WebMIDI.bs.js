@@ -71,6 +71,11 @@ function addListener(inputOrOutput, eventType, channel, callback) {
   return /* () */0;
 }
 
+function removeListener(inputOrOutput, eventType) {
+  inputOrOutput.removeListener(string_of_eventType(eventType));
+  return /* () */0;
+}
+
 var onWebMidiStart = function (webMIDIre){
 var WebMIDI = webMIDIre;
 WebMidi.enable(function () {
@@ -121,6 +126,7 @@ export {
   webMidiChannelToJs ,
   midiEvent_of_webMidiEvent ,
   addListener ,
+  removeListener ,
   onWebMidiStart ,
   
 }

@@ -326,26 +326,19 @@ function drawLayer(ctx, width, height, state, layer) {
   var exit = 0;
   if (typeof match$1 === "number") {
     switch (match$1) {
-      case 0 : 
-          if (maybeLayerRef !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-          }
-          break;
       case 1 : 
           var match$2 = state[/* cameraInput */12][0];
           if (match$2 !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(match$2), 0, 0, width, height);
           }
           break;
+      case 0 : 
       case 2 : 
-          if (maybeLayerRef !== undefined) {
-            var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), x, 0, 1, height);
-          }
+          exit = 1;
           break;
       case 3 : 
       case 4 : 
-          exit = 1;
+          exit = 2;
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
@@ -449,10 +442,13 @@ function drawLayer(ctx, width, height, state, layer) {
         
     }
   }
-  if (exit === 1) {
-    if (maybeLayerRef !== undefined) {
-      ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-    }
+  switch (exit) {
+    case 1 : 
+    case 2 : 
+        if (maybeLayerRef !== undefined) {
+          ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+        }
+        break;
     
   }
   setTimeout((function () {
