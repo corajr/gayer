@@ -954,7 +954,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 style=(
                   ReactDOMRe.Style.make(
                     ~marginBottom="24px",
-                    ~minHeight="480px",
+                    ~minHeight="400px",
                     ~position="relative",
                     (),
                   )
@@ -986,7 +986,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                       ~transform=
                         "scale("
                         ++ Js.Float.toString(
-                             480.0 /. float_of_int(self.state.params.height),
+                             400.0 /. float_of_int(self.state.params.height),
                            )
                         ++ ")",
                       ~transformOrigin="top left",

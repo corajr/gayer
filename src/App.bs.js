@@ -785,7 +785,7 @@ function make($staropt$star, _) {
                                                       id: "main-display",
                                                       style: {
                                                         marginBottom: "24px",
-                                                        minHeight: "480px",
+                                                        minHeight: "400px",
                                                         position: "relative"
                                                       }
                                                     }, ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */14]), self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], (function (layer, theRef) {
@@ -802,7 +802,7 @@ function make($staropt$star, _) {
                                                               }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                           style: {
-                                                            transform: "scale(" + ((480.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
+                                                            transform: "scale(" + ((400.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),
                                                             transformOrigin: "top left",
                                                             imageRendering: "crisp-edges"
                                                           },

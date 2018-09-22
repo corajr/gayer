@@ -752,17 +752,6 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                                                                 /* id */layer[/* id */6]
                                                               ]);
                                                   }), /* array */[])),
-                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-0.5 * Canvas$Gayer.tau, 0.5 * Canvas$Gayer.tau, "Rotation", layer[/* rotation */3], 0.01, (function (value) {
-                                                    return Curry._2(changeLayer, layer, /* record */[
-                                                                /* content */layer[/* content */0],
-                                                                /* alpha */layer[/* alpha */1],
-                                                                /* compositeOperation */layer[/* compositeOperation */2],
-                                                                /* rotation */value,
-                                                                /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5],
-                                                                /* id */layer[/* id */6]
-                                                              ]);
-                                                  }), /* array */[])),
                                         React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],

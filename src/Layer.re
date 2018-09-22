@@ -430,16 +430,16 @@ let make =
             label="Alpha"
             onChange=(value => changeLayer(layer, {...layer, alpha: value}))
           />
-          <FloatSlider
-            min=((-0.5) *. tau)
-            max=(0.5 *. tau)
-            value=layer.rotation
-            label="Rotation"
-            step=0.01
-            onChange=(
-              value => changeLayer(layer, {...layer, rotation: value})
-            )
-          />
+          /* <FloatSlider */
+          /*   min=((-0.5) *. tau) */
+          /*   max=(0.5 *. tau) */
+          /*   value=layer.rotation */
+          /*   label="Rotation" */
+          /*   step=0.01 */
+          /*   onChange=( */
+          /*     value => changeLayer(layer, {...layer, rotation: value}) */
+          /*   ) */
+          /* /> */
           /* <NumericTextField */
           /*   label=(ReasonReact.string("Rotation")) */
           /*   value=(`Float(layer.rotation)) */
