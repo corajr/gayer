@@ -233,7 +233,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     mark(performance, layerKey ++ "start");
 
     switch (layer.content) {
-    | Draw(cmds) => DrawCommand.drawCommands(ctx, cmds)
+    | Draw(cmds) =>
+      DrawCommand.drawCommands({ctx, variables: Belt.Map.String.empty}, cmds)
     | Fill(s) =>
       Ctx.setFillStyle(ctx, s);
       Ctx.fillRect(ctx, 0, 0, width, height);

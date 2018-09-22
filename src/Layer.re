@@ -1,3 +1,4 @@
+open AnalysisOptions;
 open Audio.AudioInput;
 open CameraOptions;
 open Canvas;
@@ -15,7 +16,7 @@ type layerContent =
   | Slitscan(cameraOptions)
   | Image(string)
   | Video(string)
-  | Analysis(audioInputSetting)
+  | Analysis(analysisOptions)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
   | KeycodeReader
@@ -150,8 +151,8 @@ module DecodeLayer = {
       | "analysis" =>
         json
         |> map(
-             s => Analysis(s),
-             field("source", DecodeAudioInput.audioInputSetting),
+             o => Analysis(o),
+             field("opts", DecodeAnalysisOptions.analysisOptions),
            )
 
       | "fill" => json |> map(s => Fill(s), field("style", string))
@@ -257,10 +258,10 @@ module EncodeLayer = {
         object_([("type", string("image")), ("url", string(url))])
       | Video(url) =>
         object_([("type", string("video")), ("url", string(url))])
-      | Analysis(source) =>
+      | Analysis(opts) =>
         object_([
           ("type", string("analysis")),
-          ("source", EncodeAudioInput.audioInputSetting(source)),
+          ("opts", EncodeAnalysisOptions.analysisOptions(opts)),
         ])
 
       | PitchClasses(classes) =>

@@ -7,6 +7,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 
@@ -349,6 +350,26 @@ function length(param) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "var"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "name",
+                          param[0]
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "default",
+                            param[1]
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "px"
                       ],
                       /* :: */[
@@ -359,7 +380,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 2 : 
+      case 3 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -373,7 +394,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 3 : 
+      case 4 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -387,7 +408,7 @@ function length(param) {
                         /* [] */0
                       ]
                     ]);
-      case 4 : 
+      case 5 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -407,7 +428,7 @@ function length(param) {
                         ]
                       ]
                     ]);
-      case 5 : 
+      case 6 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -427,7 +448,7 @@ function length(param) {
                         ]
                       ]
                     ]);
-      case 6 : 
+      case 7 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -719,27 +740,27 @@ function length$1(json) {
     switch (type_) {
       case "*" : 
           return field2((function (a, b) {
-                        return /* Multiply */Block.__(6, [
+                        return /* Multiply */Block.__(7, [
                                   a,
                                   b
                                 ]);
                       }), "a", length$1, "b", length$1, json);
       case "+" : 
           return field2((function (a, b) {
-                        return /* Add */Block.__(4, [
+                        return /* Add */Block.__(5, [
                                   a,
                                   b
                                 ]);
                       }), "a", length$1, "b", length$1, json);
       case "-" : 
           return Json_decode.map((function (x) {
-                        return /* Negate */Block.__(3, [x]);
+                        return /* Negate */Block.__(4, [x]);
                       }), (function (param) {
                         return Json_decode.field("x", length$1, param);
                       }), json);
       case "/" : 
           return field2((function (a, b) {
-                        return /* Divide */Block.__(5, [
+                        return /* Divide */Block.__(6, [
                                   a,
                                   b
                                 ]);
@@ -754,16 +775,23 @@ function length$1(json) {
           return /* Height */1;
       case "note" : 
           return Json_decode.map((function (i) {
-                        return /* Note */Block.__(2, [i]);
+                        return /* Note */Block.__(3, [i]);
                       }), (function (param) {
                         return Json_decode.field("note", Json_decode.$$int, param);
                       }), json);
       case "px" : 
           return Json_decode.map((function (i) {
-                        return /* Pixels */Block.__(1, [i]);
+                        return /* Pixels */Block.__(2, [i]);
                       }), (function (param) {
                         return Json_decode.field("i", Json_decode.$$int, param);
                       }), json);
+      case "var" : 
+          return field2((function (a, b) {
+                        return /* Variable */Block.__(1, [
+                                  a,
+                                  b
+                                ]);
+                      }), "name", Json_decode.string, "default", Json_decode.$$int, json);
       case "width" : 
           return /* Width */0;
       default:
@@ -949,36 +977,39 @@ var DecodeDrawCommand = /* module */[
   /* command */command$1
 ];
 
-function getLength(ctx, len) {
+function getLength(drawCtx, len) {
   if (typeof len === "number") {
     if (len === 0) {
-      return ctx.canvas.width;
+      return drawCtx[/* ctx */0].canvas.width;
     } else {
-      return ctx.canvas.height;
+      return drawCtx[/* ctx */0].canvas.height;
     }
   } else {
     switch (len.tag | 0) {
-      case 0 : 
       case 1 : 
-          return len[0];
+          return Belt_MapString.getWithDefault(drawCtx[/* variables */1], len[0], len[1]);
+      case 0 : 
       case 2 : 
-          var height = ctx.canvas.height;
+          return len[0];
+      case 3 : 
+          var height = drawCtx[/* ctx */0].canvas.height;
           var pixelsPerSemitone = height / 120 | 0;
           return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
-      case 3 : 
-          return -getLength(ctx, len[0]) | 0;
       case 4 : 
-          return getLength(ctx, len[0]) + getLength(ctx, len[1]) | 0;
+          return -getLength(drawCtx, len[0]) | 0;
       case 5 : 
-          return Caml_int32.div(getLength(ctx, len[0]), getLength(ctx, len[1]));
+          return getLength(drawCtx, len[0]) + getLength(drawCtx, len[1]) | 0;
       case 6 : 
-          return Caml_int32.imul(getLength(ctx, len[0]), getLength(ctx, len[1]));
+          return Caml_int32.div(getLength(drawCtx, len[0]), getLength(drawCtx, len[1]));
+      case 7 : 
+          return Caml_int32.imul(getLength(drawCtx, len[0]), getLength(drawCtx, len[1]));
       
     }
   }
 }
 
-function drawCommand(ctx, cmd) {
+function drawCommand(drawContext, cmd) {
+  var ctx = drawContext[/* ctx */0];
   switch (cmd.tag | 0) {
     case 0 : 
         ctx.font = cmd[0];
@@ -997,13 +1028,13 @@ function drawCommand(ctx, cmd) {
         return /* () */0;
     case 5 : 
         var match = cmd[0];
-        ctx.fillRect(getLength(ctx, match[/* x */0]), getLength(ctx, match[/* y */1]), getLength(ctx, match[/* w */2]), getLength(ctx, match[/* h */3]));
+        ctx.fillRect(getLength(drawContext, match[/* x */0]), getLength(drawContext, match[/* y */1]), getLength(drawContext, match[/* w */2]), getLength(drawContext, match[/* h */3]));
         return /* () */0;
     case 6 : 
-        ctx.fillText(cmd[0], getLength(ctx, cmd[1]), getLength(ctx, cmd[2]));
+        ctx.fillText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
         return /* () */0;
     case 7 : 
-        ctx.strokeText(cmd[0], getLength(ctx, cmd[1]), getLength(ctx, cmd[2]));
+        ctx.strokeText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
         return /* () */0;
     case 8 : 
         ctx.rotate(cmd[0]);
@@ -1014,25 +1045,25 @@ function drawCommand(ctx, cmd) {
                     /* horizontalSkewing */0.0,
                     /* verticalSkewing */0.0,
                     /* verticalScaling */1.0,
-                    /* horizontalMoving */getLength(ctx, cmd[0]),
-                    /* verticalMoving */getLength(ctx, cmd[1])
+                    /* horizontalMoving */getLength(drawContext, cmd[0]),
+                    /* verticalMoving */getLength(drawContext, cmd[1])
                   ]);
     case 10 : 
         var match$1 = cmd[1];
-        ctx.drawImage(ctx.canvas, getLength(ctx, match$1[/* x */0]), getLength(ctx, match$1[/* y */1]), getLength(ctx, match$1[/* w */2]), getLength(ctx, match$1[/* h */3]));
+        ctx.drawImage(ctx.canvas, getLength(drawContext, match$1[/* x */0]), getLength(drawContext, match$1[/* y */1]), getLength(drawContext, match$1[/* w */2]), getLength(drawContext, match$1[/* h */3]));
         return /* () */0;
     case 11 : 
         var match$2 = cmd[2];
         var match$3 = cmd[1];
-        ctx.drawImage(ctx.canvas, getLength(ctx, match$3[/* x */0]), getLength(ctx, match$3[/* y */1]), getLength(ctx, match$3[/* w */2]), getLength(ctx, match$3[/* h */3]), getLength(ctx, match$2[/* x */0]), getLength(ctx, match$2[/* y */1]), getLength(ctx, match$2[/* w */2]), getLength(ctx, match$2[/* h */3]));
+        ctx.drawImage(ctx.canvas, getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]), getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
         return /* () */0;
     
   }
 }
 
-function drawCommands(ctx, cmds) {
+function drawCommands(drawContext, cmds) {
   return List.iter((function (param) {
-                return drawCommand(ctx, param);
+                return drawCommand(drawContext, param);
               }), cmds);
 }
 

@@ -29,7 +29,12 @@ let harmonyIntensified = {
 let feedback = {
   ...defaultParams,
   audioInputSetting: Mic,
-  layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
+  layers: [
+    webcam,
+    {...analyzer(Mic), alpha: 0.5},
+    pitchFilter(cMajor),
+    reader,
+  ],
 };
 
 let webcamParams = {
@@ -40,7 +45,7 @@ let webcamParams = {
   writePosOffset: 0,
   layers: [
     {
-      ...analyzer,
+      ...analyzer(Mic),
       transformMatrix: {
         ...defaultTransform,
         horizontalScaling: float_of_int(defaultSize),
@@ -70,7 +75,7 @@ let slitscanParams = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     /* squareColumnLayer, */
     {...webcam, alpha: 0.0},
     slitscan,
@@ -91,7 +96,7 @@ let slitscanEdgeDetectParams = {
   layers: [
     slitscan,
     /* sobel, */
-    analyzer,
+    analyzer(Mic),
     /* pitchFilter(cMajor), */
     historyLayer,
     reader,
@@ -137,7 +142,7 @@ let history = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */
@@ -154,7 +159,7 @@ let historyHalving = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     squareColumnLayer,
     historyLayer,
     draw([
@@ -172,11 +177,7 @@ let historyHalving = {
   ],
 };
 
-let debussyFile = {
-  ...defaultLayer,
-  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
-  /* content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")), */
-};
+let debussyFile = analyzer(AudioFile("media/la_cathedrale_engloutie.m4a"));
 
 let debussy = {...history, layers: [debussyFile, historyLayer, reader]};
 
@@ -187,7 +188,7 @@ let droste = {
   shouldClear: false,
   layers: [
     {
-      ...analyzer,
+      ...analyzer(Mic),
       transformMatrix: {
         ...defaultTransform,
         horizontalScaling: float_of_int(defaultSize),
@@ -232,17 +233,20 @@ let readFromCenterLine = {
 
 let historyBackAndForth = {
   ...readFromCenterLine,
-  layers: [analyzer, historyBackAndForthLayer, reader],
+  layers: [analyzer(Mic), historyBackAndForthLayer, reader],
 };
 
-let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
+let vinyl = {
+  ...readFromCenterLine,
+  layers: [rotateLayer, analyzer(Mic), reader],
+};
 
 let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
 let video = {
   ...defaultParams,
   layers: [
     video(videoURL),
-    {...analyzer, content: Analysis(AudioFromVideo(videoURL))},
+    analyzer(AudioFromVideo(videoURL)),
     /* pitchFilter(cMajor), */
     reader,
   ],
@@ -293,7 +297,7 @@ let welcomeAudio = {
 let presetsWithoutLayerIds = [
   ("Keycode", keycodeParams),
   ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
-  /* ("Spectrogram", {...defaultParams, layers: [analyzer]}), */
+  /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
   ("Welcome (Audio)", welcomeAudio),
   /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),

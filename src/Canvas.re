@@ -464,11 +464,17 @@ let wrapCoord: (int, int, int) => int =
 let binsPerSemitone: int => int = height => height / 120;
 
 module DrawCommand = {
+  type drawContext = {
+    ctx: canvasRenderingContext2D,
+    variables: Belt.Map.String.t(int),
+  };
+
   type imgSource =
     | Self;
 
   type length =
     | Constant(int)
+    | Variable(string, int)
     | Pixels(int)
     | Note(int)
     | Width
@@ -514,6 +520,12 @@ module DrawCommand = {
         fun
         | Constant(v) =>
           object_([("type", string("constant")), ("v", int(v))])
+        | Variable(s, i) =>
+          object_([
+            ("type", string("var")),
+            ("name", string(s)),
+            ("default", int(i)),
+          ])
         | Pixels(i) => object_([("type", string("px")), ("i", int(i))])
         | Note(i) => object_([("type", string("note")), ("note", int(i))])
         | Width => object_([("type", string("width"))])
@@ -638,7 +650,17 @@ module DrawCommand = {
           | "/" =>
             json |> field2((a, b) => Divide(a, b), "a", length, "b", length)
 
+          | "var" =>
+            json
+            |> field2(
+                 (a, b) => Variable(a, b),
+                 "name",
+                 string,
+                 "default",
+                 int,
+               )
           | "-" => json |> map(x => Negate(x), field("x", length))
+
           | "note" => json |> map(i => Note(i), field("note", int))
           | _ =>
             raise @@
@@ -742,25 +764,28 @@ module DrawCommand = {
         json |> Json.Decode.(field("type", string) |> andThen(commandByType));
   };
 
-  let rec getLength: (ctx, length) => int =
-    (ctx, len) =>
+  let rec getLength: (drawContext, length) => int =
+    (drawCtx, len) =>
       switch (len) {
       | Constant(v) => v
+      | Variable(s, i) =>
+        Belt.Map.String.getWithDefault(drawCtx.variables, s, i)
       | Pixels(i) => i
       | Note(i) =>
-        let height = canvasHeight(Ctx.canvas(ctx));
+        let height = canvasHeight(Ctx.canvas(drawCtx.ctx));
         let pixelsPerSemitone = binsPerSemitone(height);
         height - i * pixelsPerSemitone;
-      | Width => canvasWidth(Ctx.canvas(ctx))
-      | Height => canvasHeight(Ctx.canvas(ctx))
-      | Negate(x) => - getLength(ctx, x)
-      | Add(a, b) => getLength(ctx, a) + getLength(ctx, b)
-      | Multiply(a, b) => getLength(ctx, a) * getLength(ctx, b)
-      | Divide(a, b) => getLength(ctx, a) / getLength(ctx, b)
+      | Width => canvasWidth(Ctx.canvas(drawCtx.ctx))
+      | Height => canvasHeight(Ctx.canvas(drawCtx.ctx))
+      | Negate(x) => - getLength(drawCtx, x)
+      | Add(a, b) => getLength(drawCtx, a) + getLength(drawCtx, b)
+      | Multiply(a, b) => getLength(drawCtx, a) * getLength(drawCtx, b)
+      | Divide(a, b) => getLength(drawCtx, a) / getLength(drawCtx, b)
       };
 
-  let drawCommand: (ctx, command) => unit =
-    (ctx, cmd) =>
+  let drawCommand: (drawContext, command) => unit =
+    (drawContext, cmd) => {
+      let {ctx} = drawContext;
       switch (cmd) {
       | SetFont(font) => Ctx.setFont(ctx, font)
       | SetTextAlign(textAlign) => Ctx.setTextAlign(ctx, textAlign)
@@ -773,33 +798,43 @@ module DrawCommand = {
           ctx,
           {
             ...defaultTransform,
-            horizontalMoving: float_of_int(getLength(ctx, x)),
-            verticalMoving: float_of_int(getLength(ctx, y)),
+            horizontalMoving: float_of_int(getLength(drawContext, x)),
+            verticalMoving: float_of_int(getLength(drawContext, y)),
           },
         )
       | Rotate(r) => Ctx.rotate(ctx, r)
       | FillRect({x, y, w, h}) =>
         Ctx.fillRect(
           ctx,
-          getLength(ctx, x),
-          getLength(ctx, y),
-          getLength(ctx, w),
-          getLength(ctx, h),
+          getLength(drawContext, x),
+          getLength(drawContext, y),
+          getLength(drawContext, w),
+          getLength(drawContext, h),
         )
       | FillText(s, x, y) =>
-        Ctx.fillText(ctx, s, getLength(ctx, x), getLength(ctx, y))
+        Ctx.fillText(
+          ctx,
+          s,
+          getLength(drawContext, x),
+          getLength(drawContext, y),
+        )
       | StrokeText(s, x, y) =>
-        Ctx.strokeText(ctx, s, getLength(ctx, x), getLength(ctx, y))
+        Ctx.strokeText(
+          ctx,
+          s,
+          getLength(drawContext, x),
+          getLength(drawContext, y),
+        )
       | DrawImage(src, {x, y, w, h}) =>
         switch (src) {
         | Self =>
           Ctx.drawImageDestRect(
             ctx,
             getCanvasAsSource(Ctx.canvas(ctx)),
-            getLength(ctx, x),
-            getLength(ctx, y),
-            getLength(ctx, w),
-            getLength(ctx, h),
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+            getLength(drawContext, w),
+            getLength(drawContext, h),
           )
         }
       | DrawImageSourceDest(
@@ -812,18 +847,19 @@ module DrawCommand = {
           Ctx.drawImageSourceRectDestRect(
             ctx,
             getCanvasAsSource(Ctx.canvas(ctx)),
-            getLength(ctx, srcX),
-            getLength(ctx, srcY),
-            getLength(ctx, srcW),
-            getLength(ctx, srcH),
-            getLength(ctx, x),
-            getLength(ctx, y),
-            getLength(ctx, w),
-            getLength(ctx, h),
+            getLength(drawContext, srcX),
+            getLength(drawContext, srcY),
+            getLength(drawContext, srcW),
+            getLength(drawContext, srcH),
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+            getLength(drawContext, w),
+            getLength(drawContext, h),
           )
         }
       };
+    };
 
-  let drawCommands: (ctx, list(command)) => unit =
-    (ctx, cmds) => List.iter(drawCommand(ctx), cmds);
+  let drawCommands: (drawContext, list(command)) => unit =
+    (drawContext, cmds) => List.iter(drawCommand(drawContext), cmds);
 };

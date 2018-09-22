@@ -359,7 +359,10 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillRect(0, 0, width, height);
           break;
       case 1 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */5](ctx, match$1[0]);
+          Canvas$Gayer.DrawCommand[/* drawCommands */5](/* record */[
+                /* ctx */ctx,
+                /* variables */Belt_MapString.empty
+              ], match$1[0]);
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {

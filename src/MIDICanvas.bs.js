@@ -30,10 +30,10 @@ function makeNoteColors(getFillStyleForNumber) {
   for(var i = 127; i >= 0; --i){
     noteDrawCommands = /* :: */[
       /* FillRect */Block.__(5, [/* record */[
-            /* x : Pixels */Block.__(1, [0]),
-            /* y : Pixels */Block.__(1, [i]),
-            /* w : Pixels */Block.__(1, [1]),
-            /* h : Pixels */Block.__(1, [1])
+            /* x : Pixels */Block.__(2, [0]),
+            /* y : Pixels */Block.__(2, [i]),
+            /* w : Pixels */Block.__(2, [1]),
+            /* h : Pixels */Block.__(2, [1])
           ]]),
       /* :: */[
         /* SetFillStyle */Block.__(3, [Curry._1(getFillStyleForNumber, i)]),

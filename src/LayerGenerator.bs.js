@@ -5,6 +5,7 @@ import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
+import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 
 function img(url) {
   return /* record */[
@@ -262,11 +263,11 @@ function draw($staropt$star, cmds) {
 }
 
 function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, $staropt$star$5, $staropt$star$6, s) {
-  var x = $staropt$star !== undefined ? $staropt$star : /* Divide */Block.__(5, [
+  var x = $staropt$star !== undefined ? $staropt$star : /* Divide */Block.__(6, [
         /* Width */0,
         /* Constant */Block.__(0, [2])
       ]);
-  var y = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Divide */Block.__(5, [
+  var y = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Divide */Block.__(6, [
         /* Height */1,
         /* Constant */Block.__(0, [2])
       ]);
@@ -321,32 +322,21 @@ function sobel(key) {
         ];
 }
 
-var analyzer_000 = /* content : Analysis */Block.__(5, [/* Mic */2]);
-
-var analyzer_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
-
-var analyzer_002 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */2];
-
-var analyzer_003 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3];
-
-var analyzer_004 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */4];
-
-var analyzer_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5];
-
-var analyzer_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
-
-var analyzer_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
-
-var analyzer = /* record */[
-  analyzer_000,
-  analyzer_001,
-  analyzer_002,
-  analyzer_003,
-  analyzer_004,
-  analyzer_005,
-  analyzer_006,
-  analyzer_007
-];
+function analyzer(input) {
+  return /* record */[
+          /* content : Analysis */Block.__(5, [/* record */[
+                /* input */input,
+                /* destRect */AnalysisOptions$Gayer.defaultAnalysisOptions[/* destRect */1]
+              ]]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
+}
 
 var webcam_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -421,8 +411,8 @@ var spacy = /* :: */[
 var drawSelfFullScreen = /* DrawImage */Block.__(10, [
     /* Self */0,
     /* record */[
-      /* x : Pixels */Block.__(1, [0]),
-      /* y : Pixels */Block.__(1, [0]),
+      /* x : Pixels */Block.__(2, [0]),
+      /* y : Pixels */Block.__(2, [0]),
       /* w : Width */0,
       /* h : Height */1
     ]
@@ -434,8 +424,8 @@ var init$1 = draw(undefined, /* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(1, [0]),
-            /* y : Pixels */Block.__(1, [-24]),
+            /* x : Pixels */Block.__(2, [0]),
+            /* y : Pixels */Block.__(2, [-24]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -444,8 +434,8 @@ var init$1 = draw(undefined, /* :: */[
         /* DrawImage */Block.__(10, [
             /* Self */0,
             /* record */[
-              /* x : Pixels */Block.__(1, [0]),
-              /* y : Pixels */Block.__(1, [-48]),
+              /* x : Pixels */Block.__(2, [0]),
+              /* y : Pixels */Block.__(2, [-48]),
               /* w : Width */0,
               /* h : Height */1
             ]
@@ -502,15 +492,15 @@ var harmony = /* :: */[
 
 var rotateLayer = draw(undefined, /* :: */[
       /* Translate */Block.__(9, [
-          /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0]),
-          /* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])
+          /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0]),
+          /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])
         ]),
       /* :: */[
         /* Rotate */Block.__(8, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
         /* :: */[
           /* Translate */Block.__(9, [
-              /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])]),
-              /* Negate */Block.__(3, [/* Pixels */Block.__(1, [Canvas$Gayer.defaultSize / 2 | 0])])
+              /* Negate */Block.__(4, [/* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])]),
+              /* Negate */Block.__(4, [/* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])])
             ]),
           /* :: */[
             drawSelfFullScreen,
@@ -554,21 +544,21 @@ var init$3 = draw(undefined, /* :: */[
       /* DrawImageSourceDest */Block.__(11, [
           /* Self */0,
           /* record */[
-            /* x : Add */Block.__(4, [
+            /* x : Add */Block.__(5, [
                 /* Width */0,
-                /* Pixels */Block.__(1, [-1])
+                /* Pixels */Block.__(2, [-1])
               ]),
-            /* y : Pixels */Block.__(1, [0]),
-            /* w : Pixels */Block.__(1, [1]),
+            /* y : Pixels */Block.__(2, [0]),
+            /* w : Pixels */Block.__(2, [1]),
             /* h : Height */1
           ],
           /* record */[
-            /* x : Add */Block.__(4, [
+            /* x : Add */Block.__(5, [
                 /* Width */0,
-                /* Pixels */Block.__(1, [-1])
+                /* Pixels */Block.__(2, [-1])
               ]),
-            /* y : Pixels */Block.__(1, [0]),
-            /* w : Pixels */Block.__(1, [1]),
+            /* y : Pixels */Block.__(2, [0]),
+            /* w : Pixels */Block.__(2, [1]),
             /* h : Height */1
           ]
         ]),
@@ -602,8 +592,8 @@ var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(1, [0]),
-            /* y : Pixels */Block.__(1, [0]),
+            /* x : Pixels */Block.__(2, [0]),
+            /* y : Pixels */Block.__(2, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -639,10 +629,10 @@ function singleNoteDrawCommands() {
           /* SetFillStyle */Block.__(3, ["red"]),
           /* :: */[
             /* FillRect */Block.__(5, [/* record */[
-                  /* x : Pixels */Block.__(1, [0]),
-                  /* y : Note */Block.__(2, [60]),
+                  /* x : Pixels */Block.__(2, [0]),
+                  /* y : Note */Block.__(3, [60]),
                   /* w : Width */0,
-                  /* h : Pixels */Block.__(1, [1])
+                  /* h : Pixels */Block.__(2, [1])
                 ]]),
             /* [] */0
           ]
@@ -666,8 +656,8 @@ var historyLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(1, [-1]),
-            /* y : Pixels */Block.__(1, [0]),
+            /* x : Pixels */Block.__(2, [-1]),
+            /* y : Pixels */Block.__(2, [0]),
             /* w : Width */0,
             /* h : Height */1
           ]
@@ -704,27 +694,27 @@ var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImageSourceDest */Block.__(11, [
           /* Self */0,
           /* record */[
-            /* x : Divide */Block.__(5, [
+            /* x : Divide */Block.__(6, [
                 /* Width */0,
                 /* Constant */Block.__(0, [2])
               ]),
-            /* y : Pixels */Block.__(1, [0]),
-            /* w : Divide */Block.__(5, [
+            /* y : Pixels */Block.__(2, [0]),
+            /* w : Divide */Block.__(6, [
                 /* Width */0,
                 /* Constant */Block.__(0, [2])
               ]),
             /* h : Height */1
           ],
           /* record */[
-            /* x : Add */Block.__(4, [
-                /* Divide */Block.__(5, [
+            /* x : Add */Block.__(5, [
+                /* Divide */Block.__(6, [
                     /* Width */0,
                     /* Constant */Block.__(0, [2])
                   ]),
-                /* Pixels */Block.__(1, [1])
+                /* Pixels */Block.__(2, [1])
               ]),
-            /* y : Pixels */Block.__(1, [0]),
-            /* w : Divide */Block.__(5, [
+            /* y : Pixels */Block.__(2, [0]),
+            /* w : Divide */Block.__(6, [
                 /* Width */0,
                 /* Constant */Block.__(0, [2])
               ]),
@@ -735,18 +725,18 @@ var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
         /* DrawImageSourceDest */Block.__(11, [
             /* Self */0,
             /* record */[
-              /* x : Pixels */Block.__(1, [1]),
-              /* y : Pixels */Block.__(1, [0]),
-              /* w : Divide */Block.__(5, [
+              /* x : Pixels */Block.__(2, [1]),
+              /* y : Pixels */Block.__(2, [0]),
+              /* w : Divide */Block.__(6, [
                   /* Width */0,
                   /* Constant */Block.__(0, [2])
                 ]),
               /* h : Height */1
             ],
             /* record */[
-              /* x : Pixels */Block.__(1, [0]),
-              /* y : Pixels */Block.__(1, [0]),
-              /* w : Divide */Block.__(5, [
+              /* x : Pixels */Block.__(2, [0]),
+              /* y : Pixels */Block.__(2, [0]),
+              /* w : Divide */Block.__(6, [
                   /* Width */0,
                   /* Constant */Block.__(0, [2])
                 ]),
@@ -786,15 +776,15 @@ var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
-            /* x : Pixels */Block.__(1, [1]),
-            /* y : Pixels */Block.__(1, [1]),
-            /* w : Add */Block.__(4, [
+            /* x : Pixels */Block.__(2, [1]),
+            /* y : Pixels */Block.__(2, [1]),
+            /* w : Add */Block.__(5, [
                 /* Width */0,
-                /* Pixels */Block.__(1, [-1])
+                /* Pixels */Block.__(2, [-1])
               ]),
-            /* h : Add */Block.__(4, [
+            /* h : Add */Block.__(5, [
                 /* Height */1,
-                /* Pixels */Block.__(1, [-1])
+                /* Pixels */Block.__(2, [-1])
               ])
           ]
         ]),
@@ -908,7 +898,7 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "analyzer",
-    analyzer
+    analyzer(/* Mic */2)
   ],
   /* tuple */[
     "reader",

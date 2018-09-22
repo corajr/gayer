@@ -30,7 +30,7 @@ let make =
             let key = getLayerKey(layer);
             let maybeAudio =
               switch (layer.content) {
-              | Analysis(source) =>
+              | Analysis({input: source}) =>
                 switch (source) {
                 | AudioFile(url) =>
                   <AudioFile

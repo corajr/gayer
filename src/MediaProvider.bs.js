@@ -37,7 +37,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     } else {
                                       switch (match.tag | 0) {
                                         case 5 : 
-                                            var source = match[0];
+                                            var source = match[0][/* input */0];
                                             var exit = 0;
                                             if (typeof source === "number") {
                                               exit = 1;

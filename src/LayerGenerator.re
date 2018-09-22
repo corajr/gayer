@@ -1,3 +1,5 @@
+open AnalysisOptions;
+open Audio.AudioInput;
 open Canvas.DrawCommand;
 open Layer;
 open Music;
@@ -94,7 +96,10 @@ let text =
 
 let sobel = key => {...defaultLayer, content: Regl({sourceLayer: key})};
 
-let analyzer = {...defaultLayer, content: Analysis(Mic)};
+let analyzer = (input: audioInputSetting) => {
+  ...defaultLayer,
+  content: Analysis({...defaultAnalysisOptions, input}),
+};
 
 let webcam = {...defaultLayer, content: Webcam};
 
@@ -273,7 +278,7 @@ let handDrawn = {...defaultLayer, content: HandDrawn};
 
 let allLayerTypes = [|
   ("image", hubble),
-  ("analyzer", analyzer),
+  ("analyzer", analyzer(Mic)),
   ("reader", reader),
   ("webcam", webcam),
   ("slitscan", slitscan),

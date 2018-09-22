@@ -4,7 +4,6 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Regl$Gayer from "./Regl.bs.js";
-import * as Audio$Gayer from "./Audio.bs.js";
 import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
@@ -18,6 +17,7 @@ import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
+import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
@@ -164,11 +164,11 @@ function rawAudioFormat(json) {
 function layerByType(type_, json) {
   switch (type_) {
     case "analysis" : 
-        var partial_arg = Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0];
-        return Json_decode.map((function (s) {
-                      return /* Analysis */Block.__(5, [s]);
+        var partial_arg = AnalysisOptions$Gayer.DecodeAnalysisOptions[/* analysisOptions */0];
+        return Json_decode.map((function (o) {
+                      return /* Analysis */Block.__(5, [o]);
                     }), (function (param) {
-                      return Json_decode.field("source", partial_arg, param);
+                      return Json_decode.field("opts", partial_arg, param);
                     }), json);
     case "draw" : 
         var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* command */4];
@@ -516,8 +516,8 @@ function layerContent$1(r) {
                       ],
                       /* :: */[
                         /* tuple */[
-                          "source",
-                          Curry._1(Audio$Gayer.AudioInput[/* EncodeAudioInput */0][/* audioInputSetting */0], r[0])
+                          "opts",
+                          AnalysisOptions$Gayer.EncodeAnalysisOptions[/* analysisOptions */0](r[0])
                         ],
                         /* [] */0
                       ]
