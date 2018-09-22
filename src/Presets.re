@@ -143,6 +143,7 @@ let history = {
   shouldClear: false,
   layers: [
     analyzer(Mic),
+    historyLayer,
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */

@@ -12,6 +12,7 @@ let make =
       ~rootHeight,
       ~onSetRef,
       ~getAudio,
+      ~globalDrawContext,
       ~audioGraph,
       ~audioCtx,
       ~layerRefs,
@@ -104,6 +105,7 @@ let make =
                 width=rootWidth
                 height=rootHeight
                 getReadAndWritePos
+                globalDrawContext
                 currentFilterValues
                 layerContent=layer.content
               />

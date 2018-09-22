@@ -465,7 +465,9 @@ let binsPerSemitone: int => int = height => height / 120;
 
 module DrawCommand = {
   type drawContext = {
-    ctx: canvasRenderingContext2D,
+    maybeCtxRef: ref(option(canvasRenderingContext2D)),
+    width: int,
+    height: int,
     variables: Belt.Map.String.t(int),
   };
 
@@ -772,11 +774,11 @@ module DrawCommand = {
         Belt.Map.String.getWithDefault(drawCtx.variables, s, i)
       | Pixels(i) => i
       | Note(i) =>
-        let height = canvasHeight(Ctx.canvas(drawCtx.ctx));
+        let height = drawCtx.height;
         let pixelsPerSemitone = binsPerSemitone(height);
         height - i * pixelsPerSemitone;
-      | Width => canvasWidth(Ctx.canvas(drawCtx.ctx))
-      | Height => canvasHeight(Ctx.canvas(drawCtx.ctx))
+      | Width => drawCtx.width
+      | Height => drawCtx.height
       | Negate(x) => - getLength(drawCtx, x)
       | Add(a, b) => getLength(drawCtx, a) + getLength(drawCtx, b)
       | Multiply(a, b) => getLength(drawCtx, a) * getLength(drawCtx, b)
@@ -784,81 +786,83 @@ module DrawCommand = {
       };
 
   let drawCommand: (drawContext, command) => unit =
-    (drawContext, cmd) => {
-      let {ctx} = drawContext;
-      switch (cmd) {
-      | SetFont(font) => Ctx.setFont(ctx, font)
-      | SetTextAlign(textAlign) => Ctx.setTextAlign(ctx, textAlign)
-      | SetTextBaseline(textBaseline) =>
-        Ctx.setTextBaseline(ctx, textBaseline)
-      | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
-      | SetStrokeStyle(style) => Ctx.setStrokeStyle(ctx, style)
-      | Translate(x, y) =>
-        Ctx.transform(
-          ctx,
-          {
-            ...defaultTransform,
-            horizontalMoving: float_of_int(getLength(drawContext, x)),
-            verticalMoving: float_of_int(getLength(drawContext, y)),
-          },
-        )
-      | Rotate(r) => Ctx.rotate(ctx, r)
-      | FillRect({x, y, w, h}) =>
-        Ctx.fillRect(
-          ctx,
-          getLength(drawContext, x),
-          getLength(drawContext, y),
-          getLength(drawContext, w),
-          getLength(drawContext, h),
-        )
-      | FillText(s, x, y) =>
-        Ctx.fillText(
-          ctx,
-          s,
-          getLength(drawContext, x),
-          getLength(drawContext, y),
-        )
-      | StrokeText(s, x, y) =>
-        Ctx.strokeText(
-          ctx,
-          s,
-          getLength(drawContext, x),
-          getLength(drawContext, y),
-        )
-      | DrawImage(src, {x, y, w, h}) =>
-        switch (src) {
-        | Self =>
-          Ctx.drawImageDestRect(
+    (drawContext, cmd) =>
+      switch (drawContext.maybeCtxRef^) {
+      | Some(ctx) =>
+        switch (cmd) {
+        | SetFont(font) => Ctx.setFont(ctx, font)
+        | SetTextAlign(textAlign) => Ctx.setTextAlign(ctx, textAlign)
+        | SetTextBaseline(textBaseline) =>
+          Ctx.setTextBaseline(ctx, textBaseline)
+        | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
+        | SetStrokeStyle(style) => Ctx.setStrokeStyle(ctx, style)
+        | Translate(x, y) =>
+          Ctx.transform(
             ctx,
-            getCanvasAsSource(Ctx.canvas(ctx)),
+            {
+              ...defaultTransform,
+              horizontalMoving: float_of_int(getLength(drawContext, x)),
+              verticalMoving: float_of_int(getLength(drawContext, y)),
+            },
+          )
+        | Rotate(r) => Ctx.rotate(ctx, r)
+        | FillRect({x, y, w, h}) =>
+          Ctx.fillRect(
+            ctx,
             getLength(drawContext, x),
             getLength(drawContext, y),
             getLength(drawContext, w),
             getLength(drawContext, h),
           )
-        }
-      | DrawImageSourceDest(
-          src,
-          {x: srcX, y: srcY, w: srcW, h: srcH},
-          {x, y, w, h},
-        ) =>
-        switch (src) {
-        | Self =>
-          Ctx.drawImageSourceRectDestRect(
+        | FillText(s, x, y) =>
+          Ctx.fillText(
             ctx,
-            getCanvasAsSource(Ctx.canvas(ctx)),
-            getLength(drawContext, srcX),
-            getLength(drawContext, srcY),
-            getLength(drawContext, srcW),
-            getLength(drawContext, srcH),
+            s,
             getLength(drawContext, x),
             getLength(drawContext, y),
-            getLength(drawContext, w),
-            getLength(drawContext, h),
           )
+        | StrokeText(s, x, y) =>
+          Ctx.strokeText(
+            ctx,
+            s,
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+          )
+        | DrawImage(src, {x, y, w, h}) =>
+          switch (src) {
+          | Self =>
+            Ctx.drawImageDestRect(
+              ctx,
+              getCanvasAsSource(Ctx.canvas(ctx)),
+              getLength(drawContext, x),
+              getLength(drawContext, y),
+              getLength(drawContext, w),
+              getLength(drawContext, h),
+            )
+          }
+        | DrawImageSourceDest(
+            src,
+            {x: srcX, y: srcY, w: srcW, h: srcH},
+            {x, y, w, h},
+          ) =>
+          switch (src) {
+          | Self =>
+            Ctx.drawImageSourceRectDestRect(
+              ctx,
+              getCanvasAsSource(Ctx.canvas(ctx)),
+              getLength(drawContext, srcX),
+              getLength(drawContext, srcY),
+              getLength(drawContext, srcW),
+              getLength(drawContext, srcH),
+              getLength(drawContext, x),
+              getLength(drawContext, y),
+              getLength(drawContext, w),
+              getLength(drawContext, h),
+            )
+          }
         }
+      | None => ()
       };
-    };
 
   let drawCommands: (drawContext, list(command)) => unit =
     (drawContext, cmds) => List.iter(drawCommand(drawContext), cmds);

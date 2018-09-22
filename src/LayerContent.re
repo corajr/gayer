@@ -16,6 +16,7 @@ let make =
       ~width,
       ~height,
       ~getReadAndWritePos,
+      ~globalDrawContext,
       ~currentFilterValues,
       ~layerContent,
       _children,
@@ -46,17 +47,22 @@ let make =
             /* height=(Js.Int.toString(height)) */
           />
         | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
-        | Analysis(source) =>
+        | Analysis(options) =>
+          open Canvas.DrawCommand;
+          let {w, h} = options.destRect;
+          let analysisWidth = getLength(globalDrawContext, w);
+          let analysisHeight = getLength(globalDrawContext, h);
           <AnalysisCanvas
             layerKey
-            size=height
+            width=analysisWidth
+            height=analysisHeight
             audioCtx
             audioGraph
-            input=source
+            options
             millisPerTick
             saveTick
             saveRef=setRef
-          />
+          />;
         | MIDIKeyboard => <MIDICanvas setRef height />
         | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
         | KeycodeReader =>

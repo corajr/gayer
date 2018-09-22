@@ -7,6 +7,7 @@ import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
+import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as RList$Rationale from "rationale/src/RList.js";
@@ -980,19 +981,19 @@ var DecodeDrawCommand = /* module */[
 function getLength(drawCtx, len) {
   if (typeof len === "number") {
     if (len === 0) {
-      return drawCtx[/* ctx */0].canvas.width;
+      return drawCtx[/* width */1];
     } else {
-      return drawCtx[/* ctx */0].canvas.height;
+      return drawCtx[/* height */2];
     }
   } else {
     switch (len.tag | 0) {
       case 1 : 
-          return Belt_MapString.getWithDefault(drawCtx[/* variables */1], len[0], len[1]);
+          return Belt_MapString.getWithDefault(drawCtx[/* variables */3], len[0], len[1]);
       case 0 : 
       case 2 : 
           return len[0];
       case 3 : 
-          var height = drawCtx[/* ctx */0].canvas.height;
+          var height = drawCtx[/* height */2];
           var pixelsPerSemitone = height / 120 | 0;
           return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
       case 4 : 
@@ -1009,55 +1010,60 @@ function getLength(drawCtx, len) {
 }
 
 function drawCommand(drawContext, cmd) {
-  var ctx = drawContext[/* ctx */0];
-  switch (cmd.tag | 0) {
-    case 0 : 
-        ctx.font = cmd[0];
-        return /* () */0;
-    case 1 : 
-        ctx.textAlign = cmd[0];
-        return /* () */0;
-    case 2 : 
-        ctx.textBaseline = cmd[0];
-        return /* () */0;
-    case 3 : 
-        ctx.fillStyle = cmd[0];
-        return /* () */0;
-    case 4 : 
-        ctx.strokeStyle = cmd[0];
-        return /* () */0;
-    case 5 : 
-        var match = cmd[0];
-        ctx.fillRect(getLength(drawContext, match[/* x */0]), getLength(drawContext, match[/* y */1]), getLength(drawContext, match[/* w */2]), getLength(drawContext, match[/* h */3]));
-        return /* () */0;
-    case 6 : 
-        ctx.fillText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
-        return /* () */0;
-    case 7 : 
-        ctx.strokeText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
-        return /* () */0;
-    case 8 : 
-        ctx.rotate(cmd[0]);
-        return /* () */0;
-    case 9 : 
-        return transform(ctx, /* record */[
-                    /* horizontalScaling */1.0,
-                    /* horizontalSkewing */0.0,
-                    /* verticalSkewing */0.0,
-                    /* verticalScaling */1.0,
-                    /* horizontalMoving */getLength(drawContext, cmd[0]),
-                    /* verticalMoving */getLength(drawContext, cmd[1])
-                  ]);
-    case 10 : 
-        var match$1 = cmd[1];
-        ctx.drawImage(ctx.canvas, getLength(drawContext, match$1[/* x */0]), getLength(drawContext, match$1[/* y */1]), getLength(drawContext, match$1[/* w */2]), getLength(drawContext, match$1[/* h */3]));
-        return /* () */0;
-    case 11 : 
-        var match$2 = cmd[2];
-        var match$3 = cmd[1];
-        ctx.drawImage(ctx.canvas, getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]), getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
-        return /* () */0;
-    
+  var match = drawContext[/* maybeCtxRef */0][0];
+  if (match !== undefined) {
+    var ctx = Js_primitive.valFromOption(match);
+    switch (cmd.tag | 0) {
+      case 0 : 
+          ctx.font = cmd[0];
+          return /* () */0;
+      case 1 : 
+          ctx.textAlign = cmd[0];
+          return /* () */0;
+      case 2 : 
+          ctx.textBaseline = cmd[0];
+          return /* () */0;
+      case 3 : 
+          ctx.fillStyle = cmd[0];
+          return /* () */0;
+      case 4 : 
+          ctx.strokeStyle = cmd[0];
+          return /* () */0;
+      case 5 : 
+          var match$1 = cmd[0];
+          ctx.fillRect(getLength(drawContext, match$1[/* x */0]), getLength(drawContext, match$1[/* y */1]), getLength(drawContext, match$1[/* w */2]), getLength(drawContext, match$1[/* h */3]));
+          return /* () */0;
+      case 6 : 
+          ctx.fillText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
+          return /* () */0;
+      case 7 : 
+          ctx.strokeText(cmd[0], getLength(drawContext, cmd[1]), getLength(drawContext, cmd[2]));
+          return /* () */0;
+      case 8 : 
+          ctx.rotate(cmd[0]);
+          return /* () */0;
+      case 9 : 
+          return transform(ctx, /* record */[
+                      /* horizontalScaling */1.0,
+                      /* horizontalSkewing */0.0,
+                      /* verticalSkewing */0.0,
+                      /* verticalScaling */1.0,
+                      /* horizontalMoving */getLength(drawContext, cmd[0]),
+                      /* verticalMoving */getLength(drawContext, cmd[1])
+                    ]);
+      case 10 : 
+          var match$2 = cmd[1];
+          ctx.drawImage(ctx.canvas, getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
+          return /* () */0;
+      case 11 : 
+          var match$3 = cmd[2];
+          var match$4 = cmd[1];
+          ctx.drawImage(ctx.canvas, getLength(drawContext, match$4[/* x */0]), getLength(drawContext, match$4[/* y */1]), getLength(drawContext, match$4[/* w */2]), getLength(drawContext, match$4[/* h */3]), getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]));
+          return /* () */0;
+      
+    }
+  } else {
+    return /* () */0;
   }
 }
 

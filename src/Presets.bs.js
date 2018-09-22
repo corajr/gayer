@@ -804,17 +804,20 @@ var history_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var history_014 = /* layers : :: */[
   LayerGenerator$Gayer.analyzer(/* Mic */2),
   /* :: */[
-    /* record */[
-      /* content */LayerGenerator$Gayer.reader[/* content */0],
-      /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
-      /* alpha */0.0,
-      /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
-      /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
-      /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
-      /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-      /* id */LayerGenerator$Gayer.reader[/* id */7]
-    ],
-    /* [] */0
+    LayerGenerator$Gayer.historyLayer,
+    /* :: */[
+      /* record */[
+        /* content */LayerGenerator$Gayer.reader[/* content */0],
+        /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
+        /* alpha */0.0,
+        /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
+        /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
+        /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
+        /* filters */LayerGenerator$Gayer.reader[/* filters */6],
+        /* id */LayerGenerator$Gayer.reader[/* id */7]
+      ],
+      /* [] */0
+    ]
   ]
 ];
 

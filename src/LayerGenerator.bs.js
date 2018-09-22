@@ -326,7 +326,8 @@ function analyzer(input) {
   return /* record */[
           /* content : Analysis */Block.__(5, [/* record */[
                 /* input */input,
-                /* destRect */AnalysisOptions$Gayer.defaultAnalysisOptions[/* destRect */1]
+                /* keepHistory */AnalysisOptions$Gayer.defaultAnalysisOptions[/* keepHistory */1],
+                /* destRect */AnalysisOptions$Gayer.defaultAnalysisOptions[/* destRect */2]
               ]]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],

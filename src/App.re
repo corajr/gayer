@@ -41,6 +41,7 @@ type state = {
   savedImages: list(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
+  drawContext: DrawCommand.drawContext,
   fullscreenCanvas: bool,
   tickFunctions: ref(Belt.Map.String.t(unit => unit)),
   tickCounter: ref(int),
@@ -70,6 +71,12 @@ let defaultState: state = {
   layerRefs: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
   canvasRef: ref(None),
+  drawContext: {
+    maybeCtxRef: ref(None),
+    width: 1,
+    height: 1,
+    variables: Belt.Map.String.empty,
+  },
   fullscreenCanvas: false,
   tickCounter: ref(0),
   tickFunctions: ref(Belt.Map.String.empty),
@@ -102,7 +109,8 @@ let setCanvasRef = (theRef, {ReasonReact.state}) => {
   switch (maybeRef) {
   | None => ()
   | Some(aRef) =>
-    state.layerRefs := Belt.Map.String.set(state.layerRefs^, "root", aRef)
+    state.layerRefs := Belt.Map.String.set(state.layerRefs^, "root", aRef);
+    state.drawContext.maybeCtxRef := Some(getContext(getFromReact(aRef)));
   };
 };
 
@@ -233,20 +241,23 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     mark(performance, layerKey ++ "start");
 
     switch (layer.content) {
-    | Draw(cmds) =>
-      DrawCommand.drawCommands({ctx, variables: Belt.Map.String.empty}, cmds)
+    | Draw(cmds) => DrawCommand.drawCommands(state.drawContext, cmds)
     | Fill(s) =>
       Ctx.setFillStyle(ctx, s);
       Ctx.fillRect(ctx, 0, 0, width, height);
-    | Analysis(_) =>
+    | Analysis({destRect}) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(analysisCanvas) =>
+        open DrawCommand;
         let canvasElt = getFromReact(analysisCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
-        let x =
-          wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width);
-        Ctx.drawImage(ctx, canvasAsSource, 0, 0);
+        let {x, y} = destRect;
+        let analysisX = getLength(state.drawContext, x);
+        let analysisY = getLength(state.drawContext, y);
+        /* let x = */
+        /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
+        Ctx.drawImage(ctx, canvasAsSource, analysisX, analysisY);
       }
     | MIDIKeyboard =>
       switch (maybeLayerRef) {
@@ -612,7 +623,16 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         fullscreenCanvas: ! state.fullscreenCanvas,
       })
-    | SetParams(params) => ReasonReact.Update({...state, params})
+    | SetParams(params) =>
+      ReasonReact.Update({
+        ...state,
+        params,
+        drawContext: {
+          ...state.drawContext,
+          width: params.width,
+          height: params.height,
+        },
+      })
     | SetMicInput(mic) => ReasonReact.Update({...state, micInput: Some(mic)})
     | SetMediaStream(stream) =>
       ReasonReact.Update({...state, mediaStream: Some(stream)})
@@ -1004,6 +1024,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 <MediaProvider
                   audioCtx
                   audioGraph=self.state.audioGraph
+                  globalDrawContext=self.state.drawContext
                   getAudio=(getAnalysisInput(audioCtx, self.state))
                   onSetRef=(
                     (layer, theRef) =>

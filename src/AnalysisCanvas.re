@@ -1,3 +1,4 @@
+open AnalysisOptions;
 open Audio;
 open AudioGraph;
 open Canvas;
@@ -31,11 +32,12 @@ let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
 let make =
     (
-      ~size,
+      ~width,
+      ~height,
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
-      ~input,
+      ~options,
       ~millisPerTick,
       ~saveRef,
       ~saveTick,
@@ -53,7 +55,7 @@ let make =
         CQT.createShowCQTBar({
           ...CQT.defaultCqtBarParams,
           rate: audioCtx |. sampleRate,
-          width: size,
+          width: height,
         });
 
       let fftSize = cqt |. CQT.fftSizeGet;
@@ -97,16 +99,18 @@ let make =
           |> updateConnections
       );
 
-      saveTick(self.onUnmount, layerKey, () =>
-        switch (self.state.canvasRef^) {
-        | Some(canvas) =>
-          let canvasElement = getFromReact(canvas);
-          let ctx = getContext(canvasElement);
+      if (options.keepHistory) {
+        saveTick(self.onUnmount, layerKey, () =>
+          switch (self.state.canvasRef^) {
+          | Some(canvas) =>
+            let canvasElement = getFromReact(canvas);
+            let ctx = getContext(canvasElement);
 
-          Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
-        | None => ()
-        }
-      );
+            Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
+          | None => ()
+          }
+        );
+      };
 
       setTimer(
         self.state.timerId,
@@ -115,7 +119,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state, size, size);
+            drawCQTBar(ctx, self.state, width, height);
           | None => ()
           },
         millisPerTick,
@@ -126,8 +130,8 @@ let make =
     render: self =>
       <canvas
         ref=(self.handle(setCanvasRef))
-        width=(Js.Int.toString(size))
-        height=(Js.Int.toString(size))
+        width=(Js.Int.toString(width))
+        height=(Js.Int.toString(height))
         style=(
           ReactDOMRe.Style.make(
             ~position="absolute",

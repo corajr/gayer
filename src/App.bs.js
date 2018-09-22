@@ -83,11 +83,18 @@ var defaultState_020 = /* loadedAudio : record */[/* contents */Belt_MapString.e
 
 var defaultState_021 = /* canvasRef : record */[/* contents */undefined];
 
-var defaultState_023 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
+var defaultState_022 = /* drawContext : record */[
+  /* maybeCtxRef : record */[/* contents */undefined],
+  /* width */1,
+  /* height */1,
+  /* variables */Belt_MapString.empty
+];
 
-var defaultState_024 = /* tickCounter : record */[/* contents */0];
+var defaultState_024 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_025 = /* timerId : record */[/* contents */undefined];
+var defaultState_025 = /* tickCounter : record */[/* contents */0];
+
+var defaultState_026 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -112,10 +119,11 @@ var defaultState = /* record */[
   /* savedImages : [] */0,
   defaultState_020,
   defaultState_021,
+  defaultState_022,
   /* fullscreenCanvas */false,
-  defaultState_023,
   defaultState_024,
-  defaultState_025
+  defaultState_025,
+  defaultState_026
 ];
 
 function setCanvasRef(theRef, param) {
@@ -126,6 +134,7 @@ function setCanvasRef(theRef, param) {
     return /* () */0;
   } else {
     state[/* layerRefs */18][0] = Belt_MapString.set(state[/* layerRefs */18][0], "root", theRef);
+    state[/* drawContext */22][/* maybeCtxRef */0][0] = Js_primitive.some(theRef.getContext("2d"));
     return /* () */0;
   }
 }
@@ -320,7 +329,7 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.rotate(layer[/* rotation */4]);
   ctx.filter = layer[/* filters */6];
   var layerKey = Layer$Gayer.getLayerKey(layer);
-  var match = Belt_MapString.get(state[/* tickFunctions */23][0], layerKey);
+  var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey);
   if (match !== undefined) {
     Curry._1(match, /* () */0);
   }
@@ -359,15 +368,14 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillRect(0, 0, width, height);
           break;
       case 1 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */5](/* record */[
-                /* ctx */ctx,
-                /* variables */Belt_MapString.empty
-              ], match$1[0]);
+          Canvas$Gayer.DrawCommand[/* drawCommands */5](state[/* drawContext */22], match$1[0]);
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
-            Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
+            var destRect = match$1[0][/* destRect */2];
+            var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* x */0]);
+            var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* y */1]);
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), analysisX, analysisY);
           }
           break;
       case 6 : 
@@ -461,7 +469,7 @@ function drawLayer(ctx, width, height, state, layer) {
   window.performance.mark(layerKey + "end");
   window.performance.measure(layerKey, layerKey + "start", layerKey + "end");
   setTimeout((function () {
-          var match = Belt_MapString.get(state[/* tickFunctions */23][0], layerKey + "preview");
+          var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey + "preview");
           if (match !== undefined) {
             return Curry._1(match, /* () */0);
           } else {
@@ -587,9 +595,9 @@ function updateBank(param, values, filterBank) {
 
 function saveTick(param, onUnmount, key, tickFn) {
   var state = param[/* state */1];
-  state[/* tickFunctions */23][0] = Belt_MapString.set(state[/* tickFunctions */23][0], key, tickFn);
+  state[/* tickFunctions */24][0] = Belt_MapString.set(state[/* tickFunctions */24][0], key, tickFn);
   return Curry._1(onUnmount, (function () {
-                state[/* tickFunctions */23][0] = Belt_MapString.remove(state[/* tickFunctions */23][0], key);
+                state[/* tickFunctions */24][0] = Belt_MapString.remove(state[/* tickFunctions */24][0], key);
                 return /* () */0;
               }));
 }
@@ -639,11 +647,11 @@ function make($staropt$star, _) {
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              Timing$Gayer.setTimer(self[/* state */1][/* timerId */25], (function () {
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */26], (function () {
                       return Curry._1(self[/* send */3], /* Tick */1);
                     }), self[/* state */1][/* params */6][/* millisPerTick */6]);
               Curry._1(self[/* onUnmount */4], (function () {
-                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */25]);
+                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */26]);
                     }));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
                       var hash = decodeURIComponent(url[/* hash */1]);
@@ -694,12 +702,12 @@ function make($staropt$star, _) {
                 generateNewFilterBanks(audioCtx, newSelf);
               }
               if (oldSelf[/* state */1][/* params */6][/* millisPerTick */6] !== newSelf[/* state */1][/* params */6][/* millisPerTick */6]) {
-                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */25], (function () {
+                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */26], (function () {
                         return Curry._1(newSelf[/* send */3], /* Tick */1);
                       }), newSelf[/* state */1][/* params */6][/* millisPerTick */6]);
               }
-              if (oldSelf[/* state */1][/* fullscreenCanvas */22] !== newSelf[/* state */1][/* fullscreenCanvas */22]) {
-                if (newSelf[/* state */1][/* fullscreenCanvas */22]) {
+              if (oldSelf[/* state */1][/* fullscreenCanvas */23] !== newSelf[/* state */1][/* fullscreenCanvas */23]) {
+                if (newSelf[/* state */1][/* fullscreenCanvas */23]) {
                   var match$1 = newSelf[/* state */1][/* canvasRef */21][0];
                   if (match$1 !== undefined) {
                     Fscreen.requestFullscreen(Js_primitive.valFromOption(match$1));
@@ -816,7 +824,7 @@ function make($staropt$star, _) {
                                                                           ]);
                                                               }), (function (param) {
                                                                 return getAnalysisInput(audioCtx, partial_arg$1, param);
-                                                              }), self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], self[/* state */1][/* currentFilterValues */17], (function (param, param$1, param$2) {
+                                                              }), self[/* state */1][/* drawContext */22], self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], self[/* state */1][/* currentFilterValues */17], (function (param, param$1, param$2) {
                                                                 return saveTick(self, param, param$1, param$2);
                                                               }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
@@ -861,7 +869,7 @@ function make($staropt$star, _) {
                                   })]);
                   case 1 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    state[/* tickCounter */24][0] = state[/* tickCounter */24][0] + 1 | 0;
+                                    state[/* tickCounter */25][0] = state[/* tickCounter */25][0] + 1 | 0;
                                     state[/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */2], state[/* params */6][/* width */0]);
                                     state[/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */3], state[/* params */6][/* width */0]);
                                     return maybeUpdateCanvas(state[/* canvasRef */21], (function (canvas) {
@@ -921,7 +929,7 @@ function make($staropt$star, _) {
                                   })]);
                   case 4 : 
                       var newrecord$1 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */22] = !state[/* fullscreenCanvas */22], newrecord$1)]);
+                      return /* Update */Block.__(0, [(newrecord$1[/* fullscreenCanvas */23] = !state[/* fullscreenCanvas */23], newrecord$1)]);
                   
                 }
               } else {
@@ -1019,8 +1027,17 @@ function make($staropt$star, _) {
                                               ]);
                                   })]);
                   case 9 : 
+                      var params = action[0];
                       var newrecord$7 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$7[/* params */6] = action[0], newrecord$7)]);
+                      newrecord$7[/* params */6] = params;
+                      var init = state[/* drawContext */22];
+                      newrecord$7[/* drawContext */22] = /* record */[
+                        /* maybeCtxRef */init[/* maybeCtxRef */0],
+                        /* width */params[/* width */0],
+                        /* height */params[/* height */1],
+                        /* variables */init[/* variables */3]
+                      ];
+                      return /* Update */Block.__(0, [newrecord$7]);
                   
                 }
               }

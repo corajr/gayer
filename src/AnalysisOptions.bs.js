@@ -10,6 +10,7 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 function analysisOptions(json) {
   return /* record */[
           /* input */Json_decode.field("input", Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0], json),
+          /* keepHistory */Json_decode.field("keepHistory", Json_decode.bool, json),
           /* destRect */Json_decode.field("destRect", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2], json)
         ];
 }
@@ -24,10 +25,16 @@ function analysisOptions$1(r) {
               ],
               /* :: */[
                 /* tuple */[
-                  "destRect",
-                  Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */1])
+                  "keepHistory",
+                  r[/* keepHistory */1]
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "destRect",
+                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */2])
+                  ],
+                  /* [] */0
+                ]
               ]
             ]);
 }
@@ -36,6 +43,7 @@ var EncodeAnalysisOptions = /* module */[/* analysisOptions */analysisOptions$1]
 
 var defaultAnalysisOptions = /* record */[
   /* input : Mic */2,
+  /* keepHistory */false,
   /* destRect : record */[
     /* x : Add */Block.__(5, [
         /* Width */0,
