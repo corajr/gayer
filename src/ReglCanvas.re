@@ -18,8 +18,14 @@ let copyLayerToTexture =
     ) =>
   switch (maybeRegl^, Belt.Map.String.get(layerRefs^, layerKey)) {
   | (Some(regl), Some(canvas)) =>
-    let aTexture = texture(regl, `Canvas(canvas));
-    textureRefs := Belt.Map.String.set(textureRefs^, textureKey, aTexture);
+    try (
+      {
+        let aTexture = texture(regl, `Canvas(canvas));
+        textureRefs := Belt.Map.String.set(textureRefs^, textureKey, aTexture);
+      }
+    ) {
+    | _ => ()
+    }
   | _ => ()
   };
 
@@ -40,7 +46,16 @@ let applyWithTexture =
 let component = ReasonReact.reducerComponent(__MODULE__);
 
 let make =
-    (~layerRefs, ~setRef, ~saveTick, ~layerKey, ~width, ~height, _children) => {
+    (
+      ~layerRefs,
+      ~opts,
+      ~setRef,
+      ~saveTick,
+      ~layerKey,
+      ~width,
+      ~height,
+      _children,
+    ) => {
   let handleSetRef = (aRef, {ReasonReact.state}) => {
     setRef(aRef);
     let maybeRef = Js.Nullable.toOption(aRef);
@@ -77,14 +92,14 @@ let make =
             self.state.reglRef,
             self.state.textureRefs,
             layerRefs,
-            "root",
-            "root",
+            opts.sourceLayer,
+            opts.sourceLayer,
           );
 
           applyWithTexture(
             self.state.drawCommandRef,
             self.state.textureRefs,
-            "root",
+            opts.sourceLayer,
             width,
             height,
           );

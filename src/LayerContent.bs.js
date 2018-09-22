@@ -54,9 +54,6 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                   case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
                       break;
-                  case 6 : 
-                      tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, setRef, saveTick, layerKey, width, height, /* array */[]));
-                      break;
                   
                 }
               } else {
@@ -86,6 +83,9 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       break;
                   case 8 : 
                       tmp = ReasonReact.element(undefined, undefined, RawAudioReader$Gayer.make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, layerContent[0], /* array */[]));
+                      break;
+                  case 9 : 
+                      tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, layerContent[0], setRef, saveTick, layerKey, width, height, /* array */[]));
                       break;
                   default:
                     tmp = null;

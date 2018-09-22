@@ -105,3 +105,15 @@ let makeDrawCommand = [%bs.raw
 ];
 
 [@bs.send] external draw : (drawCommand, Js.t({..})) => unit = "";
+
+type reglOptions = {sourceLayer: string};
+
+module EncodeReglOptions = {
+  let reglOptions = r =>
+    Json.Encode.(object_([("sourceLayer", string(r.sourceLayer))]));
+};
+
+module DecodeReglOptions = {
+  let reglOptions = json =>
+    Json.Decode.{sourceLayer: json |> field("sourceLayer", string)};
+};

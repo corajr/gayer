@@ -3,6 +3,7 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Regl$Gayer from "./Regl.bs.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
@@ -37,8 +38,6 @@ function string_type_of_layerContent(param) {
           return "keycode-writer";
       case 5 : 
           return "histogram";
-      case 6 : 
-          return "regl";
       
     }
   } else {
@@ -62,6 +61,8 @@ function string_type_of_layerContent(param) {
       case 8 : 
           return "raw-audio-reader";
       case 9 : 
+          return "regl";
+      case 10 : 
           return "reader";
       
     }
@@ -72,6 +73,7 @@ var defaultLayer_000 = /* content : Fill */Block.__(0, ["black"]);
 
 var defaultLayer = /* record */[
   defaultLayer_000,
+  /* enabled */true,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
   /* rotation */0.0,
@@ -223,18 +225,23 @@ function layerByType(type_, json) {
     case "reader" : 
         var partial_arg$3 = ReaderType$Gayer.DecodeReaderType[/* readerType */1];
         return Json_decode.map((function (t) {
-                      return /* Reader */Block.__(9, [t]);
+                      return /* Reader */Block.__(10, [t]);
                     }), (function (param) {
                       return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
-        return /* Regl */6;
+        var partial_arg$4 = Regl$Gayer.DecodeReglOptions[/* reglOptions */0];
+        return Json_decode.map((function (o) {
+                      return /* Regl */Block.__(9, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("options", partial_arg$4, param);
+                    }), json);
     case "slitscan" : 
-        var partial_arg$4 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
+        var partial_arg$5 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
                       return /* Slitscan */Block.__(2, [s]);
                     }), (function (param) {
-                      return Json_decode.field("options", partial_arg$4, param);
+                      return Json_decode.field("options", partial_arg$5, param);
                     }), json);
     case "video" : 
         return Json_decode.map((function (s) {
@@ -261,6 +268,7 @@ function layerContent(json) {
 function layer(json) {
   return /* record */[
           /* content */Json_decode.field("content", layerContent, json),
+          /* enabled */Json_decode.field("enabled", Json_decode.bool, json),
           /* alpha */Json_decode.field("alpha", Json_decode.$$float, json),
           /* compositeOperation */Json_decode.map(Canvas$Gayer.compositeOperation_of_string, (function (param) {
                   return Json_decode.field("compositeOperation", Json_decode.string, param);
@@ -426,14 +434,6 @@ function layerContent$1(r) {
                       ],
                       /* [] */0
                     ]);
-      case 6 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "regl"
-                      ],
-                      /* [] */0
-                    ]);
       
     }
   } else {
@@ -570,6 +570,20 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "regl"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "options",
+                          Regl$Gayer.EncodeReglOptions[/* reglOptions */0](r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 10 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "reader"
                       ],
                       /* :: */[
@@ -595,7 +609,7 @@ function layer$1(r) {
                 "id",
                 Json_encode.nullable((function (prim) {
                         return prim;
-                      }), r[/* id */6])
+                      }), r[/* id */7])
               ],
               /* :: */[
                 /* tuple */[
@@ -604,30 +618,36 @@ function layer$1(r) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "alpha",
-                    r[/* alpha */1]
+                    "enabled",
+                    r[/* enabled */1]
                   ],
                   /* :: */[
                     /* tuple */[
-                      "compositeOperation",
-                      Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */2])
+                      "alpha",
+                      r[/* alpha */2]
                     ],
                     /* :: */[
                       /* tuple */[
-                        "transformMatrix",
-                        transformMatrix$1(r[/* transformMatrix */4])
+                        "compositeOperation",
+                        Canvas$Gayer.string_of_compositeOperation(r[/* compositeOperation */3])
                       ],
                       /* :: */[
                         /* tuple */[
-                          "rotation",
-                          r[/* rotation */3]
+                          "transformMatrix",
+                          transformMatrix$1(r[/* transformMatrix */5])
                         ],
                         /* :: */[
                           /* tuple */[
-                            "filters",
-                            r[/* filters */5]
+                            "rotation",
+                            r[/* rotation */4]
                           ],
-                          /* [] */0
+                          /* :: */[
+                            /* tuple */[
+                              "filters",
+                              r[/* filters */6]
+                            ],
+                            /* [] */0
+                          ]
                         ]
                       ]
                     ]
@@ -647,7 +667,7 @@ var EncodeLayer = /* module */[
 ];
 
 function getLayerKey(layer) {
-  return Belt_Option.getWithDefault(layer[/* id */6], JSON.stringify(layerContent$1(layer[/* content */0])));
+  return Belt_Option.getWithDefault(layer[/* id */7], JSON.stringify(layerContent$1(layer[/* content */0])));
 }
 
 function renderLayerPreview(layer, changeLayer, _, saveTick, onUnmount, layerRefs) {
@@ -679,25 +699,27 @@ function renderLayerPreview(layer, changeLayer, _, saveTick, onUnmount, layerRef
           tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Pitch classes:"])), ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
                           return Curry._2(changeLayer, layer, /* record */[
                                       /* content : PitchClasses */Block.__(6, [newPitches]),
-                                      /* alpha */layer[/* alpha */1],
-                                      /* compositeOperation */layer[/* compositeOperation */2],
-                                      /* rotation */layer[/* rotation */3],
-                                      /* transformMatrix */layer[/* transformMatrix */4],
-                                      /* filters */layer[/* filters */5],
-                                      /* id */layer[/* id */6]
+                                      /* enabled */layer[/* enabled */1],
+                                      /* alpha */layer[/* alpha */2],
+                                      /* compositeOperation */layer[/* compositeOperation */3],
+                                      /* rotation */layer[/* rotation */4],
+                                      /* transformMatrix */layer[/* transformMatrix */5],
+                                      /* filters */layer[/* filters */6],
+                                      /* id */layer[/* id */7]
                                     ]);
                         }), /* array */[])));
           break;
-      case 9 : 
+      case 10 : 
           tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["Reader:"])), ReasonReact.element(undefined, undefined, ReaderType$Gayer.make(match[0], (function (newReaderType) {
                           return Curry._2(changeLayer, layer, /* record */[
-                                      /* content : Reader */Block.__(9, [newReaderType]),
-                                      /* alpha */layer[/* alpha */1],
-                                      /* compositeOperation */layer[/* compositeOperation */2],
-                                      /* rotation */layer[/* rotation */3],
-                                      /* transformMatrix */layer[/* transformMatrix */4],
-                                      /* filters */layer[/* filters */5],
-                                      /* id */layer[/* id */6]
+                                      /* content : Reader */Block.__(10, [newReaderType]),
+                                      /* enabled */layer[/* enabled */1],
+                                      /* alpha */layer[/* alpha */2],
+                                      /* compositeOperation */layer[/* compositeOperation */3],
+                                      /* rotation */layer[/* rotation */4],
+                                      /* transformMatrix */layer[/* transformMatrix */5],
+                                      /* filters */layer[/* filters */6],
+                                      /* id */layer[/* id */7]
                                     ]);
                         }), /* array */[])));
           break;
@@ -741,26 +763,28 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                               ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                         height: "100%"
                                       }, /* array */[
-                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */1], undefined, (function (value) {
+                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */2], undefined, (function (value) {
                                                     return Curry._2(changeLayer, layer, /* record */[
                                                                 /* content */layer[/* content */0],
+                                                                /* enabled */layer[/* enabled */1],
                                                                 /* alpha */value,
-                                                                /* compositeOperation */layer[/* compositeOperation */2],
-                                                                /* rotation */layer[/* rotation */3],
-                                                                /* transformMatrix */layer[/* transformMatrix */4],
-                                                                /* filters */layer[/* filters */5],
-                                                                /* id */layer[/* id */6]
+                                                                /* compositeOperation */layer[/* compositeOperation */3],
+                                                                /* rotation */layer[/* rotation */4],
+                                                                /* transformMatrix */layer[/* transformMatrix */5],
+                                                                /* filters */layer[/* filters */6],
+                                                                /* id */layer[/* id */7]
                                                               ]);
                                                   }), /* array */[])),
-                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */2], (function (newOperation) {
+                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],
-                                                                    /* alpha */layer[/* alpha */1],
+                                                                    /* enabled */layer[/* enabled */1],
+                                                                    /* alpha */layer[/* alpha */2],
                                                                     /* compositeOperation */newOperation,
-                                                                    /* rotation */layer[/* rotation */3],
-                                                                    /* transformMatrix */layer[/* transformMatrix */4],
-                                                                    /* filters */layer[/* filters */5],
-                                                                    /* id */layer[/* id */6]
+                                                                    /* rotation */layer[/* rotation */4],
+                                                                    /* transformMatrix */layer[/* transformMatrix */5],
+                                                                    /* filters */layer[/* filters */6],
+                                                                    /* id */layer[/* id */7]
                                                                   ]);
                                                       }), /* array */[])))
                                       ]))

@@ -6,6 +6,7 @@ open Canvas;
 open Fscreen;
 open Layer;
 open Params;
+open Performance;
 open Presets;
 open Score;
 open Timing;
@@ -42,6 +43,7 @@ type state = {
   canvasRef: ref(option(Dom.element)),
   fullscreenCanvas: bool,
   tickFunctions: ref(Belt.Map.String.t(unit => unit)),
+  tickCounter: ref(int),
   timerId: ref(option(Js.Global.intervalId)),
 };
 
@@ -69,6 +71,7 @@ let defaultState: state = {
   loadedAudio: ref(Belt.Map.String.empty),
   canvasRef: ref(None),
   fullscreenCanvas: false,
+  tickCounter: ref(0),
   tickFunctions: ref(Belt.Map.String.empty),
   timerId: ref(None),
 };
@@ -227,6 +230,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
 
+    mark(performance, layerKey ++ "start");
+
     switch (layer.content) {
     | Draw(cmds) => DrawCommand.drawCommands(ctx, cmds)
     | Fill(s) =>
@@ -261,7 +266,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
       | _ => ()
       }
     | RawAudioReader(_) => ()
-    | Regl =>
+    | Regl(_) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(canvas) =>
@@ -288,7 +293,23 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     | Webcam =>
       switch (state.cameraInput^) {
       | None => ()
-      | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
+      | Some(input) =>
+        let imageX = 0;
+        let imageY = 0;
+        let imageWidth = width;
+        let imageHeight = height;
+        Ctx.drawImageSourceRectDestRect(
+          ctx,
+          input,
+          imageX,
+          imageY,
+          imageWidth,
+          imageHeight,
+          0,
+          0,
+          width,
+          height,
+        );
       }
     | PitchClasses(classes) =>
       let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));
@@ -369,6 +390,9 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
       );
     };
 
+    mark(performance, layerKey ++ "end");
+    measure(performance, layerKey, layerKey ++ "start", layerKey ++ "end");
+
     ignore(
       Js.Global.setTimeout(
         () =>
@@ -384,15 +408,31 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
   };
 
 let drawCanvas = (canvasElement, width, height, state) => {
+  mark(performance, "rootCanvas-start");
+
   if (state.params.shouldClear) {
     clearCanvas(canvasElement, width, height);
   };
   let ctx = getContext(canvasElement);
 
   List.iter(
-    layer => drawLayer(ctx, width, height, state, layer),
+    layer =>
+      if (layer.enabled) {
+        drawLayer(ctx, width, height, state, layer);
+      },
     state.params.layers,
   );
+
+  mark(performance, "rootCanvas-end");
+  measure(performance, "rootCanvas", "rootCanvas-start", "rootCanvas-end");
+
+  /* let entry = getEntriesByName(performance, "rootCanvas")[0]; */
+  /* if (state.tickCounter^ mod 60 == 0) { */
+  /*   Js.log(Js.Float.toString(entry |. durationGet) ++ "ms"); */
+  /* }; */
+
+  clearMarks(performance);
+  clearMeasures(performance);
 };
 
 let getAnalysisInput:
@@ -606,34 +646,35 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         (
           self => {
             /* Js.log("heartbeat"); */
-            self.state.readPos :=
+            state.tickCounter := state.tickCounter^ + 1;
+            state.readPos :=
               wrapCoord(
-                self.state.readPos^,
-                self.state.params.readPosDelta,
-                self.state.params.width,
+                state.readPos^,
+                state.params.readPosDelta,
+                state.params.width,
               );
 
-            self.state.writePos :=
+            state.writePos :=
               wrapCoord(
-                self.state.writePos^,
-                self.state.params.writePosDelta,
-                self.state.params.width,
+                state.writePos^,
+                state.params.writePosDelta,
+                state.params.width,
               );
 
             maybeUpdateCanvas(
-              self.state.canvasRef,
+              state.canvasRef,
               canvas => {
                 drawCanvas(
                   canvas,
-                  self.state.params.width,
-                  self.state.params.height,
-                  self.state,
+                  state.params.width,
+                  state.params.height,
+                  state,
                 );
 
-                switch (self.state.filterBanks) {
+                switch (state.filterBanks) {
                 | None => ()
                 | Some(MonoBank(filterBank)) =>
-                  switch (self.state.currentFilterValues^) {
+                  switch (state.currentFilterValues^) {
                   | Some(Mono(filterValues)) =>
                     updateBank(self, filterValues, filterBank)
                   | Some(Stereo(filterValuesL, _)) =>
@@ -641,7 +682,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   | None => ()
                   }
                 | Some(StereoBanks(filterBankL, filterBankR)) =>
-                  switch (self.state.currentFilterValues^) {
+                  switch (state.currentFilterValues^) {
                   | Some(Mono(filterValues)) =>
                     updateBank(self, filterValues, filterBankL);
                     updateBank(self, filterValues, filterBankR);
@@ -652,9 +693,9 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   }
                 };
 
-                switch (self.state.oscillatorBank^) {
+                switch (state.oscillatorBank^) {
                 | Some(bank) =>
-                  switch (self.state.currentFilterValues^) {
+                  switch (state.currentFilterValues^) {
                   | Some(Mono(filterValues)) =>
                     updateBankGains(~bank, ~gainValues=filterValues)
                   | Some(Stereo(filterValuesL, _)) =>

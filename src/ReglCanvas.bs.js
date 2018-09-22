@@ -12,9 +12,14 @@ function copyLayerToTexture(maybeRegl, textureRefs, layerRefs, layerKey, texture
   var match = maybeRegl[0];
   var match$1 = Belt_MapString.get(layerRefs[0], layerKey);
   if (match !== undefined && match$1 !== undefined) {
-    var aTexture = Js_primitive.valFromOption(match).texture(Js_primitive.valFromOption(match$1));
-    textureRefs[0] = Belt_MapString.set(textureRefs[0], textureKey, aTexture);
-    return /* () */0;
+    try {
+      var aTexture = Js_primitive.valFromOption(match).texture(Js_primitive.valFromOption(match$1));
+      textureRefs[0] = Belt_MapString.set(textureRefs[0], textureKey, aTexture);
+      return /* () */0;
+    }
+    catch (exn){
+      return /* () */0;
+    }
   } else {
     return /* () */0;
   }
@@ -39,7 +44,7 @@ function applyWithTexture(drawCommandRef, textureRefs, key, width, height) {
 
 var component = ReasonReact.reducerComponent("ReglCanvas-Gayer");
 
-function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
+function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
   var handleSetRef = function (aRef, param) {
     var state = param[/* state */1];
     Curry._1(setRef, aRef);
@@ -74,8 +79,8 @@ function make(layerRefs, setRef, saveTick, layerKey, width, height, _) {
                                     ],
                                     depth: 1.0
                                   });
-                              copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, "root", "root");
-                              return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], "root", width, height);
+                              copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, opts[/* sourceLayer */0], opts[/* sourceLayer */0]);
+                              return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], opts[/* sourceLayer */0], width, height);
                             } else {
                               return /* () */0;
                             }

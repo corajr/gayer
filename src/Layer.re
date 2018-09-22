@@ -5,6 +5,7 @@ open MIDICanvas;
 open Music;
 open RawAudio;
 open ReaderType;
+open Regl;
 
 type layerContent =
   | Fill(string)
@@ -22,7 +23,7 @@ type layerContent =
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
   | Histogram
-  | Regl
+  | Regl(reglOptions)
   | Reader(readerType);
 
 let string_type_of_layerContent =
@@ -42,11 +43,12 @@ let string_type_of_layerContent =
   | RawAudioWriter(_) => "raw-audio-writer"
   | RawAudioReader(_) => "raw-audio-reader"
   | Histogram => "histogram"
-  | Regl => "regl"
+  | Regl(_) => "regl"
   | Reader(_) => "reader";
 
 type layer = {
   content: layerContent,
+  enabled: bool,
   alpha: float,
   compositeOperation,
   rotation,
@@ -57,6 +59,7 @@ type layer = {
 
 let defaultLayer = {
   content: Fill("black"),
+  enabled: true,
   alpha: 1.0,
   compositeOperation: SourceOver,
   transformMatrix: defaultTransform,
@@ -117,8 +120,14 @@ module DecodeLayer = {
       | "keycode-writer" => KeycodeWriter
       | "keycode-reader" => KeycodeReader
       | "hand-drawn" => HandDrawn
-      | "regl" => Regl
       | "webcam" => Webcam
+      | "regl" =>
+        json
+        |> map(
+             o => Regl(o),
+             field("options", DecodeReglOptions.reglOptions),
+           )
+
       | "slitscan" =>
         json
         |> map(
@@ -173,6 +182,7 @@ module DecodeLayer = {
     Json.Decode.{
       id: json |> field("id", optional(string)),
       content: json |> field("content", layerContent),
+      enabled: json |> field("enabled", bool),
       alpha: json |> field("alpha", float),
       compositeOperation:
         json
@@ -270,7 +280,11 @@ module EncodeLayer = {
       | KeycodeWriter => object_([("type", string("keycode-writer"))])
       | KeycodeReader => object_([("type", string("keycode-reader"))])
       | Histogram => object_([("type", string("histogram"))])
-      | Regl => object_([("type", string("regl"))])
+      | Regl(opts) =>
+        object_([
+          ("type", string("regl")),
+          ("options", EncodeReglOptions.reglOptions(opts)),
+        ])
       | RawAudioWriter(fmt) =>
         object_([
           ("type", string("raw-audio-writer")),
@@ -298,6 +312,7 @@ module EncodeLayer = {
       object_([
         ("id", nullable(string, r.id)),
         ("content", layerContent(r.content)),
+        ("enabled", bool(r.enabled)),
         ("alpha", float(r.alpha)),
         (
           "compositeOperation",

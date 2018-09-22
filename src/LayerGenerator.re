@@ -2,6 +2,7 @@ open Canvas.DrawCommand;
 open Layer;
 open Music;
 open RawAudio;
+open Regl;
 
 /* ## Layer definitions */
 /* */
@@ -91,9 +92,7 @@ let text =
   ]);
 };
 
-let regl = {...defaultLayer, content: Regl};
-
-let sobel = {...defaultLayer, content: Regl};
+let sobel = key => {...defaultLayer, content: Regl({sourceLayer: key})};
 
 let analyzer = {...defaultLayer, content: Analysis(Mic)};
 
@@ -123,7 +122,7 @@ let harmony = [
     compositeOperation: SourceOver,
     filters: "blur(2px)",
   },
-  sobel,
+  sobel("root"),
   {
     ...
       draw([

@@ -53,7 +53,13 @@ let webcamParams = {
 
 let webcamEdgeDetect = {
   ...defaultParams,
-  layers: [webcam, sobel, pitchFilter(cMajor), reader],
+  layers: [
+    /* {...webcam, enabled: false}, */
+    webcam,
+    sobel("webcam"),
+    pitchFilter(cMajor),
+    reader,
+  ],
 };
 
 let slitscanParams = {
@@ -247,7 +253,7 @@ let lesTresRichesHeures = {
   outputGain: 0.05,
   layers: [
     img("media/les_tres_riches_heures.jpg"),
-    sobel,
+    sobel("root"),
     pitchFilter(majorHexatonic),
     reader,
   ],
