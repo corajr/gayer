@@ -111,8 +111,15 @@ let make =
   render: self =>
     <div>
       MaterialUi.(
-        <Grid container=true spacing=Grid.V24>
-          <Grid item=true xs=Grid.V10>
+        <div
+          style=(
+            ReactDOMRe.Style.make(
+              ~display="flex",
+              ~justifyContent="space-between",
+              (),
+            )
+          )>
+          <div style=(ReactDOMRe.Style.make(~flexGrow="1", ()))>
             <ExpansionPanel
               style=(ReactDOMRe.Style.make(~marginBottom="12px", ()))>
               <ExpansionPanelSummary
@@ -248,16 +255,16 @@ let make =
                 </FormControl>
               </ExpansionPanelDetails>
             </ExpansionPanel>
-          </Grid>
-          <Grid item=true xs=Grid.V1>
+          </div>
+          <div style=(ReactDOMRe.Style.make(~marginLeft="24px", ()))>
             <NewLayerButton
               onAdd=(
                 layer =>
                   onSetParams({...params, layers: [layer, ...params.layers]})
               )
             />
-          </Grid>
-        </Grid>
+          </div>
+        </div>
       )
       <Container
         cards=(

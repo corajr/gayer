@@ -10,7 +10,7 @@ import * as Timing$Gayer from "./Timing.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
-function drawCQTBar(ctx, state, width, _) {
+function drawCQTBar(ctx, state, options, width, _) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
   var audioDataR = state[/* cqt */4][0].get_input_array(1);
   state[/* analyserL */0][0].getFloatTimeDomainData(audioDataL);
@@ -18,9 +18,14 @@ function drawCQTBar(ctx, state, width, _) {
   state[/* cqt */4][0].calc();
   state[/* cqt */4][0].render_line(1);
   var cqtLine = state[/* cqt */4][0].get_output_array();
-  var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
-  ctx.putImageData(outputImageData, width - 1 | 0, 0);
-  return /* () */0;
+  var match = options[/* readerType */1];
+  if (match) {
+    var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
+    ctx.putImageData(outputImageData, width - 1 | 0, 0);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
 }
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
@@ -49,7 +54,7 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
                       return /* () */0;
                     }));
-              if (options[/* keepHistory */1]) {
+              if (options[/* keepHistory */2]) {
                 Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                         var match = self[/* state */1][/* canvasRef */5][0];
                         if (match !== undefined) {
@@ -66,7 +71,7 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       var match = self[/* state */1][/* canvasRef */5][0];
                       if (match !== undefined) {
                         var ctx = Js_primitive.valFromOption(match).getContext("2d");
-                        return drawCQTBar(ctx, self[/* state */1], width, height);
+                        return drawCQTBar(ctx, self[/* state */1], options, width, height);
                       } else {
                         return /* () */0;
                       }

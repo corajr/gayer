@@ -163,10 +163,15 @@ function setLayerRef(_, param, param$1) {
   }
 }
 
-function changeLayer(oldLayer, newLayer, layers) {
+function changeLayer(oldLayer, maybeNewLayer, layers) {
   var match = RList$Rationale.indexOf(oldLayer, layers);
   if (match !== undefined) {
-    return RList$Rationale.update(newLayer, match, layers);
+    var index = match;
+    if (maybeNewLayer !== undefined) {
+      return RList$Rationale.update(maybeNewLayer, index, layers);
+    } else {
+      return RList$Rationale.remove(index, 1, layers);
+    }
   } else {
     return layers;
   }
@@ -372,7 +377,7 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 5 : 
           if (maybeLayerRef !== undefined) {
-            var destRect = match$1[0][/* destRect */2];
+            var destRect = match$1[0][/* destRect */3];
             var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* x */0]);
             var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* y */1]);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), analysisX, analysisY);
@@ -797,10 +802,10 @@ function make($staropt$star, _) {
                                                                         layer,
                                                                         theRef
                                                                       ]);
-                                                          }), self[/* state */1][/* layerRefs */18], (function (oldLayer, newLayer) {
+                                                          }), self[/* state */1][/* layerRefs */18], (function (oldLayer, maybeNewLayer) {
                                                             return Curry._1(self[/* send */3], /* ChangeLayer */Block.__(7, [
                                                                           oldLayer,
-                                                                          newLayer
+                                                                          maybeNewLayer
                                                                         ]));
                                                           }), pushParamsState, (function (param) {
                                                             return getAnalysisInput(audioCtx, partial_arg, param);
@@ -982,7 +987,7 @@ function make($staropt$star, _) {
                                   })
                               ]);
                   case 7 : 
-                      var newLayer = action[1];
+                      var maybeNewLayer = action[1];
                       var oldLayer = action[0];
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     var init = self[/* state */1][/* params */6];
@@ -1001,7 +1006,7 @@ function make($staropt$star, _) {
                                                 /* transpose */init[/* transpose */11],
                                                 /* stereo */init[/* stereo */12],
                                                 /* shouldClear */init[/* shouldClear */13],
-                                                /* layers */changeLayer(oldLayer, newLayer, self[/* state */1][/* params */6][/* layers */14])
+                                                /* layers */changeLayer(oldLayer, maybeNewLayer, self[/* state */1][/* params */6][/* layers */14])
                                               ]);
                                   })]);
                   case 8 : 

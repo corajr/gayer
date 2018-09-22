@@ -75,7 +75,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       break;
                   case 5 : 
                       var options = layerContent[0];
-                      var match = options[/* destRect */2];
+                      var match = options[/* destRect */3];
                       var analysisWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match[/* w */2]);
                       var analysisHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match[/* h */3]);
                       tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, options, millisPerTick, setRef, saveTick, /* array */[]));

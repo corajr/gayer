@@ -3,6 +3,7 @@ open Audio;
 open AudioGraph;
 open Canvas;
 open ImageDataUtil;
+open ReaderType;
 open Timing;
 
 type state = {
@@ -15,7 +16,7 @@ type state = {
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let drawCQTBar = (ctx, state, width, height) => {
+let drawCQTBar = (ctx, state, options, width, height) => {
   let audioDataL = CQT.getInputArray(state.cqt^, 0);
   let audioDataR = CQT.getInputArray(state.cqt^, 1);
   getFloatTimeDomainData(state.analyserL^, audioDataL);
@@ -23,9 +24,12 @@ let drawCQTBar = (ctx, state, width, height) => {
   CQT.calc(state.cqt^);
   CQT.renderLine(state.cqt^, 1);
   let cqtLine = CQT.getOutputArray(state.cqt^);
-  let outputImageData = makeImageData(~cqtLine);
-
-  Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+  switch (options.readerType) {
+  | Channel(_) =>
+    let outputImageData = makeImageData(~cqtLine);
+    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+  | Saturation => ()
+  };
 };
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
@@ -119,7 +123,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state, width, height);
+            drawCQTBar(ctx, self.state, options, width, height);
           | None => ()
           },
         millisPerTick,

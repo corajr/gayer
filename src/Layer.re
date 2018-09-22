@@ -366,7 +366,7 @@ let renderLayerPreview =
                 newPitches =>
                   changeLayer(
                     layer,
-                    {...layer, content: PitchClasses(newPitches)},
+                    Some({...layer, content: PitchClasses(newPitches)}),
                   )
               )
             />
@@ -382,7 +382,7 @@ let renderLayerPreview =
                 newReaderType =>
                   changeLayer(
                     layer,
-                    {...layer, content: Reader(newReaderType)},
+                    Some({...layer, content: Reader(newReaderType)}),
                   )
               )
             />
@@ -420,62 +420,84 @@ let make =
   ...component,
   render: self =>
     MaterialUi.(
-      <MaterialUi.Card
-        style=(
-          ReactDOMRe.Style.make(
-            ~display="flex",
-            ~justifyContent="space-between",
-            (),
-          )
-        )>
-        <CardMedia src="dummy">
-          (
-            renderLayerPreview(
-              ~layer,
-              ~saveTick,
-              ~onUnmount=self.onUnmount,
-              ~setRef=onSetRef(layer),
-              ~changeLayer,
-              ~layerRefs,
+      <Card>
+        <div
+          style=(
+            ReactDOMRe.Style.make(
+              ~display="flex",
+              ~justifyContent="space-between",
+              ~marginLeft="24px",
+              (),
             )
-          )
-        </CardMedia>
-        <CardContent style=(ReactDOMRe.Style.make(~height="100%", ()))>
-          <FloatSlider
-            value=layer.alpha
-            label="Alpha"
-            onChange=(value => changeLayer(layer, {...layer, alpha: value}))
-          />
-          /* <FloatSlider */
-          /*   min=((-0.5) *. tau) */
-          /*   max=(0.5 *. tau) */
-          /*   value=layer.rotation */
-          /*   label="Rotation" */
-          /*   step=0.01 */
-          /*   onChange=( */
-          /*     value => changeLayer(layer, {...layer, rotation: value}) */
-          /*   ) */
-          /* /> */
-          /* <NumericTextField */
-          /*   label=(ReasonReact.string("Rotation")) */
-          /*   value=(`Float(layer.rotation)) */
-          /*   onChange=( */
-          /*     value => changeLayer(layer, {...layer, rotation: value}) */
-          /*   ) */
-          /* /> */
-          <div>
-            <CompositeOperationSelect
-              compositeOperation=layer.compositeOperation
+          )>
+          <Typography
+            variant=`Subheading
+            style=(ReactDOMRe.Style.make(~marginTop="8px", ()))>
+            (ReasonReact.string(string_type_of_layerContent(layer.content)))
+          </Typography>
+          <IconButton onClick=(_evt => changeLayer(layer, None))>
+            <MaterialUIIcons.Delete />
+          </IconButton>
+        </div>
+        <div
+          style=(
+            ReactDOMRe.Style.make(
+              ~display="flex",
+              ~justifyContent="space-between",
+              (),
+            )
+          )>
+          <CardMedia src="dummy">
+            (
+              renderLayerPreview(
+                ~layer,
+                ~saveTick,
+                ~onUnmount=self.onUnmount,
+                ~setRef=onSetRef(layer),
+                ~changeLayer,
+                ~layerRefs,
+              )
+            )
+          </CardMedia>
+          <CardContent>
+            <FloatSlider
+              value=layer.alpha
+              label="Alpha"
               onChange=(
-                newOperation =>
-                  changeLayer(
-                    layer,
-                    {...layer, compositeOperation: newOperation},
-                  )
+                value => changeLayer(layer, Some({...layer, alpha: value}))
               )
             />
-          </div>
-        </CardContent>
-      </MaterialUi.Card>
+            /* <FloatSlider */
+            /*   min=((-0.5) *. tau) */
+            /*   max=(0.5 *. tau) */
+            /*   value=layer.rotation */
+            /*   label="Rotation" */
+            /*   step=0.01 */
+            /*   onChange=( */
+            /*     value => changeLayer(layer, {...layer, rotation: value}) */
+            /*   ) */
+            /* /> */
+            /* <NumericTextField */
+            /*   label=(ReasonReact.string("Rotation")) */
+            /*   value=(`Float(layer.rotation)) */
+            /*   onChange=( */
+            /*     value => changeLayer(layer, {...layer, rotation: value}) */
+            /*   ) */
+            /* /> */
+            <FormGroup row=true>
+              <CompositeOperationSelect
+                compositeOperation=layer.compositeOperation
+                onChange=(
+                  newOperation =>
+                    changeLayer(
+                      layer,
+                      Some({...layer, compositeOperation: newOperation}),
+                    )
+                )
+              />
+            </FormGroup>
+          </CardContent>
+        </div>
+      </Card>
     ),
 };

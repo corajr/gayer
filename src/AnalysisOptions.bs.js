@@ -6,10 +6,12 @@ import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
+import * as ReaderType$Gayer from "./ReaderType.bs.js";
 
 function analysisOptions(json) {
   return /* record */[
           /* input */Json_decode.field("input", Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0], json),
+          /* readerType */Json_decode.field("readerType", ReaderType$Gayer.DecodeReaderType[/* readerType */1], json),
           /* keepHistory */Json_decode.field("keepHistory", Json_decode.bool, json),
           /* destRect */Json_decode.field("destRect", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2], json)
         ];
@@ -25,15 +27,21 @@ function analysisOptions$1(r) {
               ],
               /* :: */[
                 /* tuple */[
-                  "keepHistory",
-                  r[/* keepHistory */1]
+                  "readerType",
+                  ReaderType$Gayer.EncodeReaderType[/* readerType */0](r[/* readerType */1])
                 ],
                 /* :: */[
                   /* tuple */[
-                    "destRect",
-                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */2])
+                    "keepHistory",
+                    r[/* keepHistory */2]
                   ],
-                  /* [] */0
+                  /* :: */[
+                    /* tuple */[
+                      "destRect",
+                      Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */3])
+                    ],
+                    /* [] */0
+                  ]
                 ]
               ]
             ]);
@@ -43,6 +51,7 @@ var EncodeAnalysisOptions = /* module */[/* analysisOptions */analysisOptions$1]
 
 var defaultAnalysisOptions = /* record */[
   /* input : Mic */2,
+  /* readerType : Channel */[/* R */0],
   /* keepHistory */false,
   /* destRect : record */[
     /* x : Add */Block.__(5, [

@@ -96,7 +96,7 @@ type action =
   | SetMicInput(audioNode)
   | SetMediaStream(mediaStream)
   | SetFilterBanks(filterBanks)
-  | ChangeLayer(layer, layer)
+  | ChangeLayer(layer, option(layer))
   | SetLayers(list(layer))
   | SetParams(params);
 
@@ -137,10 +137,15 @@ let setLayerRef = (audioCtx, (layer, theRef), {ReasonReact.state}) => {
   };
 };
 
-let changeLayer = (oldLayer, newLayer, layers) =>
+let changeLayer =
+    (oldLayer: layer, maybeNewLayer: option(layer), layers: list(layer)) =>
   switch (RList.indexOf(oldLayer, layers)) {
   | None => layers
-  | Some(index) => RList.update(newLayer, index, layers)
+  | Some(index) =>
+    switch (maybeNewLayer) {
+    | Some(newLayer) => RList.update(newLayer, index, layers)
+    | None => RList.remove(index, 1, layers)
+    }
   };
 
 [%mui.withStyles
@@ -641,14 +646,18 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         {...state, filterInput: Some(filterInput)},
         (self => connectInputs(self.state)),
       )
-    | ChangeLayer(oldLayer, newLayer) =>
+    | ChangeLayer(oldLayer, maybeNewLayer) =>
       ReasonReact.SideEffects(
         (
           self =>
             pushParamsState({
               ...self.state.params,
               layers:
-                changeLayer(oldLayer, newLayer, self.state.params.layers),
+                changeLayer(
+                  oldLayer,
+                  maybeNewLayer,
+                  self.state.params.layers,
+                ),
             })
         ),
       )
@@ -996,8 +1005,8 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 params=self.state.params
                 onMoveCard=(layers => self.send(SetLayers(layers)))
                 onChangeLayer=(
-                  (oldLayer, newLayer) =>
-                    self.send(ChangeLayer(oldLayer, newLayer))
+                  (oldLayer, maybeNewLayer) =>
+                    self.send(ChangeLayer(oldLayer, maybeNewLayer))
                 )
                 onSetRef=(
                   (layer, theRef) =>

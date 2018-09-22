@@ -12,12 +12,15 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
+import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
 import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
+import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
@@ -755,39 +758,49 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
-              return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, {
-                              display: "flex",
-                              justifyContent: "space-between"
-                            }, /* array */[
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, changeLayer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])),
-                              ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
-                                        height: "100%"
-                                      }, /* array */[
-                                        ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */2], undefined, (function (value) {
-                                                    return Curry._2(changeLayer, layer, /* record */[
-                                                                /* content */layer[/* content */0],
-                                                                /* enabled */layer[/* enabled */1],
-                                                                /* alpha */value,
-                                                                /* compositeOperation */layer[/* compositeOperation */3],
-                                                                /* rotation */layer[/* rotation */4],
-                                                                /* transformMatrix */layer[/* transformMatrix */5],
-                                                                /* filters */layer[/* filters */6],
-                                                                /* id */layer[/* id */7]
-                                                              ]);
-                                                  }), /* array */[])),
-                                        React.createElement("div", undefined, ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
+              return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                              React.createElement("div", {
+                                    style: {
+                                      display: "flex",
+                                      marginLeft: "24px",
+                                      justifyContent: "space-between"
+                                    }
+                                  }, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Subheading */148169314, undefined, {
+                                            marginTop: "8px"
+                                          }, /* array */[string_type_of_layerContent(layer[/* content */0])])), ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                              return Curry._2(changeLayer, layer, undefined);
+                                            }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.Delete[/* make */0](/* array */[]))]))),
+                              React.createElement("div", {
+                                    style: {
+                                      display: "flex",
+                                      justifyContent: "space-between"
+                                    }
+                                  }, ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, changeLayer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])), ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, undefined, /* array */[
+                                            ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */2], undefined, (function (value) {
                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                     /* content */layer[/* content */0],
                                                                     /* enabled */layer[/* enabled */1],
-                                                                    /* alpha */layer[/* alpha */2],
-                                                                    /* compositeOperation */newOperation,
+                                                                    /* alpha */value,
+                                                                    /* compositeOperation */layer[/* compositeOperation */3],
                                                                     /* rotation */layer[/* rotation */4],
                                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                                     /* filters */layer[/* filters */6],
                                                                     /* id */layer[/* id */7]
                                                                   ]);
-                                                      }), /* array */[])))
-                                      ]))
+                                                      }), /* array */[])),
+                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
+                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                              /* content */layer[/* content */0],
+                                                                              /* enabled */layer[/* enabled */1],
+                                                                              /* alpha */layer[/* alpha */2],
+                                                                              /* compositeOperation */newOperation,
+                                                                              /* rotation */layer[/* rotation */4],
+                                                                              /* transformMatrix */layer[/* transformMatrix */5],
+                                                                              /* filters */layer[/* filters */6],
+                                                                              /* id */layer[/* id */7]
+                                                                            ]);
+                                                                }), /* array */[]))]))
+                                          ])))
                             ]));
             }),
           /* initialState */component[/* initialState */10],
