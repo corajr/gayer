@@ -27,7 +27,7 @@ type layerContent =
   | Regl(reglOptions)
   | Reader(readerType);
 
-let string_type_of_layerContent =
+let readable_string_type_of_layerContent =
   fun
   | Fill(_) => "Fill"
   | Draw(_) => "Draw (commands)"
@@ -46,6 +46,26 @@ let string_type_of_layerContent =
   | Histogram => "Histogram"
   | Regl(_) => "Shader"
   | Reader(_) => "Reader";
+
+let string_type_of_layerContent =
+  fun
+  | Fill(_) => "fill"
+  | Draw(_) => "draw"
+  | HandDrawn => "mouse"
+  | Webcam => "webcam"
+  | Slitscan(_) => "slitscan"
+  | Image(_) => "image"
+  | Video(_) => "video"
+  | Analysis(_) => "analyzer"
+  | PitchClasses(_) => "pitch-classes"
+  | MIDIKeyboard => "midi-keyboard"
+  | KeycodeReader => "keycode-reader"
+  | KeycodeWriter => "keycode-writer"
+  | RawAudioWriter(_) => "raw-audio-writer"
+  | RawAudioReader(_) => "raw-audio-reader"
+  | Histogram => "histogram"
+  | Regl(_) => "shader"
+  | Reader(_) => "reader";
 
 let icon_of_layerContent =
   MaterialUIIcons.(
@@ -405,6 +425,7 @@ let component = ReasonReact.statelessComponent("Layer");
 let make =
     (
       ~layer,
+      ~layerKeys,
       ~layerRefs,
       ~onSetRef,
       ~saveTick,
@@ -424,7 +445,9 @@ let make =
               variant=`Subheading
               style=(ReactDOMRe.Style.make(~marginTop="-4px", ()))>
               (
-                ReasonReact.string(string_type_of_layerContent(layer.content))
+                ReasonReact.string(
+                  readable_string_type_of_layerContent(layer.content),
+                )
               )
             </Typography>
           }
@@ -513,7 +536,74 @@ let make =
               | RawAudioWriter(rawAudioFormat)
               | RawAudioReader(rawAudioFormat) => <div />
               | Analysis(analysisOptions) => <div />
-              | Regl(reglOptions) => <div />
+              | Regl(reglOptions) =>
+                <div>
+                  (
+                    switch (reglOptions) {
+                    | Sobel(opts) =>
+                      <LayerSelect
+                        layerKeys
+                        currentValue=opts.sourceLayer
+                        onChange=(
+                          newKey =>
+                            changeLayer(
+                              layer,
+                              Some({
+                                ...layer,
+                                content:
+                                  Regl(
+                                    Sobel({...opts, sourceLayer: newKey}),
+                                  ),
+                              }),
+                            )
+                        )
+                      />
+                    | Displacement(opts) =>
+                      <div>
+                        <LayerSelect
+                          layerKeys
+                          currentValue=opts.displacementSourceLayer
+                          onChange=(
+                            newKey =>
+                              changeLayer(
+                                layer,
+                                Some({
+                                  ...layer,
+                                  content:
+                                    Regl(
+                                      Displacement({
+                                        ...opts,
+                                        displacementSourceLayer: newKey,
+                                      }),
+                                    ),
+                                }),
+                              )
+                          )
+                        />
+                        <LayerSelect
+                          layerKeys
+                          currentValue=opts.displacementMap
+                          onChange=(
+                            newKey =>
+                              changeLayer(
+                                layer,
+                                Some({
+                                  ...layer,
+                                  content:
+                                    Regl(
+                                      Displacement({
+                                        ...opts,
+                                        displacementMap: newKey,
+                                      }),
+                                    ),
+                                }),
+                              )
+                          )
+                        />
+                      </div>
+                    }
+                  )
+                </div>
               | HandDrawn
               | Webcam
               | MIDIKeyboard

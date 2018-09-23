@@ -16,6 +16,7 @@ import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
+import * as LayerSelect$Gayer from "./LayerSelect.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
@@ -28,7 +29,7 @@ import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
-function string_type_of_layerContent(param) {
+function readable_string_type_of_layerContent(param) {
   if (typeof param === "number") {
     switch (param) {
       case 0 : 
@@ -69,6 +70,52 @@ function string_type_of_layerContent(param) {
           return "Shader";
       case 10 : 
           return "Reader";
+      
+    }
+  }
+}
+
+function string_type_of_layerContent(param) {
+  if (typeof param === "number") {
+    switch (param) {
+      case 0 : 
+          return "mouse";
+      case 1 : 
+          return "webcam";
+      case 2 : 
+          return "midi-keyboard";
+      case 3 : 
+          return "keycode-reader";
+      case 4 : 
+          return "keycode-writer";
+      case 5 : 
+          return "histogram";
+      
+    }
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          return "fill";
+      case 1 : 
+          return "draw";
+      case 2 : 
+          return "slitscan";
+      case 3 : 
+          return "image";
+      case 4 : 
+          return "video";
+      case 5 : 
+          return "analyzer";
+      case 6 : 
+          return "pitch-classes";
+      case 7 : 
+          return "raw-audio-writer";
+      case 8 : 
+          return "raw-audio-reader";
+      case 9 : 
+          return "shader";
+      case 10 : 
+          return "reader";
       
     }
   }
@@ -280,7 +327,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("readerType", partial_arg$3, param);
                     }), json);
     case "regl" : 
-        var partial_arg$4 = Regl$Gayer.DecodeReglOptions[/* reglOptions */0];
+        var partial_arg$4 = Regl$Gayer.DecodeReglOptions[/* reglOptions */3];
         return Json_decode.map((function (o) {
                       return /* Regl */Block.__(9, [o]);
                     }), (function (param) {
@@ -625,7 +672,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "options",
-                          Regl$Gayer.EncodeReglOptions[/* reglOptions */0](r[0])
+                          Regl$Gayer.EncodeReglOptions[/* reglOptions */2](r[0])
                         ],
                         /* [] */0
                       ]
@@ -773,7 +820,7 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
+function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -830,8 +877,58 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                   case 5 : 
                   case 7 : 
                   case 8 : 
-                  case 9 : 
                       tmp = React.createElement("div", undefined);
+                      break;
+                  case 9 : 
+                      var reglOptions = match[0];
+                      var tmp$1;
+                      if (reglOptions.tag) {
+                        var opts = reglOptions[0];
+                        tmp$1 = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
+                                        return Curry._2(changeLayer, layer, /* record */[
+                                                    /* content : Regl */Block.__(9, [/* Displacement */Block.__(1, [/* record */[
+                                                              /* displacementSourceLayer */newKey,
+                                                              /* displacementMap */opts[/* displacementMap */1]
+                                                            ]])]),
+                                                    /* enabled */layer[/* enabled */1],
+                                                    /* alpha */layer[/* alpha */2],
+                                                    /* compositeOperation */layer[/* compositeOperation */3],
+                                                    /* rotation */layer[/* rotation */4],
+                                                    /* transformMatrix */layer[/* transformMatrix */5],
+                                                    /* filters */layer[/* filters */6],
+                                                    /* id */layer[/* id */7]
+                                                  ]);
+                                      }), opts[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
+                                        return Curry._2(changeLayer, layer, /* record */[
+                                                    /* content : Regl */Block.__(9, [/* Displacement */Block.__(1, [/* record */[
+                                                              /* displacementSourceLayer */opts[/* displacementSourceLayer */0],
+                                                              /* displacementMap */newKey
+                                                            ]])]),
+                                                    /* enabled */layer[/* enabled */1],
+                                                    /* alpha */layer[/* alpha */2],
+                                                    /* compositeOperation */layer[/* compositeOperation */3],
+                                                    /* rotation */layer[/* rotation */4],
+                                                    /* transformMatrix */layer[/* transformMatrix */5],
+                                                    /* filters */layer[/* filters */6],
+                                                    /* id */layer[/* id */7]
+                                                  ]);
+                                      }), opts[/* displacementMap */1], /* array */[])));
+                      } else {
+                        var opts$1 = reglOptions[0];
+                        tmp$1 = ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
+                                    return Curry._2(changeLayer, layer, /* record */[
+                                                /* content : Regl */Block.__(9, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
+                                                /* enabled */layer[/* enabled */1],
+                                                /* alpha */layer[/* alpha */2],
+                                                /* compositeOperation */layer[/* compositeOperation */3],
+                                                /* rotation */layer[/* rotation */4],
+                                                /* transformMatrix */layer[/* transformMatrix */5],
+                                                /* filters */layer[/* filters */6],
+                                                /* id */layer[/* id */7]
+                                              ]);
+                                  }), opts$1[/* sourceLayer */0], /* array */[]));
+                      }
+                      tmp = React.createElement("div", undefined, tmp$1);
                       break;
                   case 10 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, ReaderType$Gayer.make(match[0], (function (newReaderType) {
@@ -855,7 +952,7 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
                                                       return Curry._2(changeLayer, layer, undefined);
                                                     }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.Delete[/* make */0](/* array */[]))]))), Js_primitive.some(icon_of_layerContent(layer[/* content */0])), undefined, undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Subheading */148169314, undefined, {
                                                     marginTop: "-4px"
-                                                  }, /* array */[string_type_of_layerContent(layer[/* content */0])]))), undefined, {
+                                                  }, /* array */[readable_string_type_of_layerContent(layer[/* content */0])]))), undefined, {
                                         paddingTop: "8px",
                                         paddingBottom: "0px"
                                       }, /* array */[])),
@@ -907,6 +1004,7 @@ function make(layer, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
 }
 
 export {
+  readable_string_type_of_layerContent ,
   string_type_of_layerContent ,
   icon_of_layerContent ,
   defaultLayer ,

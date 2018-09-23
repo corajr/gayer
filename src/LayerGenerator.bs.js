@@ -311,7 +311,23 @@ function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, 
 
 function sobel(key) {
   return /* record */[
-          /* content : Regl */Block.__(9, [/* record */[/* sourceLayer */key]]),
+          /* content : Regl */Block.__(9, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
+}
+
+function displace(source, displace$1) {
+  return /* record */[
+          /* content : Regl */Block.__(9, [/* Displacement */Block.__(1, [/* record */[
+                    /* displacementSourceLayer */source,
+                    /* displacementMap */displace$1
+                  ]])]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -893,6 +909,8 @@ var handDrawn = /* record */[
   handDrawn_007
 ];
 
+var idCounter = /* record */[/* contents */0];
+
 var allLayerTypes = /* array */[
   /* tuple */[
     "image",
@@ -913,6 +931,14 @@ var allLayerTypes = /* array */[
   /* tuple */[
     "slitscan",
     slitscan
+  ],
+  /* tuple */[
+    "edge detect",
+    sobel("root")
+  ],
+  /* tuple */[
+    "displace",
+    displace("root", "root")
   ],
   /* tuple */[
     "midi-keyboard",
@@ -1000,6 +1026,7 @@ export {
   draw ,
   text ,
   sobel ,
+  displace ,
   analyzer ,
   webcam ,
   slitscan ,
@@ -1019,6 +1046,7 @@ export {
   midiKeyboard ,
   midiColors ,
   handDrawn ,
+  idCounter ,
   allLayerTypes ,
   
 }

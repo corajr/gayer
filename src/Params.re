@@ -108,7 +108,11 @@ let make =
       _children,
     ) => {
   ...component,
-  render: self =>
+  render: self => {
+    let layerKeys = [
+      "root",
+      ...params.layers |> List.map(getLayerKey) |> List.sort(compare),
+    ];
     <div>
       MaterialUi.(
         <div
@@ -283,6 +287,7 @@ let make =
             params.layers,
           )
         )
+        layerKeys
         onMoveCard
         onSetRef
         layerRefs
@@ -291,5 +296,6 @@ let make =
         rootWidth=params.width
         rootHeight=params.height
       />
-    </div>,
+    </div>;
+  },
 };

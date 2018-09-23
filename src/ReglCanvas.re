@@ -66,7 +66,13 @@ let make =
       let theRegl = regl(el);
       state.reglRef := Some(theRegl);
 
-      let drawCommand = Regl.makeDrawCommand(theRegl, sobelSpec(theRegl));
+      let drawCommand =
+        switch (opts) {
+        | Sobel(_) => Regl.makeDrawCommand(theRegl, sobelSpec(theRegl))
+        | Displacement(_) =>
+          Regl.makeDrawCommand(theRegl, displaceSpec(theRegl))
+        };
+
       state.drawCommandRef := Some(drawCommand);
     | _ => ()
     };
@@ -87,22 +93,52 @@ let make =
         | None => ()
         | Some(regl) =>
           clear(regl, {"color": [|0.0, 0.0, 0.0, 1.0|], "depth": 1.0});
+          switch (opts) {
+          | Sobel({sourceLayer}) =>
+            copyLayerToTexture(
+              self.state.reglRef,
+              self.state.textureRefs,
+              layerRefs,
+              sourceLayer,
+              sourceLayer,
+            );
 
-          copyLayerToTexture(
-            self.state.reglRef,
-            self.state.textureRefs,
-            layerRefs,
-            opts.sourceLayer,
-            opts.sourceLayer,
-          );
+            applyWithTexture(
+              self.state.drawCommandRef,
+              self.state.textureRefs,
+              sourceLayer,
+              width,
+              height,
+            );
+          | Displacement({displacementSourceLayer, displacementMap}) =>
+            copyLayerToTexture(
+              self.state.reglRef,
+              self.state.textureRefs,
+              layerRefs,
+              displacementSourceLayer,
+              displacementSourceLayer,
+            );
 
-          applyWithTexture(
-            self.state.drawCommandRef,
-            self.state.textureRefs,
-            opts.sourceLayer,
-            width,
-            height,
-          );
+            switch (
+              self.state.drawCommandRef^,
+              Belt.Map.String.get(
+                self.state.textureRefs^,
+                displacementSourceLayer,
+              ),
+              Belt.Map.String.get(self.state.textureRefs^, displacementMap),
+            ) {
+            | (Some(f), Some(source), Some(displacement)) =>
+              draw(
+                f,
+                {
+                  "texture": source,
+                  "displace_map": displacement,
+                  "maximum": 20.0,
+                },
+              )
+            | _ => ()
+            };
+          };
         }
       ),
     render: self =>

@@ -56,7 +56,8 @@ function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
     } else {
       var theRegl = Regl(aRef);
       state[/* reglRef */1][0] = Js_primitive.some(theRegl);
-      var drawCommand = Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec(theRegl));
+      var drawCommand;
+      drawCommand = opts.tag ? Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.displaceSpec(theRegl)) : Regl$Gayer.makeDrawCommand(theRegl, Regl$Gayer.sobelSpec(theRegl));
       state[/* drawCommandRef */3][0] = Js_primitive.some(drawCommand);
       return /* () */0;
     }
@@ -79,8 +80,28 @@ function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
                                     ],
                                     depth: 1.0
                                   });
-                              copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, opts[/* sourceLayer */0], opts[/* sourceLayer */0]);
-                              return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], opts[/* sourceLayer */0], width, height);
+                              if (opts.tag) {
+                                var match$1 = opts[0];
+                                var displacementSourceLayer = match$1[/* displacementSourceLayer */0];
+                                copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, displacementSourceLayer, displacementSourceLayer);
+                                var match$2 = self[/* state */1][/* drawCommandRef */3][0];
+                                var match$3 = Belt_MapString.get(self[/* state */1][/* textureRefs */2][0], displacementSourceLayer);
+                                var match$4 = Belt_MapString.get(self[/* state */1][/* textureRefs */2][0], match$1[/* displacementMap */1]);
+                                if (match$2 !== undefined && match$3 !== undefined && match$4 !== undefined) {
+                                  Js_primitive.valFromOption(match$2).draw({
+                                        texture: Js_primitive.valFromOption(match$3),
+                                        displace_map: Js_primitive.valFromOption(match$4),
+                                        maximum: 20.0
+                                      });
+                                  return /* () */0;
+                                } else {
+                                  return /* () */0;
+                                }
+                              } else {
+                                var sourceLayer = opts[0][/* sourceLayer */0];
+                                copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, sourceLayer, sourceLayer);
+                                return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], sourceLayer, width, height);
+                              }
                             } else {
                               return /* () */0;
                             }

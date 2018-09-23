@@ -94,7 +94,21 @@ let text =
   ]);
 };
 
-let sobel = key => {...defaultLayer, content: Regl({sourceLayer: key})};
+let sobel = key => {
+  ...defaultLayer,
+  content: Regl(Sobel({sourceLayer: key})),
+};
+
+let displace = (source, displace) => {
+  ...defaultLayer,
+  content:
+    Regl(
+      Displacement({
+        displacementSourceLayer: source,
+        displacementMap: displace,
+      }),
+    ),
+};
 
 let analyzer = (input: audioInputSetting) => {
   ...defaultLayer,
@@ -276,12 +290,16 @@ let midiColors = {
 
 let handDrawn = {...defaultLayer, content: HandDrawn};
 
+let idCounter = ref(0);
+
 let allLayerTypes = [|
   ("image", hubble),
   ("analyzer", analyzer(Mic)),
   ("reader", reader),
   ("webcam", webcam),
   ("slitscan", slitscan),
+  ("edge detect", sobel("root")),
+  ("displace", displace("root", "root")),
   ("midi-keyboard", midiKeyboard),
   ("computer keyboard", keycodeWriter),
   ("ASCII", keycodeReader),

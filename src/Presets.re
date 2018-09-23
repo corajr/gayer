@@ -296,11 +296,17 @@ let welcomeAudio = {
 };
 
 let presetsWithoutLayerIds = [
+  (
+    "Displace",
+    {
+      ...defaultParams,
+      layers: [hubble, webcam, displace("root", "webcam")],
+    },
+  ),
   ("Keycode", keycodeParams),
   ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
   /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
   ("Welcome (Audio)", welcomeAudio),
-  /* ("Regl", {...defaultParams, layers: [regl]}), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
   /* ("Hand-drawn", handDrawnParams), */
@@ -329,13 +335,19 @@ let presetsWithoutLayerIds = [
   ("Empty", {...defaultParams, layers: []}),
 ];
 
-let idCounter = ref(0);
-
 let addIds =
   List.map(layer => {
     let nextId = idCounter^;
     idCounter := nextId + 1;
-    {...layer, id: Some(string_of_int(nextId))};
+    {
+      ...layer,
+      id:
+        Some(
+          string_type_of_layerContent(layer.content)
+          ++ "-"
+          ++ string_of_int(nextId),
+        ),
+    };
   });
 
 let presets: list((string, params)) =
