@@ -310,23 +310,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     | Webcam =>
       switch (state.cameraInput^) {
       | None => ()
-      | Some(input) =>
-        let imageX = 0;
-        let imageY = 0;
-        let imageWidth = width;
-        let imageHeight = height;
-        Ctx.drawImageSourceRectDestRect(
-          ctx,
-          input,
-          imageX,
-          imageY,
-          imageWidth,
-          imageHeight,
-          0,
-          0,
-          width,
-          height,
-        );
+      | Some(input) => Ctx.drawImageDestRect(ctx, input, 0, 0, width, height)
       }
     | PitchClasses(classes) =>
       let classList = PitchSet.elements(PitchSet.diff(allPitches, classes));

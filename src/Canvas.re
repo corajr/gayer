@@ -41,6 +41,13 @@ let channel_of_int = int =>
   | _ => R
   };
 
+let string_of_channel =
+  fun
+  | R => "R"
+  | G => "G"
+  | B => "B"
+  | A => "A";
+
 type pixel = {
   r: float,
   g: float,

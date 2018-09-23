@@ -24,6 +24,20 @@ function channel_of_int($$int) {
   }
 }
 
+function string_of_channel(param) {
+  switch (param) {
+    case 0 : 
+        return "R";
+    case 1 : 
+        return "G";
+    case 2 : 
+        return "B";
+    case 3 : 
+        return "A";
+    
+  }
+}
+
 var tau = Math.PI * 2.0;
 
 function degreesToRadians(degrees) {
@@ -1097,6 +1111,7 @@ export {
   defaultSize ,
   int_of_channel ,
   channel_of_int ,
+  string_of_channel ,
   tau ,
   degreesToRadians ,
   string_of_compositeOperation ,

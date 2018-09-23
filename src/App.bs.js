@@ -347,7 +347,7 @@ function drawLayer(ctx, width, height, state, layer) {
       case 1 : 
           var match$2 = state[/* cameraInput */12][0];
           if (match$2 !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(match$2), 0, 0, width, height, 0, 0, width, height);
+            ctx.drawImage(Js_primitive.valFromOption(match$2), 0, 0, width, height);
           }
           break;
       case 0 : 

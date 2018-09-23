@@ -29,23 +29,45 @@ type layerContent =
 
 let string_type_of_layerContent =
   fun
-  | Fill(_) => "fill"
-  | Draw(_) => "draw-command"
-  | HandDrawn => "hand-drawn"
-  | Webcam => "webcam"
-  | Slitscan(_) => "slitscan"
-  | Image(_) => "image"
-  | Video(_) => "video"
-  | Analysis(_) => "analysis"
-  | PitchClasses(_) => "pitch-classes"
-  | MIDIKeyboard => "midi-keyboard"
-  | KeycodeReader => "keycode-reader"
-  | KeycodeWriter => "keycode-writer"
-  | RawAudioWriter(_) => "raw-audio-writer"
-  | RawAudioReader(_) => "raw-audio-reader"
-  | Histogram => "histogram"
-  | Regl(_) => "regl"
-  | Reader(_) => "reader";
+  | Fill(_) => "Fill"
+  | Draw(_) => "Draw (commands)"
+  | HandDrawn => "Mouse"
+  | Webcam => "Webcam"
+  | Slitscan(_) => "Slitscan"
+  | Image(_) => "Image"
+  | Video(_) => "Video"
+  | Analysis(_) => "Analyzer"
+  | PitchClasses(_) => "Pitch classes"
+  | MIDIKeyboard => "MIDI Input"
+  | KeycodeReader => "ASCII Reader"
+  | KeycodeWriter => "ASCII Writer"
+  | RawAudioWriter(_) => "Raw Audio Writer"
+  | RawAudioReader(_) => "Raw Audio Reader"
+  | Histogram => "Histogram"
+  | Regl(_) => "Shader"
+  | Reader(_) => "Reader";
+
+let icon_of_layerContent =
+  MaterialUIIcons.(
+    fun
+    | Fill(_) => <FormatPaint />
+    | Draw(_) => <FormatListBulleted />
+    | HandDrawn => <Brush />
+    | Webcam => <Videocam />
+    | Slitscan(_) => <Flip />
+    | Image(_) => <Image />
+    | Video(_) => <Movie />
+    | Analysis(_) => <Mic />
+    | PitchClasses(_) => <Tonality />
+    | MIDIKeyboard => <MusicNote />
+    | KeycodeReader => <Textsms />
+    | KeycodeWriter => <Keyboard />
+    | RawAudioWriter(_) => <Voicemail />
+    | RawAudioReader(_) => <Voicemail />
+    | Histogram => <ShowChart />
+    | Regl(_) => <Filter />
+    | Reader(_) => <Speaker />
+  );
 
 type layer = {
   content: layerContent,
@@ -344,6 +366,8 @@ let renderLayerPreview =
         | Some(layer) =>
           let ctx = getContext(getFromReact(previewCanvas));
           let src = getElementAsImageSource(layer);
+          Ctx.setFillStyle(ctx, "black");
+          Ctx.fillRect(ctx, 0, 0, 120, 120);
           Ctx.drawImageDestRect(ctx, src, 0, 0, 120, 120);
         | _ => ()
         }
@@ -351,56 +375,28 @@ let renderLayerPreview =
     | None => ()
     };
   <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
-    <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
-    <div>
-      (
-        switch (layer.content) {
-        | PitchClasses(xs) =>
-          <div>
-            <MaterialUi.Typography>
-              (ReasonReact.string("Pitch classes:"))
-            </MaterialUi.Typography>
-            <PitchSetSelector
-              pitchSet=xs
-              onChangeSetting=(
-                newPitches =>
-                  changeLayer(
-                    layer,
-                    Some({...layer, content: PitchClasses(newPitches)}),
-                  )
-              )
-            />
-          </div>
-        | Reader(readerType) =>
-          <div>
-            <MaterialUi.Typography>
-              (ReasonReact.string("Reader:"))
-            </MaterialUi.Typography>
-            <ReaderType
-              readerType
-              onChangeSetting=(
-                newReaderType =>
-                  changeLayer(
-                    layer,
-                    Some({...layer, content: Reader(newReaderType)}),
-                  )
-              )
-            />
-          </div>
-        | _ =>
-          <MaterialUi.Typography>
-            (
-              ReasonReact.string(
-                Js.Json.stringifyWithSpace(
-                  EncodeLayer.layerContent(layer.content),
-                  2,
-                ),
-              )
-            )
-          </MaterialUi.Typography>
-        }
-      )
-    </div>
+    (
+      switch (layer.content) {
+      | HandDrawn
+      | Webcam
+      | Slitscan(_)
+      | Image(_)
+      | Video(_)
+      | Analysis(_)
+      | MIDIKeyboard
+      | KeycodeReader
+      | KeycodeWriter
+      | RawAudioWriter(_)
+      | RawAudioReader(_)
+      | Histogram
+      | Regl(_) =>
+        <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
+      | Fill(_)
+      | Draw(_)
+      | PitchClasses(_)
+      | Reader(_) => ReasonReact.null
+      }
+    )
   </div>;
 };
 
@@ -421,29 +417,31 @@ let make =
   render: self =>
     MaterialUi.(
       <Card>
+        <CardHeader
+          avatar=(icon_of_layerContent(layer.content))
+          title={
+            <Typography
+              variant=`Subheading
+              style=(ReactDOMRe.Style.make(~marginTop="-4px", ()))>
+              (
+                ReasonReact.string(string_type_of_layerContent(layer.content))
+              )
+            </Typography>
+          }
+          action={
+            <IconButton onClick=(_evt => changeLayer(layer, None))>
+              <MaterialUIIcons.Delete />
+            </IconButton>
+          }
+          style=(
+            ReactDOMRe.Style.make(~paddingTop="8px", ~paddingBottom="0px", ())
+          )
+        />
         <div
           style=(
             ReactDOMRe.Style.make(
               ~display="flex",
-              ~justifyContent="space-between",
-              ~marginLeft="24px",
-              (),
-            )
-          )>
-          <Typography
-            variant=`Subheading
-            style=(ReactDOMRe.Style.make(~marginTop="8px", ()))>
-            (ReasonReact.string(string_type_of_layerContent(layer.content)))
-          </Typography>
-          <IconButton onClick=(_evt => changeLayer(layer, None))>
-            <MaterialUIIcons.Delete />
-          </IconButton>
-        </div>
-        <div
-          style=(
-            ReactDOMRe.Style.make(
-              ~display="flex",
-              ~justifyContent="space-between",
+              ~justifyContent="flex-start",
               (),
             )
           )>
@@ -459,7 +457,96 @@ let make =
               )
             )
           </CardMedia>
-          <CardContent>
+          <CardContent style=(ReactDOMRe.Style.make(~flexGrow="1", ()))>
+            (
+              switch (layer.content) {
+              | PitchClasses(xs) =>
+                <div>
+                  <PitchSetSelector
+                    pitchSet=xs
+                    onChangeSetting=(
+                      newPitches =>
+                        changeLayer(
+                          layer,
+                          Some({
+                            ...layer,
+                            content: PitchClasses(newPitches),
+                          }),
+                        )
+                    )
+                  />
+                </div>
+              | Reader(readerType) =>
+                <div>
+                  <ReaderType
+                    readerType
+                    onChangeSetting=(
+                      newReaderType =>
+                        changeLayer(
+                          layer,
+                          Some({...layer, content: Reader(newReaderType)}),
+                        )
+                    )
+                  />
+                </div>
+              | Fill(v) =>
+                <MaterialUi.TextField
+                  label=(ReasonReact.string("style"))
+                  value=(`String(v))
+                  onChange=(
+                    evt => {
+                      let value = ReactDOMRe.domElementToObj(
+                                    ReactEventRe.Form.target(evt),
+                                  )##value;
+                      changeLayer(
+                        layer,
+                        Some({...layer, content: Fill(value)}),
+                      );
+                    }
+                  )
+                  margin=`Normal
+                />
+              | Draw(cmds) => <div />
+              | Slitscan(cameraOptions) => <div />
+              | Image(string)
+              | Video(string) => <div />
+              | RawAudioWriter(rawAudioFormat)
+              | RawAudioReader(rawAudioFormat) => <div />
+              | Analysis(analysisOptions) => <div />
+              | Regl(reglOptions) => <div />
+              | HandDrawn
+              | Webcam
+              | MIDIKeyboard
+              | KeycodeReader
+              | KeycodeWriter
+              | Histogram =>
+                <MaterialUi.Typography color=`TextSecondary>
+                  (ReasonReact.string("[no options]"))
+                </MaterialUi.Typography>
+              | _ =>
+                <MaterialUi.Typography>
+                  (
+                    ReasonReact.string(
+                      Js.Json.stringifyWithSpace(
+                        EncodeLayer.layerContent(layer.content),
+                        2,
+                      ),
+                    )
+                  )
+                </MaterialUi.Typography>
+              }
+            )
+          </CardContent>
+          <div
+            style=(
+              ReactDOMRe.Style.make(
+                ~flexDirection="column",
+                ~alignItems="flex-start",
+                ~marginRight="16px",
+                ~marginBottom="24px",
+                (),
+              )
+            )>
             <FloatSlider
               value=layer.alpha
               label="Alpha"
@@ -496,7 +583,7 @@ let make =
                 )
               />
             </FormGroup>
-          </CardContent>
+          </div>
         </div>
       </Card>
     ),
