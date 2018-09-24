@@ -41,6 +41,13 @@ let channel_of_int = int =>
   | _ => R
   };
 
+let string_of_channel =
+  fun
+  | R => "R"
+  | G => "G"
+  | B => "B"
+  | A => "A";
+
 type pixel = {
   r: float,
   g: float,
@@ -269,6 +276,10 @@ module Ctx = {
 
   [@bs.set] external setFont : (ctx, string) => unit = "font";
 
+  [@bs.set] external setTextAlign : (ctx, string) => unit = "textAlign";
+
+  [@bs.set] external setTextBaseline : (ctx, string) => unit = "textBaseline";
+
   [@bs.set] external _setFilter : (ctx, string) => unit = "filter";
 
   let setFilter: (ctx, list(filter)) => unit =
@@ -353,6 +364,8 @@ module Ctx = {
 
   [@bs.send] external fillText : (ctx, string, dim, dim) => unit = "";
 
+  [@bs.send] external strokeText : (ctx, string, dim, dim) => unit = "";
+
   [@bs.send] external strokeRect : (ctx, dim, dim, dim, dim) => unit = "";
 
   [@bs.send] external clearRect : (ctx, dim, dim, dim, dim) => unit = "";
@@ -421,139 +434,6 @@ let simpleDrawImage =
   Ctx.drawImage(ctx, getCanvasImageSource(image), 0, 0);
 };
 
-let mapRawData: (array(int), (array(int), int) => 't) => array('t) =
-  (rawData, f) => {
-    let n = Array.length(rawData) / 4;
-    Array.init(
-      n,
-      i => {
-        let offset = i * 4;
-        f(rawData, offset);
-      },
-    );
-  };
-
-let mapImageData: (imageData, (array(int), int) => 't) => array('t) =
-  (imageData, f) => mapRawData(imageData |. data, f);
-
-let rawDataToPixel = (rawData, offset) => {
-  r: float_of_int(rawData[offset + int_of_channel(R)]) /. 255.0,
-  g: float_of_int(rawData[offset + int_of_channel(G)]) /. 255.0,
-  b: float_of_int(rawData[offset + int_of_channel(B)]) /. 255.0,
-  a: float_of_int(rawData[offset + int_of_channel(A)]) /. 255.0,
-};
-
-let imageDataToPixels: imageData => array(pixel) =
-  imageData => mapImageData(imageData, rawDataToPixel);
-
-let rawDataToFloatArray = (channel, invert) => {
-  let channelOffset = int_of_channel(channel);
-  (rawData, offset) => {
-    let v = float_of_int(rawData[offset + channelOffset]) /. 255.0;
-    invert ? 1.0 -. v : v;
-  };
-};
-
-let imageDataToFloatArray: (imageData, channel) => array(float) =
-  (imageData, channel) =>
-    mapImageData(imageData, rawDataToFloatArray(channel, channel === A));
-
-let imageDataToFloat32Array: (imageData, channel) => TypedArray.float32Array =
-  (imageData, channel) => {
-    let channelOffset = int_of_channel(channel);
-    let rawData = imageData |. dataGet;
-    let n = Array.length(rawData) / 4;
-    let output =
-      TypedArray.floatArrayAsArray(TypedArray.createFloat32Array(n));
-    for (i in 0 to n - 1) {
-      let v = float_of_int(rawData[i * 4 + channelOffset]) /. 255.0;
-      output[i] = 2.0 *. v -. 1.0;
-    };
-    TypedArray.arrayFloatAsFloat32Array(output);
-  };
-
-let imageDataToStereo =
-    (imageData, channelL, channelR)
-    : (array(float), array(float)) => {
-  let rawData = imageData |. dataGet;
-  let n = Array.length(rawData) / 4;
-  let arrayL = Array.make(n, 0.0);
-  let arrayR = Array.make(n, 0.0);
-
-  let offsetL = int_of_channel(channelL);
-  let offsetR = int_of_channel(channelR);
-
-  for (i in 0 to n - 1) {
-    let offset = i * 4;
-    arrayL[i] = float_of_int(rawData[offset + offsetL]) /. 255.0;
-    arrayR[i] = float_of_int(rawData[offset + offsetR]) /. 255.0;
-  };
-  (arrayL, arrayR);
-};
-
-let imageDataToHistogram =
-    (
-      ~binCount: int,
-      ~binFn: pixel => (int, float),
-      ~divideBy: float=1.0,
-      imageData: imageData,
-    )
-    : array(float) => {
-  open Color;
-  let output = Array.make(binCount, 0.0);
-  let outputMax = ref(0.0);
-  mapImageData(imageData, rawDataToPixel)
-  |> Array.iter(pixel => {
-       let (i, v) = binFn(pixel);
-       output[i] = output[i] +. v;
-       if (output[i] > outputMax^) {
-         outputMax := output[i];
-       };
-     });
-
-  let divideByFinal = max(outputMax^, divideBy);
-
-  divideByFinal === 0.0 ? output : Array.map(x => x /. divideByFinal, output);
-};
-
-let makeUint8ClampedArray = [%bs.raw
-  len => {|return new Uint8ClampedArray(len)|}
-];
-
-let makeImageData = (~cqtLine: array(int)) => {
-  let len = Array.length(cqtLine);
-  let n = len / 4;
-  let output = makeUint8ClampedArray(len);
-
-  for (i in 0 to n - 1) {
-    let offset = i * 4;
-    let cqtOffset = (n - i - 1) * 4;
-
-    output[offset] = cqtLine[cqtOffset];
-    output[offset + 1] = cqtLine[cqtOffset + 1];
-    output[offset + 2] = cqtLine[cqtOffset + 2];
-    output[offset + 3] = 255;
-  };
-
-  createImageData(output, 1, n);
-};
-
-let makeImageDataFromFloats: (array(float), int, int) => imageData =
-  (input, w, h) => {
-    let n = Array.length(input);
-    let len = n * 4;
-    let output = makeUint8ClampedArray(len);
-    for (i in 0 to n - 1) {
-      let offset = i * 4;
-      let v = int_of_float(input[n - i - 1] *. 255.0);
-      output[offset + int_of_channel(R)] = v;
-      output[offset + int_of_channel(G)] = v;
-      output[offset + int_of_channel(B)] = v;
-      output[offset + int_of_channel(A)] = 255;
-    };
-    createImageData(output, w, h);
-  };
-
 let loadImage: (~url: string, ~onLoad: canvasImageSource => unit) => unit = [%bs.raw
   (src, onLoad) => {|
      var img = new Image;
@@ -591,11 +471,19 @@ let wrapCoord: (int, int, int) => int =
 let binsPerSemitone: int => int = height => height / 120;
 
 module DrawCommand = {
+  type drawContext = {
+    maybeCtxRef: ref(option(canvasRenderingContext2D)),
+    width: int,
+    height: int,
+    variables: Belt.Map.String.t(int),
+  };
+
   type imgSource =
     | Self;
 
   type length =
     | Constant(int)
+    | Variable(string, int)
     | Pixels(int)
     | Note(int)
     | Width
@@ -613,8 +501,14 @@ module DrawCommand = {
   };
 
   type command =
+    | SetFont(string)
+    | SetTextAlign(string)
+    | SetTextBaseline(string)
     | SetFillStyle(string)
+    | SetStrokeStyle(string)
     | FillRect(rect)
+    | FillText(string, length, length)
+    | StrokeText(string, length, length)
     | Rotate(rotation)
     | Translate(length, length)
     | DrawImage(imgSource, rect)
@@ -635,6 +529,12 @@ module DrawCommand = {
         fun
         | Constant(v) =>
           object_([("type", string("constant")), ("v", int(v))])
+        | Variable(s, i) =>
+          object_([
+            ("type", string("var")),
+            ("name", string(s)),
+            ("default", int(i)),
+          ])
         | Pixels(i) => object_([("type", string("px")), ("i", int(i))])
         | Note(i) => object_([("type", string("note")), ("note", int(i))])
         | Width => object_([("type", string("width"))])
@@ -673,14 +573,44 @@ module DrawCommand = {
     let command =
       Json.Encode.(
         fun
+        | SetFont(s) =>
+          object_([("type", string("SetFont")), ("font", string(s))])
+        | SetTextAlign(s) =>
+          object_([
+            ("type", string("SetTextAlign")),
+            ("textAlign", string(s)),
+          ])
+        | SetTextBaseline(s) =>
+          object_([
+            ("type", string("SetTextBaseline")),
+            ("textBaseline", string(s)),
+          ])
         | SetFillStyle(s) =>
           object_([
             ("type", string("SetFillStyle")),
             ("style", string(s)),
           ])
+        | SetStrokeStyle(s) =>
+          object_([
+            ("type", string("SetStrokeStyle")),
+            ("style", string(s)),
+          ])
         | FillRect(r) =>
           object_([("type", string("FillRect")), ("rect", rect(r))])
-
+        | FillText(s, x, y) =>
+          object_([
+            ("type", string("FillText")),
+            ("text", string(s)),
+            ("x", length(x)),
+            ("y", length(y)),
+          ])
+        | StrokeText(s, x, y) =>
+          object_([
+            ("type", string("StrokeText")),
+            ("text", string(s)),
+            ("x", length(x)),
+            ("y", length(y)),
+          ])
         | Rotate(r) =>
           object_([("type", string("Rotate")), ("rad", float(r))])
         | Translate(x, y) =>
@@ -729,7 +659,17 @@ module DrawCommand = {
           | "/" =>
             json |> field2((a, b) => Divide(a, b), "a", length, "b", length)
 
+          | "var" =>
+            json
+            |> field2(
+                 (a, b) => Variable(a, b),
+                 "name",
+                 string,
+                 "default",
+                 int,
+               )
           | "-" => json |> map(x => Negate(x), field("x", length))
+
           | "note" => json |> map(i => Note(i), field("note", int))
           | _ =>
             raise @@
@@ -756,6 +696,36 @@ module DrawCommand = {
           switch (type_) {
           | "SetFillStyle" =>
             json |> map(s => SetFillStyle(s), field("style", string))
+          | "SetFont" => json |> map(s => SetFont(s), field("font", string))
+          | "SetTextAlign" =>
+            json |> map(s => SetTextAlign(s), field("textAlign", string))
+          | "SetTextBaseline" =>
+            json
+            |> map(s => SetTextBaseline(s), field("textBaseline", string))
+          | "SetStrokeStyle" =>
+            json |> map(s => SetStrokeStyle(s), field("style", string))
+          | "FillText" =>
+            json
+            |> (
+              field("text", string)
+              |> andThen(s =>
+                   field("x", length)
+                   |> andThen(x =>
+                        map(y => FillText(s, x, y), field("y", length))
+                      )
+                 )
+            )
+          | "StrokeText" =>
+            json
+            |> (
+              field("text", string)
+              |> andThen(s =>
+                   field("x", length)
+                   |> andThen(x =>
+                        map(y => StrokeText(s, x, y), field("y", length))
+                      )
+                 )
+            )
           | "DrawImage" =>
             json
             |> (
@@ -803,79 +773,104 @@ module DrawCommand = {
         json |> Json.Decode.(field("type", string) |> andThen(commandByType));
   };
 
-  let rec getLength: (ctx, length) => int =
-    (ctx, len) =>
+  let rec getLength: (drawContext, length) => int =
+    (drawCtx, len) =>
       switch (len) {
       | Constant(v) => v
+      | Variable(s, i) =>
+        Belt.Map.String.getWithDefault(drawCtx.variables, s, i)
       | Pixels(i) => i
       | Note(i) =>
-        let height = canvasHeight(Ctx.canvas(ctx));
+        let height = drawCtx.height;
         let pixelsPerSemitone = binsPerSemitone(height);
         height - i * pixelsPerSemitone;
-      | Width => canvasWidth(Ctx.canvas(ctx))
-      | Height => canvasHeight(Ctx.canvas(ctx))
-      | Negate(x) => - getLength(ctx, x)
-      | Add(a, b) => getLength(ctx, a) + getLength(ctx, b)
-      | Multiply(a, b) => getLength(ctx, a) * getLength(ctx, b)
-      | Divide(a, b) => getLength(ctx, a) / getLength(ctx, b)
+      | Width => drawCtx.width
+      | Height => drawCtx.height
+      | Negate(x) => - getLength(drawCtx, x)
+      | Add(a, b) => getLength(drawCtx, a) + getLength(drawCtx, b)
+      | Multiply(a, b) => getLength(drawCtx, a) * getLength(drawCtx, b)
+      | Divide(a, b) => getLength(drawCtx, a) / getLength(drawCtx, b)
       };
 
-  let drawCommand: (ctx, command) => unit =
-    (ctx, cmd) =>
-      switch (cmd) {
-      | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
-      | Translate(x, y) =>
-        Ctx.transform(
-          ctx,
-          {
-            ...defaultTransform,
-            horizontalMoving: float_of_int(getLength(ctx, x)),
-            verticalMoving: float_of_int(getLength(ctx, y)),
-          },
-        )
-      | Rotate(r) => Ctx.rotate(ctx, r)
-      | FillRect({x, y, w, h}) =>
-        Ctx.fillRect(
-          ctx,
-          getLength(ctx, x),
-          getLength(ctx, y),
-          getLength(ctx, w),
-          getLength(ctx, h),
-        )
-      | DrawImage(src, {x, y, w, h}) =>
-        switch (src) {
-        | Self =>
-          Ctx.drawImageDestRect(
+  let drawCommand: (drawContext, command) => unit =
+    (drawContext, cmd) =>
+      switch (drawContext.maybeCtxRef^) {
+      | Some(ctx) =>
+        switch (cmd) {
+        | SetFont(font) => Ctx.setFont(ctx, font)
+        | SetTextAlign(textAlign) => Ctx.setTextAlign(ctx, textAlign)
+        | SetTextBaseline(textBaseline) =>
+          Ctx.setTextBaseline(ctx, textBaseline)
+        | SetFillStyle(style) => Ctx.setFillStyle(ctx, style)
+        | SetStrokeStyle(style) => Ctx.setStrokeStyle(ctx, style)
+        | Translate(x, y) =>
+          Ctx.transform(
             ctx,
-            getCanvasAsSource(Ctx.canvas(ctx)),
-            getLength(ctx, x),
-            getLength(ctx, y),
-            getLength(ctx, w),
-            getLength(ctx, h),
+            {
+              ...defaultTransform,
+              horizontalMoving: float_of_int(getLength(drawContext, x)),
+              verticalMoving: float_of_int(getLength(drawContext, y)),
+            },
           )
-        }
-      | DrawImageSourceDest(
-          src,
-          {x: srcX, y: srcY, w: srcW, h: srcH},
-          {x, y, w, h},
-        ) =>
-        switch (src) {
-        | Self =>
-          Ctx.drawImageSourceRectDestRect(
+        | Rotate(r) => Ctx.rotate(ctx, r)
+        | FillRect({x, y, w, h}) =>
+          Ctx.fillRect(
             ctx,
-            getCanvasAsSource(Ctx.canvas(ctx)),
-            getLength(ctx, srcX),
-            getLength(ctx, srcY),
-            getLength(ctx, srcW),
-            getLength(ctx, srcH),
-            getLength(ctx, x),
-            getLength(ctx, y),
-            getLength(ctx, w),
-            getLength(ctx, h),
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+            getLength(drawContext, w),
+            getLength(drawContext, h),
           )
+        | FillText(s, x, y) =>
+          Ctx.fillText(
+            ctx,
+            s,
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+          )
+        | StrokeText(s, x, y) =>
+          Ctx.strokeText(
+            ctx,
+            s,
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+          )
+        | DrawImage(src, {x, y, w, h}) =>
+          switch (src) {
+          | Self =>
+            Ctx.drawImageDestRect(
+              ctx,
+              getCanvasAsSource(Ctx.canvas(ctx)),
+              getLength(drawContext, x),
+              getLength(drawContext, y),
+              getLength(drawContext, w),
+              getLength(drawContext, h),
+            )
+          }
+        | DrawImageSourceDest(
+            src,
+            {x: srcX, y: srcY, w: srcW, h: srcH},
+            {x, y, w, h},
+          ) =>
+          switch (src) {
+          | Self =>
+            Ctx.drawImageSourceRectDestRect(
+              ctx,
+              getCanvasAsSource(Ctx.canvas(ctx)),
+              getLength(drawContext, srcX),
+              getLength(drawContext, srcY),
+              getLength(drawContext, srcW),
+              getLength(drawContext, srcH),
+              getLength(drawContext, x),
+              getLength(drawContext, y),
+              getLength(drawContext, w),
+              getLength(drawContext, h),
+            )
+          }
         }
+      | None => ()
       };
 
-  let drawCommands: (ctx, list(command)) => unit =
-    (ctx, cmds) => List.iter(drawCommand(ctx), cmds);
+  let drawCommands: (drawContext, list(command)) => unit =
+    (drawContext, cmds) => List.iter(drawCommand(drawContext), cmds);
 };

@@ -4,6 +4,11 @@ type readerType =
   | Channel(channel)
   | Saturation;
 
+let string_of_readerType =
+  fun
+  | Channel(x) => "Channel(" ++ string_of_channel(x) ++ ")"
+  | Saturation => "Saturation";
+
 module DecodeReaderType = {
   let readerTypeByType = (type_, json) =>
     Json.Decode.(
@@ -73,7 +78,7 @@ let make = (~readerType, ~onChangeSetting, _children) => {
                      EncodeReaderType.readerType(readerType),
                    );
                  <MenuItem value=(`String(s)) key=s>
-                   (ReasonReact.string(s))
+                   (ReasonReact.string(string_of_readerType(readerType)))
                  </MenuItem>;
                }),
           )

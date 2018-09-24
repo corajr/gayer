@@ -81,7 +81,7 @@ let sobelSpec = regl => {
      varying vec2 uv;
      void main () {
      uv = position;
-     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);
+     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);
      }
      |},
   "attributes": {
@@ -90,6 +90,51 @@ let sobelSpec = regl => {
   "uniforms": {
     "resolution": prop(regl, "resolution"),
     "texture": prop(regl, "texture"),
+  },
+  "count": 3,
+};
+
+let displaceSpec = regl => {
+  "frag": {|
+     precision mediump float;
+     uniform sampler2D texture;
+     uniform sampler2D displace_map;
+     uniform float maximum;
+     uniform float time;
+     uniform vec2 resolution;
+     varying vec2 uv;
+
+     void main () {
+	   float x = 1.0 / resolution.x;
+	   float y = 1.0 / resolution.y;
+     float time_e      = time * 0.001;
+     vec2 uv_t         = vec2(uv.s + time_e, uv.t + time_e);
+     vec4 displace     = texture2D(displace_map, uv_t);
+     float displace_k  = displace.g * maximum;
+     vec2 uv_displaced = vec2(uv.x + (displace_k * x),
+       uv.y + (displace_k * y));
+
+     gl_FragColor = texture2D(texture, uv_displaced);
+     }
+     |},
+  "vert": {|
+     precision mediump float;
+     attribute vec2 position;
+     varying vec2 uv;
+     void main () {
+     uv = position;
+     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);
+     }
+     |},
+  "attributes": {
+    "position": [|((-2), 0), (0, (-2)), (2, 2)|],
+  },
+  "uniforms": {
+    "resolution": prop(regl, "resolution"),
+    "texture": prop(regl, "texture"),
+    "displace_map": prop(regl, "displace_map"),
+    "maximum": prop(regl, "maximum"),
+    "time": prop(regl, "time"),
   },
   "count": 3,
 };
@@ -105,3 +150,66 @@ let makeDrawCommand = [%bs.raw
 ];
 
 [@bs.send] external draw : (drawCommand, Js.t({..})) => unit = "";
+
+type sobelOptions = {sourceLayer: string};
+
+type displacementOptions = {
+  displacementSourceLayer: string,
+  displacementMap: string,
+};
+
+type reglOptions =
+  | Sobel(sobelOptions)
+  | Displacement(displacementOptions);
+
+module EncodeReglOptions = {
+  let sobelOptions = r =>
+    Json.Encode.(object_([("sourceLayer", string(r.sourceLayer))]));
+
+  let displacementOptions = r =>
+    Json.Encode.(
+      object_([
+        ("sourceLayer", string(r.displacementSourceLayer)),
+        ("displacementMap", string(r.displacementMap)),
+      ])
+    );
+
+  let reglOptions =
+    Json.Encode.(
+      fun
+      | Sobel(o) =>
+        object_([("type", string("sobel")), ("opts", sobelOptions(o))])
+      | Displacement(o) =>
+        object_([
+          ("type", string("displacement")),
+          ("opts", displacementOptions(o)),
+        ])
+    );
+};
+
+module DecodeReglOptions = {
+  let sobelOptions = json =>
+    Json.Decode.{sourceLayer: json |> field("sourceLayer", string)};
+
+  let displacementOptions = json =>
+    Json.Decode.{
+      displacementSourceLayer: json |> field("sourceLayer", string),
+      displacementMap: json |> field("displacementMap", string),
+    };
+
+  let reglOptionsByType = (type_, json) =>
+    Json.Decode.(
+      switch (type_) {
+      | "sobel" => json |> map(o => Sobel(o), field("opts", sobelOptions))
+      | "displacement" =>
+        json
+        |> map(o => Displacement(o), field("opts", displacementOptions))
+      | _ => Sobel({sourceLayer: "root"})
+      }
+    );
+
+  let reglOptions = json =>
+    Json.Decode.(
+      json |> (field("type", string) |> andThen(reglOptionsByType))
+    );
+};

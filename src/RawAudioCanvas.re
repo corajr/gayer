@@ -88,7 +88,7 @@ let make =
       (theRef, {ReasonReact.state, ReasonReact.send, ReasonReact.onUnmount}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
     setRef(theRef);
-    saveTick(onUnmount, layerKey, () =>
+    saveTick(onUnmount, layerKey, _t =>
       switch (encoding) {
       | Float => drawRawAudioFloat(layerRefs, state, x, y, width, height)
       | Int8(c) => drawRawAudioUint8(layerRefs, c, state, x, y, width, height)

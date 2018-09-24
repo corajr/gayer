@@ -1,5 +1,6 @@
 open Canvas;
 open MIDI;
+open ImageDataUtil;
 open WebMIDI;
 
 type action =
@@ -50,8 +51,8 @@ let drawMidiNotesImg = (canvasRenderingContext2D, state) => {
   Ctx.putImageData(canvasRenderingContext2D, outputImageData, 0, 0);
 };
 
-let drawMidiNotes = (ctx, height, noteToY, state) => {
-  let notesOn = state.midiState^.notesOn;
+let drawMidiNotes = (ctx, height, noteToY, midiState) => {
+  let notesOn = midiState^.notesOn;
   for (i in 127 downto 0) {
     let v = notesOn[i];
     if (v > 0.0) {
@@ -66,15 +67,15 @@ let drawMidiNotes = (ctx, height, noteToY, state) => {
 
 let component = ReasonReact.reducerComponent("MIDICanvas");
 
-let make = (~height, ~saveRef, _children) => {
+let make = (~height, ~setRef, _children) => {
   let setCanvasRef = (theRef, {ReasonReact.state}) => {
     state.canvasRef := Js.Nullable.toOption(theRef);
-    saveRef(theRef);
+    setRef(theRef);
   };
 
   let noteToY = note => {
     let pixelsPerNote = height / 120;
-    (124 - note) * pixelsPerNote;
+    (124 - note) * pixelsPerNote - 1;
   };
 
   {
@@ -96,6 +97,10 @@ let make = (~height, ~saveRef, _children) => {
           addListener(input, WebMidiEventType.NoteOff, All, e =>
             self.send(MIDIEventReceived(e))
           );
+          self.onUnmount(() => {
+            removeListener(input, WebMidiEventType.NoteOn);
+            removeListener(input, WebMidiEventType.NoteOff);
+          });
         },
       ),
     reducer: (action, state) =>
@@ -108,10 +113,9 @@ let make = (~height, ~saveRef, _children) => {
             (
               _self => {
                 MIDI.update(state.midiState^, event);
-                let canvasElement = getFromReact(canvas);
-                let ctx = getContext(canvasElement);
+                let ctx = getContext(getFromReact(canvas));
                 Ctx.clearRect(ctx, 0, 0, 1, height);
-                drawMidiNotes(ctx, height, noteToY, state);
+                drawMidiNotes(ctx, height, noteToY, state.midiState);
               }
             ),
           )

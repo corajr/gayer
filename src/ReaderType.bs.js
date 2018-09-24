@@ -10,6 +10,14 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as MaterialUi_Select from "@jsiebern/bs-material-ui/src/MaterialUi_Select.bs.js";
 import * as MaterialUi_MenuItem from "@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js";
 
+function string_of_readerType(param) {
+  if (param) {
+    return "Channel(" + (Canvas$Gayer.string_of_channel(param[0]) + ")");
+  } else {
+    return "Saturation";
+  }
+}
+
 function readerTypeByType(type_, json) {
   switch (type_) {
     case "channel" : 
@@ -98,7 +106,7 @@ function make(readerType$2, onChangeSetting, _) {
                                       return ReasonReact.element(s, undefined, MaterialUi_MenuItem.make(undefined, undefined, undefined, undefined, /* `String */[
                                                       -976970511,
                                                       s
-                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[s]));
+                                                    ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[string_of_readerType(readerType$3)]));
                                     }), allReaderTypes)]));
             }),
           /* initialState */component[/* initialState */10],
@@ -110,6 +118,7 @@ function make(readerType$2, onChangeSetting, _) {
 }
 
 export {
+  string_of_readerType ,
   DecodeReaderType ,
   EncodeReaderType ,
   allReaderTypes ,

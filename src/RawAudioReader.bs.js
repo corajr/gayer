@@ -4,11 +4,11 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as TypedArray$Gayer from "./TypedArray.bs.js";
+import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("RawAudioReader-Gayer");
 
@@ -35,7 +35,7 @@ function make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, rawAudioForma
                               var ctx = Js_primitive.valFromOption(match$2).getContext("2d");
                               var imageData = ctx.getImageData(x, y, w, h);
                               if (encoding) {
-                                var floats = Canvas$Gayer.imageDataToFloat32Array(imageData, encoding[0]);
+                                var floats = ImageDataUtil$Gayer.imageDataToFloat32Array(imageData, encoding[0]);
                                 buffer.copyToChannel(floats, 0, 0);
                               } else {
                                 var rawImgData = TypedArray$Gayer.toFloat32Array(imageData.data);

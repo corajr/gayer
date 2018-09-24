@@ -12,7 +12,7 @@ import * as LayerContent$Gayer from "./LayerContent.bs.js";
 
 var component = ReasonReact.statelessComponent("MediaProvider");
 
-function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, audioCtx, layerRefs, saveTick, getReadAndWritePos, millisPerAudioTick, _) {
+function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawContext, audioGraph, audioCtx, layerRefs, currentFilterValues, saveTick, getReadAndWritePos, millisPerAudioTick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -36,8 +36,8 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                       maybeAudio = null;
                                     } else {
                                       switch (match.tag | 0) {
-                                        case 5 : 
-                                            var source = match[0];
+                                        case 6 : 
+                                            var source = match[0][/* input */0];
                                             var exit = 0;
                                             if (typeof source === "number") {
                                               exit = 1;
@@ -77,7 +77,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                               }
                                             }
                                             break;
-                                        case 7 : 
+                                        case 8 : 
                                             var match$2 = Curry._1(getAudio, /* Mic */2);
                                             var maybeInput$1 = match$2[1];
                                             if (maybeInput$1 !== undefined) {
@@ -115,7 +115,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, audioGraph, aud
                                     return React.createElement("div", {
                                                 key: key,
                                                 style: tmp
-                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, getReadAndWritePos, layer[/* content */0], /* array */[])));
+                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, getReadAndWritePos, globalDrawContext, currentFilterValues, layer[/* content */0], /* array */[])));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],

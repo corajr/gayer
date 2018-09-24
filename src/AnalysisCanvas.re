@@ -1,6 +1,9 @@
+open AnalysisOptions;
 open Audio;
 open AudioGraph;
 open Canvas;
+open ImageDataUtil;
+open ReaderType;
 open Timing;
 
 type state = {
@@ -13,7 +16,7 @@ type state = {
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let drawCQTBar = (ctx, state, width, height) => {
+let drawCQTBar = (ctx, state, options, width, height) => {
   let audioDataL = CQT.getInputArray(state.cqt^, 0);
   let audioDataR = CQT.getInputArray(state.cqt^, 1);
   getFloatTimeDomainData(state.analyserL^, audioDataL);
@@ -21,20 +24,24 @@ let drawCQTBar = (ctx, state, width, height) => {
   CQT.calc(state.cqt^);
   CQT.renderLine(state.cqt^, 1);
   let cqtLine = CQT.getOutputArray(state.cqt^);
-  let outputImageData = makeImageData(~cqtLine);
-
-  Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+  switch (options.readerType) {
+  | Channel(_) =>
+    let outputImageData = makeImageData(~cqtLine);
+    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+  | Saturation => ()
+  };
 };
 
 let component = ReasonReact.reducerComponent("AnalysisCanvas");
 
 let make =
     (
-      ~size,
+      ~width,
+      ~height,
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
-      ~input,
+      ~options,
       ~millisPerTick,
       ~saveRef,
       ~saveTick,
@@ -52,7 +59,7 @@ let make =
         CQT.createShowCQTBar({
           ...CQT.defaultCqtBarParams,
           rate: audioCtx |. sampleRate,
-          width: size,
+          width: height,
         });
 
       let fftSize = cqt |. CQT.fftSizeGet;
@@ -96,16 +103,20 @@ let make =
           |> updateConnections
       );
 
-      saveTick(self.onUnmount, layerKey, () =>
-        switch (self.state.canvasRef^) {
-        | Some(canvas) =>
-          let canvasElement = getFromReact(canvas);
-          let ctx = getContext(canvasElement);
+      switch (options.analysisSize) {
+      | WithHistory(_) =>
+        saveTick(self.onUnmount, layerKey, _t =>
+          switch (self.state.canvasRef^) {
+          | Some(canvas) =>
+            let canvasElement = getFromReact(canvas);
+            let ctx = getContext(canvasElement);
 
-          Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
-        | None => ()
-        }
-      );
+            Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
+          | None => ()
+          }
+        )
+      | _ => ()
+      };
 
       setTimer(
         self.state.timerId,
@@ -114,7 +125,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state, size, size);
+            drawCQTBar(ctx, self.state, options, width, height);
           | None => ()
           },
         millisPerTick,
@@ -125,8 +136,8 @@ let make =
     render: self =>
       <canvas
         ref=(self.handle(setCanvasRef))
-        width=(Js.Int.toString(size))
-        height=(Js.Int.toString(size))
+        width=(Js.Int.toString(width))
+        height=(Js.Int.toString(height))
         style=(
           ReactDOMRe.Style.make(
             ~position="absolute",

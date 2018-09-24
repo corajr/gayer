@@ -16,6 +16,8 @@ let make =
       ~width,
       ~height,
       ~getReadAndWritePos,
+      ~globalDrawContext,
+      ~currentFilterValues,
       ~layerContent,
       _children,
     ) => {
@@ -24,15 +26,16 @@ let make =
     <div key=layerKey>
       (
         switch (layerContent) {
-        | Webcam(_) =>
-          <video
-            ref=setRef
-            autoPlay=true
-            muted=true
-            width="120"
-            height="120"
-            /* width=(Js.Int.toString(width)) */
-            /* height=(Js.Int.toString(height)) */
+        | Webcam => <video ref=setRef autoPlay=true muted=true />
+        | Slitscan(opts) =>
+          <SlitscanCanvas
+            layerKey
+            layerRefs
+            sourceKey=opts.sourceLayerKey
+            setRef
+            saveTick
+            width
+            height
           />
         | Image(url) =>
           <img
@@ -44,18 +47,48 @@ let make =
             /* height=(Js.Int.toString(height)) */
           />
         | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
-        | Analysis(source) =>
+        | Analysis(options) =>
+          open Canvas.DrawCommand;
+          let (w, h) =
+            switch (options.analysisSize) {
+            | WithHistory({w, h}) => (w, h)
+            | DestRect({w, h}) => (w, h)
+            };
+
+          let analysisWidth = getLength(globalDrawContext, w);
+          let analysisHeight = getLength(globalDrawContext, h);
           <AnalysisCanvas
             layerKey
-            size=height
+            width=analysisWidth
+            height=analysisHeight
             audioCtx
             audioGraph
-            input=source
+            options
             millisPerTick
             saveTick
             saveRef=setRef
+          />;
+        | MIDIKeyboard => <MIDICanvas setRef height />
+        | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
+        | KeycodeReader =>
+          <KeycodeReaderCanvas
+            layerKey
+            layerRefs
+            setRef
+            saveTick
+            currentFilterValues
+            getReadAndWritePos
           />
-        | MIDIKeyboard => <MIDICanvas saveRef=setRef height />
+        | Draw(cmds) =>
+          <DrawCommandCanvas
+            cmds
+            layerKey
+            layerRefs
+            setRef
+            saveTick
+            width
+            height
+          />
         | HandDrawn => <HandDrawnCanvas setRef width height />
         | RawAudioWriter({x, y, w, h, encoding}) =>
           <RawAudioCanvas
@@ -83,8 +116,8 @@ let make =
             getReadAndWritePos
             saveTick
           />
-        | Regl =>
-          <ReglCanvas setRef layerRefs width height saveTick layerKey />
+        | Regl(opts) =>
+          <ReglCanvas setRef layerRefs opts width height saveTick layerKey />
         | RawAudioReader(rawAudioFormat) =>
           <RawAudioReader
             layerKey
@@ -94,7 +127,7 @@ let make =
             audioCtx
             audioGraph
           />
-        | Draw(_)
+        | DrawGlobal(_)
         | PitchClasses(_)
         | Fill(_)
         | Reader(_) => ReasonReact.null

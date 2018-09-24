@@ -5,12 +5,12 @@ import * as React from "react";
 import * as CQT$Gayer from "./CQT.bs.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
+import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
-function drawCQTBar(ctx, state, width, _) {
+function drawCQTBar(ctx, state, options, width, _) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
   var audioDataR = state[/* cqt */4][0].get_input_array(1);
   state[/* analyserL */0][0].getFloatTimeDomainData(audioDataL);
@@ -18,14 +18,19 @@ function drawCQTBar(ctx, state, width, _) {
   state[/* cqt */4][0].calc();
   state[/* cqt */4][0].render_line(1);
   var cqtLine = state[/* cqt */4][0].get_output_array();
-  var outputImageData = Canvas$Gayer.makeImageData(cqtLine);
-  ctx.putImageData(outputImageData, width - 1 | 0, 0);
-  return /* () */0;
+  var match = options[/* readerType */1];
+  if (match) {
+    var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
+    ctx.putImageData(outputImageData, width - 1 | 0, 0);
+    return /* () */0;
+  } else {
+    return /* () */0;
+  }
 }
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(size, layerKey, audioCtx, audioGraph, _, millisPerTick, saveRef, saveTick, _$1) {
+function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerTick, saveRef, saveTick, _) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     return Curry._1(saveRef, theRef);
@@ -49,22 +54,25 @@ function make(size, layerKey, audioCtx, audioGraph, _, millisPerTick, saveRef, s
                       audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
                       return /* () */0;
                     }));
-              Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
-                      var match = self[/* state */1][/* canvasRef */5][0];
-                      if (match !== undefined) {
-                        var canvas = Js_primitive.valFromOption(match);
-                        var ctx = canvas.getContext("2d");
-                        ctx.drawImage(canvas, -1, 0);
-                        return /* () */0;
-                      } else {
-                        return /* () */0;
-                      }
-                    }));
+              var match = options[/* analysisSize */2];
+              if (!match.tag) {
+                Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
+                        var match = self[/* state */1][/* canvasRef */5][0];
+                        if (match !== undefined) {
+                          var canvas = Js_primitive.valFromOption(match);
+                          var ctx = canvas.getContext("2d");
+                          ctx.drawImage(canvas, -1, 0);
+                          return /* () */0;
+                        } else {
+                          return /* () */0;
+                        }
+                      }));
+              }
               Timing$Gayer.setTimer(self[/* state */1][/* timerId */6], (function () {
                       var match = self[/* state */1][/* canvasRef */5][0];
                       if (match !== undefined) {
                         var ctx = Js_primitive.valFromOption(match).getContext("2d");
-                        return drawCQTBar(ctx, self[/* state */1], size, size);
+                        return drawCQTBar(ctx, self[/* state */1], options, width, height);
                       } else {
                         return /* () */0;
                       }
@@ -84,15 +92,15 @@ function make(size, layerKey, audioCtx, audioGraph, _, millisPerTick, saveRef, s
                             position: "absolute",
                             visibility: "hidden"
                           },
-                          height: size.toString(),
-                          width: size.toString()
+                          height: height.toString(),
+                          width: width.toString()
                         });
             }),
           /* initialState */(function () {
               var cqt = CQT$Gayer.createShowCQTBar(/* record */[
                     /* bits */CQT$Gayer.defaultCqtBarParams[/* bits */0],
                     /* rate */audioCtx.sampleRate,
-                    /* width */size,
+                    /* width */height,
                     /* height */CQT$Gayer.defaultCqtBarParams[/* height */3],
                     /* barVolume */CQT$Gayer.defaultCqtBarParams[/* barVolume */4],
                     /* sonogramVolume */CQT$Gayer.defaultCqtBarParams[/* sonogramVolume */5],

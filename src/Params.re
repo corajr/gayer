@@ -108,136 +108,164 @@ let make =
       _children,
     ) => {
   ...component,
-  render: self =>
+  render: self => {
+    let layerKeys = ["root", ...params.layers |> List.map(getLayerKey)];
     <div>
       MaterialUi.(
-        <ExpansionPanel
-          style=(ReactDOMRe.Style.make(~marginBottom="12px", ()))>
-          <ExpansionPanelSummary expandIcon={<MaterialUIIcons.ExpandMore />}>
-            <Typography variant=`Subheading color=`Inherit>
-              (ReasonReact.string("Global Settings"))
-            </Typography>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
-            <FormControl component=(`String("fieldset"))>
-              <FormLabel component=(`String("legend"))>
-                (ReasonReact.string("Graphics"))
-              </FormLabel>
-              <FormGroup row=true>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked=(`Bool(params.shouldClear))
-                      onChange=(
-                        (_evt, value) =>
-                          onSetParams({...params, shouldClear: value})
-                      )
-                      value="shouldClear"
+        <div
+          style=(
+            ReactDOMRe.Style.make(
+              ~display="flex",
+              ~justifyContent="space-between",
+              (),
+            )
+          )>
+          <div style=(ReactDOMRe.Style.make(~flexGrow="1", ()))>
+            <ExpansionPanel
+              style=(ReactDOMRe.Style.make(~marginBottom="12px", ()))>
+              <ExpansionPanelSummary
+                expandIcon={<MaterialUIIcons.ExpandMore />}>
+                <Typography variant=`Subheading color=`Inherit>
+                  (ReasonReact.string("Global Settings"))
+                </Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <FormControl component=(`String("fieldset"))>
+                  <FormLabel component=(`String("legend"))>
+                    (ReasonReact.string("Graphics"))
+                  </FormLabel>
+                  <FormGroup row=true>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked=(`Bool(params.shouldClear))
+                          onChange=(
+                            (_evt, value) =>
+                              onSetParams({...params, shouldClear: value})
+                          )
+                          value="shouldClear"
+                        />
+                      }
+                      label=(ReasonReact.string("Clear between frames"))
                     />
-                  }
-                  label=(ReasonReact.string("Clear between frames"))
-                />
-              </FormGroup>
-              <IntSlider
-                label="Read position offset"
-                value=params.readPosOffset
-                min=0
-                max=(params.width - 1)
-                step=1
-                onChange=(
-                  readPosOffset => onSetParams({...params, readPosOffset})
-                )
-              />
-              <IntSlider
-                label="Write position offset"
-                value=params.writePosOffset
-                min=0
-                max=(params.width - 1)
-                onChange=(
-                  writePosOffset => onSetParams({...params, writePosOffset})
-                )
-              />
-              <IntSlider
-                label="Read position delta"
-                value=params.readPosDelta
-                onChange=(
-                  readPosDelta => onSetParams({...params, readPosDelta})
-                )
-                min=(- params.width + 1)
-                max=(params.width - 1)
-              />
-              <IntSlider
-                label="Write position delta"
-                value=params.writePosDelta
-                onChange=(
-                  writePosDelta => onSetParams({...params, writePosDelta})
-                )
-                min=(- params.width + 1)
-                max=(params.width - 1)
-              />
-            </FormControl>
-            <FormControl component=(`String("fieldset"))>
-              <FormLabel component=(`String("legend"))>
-                (ReasonReact.string("Audio"))
-              </FormLabel>
-              <FormGroup row=true>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked=(`Bool(params.stereo))
-                      onChange=(
-                        (_evt, value) =>
-                          onSetParams({...params, stereo: value})
-                      )
-                      value="stereo"
+                  </FormGroup>
+                  <IntSlider
+                    label="Read position offset"
+                    value=params.readPosOffset
+                    min=0
+                    max=(params.width - 1)
+                    step=1
+                    onChange=(
+                      readPosOffset => onSetParams({...params, readPosOffset})
+                    )
+                  />
+                  <IntSlider
+                    label="Write position offset"
+                    value=params.writePosOffset
+                    min=0
+                    max=(params.width - 1)
+                    onChange=(
+                      writePosOffset =>
+                        onSetParams({...params, writePosOffset})
+                    )
+                  />
+                  <IntSlider
+                    label="Read position delta"
+                    value=params.readPosDelta
+                    onChange=(
+                      readPosDelta => onSetParams({...params, readPosDelta})
+                    )
+                    min=(- params.width + 1)
+                    max=(params.width - 1)
+                  />
+                  <IntSlider
+                    label="Write position delta"
+                    value=params.writePosDelta
+                    onChange=(
+                      writePosDelta => onSetParams({...params, writePosDelta})
+                    )
+                    min=(- params.width + 1)
+                    max=(params.width - 1)
+                  />
+                </FormControl>
+                <FormControl component=(`String("fieldset"))>
+                  <FormLabel component=(`String("legend"))>
+                    (ReasonReact.string("Audio"))
+                  </FormLabel>
+                  <FormGroup row=true>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked=(`Bool(params.stereo))
+                          onChange=(
+                            (_evt, value) =>
+                              onSetParams({...params, stereo: value})
+                          )
+                          value="stereo"
+                        />
+                      }
+                      label=(ReasonReact.string("Stereo (red=L, blue=R)"))
                     />
-                  }
-                  label=(ReasonReact.string("Stereo (red=L, blue=R)"))
-                />
-              </FormGroup>
-              <AudioInputSelect
-                audioInputSetting=params.audioInputSetting
-                onChangeSetting=(
-                  audioInputSetting =>
-                    onSetParams({...params, audioInputSetting})
-                )
-              />
-              <FloatSlider
-                label="Input gain"
-                value=params.inputGain
-                onChange=(inputGain => onSetParams({...params, inputGain}))
-              />
-              <FloatSlider
-                label="Output gain"
-                value=params.outputGain
-                onChange=(outputGain => onSetParams({...params, outputGain}))
-              />
-              <FloatSlider
-                label="Q"
-                value=params.q
-                onChange=(q => onSetParams({...params, q}))
-                min=1.0
-                max=200.0
-              />
-              <IntSlider
-                label="Transpose"
-                value=params.transpose
-                onChange=(transpose => onSetParams({...params, transpose}))
-                min=(-119)
-                max=119
-              />
-              <IntSlider
-                label="Milliseconds per tick"
-                value=params.millisPerTick
-                onChange=(
-                  millisPerTick => onSetParams({...params, millisPerTick})
-                )
-                min=10
-                max=100
-              />
-            </FormControl>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
+                  </FormGroup>
+                  <AudioInputSelect
+                    audioInputSetting=params.audioInputSetting
+                    onChangeSetting=(
+                      audioInputSetting =>
+                        onSetParams({...params, audioInputSetting})
+                    )
+                  />
+                  <FloatSlider
+                    label="Input gain"
+                    value=params.inputGain
+                    onChange=(
+                      inputGain => onSetParams({...params, inputGain})
+                    )
+                  />
+                  <FloatSlider
+                    label="Output gain"
+                    value=params.outputGain
+                    onChange=(
+                      outputGain => onSetParams({...params, outputGain})
+                    )
+                  />
+                  <FloatSlider
+                    label="Q"
+                    value=params.q
+                    onChange=(q => onSetParams({...params, q}))
+                    min=1.0
+                    max=200.0
+                  />
+                  <IntSlider
+                    label="Transpose"
+                    value=params.transpose
+                    onChange=(
+                      transpose => onSetParams({...params, transpose})
+                    )
+                    min=(-119)
+                    max=119
+                  />
+                  <IntSlider
+                    label="Milliseconds per tick"
+                    value=params.millisPerTick
+                    onChange=(
+                      millisPerTick => onSetParams({...params, millisPerTick})
+                    )
+                    min=10
+                    max=100
+                  />
+                </FormControl>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          </div>
+          <div style=(ReactDOMRe.Style.make(~marginLeft="24px", ()))>
+            <NewLayerButton
+              onAdd=(
+                layer =>
+                  onSetParams({...params, layers: [layer, ...params.layers]})
+              )
+            />
+          </div>
+        </div>
       )
       <Container
         cards=(
@@ -256,6 +284,7 @@ let make =
             params.layers,
           )
         )
+        layerKeys
         onMoveCard
         onSetRef
         layerRefs
@@ -264,5 +293,6 @@ let make =
         rootWidth=params.width
         rootHeight=params.height
       />
-    </div>,
+    </div>;
+  },
 };

@@ -123,6 +123,15 @@ let addListener =
     },
   );
 
+[@bs.send]
+external _removeListener : (inputOrOutput, string) => unit = "removeListener";
+
+let removeListener = (~inputOrOutput, ~eventType: WebMidiEventType.t) =>
+  _removeListener(
+    inputOrOutput,
+    WebMidiEventType.string_of_eventType(eventType),
+  );
+
 let onWebMidiStart: t => unit = [%bs.raw
   webMIDIre => {|
 var WebMIDI = webMIDIre;

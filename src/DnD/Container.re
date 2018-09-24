@@ -22,6 +22,7 @@ let make =
       ~onMoveCard,
       ~onChangeLayer,
       ~onSetRef,
+      ~layerKeys,
       ~layerRefs,
       ~rootWidth,
       ~rootHeight,
@@ -134,6 +135,7 @@ let make =
                    height=rootHeight
                    onSetRef
                    saveTick
+                   layerKeys
                    layerRefs
                  />
                </div>

@@ -32,9 +32,10 @@ function slitscanOptions(json) {
 }
 
 function cameraOptions(json) {
-  return /* record */[/* slitscan */Json_decode.optional((function (param) {
-                  return Json_decode.field("slitscan", slitscanOptions, param);
-                }), json)];
+  return /* record */[
+          /* sourceLayerKey */Json_decode.field("source", Json_decode.string, json),
+          /* slitscan */Json_decode.field("slitscan", slitscanOptions, json)
+        ];
 }
 
 var DecodeCameraOptions = /* module */[
@@ -95,10 +96,16 @@ function slitscanOptions$1(param) {
 function cameraOptions$1(r) {
   return Json_encode.object_(/* :: */[
               /* tuple */[
-                "slitscan",
-                Json_encode.nullable(slitscanOptions$1, r[/* slitscan */0])
+                "source",
+                r[/* sourceLayerKey */0]
               ],
-              /* [] */0
+              /* :: */[
+                /* tuple */[
+                  "slitscan",
+                  slitscanOptions$1(r[/* slitscan */1])
+                ],
+                /* [] */0
+              ]
             ]);
 }
 

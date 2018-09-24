@@ -1,276 +1,18 @@
 open Audio;
 open Canvas.DrawCommand;
 open Layer;
+open LayerGenerator;
 open Music;
 open Params;
 open Score;
 open RawAudio;
 
-let defaultSize = Canvas.defaultSize;
-let defaultTransform = Canvas.defaultTransform;
-let tau = Canvas.tau;
-
-/* ## Layer definitions */
-/* */
-/* GAYER is built up from a series of layers. Convenience methods are provided
-   here for creating several commonly used layers. */
-
-let img = url => {...defaultLayer, content: Image(url)};
-let video = url => {...defaultLayer, content: Video(url)};
-
-let reader = {...defaultLayer, content: Reader(Channel(R))};
-
-let saturationReader = {...defaultLayer, content: Reader(Saturation)};
-
-let histogram = {
-  ...defaultLayer,
-  content: Histogram,
-  alpha: 1.0,
-  compositeOperation: SourceOver,
-};
-
-let rawAudioFormat = {
-  x: 0,
-  y: 0,
-  w: 64,
-  h: 32,
-  encoding: Int8(R),
-  sampleRate: 44100,
-};
-
-let rawAudioWriter = {
-  ...defaultLayer,
-  content: RawAudioWriter(rawAudioFormat),
-};
-let rawAudioReader = {
-  ...defaultLayer,
-  content: RawAudioReader(rawAudioFormat),
-};
-
-let pitchFilter = pc => {...defaultLayer, content: PitchClasses(pc)};
-
-let fill = (~alpha: float=1.0, fillStyle: string) => {
-  ...defaultLayer,
-  content: Fill(fillStyle),
-  alpha,
-};
-
-let draw = (~alpha: float=1.0, cmds: list(command)) => {
-  ...defaultLayer,
-  content: Draw(cmds),
-  alpha,
-};
-
-let regl = {...defaultLayer, content: Regl};
-
-let sobel = {...defaultLayer, content: Regl};
-
-let analyzer = {...defaultLayer, content: Analysis(Mic)};
-
-let webcam = {...defaultLayer, content: Webcam({slitscan: None})};
-
-let slitscan = {
-  ...defaultLayer,
-  content: Webcam({slitscan: Some(StaticX(320))}),
-};
-
-let slitscanMoving = {
-  ...defaultLayer,
-  content: Webcam({slitscan: Some(ReadPosX)}),
-};
-
-let hubble = img("media/hubble_ultra_deep_field.jpg");
-
-let spacy = [hubble, pitchFilter(cMajor), reader];
-
-let drawSelfFullScreen =
-  DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height});
-
-let harmony = [
-  /* fill("black", ~alpha=0.1), */
-  {
-    ...img("media/harmony.png"),
-    transformMatrix: {
-      ...defaultTransform,
-      verticalMoving: 48.0,
-    },
-    alpha: 1.0,
-    compositeOperation: SourceOver,
-    filters: "blur(2px)",
-  },
-  sobel,
-  {
-    ...
-      draw([
-        DrawImage(
-          Self,
-          {x: Pixels(0), y: Pixels(-24), w: Width, h: Height},
-        ),
-        DrawImage(
-          Self,
-          {x: Pixels(0), y: Pixels(-48), w: Width, h: Height},
-        ),
-      ]),
-    compositeOperation: Difference,
-    alpha: 0.5,
-  },
-  pitchFilter(cSharpMajor),
-  reader,
-];
-
-let rotateLayer =
-  draw([
-    Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
-    Rotate(oneCompleteTurnAfterNTicks(defaultSize / 2)),
-    Translate(
-      Negate(Pixels(defaultSize / 2)),
-      Negate(Pixels(defaultSize / 2)),
-    ),
-    drawSelfFullScreen,
-  ]);
-
-let blurLayer = {...draw([drawSelfFullScreen]), filters: "blur(2px)"};
-
-let squareColumnLayer = {
-  ...
-    draw([
-      DrawImageSourceDest(
-        Self,
-        {
-          x: Add(Width, Pixels(-1)),
-          y: Pixels(0),
-          w: Pixels(1),
-          h: Height,
-        },
-        {
-          x: Add(Width, Pixels(-1)),
-          y: Pixels(0),
-          w: Pixels(1),
-          h: Height,
-        },
-      ),
-    ]),
-  alpha: 0.75,
-  compositeOperation: Multiply,
-};
-
-let squareLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(Self, {x: Pixels(0), y: Pixels(0), w: Width, h: Height}),
-    ]),
-  compositeOperation: Multiply,
-};
-
-let singleNoteDrawCommands = note => [
-  SetFillStyle("red"),
-  FillRect({x: Pixels(0), y: Note(60), w: Width, h: Pixels(1)}),
-];
-
-let singleNoteLayer = note => {
-  ...defaultLayer,
-  content: Draw(singleNoteDrawCommands(note)),
-};
-
-let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
-
-let historyLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(Self, {x: Pixels(-1), y: Pixels(0), w: Width, h: Height}),
-    ]),
-};
-
-let historyBackAndForthLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImageSourceDest(
-        Self,
-        {
-          x: Divide(Width, Constant(2)),
-          y: Pixels(0),
-          w: Divide(Width, Constant(2)),
-          h: Height,
-        },
-        {
-          x: Add(Divide(Width, Constant(2)), Pixels(1)),
-          y: Pixels(0),
-          w: Divide(Width, Constant(2)),
-          h: Height,
-        },
-      ),
-      DrawImageSourceDest(
-        Self,
-        {
-          x: Pixels(1),
-          y: Pixels(0),
-          w: Divide(Width, Constant(2)),
-          h: Height,
-        },
-        {
-          x: Pixels(0),
-          y: Pixels(0),
-          w: Divide(Width, Constant(2)),
-          h: Height,
-        },
-      ),
-    ]),
-};
-
-let drosteLayer = {
-  ...defaultLayer,
-  content:
-    Draw([
-      DrawImage(
-        Self,
-        {
-          x: Pixels(1),
-          y: Pixels(1),
-          w: Add(Width, Pixels(-1)),
-          h: Add(Height, Pixels(-1)),
-        },
-      ),
-    ]),
-  filters:
-    "hue-rotate(" ++ Js.Float.toString(1.0 /. 30.0 *. (5.0 /. 6.0)) ++ "turn)",
-};
-
-let midiKeyboard = {...defaultLayer, content: MIDIKeyboard};
-
-/* TODO: think of a more elegant way to do this */
-let midiColors = {
-  ...defaultLayer,
-  content: Draw(MIDICanvas.makeNoteColors(MIDICanvas.oneRainbow)),
-  compositeOperation: Multiply,
-};
-
-let handDrawn = {...defaultLayer, content: HandDrawn};
-
-let allLayerTypes = [
-  hubble,
-  analyzer,
-  webcam,
-  slitscan,
-  handDrawn,
-  fill(~alpha=0.0125, "white"),
-  pitchFilter(cMajor),
-  blurLayer,
-  rotateLayer,
-  squareColumnLayer,
-  squareLayer,
-  rawAudioWriter,
-  rawAudioReader,
-  saturationReader,
-  reader,
-];
-
 /* ## Param definitions */
 /* These are the params definitions, which include not only a list of layers but
    a variety of other parameters as well. Complete definitions are available in
    Params.re. */
+
+let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
 
 let harmonyParams = {
   ...defaultParams,
@@ -287,7 +29,12 @@ let harmonyIntensified = {
 let feedback = {
   ...defaultParams,
   audioInputSetting: Mic,
-  layers: [webcam, {...analyzer, alpha: 0.5}, pitchFilter(cMajor), reader],
+  layers: [
+    webcam,
+    {...analyzer(Mic), alpha: 0.5},
+    pitchFilter(cMajor),
+    reader,
+  ],
 };
 
 let webcamParams = {
@@ -298,7 +45,7 @@ let webcamParams = {
   writePosOffset: 0,
   layers: [
     {
-      ...analyzer,
+      ...analyzer(Mic),
       transformMatrix: {
         ...defaultTransform,
         horizontalScaling: float_of_int(defaultSize),
@@ -311,7 +58,13 @@ let webcamParams = {
 
 let webcamEdgeDetect = {
   ...defaultParams,
-  layers: [webcam, sobel, pitchFilter(cMajor), reader],
+  layers: [
+    /* {...webcam, enabled: false}, */
+    webcam,
+    sobel("webcam"),
+    pitchFilter(cMajor),
+    reader,
+  ],
 };
 
 let slitscanParams = {
@@ -322,11 +75,12 @@ let slitscanParams = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     /* squareColumnLayer, */
-    {...slitscan, compositeOperation: Overlay},
+    {...webcam, alpha: 0.0},
+    slitscan,
+    sobel("root"),
     /* pitchFilter(cMajor), */
-    historyLayer,
     reader,
   ],
 };
@@ -341,7 +95,7 @@ let slitscanEdgeDetectParams = {
   layers: [
     slitscan,
     /* sobel, */
-    analyzer,
+    analyzer(Mic),
     /* pitchFilter(cMajor), */
     historyLayer,
     reader,
@@ -350,26 +104,8 @@ let slitscanEdgeDetectParams = {
 
 let slitscanHistogramParams = {
   ...slitscanParams,
-  layers: [
-    slitscan,
-    histogram,
-    {...analyzer, compositeOperation: Screen},
-    historyLayer,
-    reader,
-  ],
+  layers: [webcam, slitscan, histogram, historyLayer, reader],
 };
-
-let slitscanMovingParams = {
-  ...defaultParams,
-  shouldClear: false,
-  layers: [
-    slitscanMoving,
-    {...analyzer, compositeOperation: Multiply, alpha: 0.5},
-    /* pitchFilter(cMajor), */
-    {...reader, alpha: 0.0},
-  ],
-};
-
 let whiteboardParams = {
   ...defaultParams,
   layers: [
@@ -405,7 +141,7 @@ let history = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */
@@ -422,10 +158,10 @@ let historyHalving = {
   writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer,
+    analyzer(Mic),
     squareColumnLayer,
     historyLayer,
-    draw([
+    drawGlobal([
       DrawImage(
         Self,
         {
@@ -440,11 +176,7 @@ let historyHalving = {
   ],
 };
 
-let debussyFile = {
-  ...defaultLayer,
-  content: Analysis(AudioFile("media/la_cathedrale_engloutie.m4a")),
-  /* content: Analysis(AudioFile("media/sade/is_it_a_crime.mp3")), */
-};
+let debussyFile = analyzer(AudioFile("media/la_cathedrale_engloutie.m4a"));
 
 let debussy = {...history, layers: [debussyFile, historyLayer, reader]};
 
@@ -455,7 +187,7 @@ let droste = {
   shouldClear: false,
   layers: [
     {
-      ...analyzer,
+      ...analyzer(Mic),
       transformMatrix: {
         ...defaultTransform,
         horizontalScaling: float_of_int(defaultSize),
@@ -483,7 +215,10 @@ let handDrawnParams = {
   layers: [fill("black"), handDrawn, reader],
 };
 
-let midi = {...history, layers: [midiKeyboard, historyLayer, reader]};
+let midi = {
+  ...history,
+  layers: [fill("black"), midiKeyboard, {...reader, alpha: 0.0}],
+};
 
 let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
 
@@ -497,17 +232,20 @@ let readFromCenterLine = {
 
 let historyBackAndForth = {
   ...readFromCenterLine,
-  layers: [analyzer, historyBackAndForthLayer, reader],
+  layers: [analyzer(Mic), historyBackAndForthLayer, reader],
 };
 
-let vinyl = {...readFromCenterLine, layers: [rotateLayer, analyzer, reader]};
+let vinyl = {
+  ...readFromCenterLine,
+  layers: [rotateLayer, analyzer(Mic), reader],
+};
 
 let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
 let video = {
   ...defaultParams,
   layers: [
     video(videoURL),
-    {...analyzer, content: Analysis(AudioFromVideo(videoURL))},
+    analyzer(AudioFromVideo(videoURL)),
     /* pitchFilter(cMajor), */
     reader,
   ],
@@ -518,7 +256,7 @@ let lesTresRichesHeures = {
   outputGain: 0.05,
   layers: [
     img("media/les_tres_riches_heures.jpg"),
-    sobel,
+    sobel("root"),
     pitchFilter(majorHexatonic),
     reader,
   ],
@@ -536,29 +274,64 @@ let rawAudioAndSpacy = {
   layers: List.append(spacy, [rawAudioWriter, rawAudioReader]),
 };
 
+let keycodeParams = {
+  ...defaultParams,
+  layers: [
+    fill("black"),
+    keycodeWriter,
+    reader,
+    {...keycodeReader, alpha: 0.5},
+  ],
+};
+
+let welcomeAudio = {
+  ...defaultParams,
+  layers: [
+    fill("black"),
+    text("GAYER", ~color="red", ~fillOrStroke=Stroke),
+    saturationReader,
+  ],
+};
+
+let displaceParams = {
+  ...defaultParams,
+  layers: [
+    {...webcam, alpha: 0.0, id: Some("webcam")},
+    displace("webcam", "analyzer"),
+    {
+      ...analyzer(Mic, ~includeHistory=true),
+      alpha: 0.1,
+      id: Some("analyzer"),
+    },
+    reader,
+  ],
+};
+
 let presetsWithoutLayerIds = [
-  /* ("Regl", {...defaultParams, layers: [regl]}), */
+  /* ("Displace", displaceParams), */
+  /* ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}), */
+  /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
+  /* ("Welcome (Audio)", welcomeAudio), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
+  ("Mic (CQT analysis)", history),
   /* ("Hand-drawn", handDrawnParams), */
-  /* ("Webcam", webcamEdgeDetect), */
   ("Webcam (edge detection)", webcamEdgeDetect),
-  ("Slitscan", slitscanParams),
+  /* ("Slitscan", slitscanParams), */
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
   /* ("Slitscan (color histogram)", slitscanHistogramParams), */
-  /* ("Slitscan (moving)", slitscanMovingParams), */
-  ("History", history),
+  /* ("Keycode", keycodeParams), */
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
-  ("Rotation", vinyl),
+  /* ("Rotation", vinyl), */
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
   ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI (requires MIDI keyboard)", midi),
-  ("Audio file", debussy),
-  ("Harmony", harmonyParams),
+  /* ("Audio file", debussy), */
+  /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
@@ -567,14 +340,7 @@ let presetsWithoutLayerIds = [
   ("Empty", {...defaultParams, layers: []}),
 ];
 
-let idCounter = ref(0);
-
-let addIds =
-  List.map(layer => {
-    let nextId = idCounter^;
-    idCounter := nextId + 1;
-    {...layer, id: Some(string_of_int(nextId))};
-  });
+let addIds = List.map(maybeAddId);
 
 let presets: list((string, params)) =
   List.map(

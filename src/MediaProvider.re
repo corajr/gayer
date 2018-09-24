@@ -12,9 +12,11 @@ let make =
       ~rootHeight,
       ~onSetRef,
       ~getAudio,
+      ~globalDrawContext,
       ~audioGraph,
       ~audioCtx,
       ~layerRefs,
+      ~currentFilterValues,
       ~saveTick,
       ~getReadAndWritePos,
       ~millisPerAudioTick,
@@ -29,7 +31,7 @@ let make =
             let key = getLayerKey(layer);
             let maybeAudio =
               switch (layer.content) {
-              | Analysis(source) =>
+              | Analysis({input: source}) =>
                 switch (source) {
                 | AudioFile(url) =>
                   <AudioFile
@@ -103,6 +105,8 @@ let make =
                 width=rootWidth
                 height=rootHeight
                 getReadAndWritePos
+                globalDrawContext
+                currentFilterValues
                 layerContent=layer.content
               />
             </div>;
