@@ -29,7 +29,7 @@ let make =
     reducer: ((), _state: state) => ReasonReact.NoUpdate,
     initialState: () => {canvasRef: ref(None)},
     didMount: self =>
-      saveTick(self.onUnmount, layerKey, () =>
+      saveTick(self.onUnmount, layerKey, _t =>
         switch (currentFilterValues^, self.state.canvasRef^) {
         | (Some(Audio.Stereo(values, _)), Some(canvas))
         | (Some(Audio.Mono(values)), Some(canvas)) =>

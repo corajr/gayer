@@ -43,6 +43,66 @@ let applyWithTexture =
   | _ => ()
   };
 
+let makeTick = ({ReasonReact.state}, layerRefs, opts, width, height, t) =>
+  switch (state.reglRef^) {
+  | None => ()
+  | Some(regl) =>
+    clear(regl, {"color": [|0.0, 0.0, 0.0, 1.0|], "depth": 1.0});
+    switch (opts) {
+    | Sobel({sourceLayer}) =>
+      copyLayerToTexture(
+        state.reglRef,
+        state.textureRefs,
+        layerRefs,
+        sourceLayer,
+        sourceLayer,
+      );
+
+      applyWithTexture(
+        state.drawCommandRef,
+        state.textureRefs,
+        sourceLayer,
+        width,
+        height,
+      );
+    | Displacement({displacementSourceLayer, displacementMap}) =>
+      copyLayerToTexture(
+        state.reglRef,
+        state.textureRefs,
+        layerRefs,
+        displacementSourceLayer,
+        displacementSourceLayer,
+      );
+
+      copyLayerToTexture(
+        state.reglRef,
+        state.textureRefs,
+        layerRefs,
+        displacementMap,
+        displacementMap,
+      );
+
+      switch (
+        state.drawCommandRef^,
+        Belt.Map.String.get(state.textureRefs^, displacementSourceLayer),
+        Belt.Map.String.get(state.textureRefs^, displacementMap),
+      ) {
+      | (Some(f), Some(source), Some(displacement)) =>
+        draw(
+          f,
+          {
+            "texture": source,
+            "displace_map": displacement,
+            "maximum": 20.0,
+            "time": t,
+            "resolution": [|width, height|],
+          },
+        )
+      | _ => ()
+      };
+    };
+  };
+
 let component = ReasonReact.reducerComponent(__MODULE__);
 
 let make =
@@ -88,58 +148,16 @@ let make =
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     didMount: self =>
-      saveTick(self.onUnmount, layerKey, () =>
-        switch (self.state.reglRef^) {
-        | None => ()
-        | Some(regl) =>
-          clear(regl, {"color": [|0.0, 0.0, 0.0, 1.0|], "depth": 1.0});
-          switch (opts) {
-          | Sobel({sourceLayer}) =>
-            copyLayerToTexture(
-              self.state.reglRef,
-              self.state.textureRefs,
-              layerRefs,
-              sourceLayer,
-              sourceLayer,
-            );
-
-            applyWithTexture(
-              self.state.drawCommandRef,
-              self.state.textureRefs,
-              sourceLayer,
-              width,
-              height,
-            );
-          | Displacement({displacementSourceLayer, displacementMap}) =>
-            copyLayerToTexture(
-              self.state.reglRef,
-              self.state.textureRefs,
-              layerRefs,
-              displacementSourceLayer,
-              displacementSourceLayer,
-            );
-
-            switch (
-              self.state.drawCommandRef^,
-              Belt.Map.String.get(
-                self.state.textureRefs^,
-                displacementSourceLayer,
-              ),
-              Belt.Map.String.get(self.state.textureRefs^, displacementMap),
-            ) {
-            | (Some(f), Some(source), Some(displacement)) =>
-              draw(
-                f,
-                {
-                  "texture": source,
-                  "displace_map": displacement,
-                  "maximum": 20.0,
-                },
-              )
-            | _ => ()
-            };
-          };
-        }
+      saveTick(
+        self.onUnmount,
+        layerKey,
+        makeTick(self, layerRefs, opts, width, height),
+      ),
+    willUpdate: ({newSelf}) =>
+      saveTick(
+        _f => (),
+        layerKey,
+        makeTick(newSelf, layerRefs, opts, width, height),
       ),
     render: self =>
       <canvas

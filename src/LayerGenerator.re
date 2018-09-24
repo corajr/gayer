@@ -59,6 +59,12 @@ let fill = (~alpha: float=1.0, fillStyle: string) => {
   alpha,
 };
 
+let drawGlobal = (~alpha: float=1.0, cmds: list(command)) => {
+  ...defaultLayer,
+  content: DrawGlobal(cmds),
+  alpha,
+};
+
 let draw = (~alpha: float=1.0, cmds: list(command)) => {
   ...defaultLayer,
   content: Draw(cmds),
@@ -86,7 +92,7 @@ let text =
     | Stroke => [SetStrokeStyle(color), StrokeText(s, x, y)]
     };
 
-  draw([
+  drawGlobal([
     SetFont(font),
     SetTextAlign(align),
     SetTextBaseline(baseline),
@@ -110,10 +116,20 @@ let displace = (source, displace) => {
     ),
 };
 
-let analyzer = (input: audioInputSetting) => {
-  ...defaultLayer,
-  content: Analysis({...defaultAnalysisOptions, input}),
-};
+let analyzer = (~includeHistory: bool=true, input: audioInputSetting) =>
+  if (includeHistory) {
+    {
+      ...defaultLayer,
+      content:
+        Analysis({
+          ...defaultAnalysisOptions,
+          input,
+          analysisSize: WithHistory({w: Width, h: Height}),
+        }),
+    };
+  } else {
+    {...defaultLayer, content: Analysis({...defaultAnalysisOptions, input})};
+  };
 
 let webcam = {...defaultLayer, content: Webcam};
 
@@ -144,7 +160,7 @@ let harmony = [
   sobel("root"),
   {
     ...
-      draw([
+      drawGlobal([
         DrawImage(
           Self,
           {x: Pixels(0), y: Pixels(-24), w: Width, h: Height},
@@ -162,7 +178,7 @@ let harmony = [
 ];
 
 let rotateLayer =
-  draw([
+  drawGlobal([
     Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
     Rotate(oneCompleteTurnAfterNTicks(defaultSize / 2)),
     Translate(
@@ -172,11 +188,11 @@ let rotateLayer =
     drawSelfFullScreen,
   ]);
 
-let blurLayer = {...draw([drawSelfFullScreen]), filters: "blur(2px)"};
+let blurLayer = {...drawGlobal([drawSelfFullScreen]), filters: "blur(2px)"};
 
 let squareColumnLayer = {
   ...
-    draw([
+    drawGlobal([
       DrawImageSourceDest(
         Self,
         {
@@ -292,6 +308,24 @@ let handDrawn = {...defaultLayer, content: HandDrawn};
 
 let idCounter = ref(0);
 
+let maybeAddId: layer => layer =
+  layer =>
+    switch (layer.id) {
+    | None =>
+      let nextId = idCounter^;
+      idCounter := nextId + 1;
+      {
+        ...layer,
+        id:
+          Some(
+            string_type_of_layerContent(layer.content)
+            ++ "-"
+            ++ string_of_int(nextId),
+          ),
+      };
+    | Some(_) => layer
+    };
+
 let allLayerTypes = [|
   ("image", hubble),
   ("analyzer", analyzer(Mic)),
@@ -303,8 +337,8 @@ let allLayerTypes = [|
   ("midi-keyboard", midiKeyboard),
   ("computer keyboard", keycodeWriter),
   ("ASCII", keycodeReader),
-  ("mouse-draw", handDrawn),
-  ("draw (commands)", draw([SetFillStyle("red")])),
+  ("mouse-drawGlobal", handDrawn),
+  ("drawGlobal (commands)", drawGlobal([SetFillStyle("red")])),
   ("fill", fill(~alpha=0.0125, "white")),
   ("pitch filter", pitchFilter(cMajor)),
   ("blur", blurLayer),

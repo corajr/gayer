@@ -109,10 +109,7 @@ let make =
     ) => {
   ...component,
   render: self => {
-    let layerKeys = [
-      "root",
-      ...params.layers |> List.map(getLayerKey) |> List.sort(compare),
-    ];
+    let layerKeys = ["root", ...params.layers |> List.map(getLayerKey)];
     <div>
       MaterialUi.(
         <div

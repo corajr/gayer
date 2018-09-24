@@ -37,7 +37,7 @@ var triangleSpec = {
 function sobelSpec(regl) {
   return {
           frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform vec2 resolution;\n     varying vec2 uv;\n\n     void main () {\n\tfloat x = 1.0 / resolution.x;\n\tfloat y = 1.0 / resolution.y;\n\tvec4 horizEdge = vec4( 0.0 );\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y     ) ) * 2.0;\n\thorizEdge -= texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y     ) ) * 2.0;\n\thorizEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec4 vertEdge = vec4( 0.0 );\n\tvertEdge -= texture2D(texture, vec2( uv.x - x, uv.y - y ) ) * 1.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x    , uv.y - y ) ) * 2.0;\n\tvertEdge -= texture2D(texture, vec2( uv.x + x, uv.y - y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x - x, uv.y + y ) ) * 1.0;\n\tvertEdge += texture2D(texture, vec2( uv.x    , uv.y + y ) ) * 2.0;\n\tvertEdge += texture2D(texture, vec2( uv.x + x, uv.y + y ) ) * 1.0;\n\tvec3 edge = sqrt((horizEdge.rgb * horizEdge.rgb) + (vertEdge.rgb * vertEdge.rgb));\n\n\tgl_FragColor = vec4( edge, texture2D(texture, uv ).a );\n     }\n     ",
-          vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);\n     }\n     ",
+          vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);\n     }\n     ",
           attributes: {
             position: /* array */[
               /* tuple */[
@@ -64,8 +64,8 @@ function sobelSpec(regl) {
 
 function displaceSpec(regl) {
   return {
-          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform sampler2D displace_map;\n     uniform float maximum;\n     varying vec2 uv;\n\n     void main () {\n     vec4 displace     = texture2D(displace_map, uv);\n     float displace_k  = displace.g * maximum;\n     vec2 uv_displaced = vec2(uv.x + displace_k,\n       uv.y + displace_k);\n\n     gl_FragColor = texture2D(texture, uv_displaced);\n     }\n     ",
-          vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);\n     }\n     ",
+          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform sampler2D displace_map;\n     uniform float maximum;\n     uniform float time;\n     uniform vec2 resolution;\n     varying vec2 uv;\n\n     void main () {\n\t   float x = 1.0 / resolution.x;\n\t   float y = 1.0 / resolution.y;\n     float time_e      = time * 0.001;\n     vec2 uv_t         = vec2(uv.s + time_e, uv.t + time_e);\n     vec4 displace     = texture2D(displace_map, uv_t);\n     float displace_k  = displace.g * maximum;\n     vec2 uv_displaced = vec2(uv.x + (displace_k * x),\n       uv.y + (displace_k * y));\n\n     gl_FragColor = texture2D(texture, uv_displaced);\n     }\n     ",
+          vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);\n     }\n     ",
           attributes: {
             position: /* array */[
               /* tuple */[
@@ -86,7 +86,8 @@ function displaceSpec(regl) {
             resolution: regl.prop("resolution"),
             texture: regl.prop("texture"),
             displace_map: regl.prop("displace_map"),
-            maximum: regl.prop("maximum")
+            maximum: regl.prop("maximum"),
+            time: regl.prop("time")
           },
           count: 3
         };

@@ -79,9 +79,8 @@ let slitscanParams = {
     /* squareColumnLayer, */
     {...webcam, alpha: 0.0},
     slitscan,
-    /* sobel, */
+    sobel("root"),
     /* pitchFilter(cMajor), */
-    historyLayer,
     reader,
   ],
 };
@@ -143,7 +142,6 @@ let history = {
   shouldClear: false,
   layers: [
     analyzer(Mic),
-    historyLayer,
     /* squareLayer, */
     /* blurLayer, */
     /* {...squareColumnLayer, alpha: 1.0}, */
@@ -163,7 +161,7 @@ let historyHalving = {
     analyzer(Mic),
     squareColumnLayer,
     historyLayer,
-    draw([
+    drawGlobal([
       DrawImage(
         Self,
         {
@@ -295,38 +293,45 @@ let welcomeAudio = {
   ],
 };
 
-let presetsWithoutLayerIds = [
-  (
-    "Displace",
+let displaceParams = {
+  ...defaultParams,
+  layers: [
+    {...webcam, alpha: 0.0, id: Some("webcam")},
+    displace("webcam", "analyzer"),
     {
-      ...defaultParams,
-      layers: [hubble, webcam, displace("root", "webcam")],
+      ...analyzer(Mic, ~includeHistory=true),
+      alpha: 0.1,
+      id: Some("analyzer"),
     },
-  ),
-  ("Keycode", keycodeParams),
-  ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}),
+    reader,
+  ],
+};
+
+let presetsWithoutLayerIds = [
+  /* ("Displace", displaceParams), */
+  /* ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}), */
   /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
-  ("Welcome (Audio)", welcomeAudio),
+  /* ("Welcome (Audio)", welcomeAudio), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Single note", singleNote),
+  ("Mic (CQT analysis)", history),
   /* ("Hand-drawn", handDrawnParams), */
-  /* ("Webcam", webcamEdgeDetect), */
   ("Webcam (edge detection)", webcamEdgeDetect),
-  ("Slitscan", slitscanParams),
+  /* ("Slitscan", slitscanParams), */
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
-  ("Slitscan (color histogram)", slitscanHistogramParams),
-  ("History", history),
+  /* ("Slitscan (color histogram)", slitscanHistogramParams), */
+  /* ("Keycode", keycodeParams), */
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
-  ("Rotation", vinyl),
+  /* ("Rotation", vinyl), */
   /* ("Angle", droste), */
   ("Tughra of Suleiman", tughra),
   ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI (requires MIDI keyboard)", midi),
-  ("Audio file", debussy),
-  ("Harmony", harmonyParams),
+  /* ("Audio file", debussy), */
+  /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
@@ -335,20 +340,7 @@ let presetsWithoutLayerIds = [
   ("Empty", {...defaultParams, layers: []}),
 ];
 
-let addIds =
-  List.map(layer => {
-    let nextId = idCounter^;
-    idCounter := nextId + 1;
-    {
-      ...layer,
-      id:
-        Some(
-          string_type_of_layerContent(layer.content)
-          ++ "-"
-          ++ string_of_int(nextId),
-        ),
-    };
-  });
+let addIds = List.map(maybeAddId);
 
 let presets: list((string, params)) =
   List.map(

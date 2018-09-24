@@ -24,7 +24,7 @@ let make =
     state.canvasRef := maybeRef;
   };
 
-  let onTick = ({ReasonReact.state}, ()) =>
+  let onTick = ({ReasonReact.state}, _t) =>
     switch (Belt.Map.String.get(layerRefs^, "root"), state.canvasRef^) {
     | (Some(rootCanvas), Some(histogramCanvas)) =>
       let rootCtx = getContext(getFromReact(rootCanvas));

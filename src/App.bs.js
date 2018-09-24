@@ -336,7 +336,7 @@ function drawLayer(ctx, width, height, state, layer) {
   var layerKey = Layer$Gayer.getLayerKey(layer);
   var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey);
   if (match !== undefined) {
-    Curry._1(match, /* () */0);
+    Curry._1(match, state[/* tickCounter */25][0]);
   }
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */18][0], layerKey);
   window.performance.mark(layerKey + "start");
@@ -350,9 +350,10 @@ function drawLayer(ctx, width, height, state, layer) {
             ctx.drawImage(Js_primitive.valFromOption(match$2), 0, 0, width, height);
           }
           break;
-      case 0 : 
       case 2 : 
-          exit = 1;
+          if (maybeLayerRef !== undefined) {
+            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
+          }
           break;
       case 3 : 
       case 4 : 
@@ -364,7 +365,8 @@ function drawLayer(ctx, width, height, state, layer) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
           }
           break;
-      
+      default:
+        exit = 1;
     }
   } else {
     switch (match$1.tag | 0) {
@@ -372,18 +374,24 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillStyle = match$1[0];
           ctx.fillRect(0, 0, width, height);
           break;
-      case 1 : 
+      case 2 : 
           Canvas$Gayer.DrawCommand[/* drawCommands */5](state[/* drawContext */22], match$1[0]);
           break;
-      case 5 : 
+      case 6 : 
           if (maybeLayerRef !== undefined) {
-            var destRect = match$1[0][/* destRect */3];
-            var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* x */0]);
-            var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], destRect[/* y */1]);
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), analysisX, analysisY);
+            var analysisCanvas = Js_primitive.valFromOption(maybeLayerRef);
+            var analysisSize = match$1[0][/* analysisSize */2];
+            if (analysisSize.tag) {
+              var match$3 = analysisSize[0];
+              var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* x */0]);
+              var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* y */1]);
+              ctx.drawImage(analysisCanvas, analysisX, analysisY);
+            } else {
+              ctx.drawImage(analysisCanvas, 0, 0, width, height);
+            }
           }
           break;
-      case 6 : 
+      case 7 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match$1[0]));
           ctx.fillStyle = "black";
           var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
@@ -397,23 +405,23 @@ function drawLayer(ctx, width, height, state, layer) {
                 }(i)), classList);
           }
           break;
-      case 7 : 
-          var match$3 = match$1[0];
-          if (match$3[/* encoding */4]) {
+      case 8 : 
+          var match$4 = match$1[0];
+          if (match$4[/* encoding */4]) {
             if (maybeLayerRef !== undefined) {
-              ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), match$3[/* x */0], match$3[/* y */1], match$3[/* w */2], match$3[/* h */3]);
+              ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), match$4[/* x */0], match$4[/* y */1], match$4[/* w */2], match$4[/* h */3]);
             }
             
           }
           break;
-      case 8 : 
-          break;
       case 9 : 
+          break;
+      case 10 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
           break;
-      case 10 : 
+      case 11 : 
           var readerType = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
@@ -440,10 +448,10 @@ function drawLayer(ctx, width, height, state, layer) {
             if (channel >= 3) {
               state[/* currentFilterValues */17][0] = /* Mono */Block.__(0, [ImageDataUtil$Gayer.imageDataToFloatArray(slice, channel)]);
             } else {
-              var match$4 = ImageDataUtil$Gayer.imageDataToStereo(slice, channel, /* B */2);
+              var match$5 = ImageDataUtil$Gayer.imageDataToStereo(slice, channel, /* B */2);
               state[/* currentFilterValues */17][0] = /* Stereo */Block.__(1, [
-                  match$4[0],
-                  match$4[1]
+                  match$5[0],
+                  match$5[1]
                 ]);
             }
           } else {
@@ -456,10 +464,7 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       default:
-        if (maybeLayerRef !== undefined) {
-          ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-        }
-        
+        exit = 1;
     }
   }
   switch (exit) {
@@ -476,7 +481,7 @@ function drawLayer(ctx, width, height, state, layer) {
   setTimeout((function () {
           var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey + "preview");
           if (match !== undefined) {
-            return Curry._1(match, /* () */0);
+            return Curry._1(match, 0.0);
           } else {
             return /* () */0;
           }
@@ -593,9 +598,43 @@ function generateNewFilterBanks(audioCtx, param) {
   }
 }
 
-function updateBank(param, values, filterBank) {
-  var state = param[/* state */1];
+function updateBank(state, values, filterBank) {
   return Audio$Gayer.updateFilterBank(state[/* params */6][/* inputGain */8], state[/* params */6][/* outputGain */9], filterBank, values);
+}
+
+function updateFilterBanks(param) {
+  var state = param[/* state */1];
+  var match = state[/* filterBanks */14];
+  if (match !== undefined) {
+    var match$1 = match;
+    if (match$1.tag) {
+      var filterBankR = match$1[1];
+      var filterBankL = match$1[0];
+      var match$2 = state[/* currentFilterValues */17][0];
+      if (match$2 !== undefined) {
+        var match$3 = match$2;
+        if (match$3.tag) {
+          updateBank(state, match$3[0], filterBankL);
+          return updateBank(state, match$3[1], filterBankR);
+        } else {
+          var filterValues = match$3[0];
+          updateBank(state, filterValues, filterBankL);
+          return updateBank(state, filterValues, filterBankR);
+        }
+      } else {
+        return /* () */0;
+      }
+    } else {
+      var match$4 = state[/* currentFilterValues */17][0];
+      if (match$4 !== undefined) {
+        return updateBank(state, match$4[0], match$1[0]);
+      } else {
+        return /* () */0;
+      }
+    }
+  } else {
+    return /* () */0;
+  }
 }
 
 function saveTick(param, onUnmount, key, tickFn) {
@@ -702,6 +741,7 @@ function make($staropt$star, _) {
               if (layersChanged || oldSelf[/* state */1][/* params */6][/* readPosOffset */4] !== newSelf[/* state */1][/* params */6][/* readPosOffset */4] || oldSelf[/* state */1][/* params */6][/* writePosOffset */5] !== newSelf[/* state */1][/* params */6][/* readPosOffset */4]) {
                 newSelf[/* state */1][/* readPos */2][0] = 0;
                 newSelf[/* state */1][/* writePos */3][0] = 0;
+                newSelf[/* state */1][/* currentFilterValues */17][0] = /* Mono */Block.__(0, [Caml_array.caml_make_vect(newSelf[/* state */1][/* params */6][/* height */1], 0.0)]);
               }
               if (oldSelf[/* state */1][/* params */6][/* q */10] !== newSelf[/* state */1][/* params */6][/* q */10] || oldSelf[/* state */1][/* params */6][/* transpose */11] !== newSelf[/* state */1][/* params */6][/* transpose */11] || oldSelf[/* state */1][/* params */6][/* stereo */12] !== newSelf[/* state */1][/* params */6][/* stereo */12] || oldSelf[/* state */1][/* params */6][/* height */1] !== newSelf[/* state */1][/* params */6][/* height */1]) {
                 generateNewFilterBanks(audioCtx, newSelf);
@@ -879,38 +919,12 @@ function make($staropt$star, _) {
                                     state[/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */3], state[/* params */6][/* width */0]);
                                     return maybeUpdateCanvas(state[/* canvasRef */21], (function (canvas) {
                                                   drawCanvas(canvas, state[/* params */6][/* width */0], state[/* params */6][/* height */1], state);
-                                                  var match = state[/* filterBanks */14];
+                                                  updateFilterBanks(self);
+                                                  var match = state[/* oscillatorBank */13][0];
                                                   if (match !== undefined) {
-                                                    var match$1 = match;
-                                                    if (match$1.tag) {
-                                                      var filterBankR = match$1[1];
-                                                      var filterBankL = match$1[0];
-                                                      var match$2 = state[/* currentFilterValues */17][0];
-                                                      if (match$2 !== undefined) {
-                                                        var match$3 = match$2;
-                                                        if (match$3.tag) {
-                                                          updateBank(self, match$3[0], filterBankL);
-                                                          updateBank(self, match$3[1], filterBankR);
-                                                        } else {
-                                                          var filterValues = match$3[0];
-                                                          updateBank(self, filterValues, filterBankL);
-                                                          updateBank(self, filterValues, filterBankR);
-                                                        }
-                                                      }
-                                                      
-                                                    } else {
-                                                      var match$4 = state[/* currentFilterValues */17][0];
-                                                      if (match$4 !== undefined) {
-                                                        updateBank(self, match$4[0], match$1[0]);
-                                                      }
-                                                      
-                                                    }
-                                                  }
-                                                  var match$5 = state[/* oscillatorBank */13][0];
-                                                  if (match$5 !== undefined) {
-                                                    var match$6 = state[/* currentFilterValues */17][0];
-                                                    if (match$6 !== undefined) {
-                                                      return Audio$Gayer.updateBankGains(match$5, match$6[0]);
+                                                    var match$1 = state[/* currentFilterValues */17][0];
+                                                    if (match$1 !== undefined) {
+                                                      return Audio$Gayer.updateBankGains(match, match$1[0]);
                                                     } else {
                                                       return /* () */0;
                                                     }
@@ -1078,6 +1092,7 @@ export {
   sortLayers ,
   generateNewFilterBanks ,
   updateBank ,
+  updateFilterBanks ,
   saveTick ,
   make ,
   

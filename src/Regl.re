@@ -81,7 +81,7 @@ let sobelSpec = regl => {
      varying vec2 uv;
      void main () {
      uv = position;
-     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);
+     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);
      }
      |},
   "attributes": {
@@ -100,13 +100,19 @@ let displaceSpec = regl => {
      uniform sampler2D texture;
      uniform sampler2D displace_map;
      uniform float maximum;
+     uniform float time;
+     uniform vec2 resolution;
      varying vec2 uv;
 
      void main () {
-     vec4 displace     = texture2D(displace_map, uv);
+	   float x = 1.0 / resolution.x;
+	   float y = 1.0 / resolution.y;
+     float time_e      = time * 0.001;
+     vec2 uv_t         = vec2(uv.s + time_e, uv.t + time_e);
+     vec4 displace     = texture2D(displace_map, uv_t);
      float displace_k  = displace.g * maximum;
-     vec2 uv_displaced = vec2(uv.x + displace_k,
-       uv.y + displace_k);
+     vec2 uv_displaced = vec2(uv.x + (displace_k * x),
+       uv.y + (displace_k * y));
 
      gl_FragColor = texture2D(texture, uv_displaced);
      }
@@ -117,7 +123,7 @@ let displaceSpec = regl => {
      varying vec2 uv;
      void main () {
      uv = position;
-     gl_Position = vec4(1.0 - 2.0 * position, 0, 1);
+     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);
      }
      |},
   "attributes": {
@@ -128,6 +134,7 @@ let displaceSpec = regl => {
     "texture": prop(regl, "texture"),
     "displace_map": prop(regl, "displace_map"),
     "maximum": prop(regl, "maximum"),
+    "time": prop(regl, "time"),
   },
   "count": 3,
 };

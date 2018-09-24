@@ -8,6 +8,7 @@ import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_Button from "@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js";
 import * as NewLayerMenu$Gayer from "./NewLayerMenu.bs.js";
+import * as LayerGenerator$Gayer from "./LayerGenerator.bs.js";
 
 function setRef(theRef, param) {
   if (theRef == null) {
@@ -36,7 +37,7 @@ function make(onAdd, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("div", undefined, ReasonReact.element(undefined, Curry._1(self[/* handle */0], setRef), MaterialUi_Button.make(undefined, /* Primary */-791844958, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Fab */3502759, undefined, undefined, undefined, undefined, undefined, undefined, Curry._1(self[/* handle */0], sendOpen), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.Add[/* make */0](/* array */[]))])), ReasonReact.element(undefined, undefined, NewLayerMenu$Gayer.make((function (layer) {
-                                    Curry._1(onAdd, layer);
+                                    Curry._1(onAdd, LayerGenerator$Gayer.maybeAddId(layer));
                                     return Curry._1(self[/* send */3], /* Close */1);
                                   }), self[/* state */1][/* open_ */1], self[/* state */1][/* anchorEl */0], /* array */[])));
             }),

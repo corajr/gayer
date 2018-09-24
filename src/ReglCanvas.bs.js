@@ -42,6 +42,53 @@ function applyWithTexture(drawCommandRef, textureRefs, key, width, height) {
   }
 }
 
+function makeTick(param, layerRefs, opts, width, height, t) {
+  var state = param[/* state */1];
+  var match = state[/* reglRef */1][0];
+  if (match !== undefined) {
+    Js_primitive.valFromOption(match).clear({
+          color: /* array */[
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          depth: 1.0
+        });
+    if (opts.tag) {
+      var match$1 = opts[0];
+      var displacementMap = match$1[/* displacementMap */1];
+      var displacementSourceLayer = match$1[/* displacementSourceLayer */0];
+      copyLayerToTexture(state[/* reglRef */1], state[/* textureRefs */2], layerRefs, displacementSourceLayer, displacementSourceLayer);
+      copyLayerToTexture(state[/* reglRef */1], state[/* textureRefs */2], layerRefs, displacementMap, displacementMap);
+      var match$2 = state[/* drawCommandRef */3][0];
+      var match$3 = Belt_MapString.get(state[/* textureRefs */2][0], displacementSourceLayer);
+      var match$4 = Belt_MapString.get(state[/* textureRefs */2][0], displacementMap);
+      if (match$2 !== undefined && match$3 !== undefined && match$4 !== undefined) {
+        Js_primitive.valFromOption(match$2).draw({
+              texture: Js_primitive.valFromOption(match$3),
+              displace_map: Js_primitive.valFromOption(match$4),
+              maximum: 20.0,
+              time: t,
+              resolution: /* array */[
+                width,
+                height
+              ]
+            });
+        return /* () */0;
+      } else {
+        return /* () */0;
+      }
+    } else {
+      var sourceLayer = opts[0][/* sourceLayer */0];
+      copyLayerToTexture(state[/* reglRef */1], state[/* textureRefs */2], layerRefs, sourceLayer, sourceLayer);
+      return applyWithTexture(state[/* drawCommandRef */3], state[/* textureRefs */2], sourceLayer, width, height);
+    }
+  } else {
+    return /* () */0;
+  }
+}
+
 var component = ReasonReact.reducerComponent("ReglCanvas-Gayer");
 
 function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
@@ -68,48 +115,20 @@ function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
-                            var match = self[/* state */1][/* reglRef */1][0];
-                            if (match !== undefined) {
-                              Js_primitive.valFromOption(match).clear({
-                                    color: /* array */[
-                                      0.0,
-                                      0.0,
-                                      0.0,
-                                      1.0
-                                    ],
-                                    depth: 1.0
-                                  });
-                              if (opts.tag) {
-                                var match$1 = opts[0];
-                                var displacementSourceLayer = match$1[/* displacementSourceLayer */0];
-                                copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, displacementSourceLayer, displacementSourceLayer);
-                                var match$2 = self[/* state */1][/* drawCommandRef */3][0];
-                                var match$3 = Belt_MapString.get(self[/* state */1][/* textureRefs */2][0], displacementSourceLayer);
-                                var match$4 = Belt_MapString.get(self[/* state */1][/* textureRefs */2][0], match$1[/* displacementMap */1]);
-                                if (match$2 !== undefined && match$3 !== undefined && match$4 !== undefined) {
-                                  Js_primitive.valFromOption(match$2).draw({
-                                        texture: Js_primitive.valFromOption(match$3),
-                                        displace_map: Js_primitive.valFromOption(match$4),
-                                        maximum: 20.0
-                                      });
-                                  return /* () */0;
-                                } else {
-                                  return /* () */0;
-                                }
-                              } else {
-                                var sourceLayer = opts[0][/* sourceLayer */0];
-                                copyLayerToTexture(self[/* state */1][/* reglRef */1], self[/* state */1][/* textureRefs */2], layerRefs, sourceLayer, sourceLayer);
-                                return applyWithTexture(self[/* state */1][/* drawCommandRef */3], self[/* state */1][/* textureRefs */2], sourceLayer, width, height);
-                              }
-                            } else {
-                              return /* () */0;
-                            }
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function (param) {
+                            return makeTick(self, layerRefs, opts, width, height, param);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
-          /* willUpdate */component[/* willUpdate */7],
+          /* willUpdate */(function (param) {
+              var newSelf = param[/* newSelf */1];
+              return Curry._3(saveTick, (function () {
+                            return /* () */0;
+                          }), layerKey, (function (param) {
+                            return makeTick(newSelf, layerRefs, opts, width, height, param);
+                          }));
+            }),
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("canvas", {
@@ -138,6 +157,7 @@ function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
 export {
   copyLayerToTexture ,
   applyWithTexture ,
+  makeTick ,
   component ,
   make ,
   

@@ -49,7 +49,7 @@ let make = (~onAdd, _children) => {
           open_=self.state.open_
           onAdd=(
             layer => {
-              onAdd(layer);
+              onAdd(LayerGenerator.maybeAddId(layer));
               self.send(Close);
             }
           )

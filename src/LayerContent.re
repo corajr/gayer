@@ -49,7 +49,12 @@ let make =
         | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
         | Analysis(options) =>
           open Canvas.DrawCommand;
-          let {w, h} = options.destRect;
+          let (w, h) =
+            switch (options.analysisSize) {
+            | WithHistory({w, h}) => (w, h)
+            | DestRect({w, h}) => (w, h)
+            };
+
           let analysisWidth = getLength(globalDrawContext, w);
           let analysisHeight = getLength(globalDrawContext, h);
           <AnalysisCanvas
@@ -73,6 +78,16 @@ let make =
             saveTick
             currentFilterValues
             getReadAndWritePos
+          />
+        | Draw(cmds) =>
+          <DrawCommandCanvas
+            cmds
+            layerKey
+            layerRefs
+            setRef
+            saveTick
+            width
+            height
           />
         | HandDrawn => <HandDrawnCanvas setRef width height />
         | RawAudioWriter({x, y, w, h, encoding}) =>
@@ -112,7 +127,7 @@ let make =
             audioCtx
             audioGraph
           />
-        | Draw(_)
+        | DrawGlobal(_)
         | PitchClasses(_)
         | Fill(_)
         | Reader(_) => ReasonReact.null

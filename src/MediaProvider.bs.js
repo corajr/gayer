@@ -36,7 +36,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawConte
                                       maybeAudio = null;
                                     } else {
                                       switch (match.tag | 0) {
-                                        case 5 : 
+                                        case 6 : 
                                             var source = match[0][/* input */0];
                                             var exit = 0;
                                             if (typeof source === "number") {
@@ -77,7 +77,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawConte
                                               }
                                             }
                                             break;
-                                        case 7 : 
+                                        case 8 : 
                                             var match$2 = Curry._1(getAudio, /* Mic */2);
                                             var maybeInput$1 = match$2[1];
                                             if (maybeInput$1 !== undefined) {

@@ -8,16 +8,88 @@ import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 
+function analysisSizeByType(type_, json) {
+  switch (type_) {
+    case "dest-rect" : 
+        var partial_arg = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2];
+        return Json_decode.map((function (r) {
+                      return /* DestRect */Block.__(1, [r]);
+                    }), (function (param) {
+                      return Json_decode.field("rect", partial_arg, param);
+                    }), json);
+    case "with-history" : 
+        return Canvas$Gayer.DrawCommand[/* field2 */0]((function (w, h) {
+                      return /* WithHistory */Block.__(0, [/* record */[
+                                  /* w */w,
+                                  /* h */h
+                                ]]);
+                    }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
+    default:
+      return /* WithHistory */Block.__(0, [/* record */[
+                  /* w : Width */0,
+                  /* h : Height */1
+                ]]);
+  }
+}
+
+function analysisSize(json) {
+  return Json_decode.andThen(analysisSizeByType, (function (param) {
+                return Json_decode.field("type", Json_decode.string, param);
+              }), json);
+}
+
 function analysisOptions(json) {
   return /* record */[
           /* input */Json_decode.field("input", Audio$Gayer.AudioInput[/* DecodeAudioInput */1][/* audioInputSetting */0], json),
           /* readerType */Json_decode.field("readerType", ReaderType$Gayer.DecodeReaderType[/* readerType */1], json),
-          /* keepHistory */Json_decode.field("keepHistory", Json_decode.bool, json),
-          /* destRect */Json_decode.field("destRect", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2], json)
+          /* analysisSize */Json_decode.field("analysisSize", analysisSize, json)
         ];
 }
 
-var DecodeAnalysisOptions = /* module */[/* analysisOptions */analysisOptions];
+var DecodeAnalysisOptions = /* module */[
+  /* analysisSizeByType */analysisSizeByType,
+  /* analysisSize */analysisSize,
+  /* analysisOptions */analysisOptions
+];
+
+function analysisSize$1(param) {
+  if (param.tag) {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "dest-rect"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "rect",
+                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
+                  ],
+                  /* [] */0
+                ]
+              ]);
+  } else {
+    var match = param[0];
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "with-history"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "w",
+                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "h",
+                      Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                    ],
+                    /* [] */0
+                  ]
+                ]
+              ]);
+  }
+}
 
 function analysisOptions$1(r) {
   return Json_encode.object_(/* :: */[
@@ -32,40 +104,42 @@ function analysisOptions$1(r) {
                 ],
                 /* :: */[
                   /* tuple */[
-                    "keepHistory",
-                    r[/* keepHistory */2]
+                    "analysisSize",
+                    analysisSize$1(r[/* analysisSize */2])
                   ],
-                  /* :: */[
-                    /* tuple */[
-                      "destRect",
-                      Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */3])
-                    ],
-                    /* [] */0
-                  ]
+                  /* [] */0
                 ]
               ]
             ]);
 }
 
-var EncodeAnalysisOptions = /* module */[/* analysisOptions */analysisOptions$1];
+var EncodeAnalysisOptions = /* module */[
+  /* analysisSize */analysisSize$1,
+  /* analysisOptions */analysisOptions$1
+];
 
 var defaultAnalysisOptions = /* record */[
   /* input : Mic */2,
   /* readerType : Channel */[/* R */0],
-  /* keepHistory */false,
-  /* destRect : record */[
-    /* x : Add */Block.__(5, [
-        /* Width */0,
-        /* Pixels */Block.__(2, [-1])
-      ]),
-    /* y : Pixels */Block.__(2, [0]),
-    /* w : Pixels */Block.__(2, [1]),
-    /* h : Height */1
-  ]
+  /* analysisSize : WithHistory */Block.__(0, [/* record */[
+        /* w : Width */0,
+        /* h : Height */1
+      ]])
 ];
+
+var destRect = /* DestRect */Block.__(1, [/* record */[
+      /* x : Add */Block.__(5, [
+          /* Width */0,
+          /* Pixels */Block.__(2, [-1])
+        ]),
+      /* y : Pixels */Block.__(2, [0]),
+      /* w : Pixels */Block.__(2, [1]),
+      /* h : Height */1
+    ]]);
 
 export {
   defaultAnalysisOptions ,
+  destRect ,
   DecodeAnalysisOptions ,
   EncodeAnalysisOptions ,
   

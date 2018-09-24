@@ -21,7 +21,7 @@ let make =
     state.canvasRef := maybeRef;
   };
 
-  let onTick = ({ReasonReact.state}, ()) =>
+  let onTick = ({ReasonReact.state}, _t) =>
     switch (state.canvasRef^, Belt.Map.String.get(layerRefs^, sourceKey)) {
     | (Some(canvas), Some(sourceCanvas)) =>
       let sourceImage = getCanvasAsSource(getFromReact(sourceCanvas));

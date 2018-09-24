@@ -103,8 +103,9 @@ let make =
           |> updateConnections
       );
 
-      if (options.keepHistory) {
-        saveTick(self.onUnmount, layerKey, () =>
+      switch (options.analysisSize) {
+      | WithHistory(_) =>
+        saveTick(self.onUnmount, layerKey, _t =>
           switch (self.state.canvasRef^) {
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
@@ -113,7 +114,8 @@ let make =
             Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
           | None => ()
           }
-        );
+        )
+      | _ => ()
       };
 
       setTimer(

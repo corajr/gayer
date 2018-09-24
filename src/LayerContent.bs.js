@@ -14,6 +14,7 @@ import * as RawAudioReader$Gayer from "./RawAudioReader.bs.js";
 import * as SlitscanCanvas$Gayer from "./SlitscanCanvas.bs.js";
 import * as HandDrawnCanvas$Gayer from "./HandDrawnCanvas.bs.js";
 import * as HistogramCanvas$Gayer from "./HistogramCanvas.bs.js";
+import * as DrawCommandCanvas$Gayer from "./DrawCommandCanvas.bs.js";
 import * as KeycodeReaderCanvas$Gayer from "./KeycodeReaderCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
@@ -59,10 +60,13 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                 }
               } else {
                 switch (layerContent.tag | 0) {
-                  case 2 : 
-                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, layerContent[0][/* sourceLayerKey */0], width, height, saveTick, /* array */[]));
+                  case 1 : 
+                      tmp = ReasonReact.element(undefined, undefined, DrawCommandCanvas$Gayer.make(layerContent[0], layerKey, layerRefs, setRef, saveTick, width, height, /* array */[]));
                       break;
                   case 3 : 
+                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, layerContent[0][/* sourceLayerKey */0], width, height, saveTick, /* array */[]));
+                      break;
+                  case 4 : 
                       tmp = React.createElement("img", {
                             ref: setRef,
                             height: "120",
@@ -70,26 +74,40 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                             width: "120"
                           });
                       break;
-                  case 4 : 
+                  case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, VideoFile$Gayer.make(audioCtx, audioGraph, layerKey, setRef, layerContent[0], /* array */[]));
                       break;
-                  case 5 : 
+                  case 6 : 
                       var options = layerContent[0];
-                      var match = options[/* destRect */3];
-                      var analysisWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match[/* w */2]);
-                      var analysisHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match[/* h */3]);
+                      var match = options[/* analysisSize */2];
+                      var match$1;
+                      if (match.tag) {
+                        var match$2 = match[0];
+                        match$1 = /* tuple */[
+                          match$2[/* w */2],
+                          match$2[/* h */3]
+                        ];
+                      } else {
+                        var match$3 = match[0];
+                        match$1 = /* tuple */[
+                          match$3[/* w */0],
+                          match$3[/* h */1]
+                        ];
+                      }
+                      var analysisWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[0]);
+                      var analysisHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[1]);
                       tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, options, millisPerTick, setRef, saveTick, /* array */[]));
                       break;
-                  case 7 : 
-                      var match$1 = layerContent[0];
-                      var h = match$1[/* h */3];
-                      var w = match$1[/* w */2];
-                      tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, layerRefs, audioCtx, match$1[/* encoding */4], audioGraph, setRef, match$1[/* x */0], match$1[/* y */1], /* array */[]));
-                      break;
                   case 8 : 
-                      tmp = ReasonReact.element(undefined, undefined, RawAudioReader$Gayer.make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, layerContent[0], /* array */[]));
+                      var match$4 = layerContent[0];
+                      var h = match$4[/* h */3];
+                      var w = match$4[/* w */2];
+                      tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, layerRefs, audioCtx, match$4[/* encoding */4], audioGraph, setRef, match$4[/* x */0], match$4[/* y */1], /* array */[]));
                       break;
                   case 9 : 
+                      tmp = ReasonReact.element(undefined, undefined, RawAudioReader$Gayer.make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, layerContent[0], /* array */[]));
+                      break;
+                  case 10 : 
                       tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, layerContent[0], setRef, saveTick, layerKey, width, height, /* array */[]));
                       break;
                   default:

@@ -11,6 +11,7 @@ open Regl;
 type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
+  | DrawGlobal(list(DrawCommand.command))
   | HandDrawn
   | Webcam
   | Slitscan(cameraOptions)
@@ -30,7 +31,8 @@ type layerContent =
 let readable_string_type_of_layerContent =
   fun
   | Fill(_) => "Fill"
-  | Draw(_) => "Draw (commands)"
+  | Draw(_) => "Draw Commands"
+  | DrawGlobal(_) => "Draw Commands (global)"
   | HandDrawn => "Mouse"
   | Webcam => "Webcam"
   | Slitscan(_) => "Slitscan"
@@ -51,6 +53,7 @@ let string_type_of_layerContent =
   fun
   | Fill(_) => "fill"
   | Draw(_) => "draw"
+  | DrawGlobal(_) => "draw-global"
   | HandDrawn => "mouse"
   | Webcam => "webcam"
   | Slitscan(_) => "slitscan"
@@ -72,6 +75,7 @@ let icon_of_layerContent =
     fun
     | Fill(_) => <FormatPaint />
     | Draw(_) => <FormatListBulleted />
+    | DrawGlobal(_) => <FormatListBulleted />
     | HandDrawn => <Brush />
     | Webcam => <Videocam />
     | Slitscan(_) => <Flip />
@@ -204,6 +208,12 @@ module DecodeLayer = {
              xs => Draw(xs),
              field("cmds", list(DrawCommand.DecodeDrawCommand.command)),
            )
+      | "draw-global" =>
+        json
+        |> map(
+             xs => DrawGlobal(xs),
+             field("cmds", list(DrawCommand.DecodeDrawCommand.command)),
+           )
       | "pitchClasses" =>
         json
         |> map(
@@ -319,6 +329,11 @@ module EncodeLayer = {
           ("type", string("draw")),
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
+      | DrawGlobal(cmds) =>
+        object_([
+          ("type", string("draw-global")),
+          ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
+        ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
       | KeycodeWriter => object_([("type", string("keycode-writer"))])
       | KeycodeReader => object_([("type", string("keycode-reader"))])
@@ -381,7 +396,7 @@ let renderLayerPreview =
   let savePreviewRef = aRef =>
     switch (Js.Nullable.toOption(aRef)) {
     | Some(previewCanvas) =>
-      saveTick(onUnmount, layerKey ++ "preview", () =>
+      saveTick(onUnmount, layerKey ++ "preview", _t =>
         switch (Belt.Map.String.get(layerRefs^, layerKey)) {
         | Some(layer) =>
           let ctx = getContext(getFromReact(previewCanvas));
@@ -409,10 +424,11 @@ let renderLayerPreview =
       | RawAudioWriter(_)
       | RawAudioReader(_)
       | Histogram
+      | Draw(_)
       | Regl(_) =>
         <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
       | Fill(_)
-      | Draw(_)
+      | DrawGlobal(_)
       | PitchClasses(_)
       | Reader(_) => ReasonReact.null
       }
@@ -530,6 +546,7 @@ let make =
                   margin=`Normal
                 />
               | Draw(cmds) => <div />
+              | DrawGlobal(cmds) => <div />
               | Slitscan(cameraOptions) => <div />
               | Image(string)
               | Video(string) => <div />

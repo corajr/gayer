@@ -4,7 +4,6 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Hashtbl from "bs-platform/lib/es6/hashtbl.js";
-import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
@@ -185,7 +184,7 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
           /* willUpdate */component[/* willUpdate */7],
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
-              var layerKeys_001 = List.sort(Caml_obj.caml_compare, List.map(Layer$Gayer.getLayerKey, params[/* layers */14]));
+              var layerKeys_001 = List.map(Layer$Gayer.getLayerKey, params[/* layers */14]);
               var layerKeys = /* :: */[
                 "root",
                 layerKeys_001

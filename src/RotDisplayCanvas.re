@@ -56,7 +56,7 @@ let make =
         );
       self.state.rotDisplayRef := Some(display);
       self.state.canvasRef := Some(getContainer(display));
-      saveTick(self.onUnmount, layerKey, () =>
+      saveTick(self.onUnmount, layerKey, _t =>
         switch (currentFilterValues^, self.state.rotDisplayRef^) {
         | (Audio.Mono(values), Some(display)) =>
           let n = Array.length(values);

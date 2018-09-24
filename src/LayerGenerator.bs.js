@@ -9,7 +9,7 @@ import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 
 function img(url) {
   return /* record */[
-          /* content : Image */Block.__(3, [url]),
+          /* content : Image */Block.__(4, [url]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -22,7 +22,7 @@ function img(url) {
 
 function video(url) {
   return /* record */[
-          /* content : Video */Block.__(4, [url]),
+          /* content : Video */Block.__(5, [url]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -33,7 +33,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(10, [/* Channel */[/* R */0]]);
+var reader_000 = /* content : Reader */Block.__(11, [/* Channel */[/* R */0]]);
 
 var reader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -60,7 +60,7 @@ var reader = /* record */[
   reader_007
 ];
 
-var saturationReader_000 = /* content : Reader */Block.__(10, [/* Saturation */0]);
+var saturationReader_000 = /* content : Reader */Block.__(11, [/* Saturation */0]);
 
 var saturationReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -167,7 +167,7 @@ var rawAudioFormat = /* record */[
   /* sampleRate */44100
 ];
 
-var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(7, [rawAudioFormat]);
+var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(8, [rawAudioFormat]);
 
 var rawAudioWriter_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -194,7 +194,7 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_007
 ];
 
-var rawAudioReader_000 = /* content : RawAudioReader */Block.__(8, [rawAudioFormat]);
+var rawAudioReader_000 = /* content : RawAudioReader */Block.__(9, [rawAudioFormat]);
 
 var rawAudioReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -223,7 +223,7 @@ var rawAudioReader = /* record */[
 
 function pitchFilter(pc) {
   return /* record */[
-          /* content : PitchClasses */Block.__(6, [pc]),
+          /* content : PitchClasses */Block.__(7, [pc]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -238,6 +238,20 @@ function fill($staropt$star, fillStyle) {
   var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
   return /* record */[
           /* content : Fill */Block.__(0, [fillStyle]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */alpha,
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
+}
+
+function drawGlobal($staropt$star, cmds) {
+  var alpha = $staropt$star !== undefined ? $staropt$star : 1.0;
+  return /* record */[
+          /* content : DrawGlobal */Block.__(2, [cmds]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */alpha,
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -297,7 +311,7 @@ function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, 
         /* [] */0
       ]
     ];
-  return draw(undefined, /* :: */[
+  return drawGlobal(undefined, /* :: */[
               /* SetFont */Block.__(0, [font]),
               /* :: */[
                 /* SetTextAlign */Block.__(1, [align]),
@@ -311,7 +325,7 @@ function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, 
 
 function sobel(key) {
   return /* record */[
-          /* content : Regl */Block.__(9, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
+          /* content : Regl */Block.__(10, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -324,7 +338,7 @@ function sobel(key) {
 
 function displace(source, displace$1) {
   return /* record */[
-          /* content : Regl */Block.__(9, [/* Displacement */Block.__(1, [/* record */[
+          /* content : Regl */Block.__(10, [/* Displacement */Block.__(1, [/* record */[
                     /* displacementSourceLayer */source,
                     /* displacementMap */displace$1
                   ]])]),
@@ -338,22 +352,42 @@ function displace(source, displace$1) {
         ];
 }
 
-function analyzer(input) {
-  return /* record */[
-          /* content : Analysis */Block.__(5, [/* record */[
-                /* input */input,
-                /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
-                /* keepHistory */AnalysisOptions$Gayer.defaultAnalysisOptions[/* keepHistory */2],
-                /* destRect */AnalysisOptions$Gayer.defaultAnalysisOptions[/* destRect */3]
-              ]]),
-          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
-          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
-          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
-          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
-          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
-          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
-        ];
+function analyzer($staropt$star, input) {
+  var includeHistory = $staropt$star !== undefined ? $staropt$star : true;
+  if (includeHistory) {
+    return /* record */[
+            /* content : Analysis */Block.__(6, [/* record */[
+                  /* input */input,
+                  /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
+                  /* analysisSize : WithHistory */Block.__(0, [/* record */[
+                        /* w : Width */0,
+                        /* h : Height */1
+                      ]])
+                ]]),
+            /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+            /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+            /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+            /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+            /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+            /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+            /* id */Layer$Gayer.defaultLayer[/* id */7]
+          ];
+  } else {
+    return /* record */[
+            /* content : Analysis */Block.__(6, [/* record */[
+                  /* input */input,
+                  /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
+                  /* analysisSize */AnalysisOptions$Gayer.defaultAnalysisOptions[/* analysisSize */2]
+                ]]),
+            /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+            /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+            /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+            /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+            /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+            /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+            /* id */Layer$Gayer.defaultLayer[/* id */7]
+          ];
+  }
 }
 
 var webcam_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
@@ -381,7 +415,7 @@ var webcam = /* record */[
   webcam_007
 ];
 
-var slitscan_000 = /* content : Slitscan */Block.__(2, [/* record */[
+var slitscan_000 = /* content : Slitscan */Block.__(3, [/* record */[
       /* sourceLayerKey */"webcam",
       /* slitscan : StaticX */Block.__(0, [320])
     ]]);
@@ -438,7 +472,7 @@ var drawSelfFullScreen = /* DrawImage */Block.__(10, [
 
 var init = img("media/harmony.png");
 
-var init$1 = draw(undefined, /* :: */[
+var init$1 = drawGlobal(undefined, /* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
@@ -508,7 +542,7 @@ var harmony = /* :: */[
   harmony_001
 ];
 
-var rotateLayer = draw(undefined, /* :: */[
+var rotateLayer = drawGlobal(undefined, /* :: */[
       /* Translate */Block.__(9, [
           /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0]),
           /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])
@@ -528,7 +562,7 @@ var rotateLayer = draw(undefined, /* :: */[
       ]
     ]);
 
-var init$2 = draw(undefined, /* :: */[
+var init$2 = drawGlobal(undefined, /* :: */[
       drawSelfFullScreen,
       /* [] */0
     ]);
@@ -558,7 +592,7 @@ var blurLayer = /* record */[
   blurLayer_007
 ];
 
-var init$3 = draw(undefined, /* :: */[
+var init$3 = drawGlobal(undefined, /* :: */[
       /* DrawImageSourceDest */Block.__(11, [
           /* Self */0,
           /* record */[
@@ -911,6 +945,26 @@ var handDrawn = /* record */[
 
 var idCounter = /* record */[/* contents */0];
 
+function maybeAddId(layer) {
+  var match = layer[/* id */7];
+  if (match !== undefined) {
+    return layer;
+  } else {
+    var nextId = idCounter[0];
+    idCounter[0] = nextId + 1 | 0;
+    return /* record */[
+            /* content */layer[/* content */0],
+            /* enabled */layer[/* enabled */1],
+            /* alpha */layer[/* alpha */2],
+            /* compositeOperation */layer[/* compositeOperation */3],
+            /* rotation */layer[/* rotation */4],
+            /* transformMatrix */layer[/* transformMatrix */5],
+            /* filters */layer[/* filters */6],
+            /* id */Layer$Gayer.string_type_of_layerContent(layer[/* content */0]) + ("-" + String(nextId))
+          ];
+  }
+}
+
 var allLayerTypes = /* array */[
   /* tuple */[
     "image",
@@ -918,7 +972,7 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "analyzer",
-    analyzer(/* Mic */2)
+    analyzer(undefined, /* Mic */2)
   ],
   /* tuple */[
     "reader",
@@ -953,12 +1007,12 @@ var allLayerTypes = /* array */[
     keycodeReader
   ],
   /* tuple */[
-    "mouse-draw",
+    "mouse-drawGlobal",
     handDrawn
   ],
   /* tuple */[
-    "draw (commands)",
-    draw(undefined, /* :: */[
+    "drawGlobal (commands)",
+    drawGlobal(undefined, /* :: */[
           /* SetFillStyle */Block.__(3, ["red"]),
           /* [] */0
         ])
@@ -1023,6 +1077,7 @@ export {
   rawAudioReader ,
   pitchFilter ,
   fill ,
+  drawGlobal ,
   draw ,
   text ,
   sobel ,
@@ -1047,6 +1102,7 @@ export {
   midiColors ,
   handDrawn ,
   idCounter ,
+  maybeAddId ,
   allLayerTypes ,
   
 }

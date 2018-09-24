@@ -43,7 +43,7 @@ type state = {
   canvasRef: ref(option(Dom.element)),
   drawContext: DrawCommand.drawContext,
   fullscreenCanvas: bool,
-  tickFunctions: ref(Belt.Map.String.t(unit => unit)),
+  tickFunctions: ref(Belt.Map.String.t(float => unit)),
   tickCounter: ref(int),
   timerId: ref(option(Js.Global.intervalId)),
 };
@@ -238,7 +238,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     let layerKey = getLayerKey(layer);
     switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
     | None => ()
-    | Some(f) => f()
+    | Some(f) => f(float_of_int(state.tickCounter^))
     };
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
@@ -246,23 +246,28 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     mark(performance, layerKey ++ "start");
 
     switch (layer.content) {
-    | Draw(cmds) => DrawCommand.drawCommands(state.drawContext, cmds)
+    | DrawGlobal(cmds) => DrawCommand.drawCommands(state.drawContext, cmds)
     | Fill(s) =>
       Ctx.setFillStyle(ctx, s);
       Ctx.fillRect(ctx, 0, 0, width, height);
-    | Analysis({destRect}) =>
+    | Analysis({analysisSize}) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(analysisCanvas) =>
-        open DrawCommand;
         let canvasElt = getFromReact(analysisCanvas);
         let canvasAsSource = getCanvasAsSource(canvasElt);
-        let {x, y} = destRect;
-        let analysisX = getLength(state.drawContext, x);
-        let analysisY = getLength(state.drawContext, y);
-        /* let x = */
-        /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
-        Ctx.drawImage(ctx, canvasAsSource, analysisX, analysisY);
+        DrawCommand.(
+          switch (analysisSize) {
+          | WithHistory(_) =>
+            Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height)
+          | DestRect({x, y}) =>
+            let analysisX = getLength(state.drawContext, x);
+            let analysisY = getLength(state.drawContext, y);
+            /* let x = */
+            /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
+            Ctx.drawImage(ctx, canvasAsSource, analysisX, analysisY);
+          }
+        );
       }
     | MIDIKeyboard =>
       switch (maybeLayerRef) {
@@ -290,14 +295,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         let canvasSource = getCanvasAsSource(getFromReact(canvas));
         Ctx.drawImage(ctx, canvasSource, 0, 0);
       }
-    | HandDrawn =>
-      switch (maybeLayerRef) {
-      | None => ()
-      | Some(handDrawn) =>
-        let canvasElt = getFromReact(handDrawn);
-        let canvasAsSource = getCanvasAsSource(canvasElt);
-        Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height);
-      }
+    | HandDrawn
+    | Draw(_)
     | Slitscan(_)
     | Image(_)
     | Video(_) =>
@@ -401,7 +400,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
             Belt.Map.String.get(state.tickFunctions^, layerKey ++ "preview")
           ) {
           | None => ()
-          | Some(f) => f()
+          | Some(f) => f(0.0)
           },
         0,
       ),
@@ -543,13 +542,36 @@ let generateNewFilterBanks =
   };
 };
 
-let updateBank = ({ReasonReact.state}, values, filterBank) =>
+let updateBank = (state, values, filterBank) =>
   updateFilterBank(
     ~filterBank,
     ~filterValues=values,
     ~inputGain=state.params.inputGain,
     ~outputGain=state.params.outputGain,
   );
+
+let updateFilterBanks = ({ReasonReact.state}) =>
+  switch (state.filterBanks) {
+  | None => ()
+  | Some(MonoBank(filterBank)) =>
+    switch (state.currentFilterValues^) {
+    | Some(Mono(filterValues)) =>
+      updateBank(state, filterValues, filterBank)
+    | Some(Stereo(filterValuesL, _)) =>
+      updateBank(state, filterValuesL, filterBank)
+    | None => ()
+    }
+  | Some(StereoBanks(filterBankL, filterBankR)) =>
+    switch (state.currentFilterValues^) {
+    | Some(Mono(filterValues)) =>
+      updateBank(state, filterValues, filterBankL);
+      updateBank(state, filterValues, filterBankR);
+    | Some(Stereo(filterValuesL, filterValuesR)) =>
+      updateBank(state, filterValuesL, filterBankL);
+      updateBank(state, filterValuesR, filterBankR);
+    | None => ()
+    }
+  };
 
 let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
   state.tickFunctions :=
@@ -685,27 +707,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                   state,
                 );
 
-                switch (state.filterBanks) {
-                | None => ()
-                | Some(MonoBank(filterBank)) =>
-                  switch (state.currentFilterValues^) {
-                  | Some(Mono(filterValues)) =>
-                    updateBank(self, filterValues, filterBank)
-                  | Some(Stereo(filterValuesL, _)) =>
-                    updateBank(self, filterValuesL, filterBank)
-                  | None => ()
-                  }
-                | Some(StereoBanks(filterBankL, filterBankR)) =>
-                  switch (state.currentFilterValues^) {
-                  | Some(Mono(filterValues)) =>
-                    updateBank(self, filterValues, filterBankL);
-                    updateBank(self, filterValues, filterBankR);
-                  | Some(Stereo(filterValuesL, filterValuesR)) =>
-                    updateBank(self, filterValuesL, filterBankL);
-                    updateBank(self, filterValuesR, filterBankR);
-                  | None => ()
-                  }
-                };
+                updateFilterBanks(self);
 
                 switch (state.oscillatorBank^) {
                 | Some(bank) =>
@@ -864,6 +866,8 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                                                  readPosOffset) {
       newSelf.state.readPos := 0;
       newSelf.state.writePos := 0;
+      newSelf.state.currentFilterValues :=
+        Some(Mono(Array.make(newSelf.state.params.height, 0.0)));
     };
 
     if (oldSelf.state.params.q != newSelf.state.params.q

@@ -54,7 +54,8 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       audioGraph[0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.removeAllEdgesInvolvingNode(layerKey, AudioGraph$Gayer.removeNode(layerKey, audioGraph[0])));
                       return /* () */0;
                     }));
-              if (options[/* keepHistory */2]) {
+              var match = options[/* analysisSize */2];
+              if (!match.tag) {
                 Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                         var match = self[/* state */1][/* canvasRef */5][0];
                         if (match !== undefined) {
