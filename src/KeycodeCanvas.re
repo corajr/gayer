@@ -8,11 +8,8 @@ type state = {
 
 let makeKeyDownCallback = ({ReasonReact.state}, width, height, e) => {
   switch (key(e)) {
-  | "Alt"
-  | "AltGraph"
-  | "Meta"
-  | "Ctrl" => ()
-  | _ => KeyboardEventRe.preventDefault(e)
+  | "Space" => KeyboardEventRe.preventDefault(e)
+  | _ => ()
   };
   switch (state.canvasRef^) {
   | None => ()

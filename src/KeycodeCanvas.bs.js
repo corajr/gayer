@@ -8,14 +8,8 @@ import * as KeyboardManager$Gayer from "./KeyboardManager.bs.js";
 
 function makeKeyDownCallback(param, width, height, e) {
   var match = KeyboardManager$Gayer.key(e);
-  switch (match) {
-    case "Alt" : 
-    case "AltGraph" : 
-    case "Ctrl" : 
-    case "Meta" : 
-        break;
-    default:
-      e.preventDefault();
+  if (match === "Space") {
+    e.preventDefault();
   }
   var match$1 = param[/* state */1][/* canvasRef */0][0];
   if (match$1 !== undefined) {
