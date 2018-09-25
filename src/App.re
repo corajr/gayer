@@ -347,47 +347,31 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
       let xToRead =
         wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
       let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+      ImageDataUtil.updateFilterValuesFromImageData(
+        slice,
+        readerType,
+        state.currentFilterValues,
+      );
+
       /* let slice = */
       /*   Ctx.getImageData(ctx, width / 2, height / 2, height / 10, 10); */
       /* Ctx.strokeRect(ctx, width / 2, height / 2, height / 10, 10); */
-      ImageDataUtil.(
-        switch (readerType) {
-        | Channel(channel) =>
-          Ctx.setFillStyle(
-            ctx,
-            switch (channel) {
-            | R => rgba(127, 0, 0, 0.5)
-            | G => rgba(0, 127, 0, 0.5)
-            | B => rgba(0, 0, 127, 0.5)
-            | A => rgba(127, 127, 127, 0.5)
-            },
-          );
-          Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      switch (readerType) {
+      | Channel(channel) =>
+        Ctx.setFillStyle(
+          ctx,
           switch (channel) {
-          | R
-          | G
-          | B =>
-            let (l, r) = imageDataToStereo(slice, channel, B);
-            state.currentFilterValues := Some(Stereo(l, r));
-          | A =>
-            state.currentFilterValues :=
-              Some(Mono(imageDataToFloatArray(slice, channel)))
-          };
-        | Saturation =>
-          Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
-          Ctx.fillRect(ctx, xToRead, 0, 1, height);
-          let saturations =
-            Array.map(
-              ({r, g, b}) => {
-                let (_, s, _) = Color.rgbToHslFloat(r, g, b);
-                s;
-              },
-              imageDataToPixels(slice),
-            );
-
-          state.currentFilterValues := Some(Mono(saturations));
-        }
-      );
+          | R => rgba(127, 0, 0, 0.5)
+          | G => rgba(0, 127, 0, 0.5)
+          | B => rgba(0, 0, 127, 0.5)
+          | A => rgba(127, 127, 127, 0.5)
+          },
+        );
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      | Saturation =>
+        Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      };
     };
 
     mark(performance, layerKey ++ "end");

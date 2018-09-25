@@ -97,18 +97,32 @@ let imageDataToHistogram =
   divideByFinal === 0.0 ? output : Array.map(x => x /. divideByFinal, output);
 };
 
-let imageDataToFilterValues =
+let updateFilterValuesFromImageData =
     (
       imageData: imageData,
-      filterValuesRef: ref(Audio.filterValues),
       readerType: readerType,
+      currentFilterValues: ref(option(Audio.filterValues)),
     )
     : unit => {
   let rawData = imageData |. dataGet;
   let n = Array.length(rawData) / 4;
   switch (readerType) {
-  | Channel(channel) => ()
-  | Saturation => ()
+  | Channel(A) =>
+    currentFilterValues := Some(Mono(imageDataToFloatArray(imageData, A)))
+  | Channel(channel) =>
+    let (l, r) = imageDataToStereo(imageData, channel, B);
+    currentFilterValues := Some(Stereo(l, r));
+  | Saturation =>
+    let saturations =
+      Array.map(
+        ({r, g, b}) => {
+          let (_, s, _) = Color.rgbToHslFloat(r, g, b);
+          s;
+        },
+        imageDataToPixels(imageData),
+      );
+
+    currentFilterValues := Some(Mono(saturations));
   };
 };
 

@@ -308,7 +308,6 @@ let displaceParams = {
 };
 
 let presetsWithoutLayerIds = [
-  /* ("Displace", displaceParams), */
   /* ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}), */
   /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
   /* ("Welcome (Audio)", welcomeAudio), */
@@ -320,7 +319,8 @@ let presetsWithoutLayerIds = [
   /* ("Slitscan", slitscanParams), */
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
   /* ("Slitscan (color histogram)", slitscanHistogramParams), */
-  /* ("Keycode", keycodeParams), */
+  ("Keycode", keycodeParams),
+  ("Displace", displaceParams),
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
@@ -333,7 +333,6 @@ let presetsWithoutLayerIds = [
   /* ("Audio file", debussy), */
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
-  /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
   /* ("Raw audio (can feedback!)", rawAudio), */
   /* ("Raw audio and spacy", rawAudioAndSpacy), */

@@ -12,7 +12,6 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
-import * as Color$Gayer from "./Color.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
@@ -424,10 +423,10 @@ function drawLayer(ctx, width, height, state, layer) {
           var readerType = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);
+          ImageDataUtil$Gayer.updateFilterValuesFromImageData(slice, readerType, state[/* currentFilterValues */17]);
           if (readerType) {
-            var channel = readerType[0];
             var tmp;
-            switch (channel) {
+            switch (readerType[0]) {
               case 0 : 
                   tmp = Canvas$Gayer.rgba(127, 0, 0, 0.5);
                   break;
@@ -444,22 +443,9 @@ function drawLayer(ctx, width, height, state, layer) {
             }
             ctx.fillStyle = tmp;
             ctx.fillRect(xToRead, 0, 1, height);
-            if (channel >= 3) {
-              state[/* currentFilterValues */17][0] = /* Mono */Block.__(0, [ImageDataUtil$Gayer.imageDataToFloatArray(slice, channel)]);
-            } else {
-              var match$5 = ImageDataUtil$Gayer.imageDataToStereo(slice, channel, /* B */2);
-              state[/* currentFilterValues */17][0] = /* Stereo */Block.__(1, [
-                  match$5[0],
-                  match$5[1]
-                ]);
-            }
           } else {
             ctx.fillStyle = Canvas$Gayer.rgba(255, 255, 255, 0.5);
             ctx.fillRect(xToRead, 0, 1, height);
-            var saturations = $$Array.map((function (param) {
-                    return Color$Gayer.rgbToHslFloat(param[/* r */0], param[/* g */1], param[/* b */2])[1];
-                  }), ImageDataUtil$Gayer.imageDataToPixels(slice));
-            state[/* currentFilterValues */17][0] = /* Mono */Block.__(0, [saturations]);
           }
           break;
       default:
