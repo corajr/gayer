@@ -12,6 +12,20 @@ import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 import * as RList$Rationale from "rationale/src/RList.js";
 
+function string_of_canvasPatternRepeat(param) {
+  switch (param) {
+    case 0 : 
+        return "repeat";
+    case 1 : 
+        return "repeat-x";
+    case 2 : 
+        return "repeat-y";
+    case 3 : 
+        return "no-repeat";
+    
+  }
+}
+
 function int_of_channel(channel) {
   return channel;
 }
@@ -40,8 +54,14 @@ function string_of_channel(param) {
 
 var tau = Math.PI * 2.0;
 
+var one_over_tau = 1.0 / tau;
+
 function degreesToRadians(degrees) {
   return degrees * (360.0 / tau);
+}
+
+function radiansToDegrees(radians) {
+  return radians * one_over_tau;
 }
 
 function string_of_compositeOperation(param) {
@@ -214,6 +234,10 @@ function setGlobalCompositeOperation(ctx, compositeOperation) {
   return /* () */0;
 }
 
+function createPattern(ctx, src, repeat) {
+  return ctx.createPattern(src, string_of_canvasPatternRepeat(repeat));
+}
+
 function setFilter(ctx, filters) {
   ctx.filter = RList$Rationale.join(" ")(List.map(string_of_filter, filters));
   return /* () */0;
@@ -254,6 +278,7 @@ function line(ctx, param, param$1) {
 
 var Ctx = /* module */[
   /* setGlobalCompositeOperation */setGlobalCompositeOperation,
+  /* createPattern */createPattern,
   /* setFilter */setFilter,
   /* transform */transform,
   /* setTransform */setTransform,
@@ -1108,12 +1133,15 @@ var defaultTransform = /* record */[
 ];
 
 export {
+  string_of_canvasPatternRepeat ,
   defaultSize ,
   int_of_channel ,
   channel_of_int ,
   string_of_channel ,
   tau ,
+  one_over_tau ,
   degreesToRadians ,
+  radiansToDegrees ,
   string_of_compositeOperation ,
   compositeOperation_of_string ,
   defaultTransform ,

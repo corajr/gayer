@@ -878,13 +878,13 @@ let make =
                 />
               </FormGroup>
               <NumericTextField
-                label=(ReasonReact.string("Rotation"))
-                value=(`Float(layer.rotation /. (tau /. 360.0)))
+                label=(ReasonReact.string("Rotation (degrees)"))
+                value=(`Float(radiansToDegrees(layer.rotation)))
                 onChange=(
                   value =>
                     changeLayer(
                       layer,
-                      Some({...layer, rotation: value *. (tau /. 360.0)}),
+                      Some({...layer, rotation: degreesToRadians(value)}),
                     )
                 )
               />

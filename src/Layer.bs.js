@@ -1210,14 +1210,14 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                     ])),
                                                             ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                                                       365180284,
-                                                                      layer[/* rotation */4] / (Canvas$Gayer.tau / 360.0)
-                                                                    ], "Rotation", (function (value) {
+                                                                      Canvas$Gayer.radiansToDegrees(layer[/* rotation */4])
+                                                                    ], "Rotation (degrees)", (function (value) {
                                                                         return Curry._2(changeLayer, layer, /* record */[
                                                                                     /* content */layer[/* content */0],
                                                                                     /* enabled */layer[/* enabled */1],
                                                                                     /* alpha */layer[/* alpha */2],
                                                                                     /* compositeOperation */layer[/* compositeOperation */3],
-                                                                                    /* rotation */value * (Canvas$Gayer.tau / 360.0),
+                                                                                    /* rotation */Canvas$Gayer.degreesToRadians(value),
                                                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                                                     /* filters */layer[/* filters */6],
                                                                                     /* id */layer[/* id */7]

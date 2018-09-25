@@ -328,7 +328,7 @@ function getReadAndWritePos(f, param) {
 function drawLayer(ctx, width, height, state, layer) {
   ctx.globalAlpha = layer[/* alpha */2];
   Canvas$Gayer.Ctx[/* setGlobalCompositeOperation */0](ctx, layer[/* compositeOperation */3]);
-  Canvas$Gayer.Ctx[/* setTransform */3](ctx, layer[/* transformMatrix */5]);
+  Canvas$Gayer.Ctx[/* setTransform */4](ctx, layer[/* transformMatrix */5]);
   ctx.rotate(layer[/* rotation */4]);
   ctx.filter = layer[/* filters */6];
   var layerKey = Layer$Gayer.getLayerKey(layer);

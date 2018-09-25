@@ -4,6 +4,21 @@ type canvasRenderingContext2D;
 type ctx = canvasRenderingContext2D;
 type canvasElement;
 
+type canvasPattern;
+
+type canvasPatternRepeat =
+  | Repeat
+  | RepeatX
+  | RepeatY
+  | NoRepeat;
+
+let string_of_canvasPatternRepeat =
+  fun
+  | Repeat => "repeat"
+  | RepeatX => "repeat-x"
+  | RepeatY => "repeat-y"
+  | NoRepeat => "no-repeat";
+
 type canvasImageSource;
 
 type image;
@@ -60,8 +75,11 @@ type dim = int;
 type rotation = float;
 
 let tau: rotation = Js.Math._PI *. 2.0;
+let one_over_tau: rotation = 1.0 /. tau;
 
 let degreesToRadians: float => rotation = degrees => degrees *. (360.0 /. tau);
+
+let radiansToDegrees: rotation => float = radians => radians *. one_over_tau;
 
 type rect = {
   x: dim,
@@ -266,6 +284,13 @@ module Ctx = {
 
   [@bs.set] external setFillStyle : (ctx, string) => unit = "fillStyle";
 
+  [@bs.set]
+  external setFillStylePattern : (ctx, canvasPattern) => unit = "fillStyle";
+
+  [@bs.set]
+  external setStrokeStylePattern : (ctx, canvasPattern) => unit =
+    "strokeStyle";
+
   [@bs.set] external setStrokeStyle : (ctx, string) => unit = "strokeStyle";
 
   [@bs.set] external setStrokeWidth : (ctx, dim) => unit = "lineWidth";
@@ -281,6 +306,13 @@ module Ctx = {
   [@bs.set] external setTextBaseline : (ctx, string) => unit = "textBaseline";
 
   [@bs.set] external _setFilter : (ctx, string) => unit = "filter";
+
+  [@bs.send]
+  external _createPattern : (ctx, canvasImageSource, string) => canvasPattern =
+    "createPattern";
+
+  let createPattern = (ctx, src, repeat) =>
+    _createPattern(ctx, src, string_of_canvasPatternRepeat(repeat));
 
   let setFilter: (ctx, list(filter)) => unit =
     (ctx, filters) =>

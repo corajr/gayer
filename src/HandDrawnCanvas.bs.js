@@ -35,7 +35,7 @@ function make(setRef, _, _$1, _$2) {
       var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
       ctx.beginPath();
       ctx.fillStyle = "white";
-      Canvas$Gayer.Ctx[/* circle */4](ctx, match$2[0], match$2[1], 15);
+      Canvas$Gayer.Ctx[/* circle */5](ctx, match$2[0], match$2[1], 15);
       ctx.fill();
       ctx.closePath();
       return /* () */0;
