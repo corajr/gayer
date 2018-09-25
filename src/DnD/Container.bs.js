@@ -26,7 +26,7 @@ var defaultState = /* record */[
 
 var component = ReasonReact.reducerComponent("Container");
 
-function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, rootWidth, rootHeight, saveTick, _) {
+function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, rootWidth, rootHeight, saveTick, savedImages, _) {
   var dragulaDecorator = function (theRef, param) {
     var state = param[/* state */1];
     state[/* dragContainerRef */1][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -124,7 +124,7 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, 
                                                 style: {
                                                   marginBottom: "16px"
                                                 }
-                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], layerKeys, layerRefs, onSetRef, saveTick, onChangeLayer, rootWidth, rootHeight, /* array */[])));
+                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], layerKeys, layerRefs, onSetRef, saveTick, onChangeLayer, savedImages, rootWidth, rootHeight, /* array */[])));
                                   }), cards)));
             }),
           /* initialState */(function () {

@@ -38,7 +38,7 @@ type state = {
   merger: ref(option(channelMerger)),
   currentFilterValues: ref(option(filterValues)),
   layerRefs: ref(Belt.Map.String.t(Dom.element)),
-  savedImages: list(string),
+  savedImages: Belt.Map.String.t(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
   drawContext: DrawCommand.drawContext,
@@ -67,7 +67,7 @@ let defaultState: state = {
   currentFilterValues: ref(None),
   compressor: ref(None),
   merger: ref(None),
-  savedImages: [],
+  savedImages: Belt.Map.String.empty,
   layerRefs: ref(Belt.Map.String.empty),
   loadedAudio: ref(Belt.Map.String.empty),
   canvasRef: ref(None),
@@ -587,10 +587,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   reducer: (action, state) =>
     switch (action) {
     | AddSavedImage(url) =>
+      let timestamp = [%bs.raw "new Date().toISOString()"];
       ReasonReact.Update({
         ...state,
-        savedImages: [url, ...state.savedImages],
-      })
+        savedImages: Belt.Map.String.set(state.savedImages, timestamp, url),
+      });
     | SaveImage =>
       ReasonReact.SideEffects(
         (
@@ -1002,9 +1003,8 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 )
                 layerRefs=self.state.layerRefs
                 onSetParams=(newParams => pushParamsState(newParams))
-                millisPerAudioTick=16
                 saveTick=(saveTick(self))
-                getAudio=(getAnalysisInput(audioCtx, self.state))
+                savedImages=self.state.savedImages
               />
             </Grid>
             <Grid item=true xs=Grid.V6>
@@ -1083,13 +1083,8 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 </div>
                 (
                   self.state.savedImages
-                  |> Array.of_list
-                  |> Array.map(url =>
-                       <img
-                         key=(Js.Int.toString(Hashtbl.hash(url)))
-                         src=url
-                       />
-                     )
+                  |> Belt.Map.String.toArray
+                  |> Array.map(((key, url)) => <img key src=url />)
                   |> ReasonReact.array
                 )
               </div>

@@ -16,6 +16,7 @@ import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
+import * as ImageSelect$Gayer from "./ImageSelect.bs.js";
 import * as LayerSelect$Gayer from "./LayerSelect.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
@@ -849,7 +850,7 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
 
 var component = ReasonReact.statelessComponent("Layer");
 
-function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, _, _$1, _$2) {
+function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, savedImages, _, _$1, _$2) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -885,6 +886,20 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, _, _
                                 match[0]
                               ], undefined, /* array */[]));
                       break;
+                  case 4 : 
+                      tmp = ReasonReact.element(undefined, undefined, ImageSelect$Gayer.make(match[0], savedImages, (function (newUrl) {
+                                  return Curry._2(changeLayer, layer, /* record */[
+                                              /* content : Image */Block.__(4, [newUrl]),
+                                              /* enabled */layer[/* enabled */1],
+                                              /* alpha */layer[/* alpha */2],
+                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                              /* rotation */layer[/* rotation */4],
+                                              /* transformMatrix */layer[/* transformMatrix */5],
+                                              /* filters */layer[/* filters */6],
+                                              /* id */layer[/* id */7]
+                                            ]);
+                                }), /* array */[]));
+                      break;
                   case 7 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
                                       return Curry._2(changeLayer, layer, /* record */[
@@ -902,7 +917,6 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, _, _
                   case 1 : 
                   case 2 : 
                   case 3 : 
-                  case 4 : 
                   case 5 : 
                   case 6 : 
                   case 8 : 

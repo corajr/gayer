@@ -102,9 +102,8 @@ let make =
       ~layerRefs,
       ~onChangeLayer,
       ~onSetParams,
-      ~getAudio,
       ~saveTick,
-      ~millisPerAudioTick,
+      ~savedImages,
       _children,
     ) => {
   ...component,
@@ -290,6 +289,7 @@ let make =
         layerRefs
         onChangeLayer
         saveTick
+        savedImages
         rootWidth=params.width
         rootHeight=params.height
       />

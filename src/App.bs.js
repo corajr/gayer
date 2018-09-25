@@ -6,7 +6,6 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Hashtbl from "bs-platform/lib/es6/hashtbl.js";
 import * as Fscreen from "fscreen";
 import * as Caml_obj from "bs-platform/lib/es6/caml_obj.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
@@ -116,7 +115,7 @@ var defaultState = /* record */[
   defaultState_016,
   defaultState_017,
   defaultState_018,
-  /* savedImages : [] */0,
+  /* savedImages */Belt_MapString.empty,
   defaultState_020,
   defaultState_021,
   defaultState_022,
@@ -776,7 +775,6 @@ function make($staropt$star, _) {
           /* render */(function (self) {
               var match = Belt_Option.isSome(self[/* state */1][/* score */7]);
               var partial_arg = self[/* state */1];
-              var partial_arg$1 = self[/* state */1];
               return React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_CssBaseline.make(/* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_AppBar.make(undefined, undefined, /* Sticky */1070408009, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_Toolbar.make(undefined, undefined, undefined, undefined, /* array */[
                                             ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                         return Curry._1(self[/* send */3], /* TogglePresetDrawer */2);
@@ -847,11 +845,9 @@ function make($staropt$star, _) {
                                                                           oldLayer,
                                                                           maybeNewLayer
                                                                         ]));
-                                                          }), pushParamsState, (function (param) {
-                                                            return getAnalysisInput(audioCtx, partial_arg, param);
-                                                          }), (function (param, param$1, param$2) {
+                                                          }), pushParamsState, (function (param, param$1, param$2) {
                                                             return saveTick(self, param, param$1, param$2);
-                                                          }), 16, /* array */[]))])),
+                                                          }), self[/* state */1][/* savedImages */19], /* array */[]))])),
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
                                                 React.createElement("div", {
                                                       id: "main-display",
@@ -868,7 +864,7 @@ function make($staropt$star, _) {
                                                                             theRef
                                                                           ]);
                                                               }), (function (param) {
-                                                                return getAnalysisInput(audioCtx, partial_arg$1, param);
+                                                                return getAnalysisInput(audioCtx, partial_arg, param);
                                                               }), self[/* state */1][/* drawContext */22], self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], self[/* state */1][/* currentFilterValues */17], (function (param, param$1, param$2) {
                                                                 return saveTick(self, param, param$1, param$2);
                                                               }), Curry._1(self[/* handle */0], getReadAndWritePos), 16, /* array */[])), React.createElement("canvas", {
@@ -890,12 +886,12 @@ function make($staropt$star, _) {
                                                                   }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                                                   ReasonReact.element(undefined, undefined, MaterialUIIcons.PhotoCamera[/* make */0](/* array */[])),
                                                                   "Snapshot"
-                                                                ]))), $$Array.map((function (url) {
+                                                                ]))), $$Array.map((function (param) {
                                                             return React.createElement("img", {
-                                                                        key: Hashtbl.hash(url).toString(),
-                                                                        src: url
+                                                                        key: param[0],
+                                                                        src: param[1]
                                                                       });
-                                                          }), $$Array.of_list(self[/* state */1][/* savedImages */19])))
+                                                          }), Belt_MapString.toArray(self[/* state */1][/* savedImages */19])))
                                               ]))
                                     ]))));
             }),
@@ -973,11 +969,9 @@ function make($staropt$star, _) {
                                     }
                                   })]);
                   case 2 : 
+                      var timestamp = (new Date().toISOString());
                       var newrecord$2 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */19] = /* :: */[
-                                    action[0],
-                                    state[/* savedImages */19]
-                                  ], newrecord$2)]);
+                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */19] = Belt_MapString.set(state[/* savedImages */19], timestamp, action[0]), newrecord$2)]);
                   case 3 : 
                       var newrecord$3 = Caml_array.caml_array_dup(state);
                       return /* UpdateWithSideEffects */Block.__(2, [

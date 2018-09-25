@@ -446,6 +446,7 @@ let make =
       ~onSetRef,
       ~saveTick,
       ~changeLayer,
+      ~savedImages,
       ~width,
       ~height,
       _children,
@@ -548,8 +549,19 @@ let make =
               | Draw(cmds) => <div />
               | DrawGlobal(cmds) => <div />
               | Slitscan(cameraOptions) => <div />
-              | Image(string)
-              | Video(string) => <div />
+              | Image(url) =>
+                <ImageSelect
+                  url
+                  savedImages
+                  onChange=(
+                    newUrl =>
+                      changeLayer(
+                        layer,
+                        Some({...layer, content: Image(newUrl)}),
+                      )
+                  )
+                />
+              | Video(url) => <div />
               | RawAudioWriter(rawAudioFormat)
               | RawAudioReader(rawAudioFormat) => <div />
               | Analysis(analysisOptions) => <div />

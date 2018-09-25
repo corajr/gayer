@@ -27,6 +27,7 @@ let make =
       ~rootWidth,
       ~rootHeight,
       ~saveTick,
+      ~savedImages,
       _children,
     ) => {
   let handleCardsChange = (state, ids) => {
@@ -135,6 +136,7 @@ let make =
                    height=rootHeight
                    onSetRef
                    saveTick
+                   savedImages
                    layerKeys
                    layerRefs
                  />
