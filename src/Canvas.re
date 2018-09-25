@@ -374,8 +374,7 @@ module Ctx = {
   external ellipse : (ctx, dim, dim, dim, dim, float, float, float) => unit =
     "";
 
-  let circle = (ctx, x, y, r) =>
-    ellipse(ctx, x, y, r, r, 0.0, 0.0, 2.0 *. [%bs.raw "Math.PI"]);
+  let circle = (ctx, x, y, r) => ellipse(ctx, x, y, r, r, 0.0, 0.0, tau);
 
   [@bs.send] external moveTo : (ctx, dim, dim) => unit = "";
 

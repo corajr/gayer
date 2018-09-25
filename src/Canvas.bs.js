@@ -230,7 +230,7 @@ function setTransform(ctx, param) {
 }
 
 function circle(ctx, x, y, r) {
-  ctx.ellipse(x, y, r, r, 0.0, 0.0, 2.0 * (Math.PI));
+  ctx.ellipse(x, y, r, r, 0.0, 0.0, tau);
   return /* () */0;
 }
 
