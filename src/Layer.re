@@ -436,7 +436,11 @@ let renderLayerPreview =
   </div>;
 };
 
-let component = ReasonReact.statelessComponent("Layer");
+type state = {expanded: bool};
+type action =
+  | ToggleExpanded;
+
+let component = ReasonReact.reducerComponent(__MODULE__);
 
 let make =
     (
@@ -452,6 +456,12 @@ let make =
       _children,
     ) => {
   ...component,
+  initialState: () => {expanded: false},
+  reducer: (action, state) =>
+    switch (action) {
+    | ToggleExpanded =>
+      ReasonReact.Update({...state, expanded: ! state.expanded})
+    },
   render: self =>
     MaterialUi.(
       <Card>
@@ -661,7 +671,7 @@ let make =
               ReactDOMRe.Style.make(
                 ~flexDirection="column",
                 ~alignItems="flex-start",
-                ~marginRight="16px",
+                ~marginRight="24px",
                 ~marginBottom="24px",
                 (),
               )
@@ -683,13 +693,6 @@ let make =
             /*     value => changeLayer(layer, {...layer, rotation: value}) */
             /*   ) */
             /* /> */
-            /* <NumericTextField */
-            /*   label=(ReasonReact.string("Rotation")) */
-            /*   value=(`Float(layer.rotation)) */
-            /*   onChange=( */
-            /*     value => changeLayer(layer, {...layer, rotation: value}) */
-            /*   ) */
-            /* /> */
             <FormGroup row=true>
               <CompositeOperationSelect
                 compositeOperation=layer.compositeOperation
@@ -702,8 +705,215 @@ let make =
                 )
               />
             </FormGroup>
+            <FormGroup row=true>
+              <div style=(ReactDOMRe.Style.make(~flexGrow="1", ())) />
+              <IconButton
+                style=(ReactDOMRe.Style.make(~marginRight="-16px", ()))
+                onClick=(
+                  self.handle((_evt, {ReasonReact.send}) =>
+                    send(ToggleExpanded)
+                  )
+                )>
+                (
+                  self.state.expanded ?
+                    <span
+                      style=(
+                        ReactDOMRe.Style.make(~transform="rotate(180deg)", ())
+                      )>
+                      <MaterialUIIcons.ExpandMore />
+                    </span> :
+                    <MaterialUIIcons.ExpandMore />
+                )
+              </IconButton>
+            </FormGroup>
           </div>
         </div>
+        <Collapse in_=self.state.expanded>
+          <CardContent
+            style=(
+              ReactDOMRe.Style.make(
+                ~display="flex",
+                ~flexDirection="row",
+                ~justifyContent="space-between",
+                (),
+              )
+            )>
+            <FormControl component=(`String("fieldset"))>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked=(`Bool(layer.enabled))
+                      onChange=(
+                        (_evt, value) =>
+                          changeLayer(
+                            layer,
+                            Some({...layer, enabled: value}),
+                          )
+                      )
+                      value="enabled"
+                    />
+                  }
+                  label=(ReasonReact.string("Active (include in render)"))
+                />
+              </FormGroup>
+              <FormGroup>
+                <FloatSlider
+                  label="x"
+                  value=layer.transformMatrix.horizontalMoving
+                  min=(-. float_of_int(width))
+                  max=(float_of_int(width))
+                  onChange=(
+                    newX =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            horizontalMoving: newX,
+                          },
+                        }),
+                      )
+                  )
+                />
+                <FloatSlider
+                  label="scaleX"
+                  value=layer.transformMatrix.horizontalScaling
+                  min=(-5.0)
+                  max=5.0
+                  onChange=(
+                    newScaleX =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            horizontalScaling: newScaleX,
+                          },
+                        }),
+                      )
+                  )
+                />
+              </FormGroup>
+              <FormGroup>
+                <FloatSlider
+                  label="y"
+                  value=layer.transformMatrix.verticalMoving
+                  min=(-. float_of_int(height))
+                  max=(float_of_int(height))
+                  onChange=(
+                    newY =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            verticalMoving: -. newY,
+                          },
+                        }),
+                      )
+                  )
+                />
+                <FloatSlider
+                  label="scaleY"
+                  value=layer.transformMatrix.verticalScaling
+                  min=(-5.0)
+                  max=5.0
+                  onChange=(
+                    newScaleY =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            verticalScaling: newScaleY,
+                          },
+                        }),
+                      )
+                  )
+                />
+              </FormGroup>
+              <FormGroup>
+                <FloatSlider
+                  label="skewX"
+                  value=layer.transformMatrix.horizontalSkewing
+                  min=(-5.0)
+                  max=5.0
+                  onChange=(
+                    newSkewX =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            horizontalSkewing: newSkewX,
+                          },
+                        }),
+                      )
+                  )
+                />
+                <FloatSlider
+                  label="skewY"
+                  value=layer.transformMatrix.verticalSkewing
+                  min=(-5.0)
+                  max=5.0
+                  onChange=(
+                    newSkewY =>
+                      changeLayer(
+                        layer,
+                        Some({
+                          ...layer,
+                          transformMatrix: {
+                            ...layer.transformMatrix,
+                            verticalSkewing: newSkewY,
+                          },
+                        }),
+                      )
+                  )
+                />
+              </FormGroup>
+              <NumericTextField
+                label=(ReasonReact.string("Rotation"))
+                value=(`Float(layer.rotation /. (tau /. 360.0)))
+                onChange=(
+                  value =>
+                    changeLayer(
+                      layer,
+                      Some({...layer, rotation: value *. (tau /. 360.0)}),
+                    )
+                )
+              />
+            </FormControl>
+            <FormControl
+              component=(`String("fieldset"))
+              style=(
+                ReactDOMRe.Style.make(
+                  ~display="flex",
+                  ~justifyContent="flex-start",
+                  (),
+                )
+              )>
+              <MaterialUi.TextField
+                label=(ReasonReact.string("filters"))
+                value=(`String(layer.filters))
+                onChange=(
+                  evt => {
+                    let value = ReactDOMRe.domElementToObj(
+                                  ReactEventRe.Form.target(evt),
+                                )##value;
+                    changeLayer(layer, Some({...layer, filters: value}));
+                  }
+                )
+                margin=`Normal
+              />
+            </FormControl>
+          </CardContent>
+        </Collapse>
       </Card>
     ),
 };

@@ -18,7 +18,9 @@ import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as ImageSelect$Gayer from "./ImageSelect.bs.js";
 import * as LayerSelect$Gayer from "./LayerSelect.bs.js";
+import * as MaterialUi_Switch from "@jsiebern/bs-material-ui/src/MaterialUi_Switch.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
+import * as MaterialUi_Collapse from "@jsiebern/bs-material-ui/src/MaterialUi_Collapse.bs.js";
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
 import * as MaterialUi_TextField from "@jsiebern/bs-material-ui/src/MaterialUi_TextField.bs.js";
@@ -27,7 +29,10 @@ import * as MaterialUi_CardHeader from "@jsiebern/bs-material-ui/src/MaterialUi_
 import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi_CardContent.bs.js";
+import * as MaterialUi_FormControl from "@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js";
+import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
+import * as MaterialUi_FormControlLabel from "@jsiebern/bs-material-ui/src/MaterialUi_FormControlLabel.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
 
 function readable_string_type_of_layerContent(param) {
@@ -848,9 +853,9 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
             }, tmp);
 }
 
-var component = ReasonReact.statelessComponent("Layer");
+var component = ReasonReact.reducerComponent("Layer-Gayer");
 
-function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, savedImages, _, _$1, _$2) {
+function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, savedImages, width, height, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -991,6 +996,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                   
                 }
               }
+              var match$1 = self[/* state */1][/* expanded */0];
               return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_CardHeader.make(Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                       return Curry._2(changeLayer, layer, undefined);
@@ -1009,7 +1015,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                             flexGrow: "1"
                                           }, /* array */[tmp])), React.createElement("div", {
                                         style: {
-                                          marginRight: "16px",
+                                          marginRight: "24px",
                                           marginBottom: "24px",
                                           alignItems: "flex-start",
                                           flexDirection: "column"
@@ -1036,12 +1042,220 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                         /* filters */layer[/* filters */6],
                                                                         /* id */layer[/* id */7]
                                                                       ]);
-                                                          }), /* array */[]))]))))
+                                                          }), /* array */[]))])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
+                                                React.createElement("div", {
+                                                      style: {
+                                                        flexGrow: "1"
+                                                      }
+                                                    }),
+                                                ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, Curry._1(self[/* handle */0], (function (_, param) {
+                                                                return Curry._1(param[/* send */3], /* ToggleExpanded */0);
+                                                              })), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
+                                                          marginRight: "-16px"
+                                                        }, /* array */[match$1 ? React.createElement("span", {
+                                                                  style: {
+                                                                    transform: "rotate(180deg)"
+                                                                  }
+                                                                }, ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))) : ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))]))
+                                              ])))),
+                              ReasonReact.element(undefined, undefined, MaterialUi_Collapse.make(undefined, undefined, undefined, self[/* state */1][/* expanded */0], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
+                                                  display: "flex",
+                                                  flexDirection: "row",
+                                                  justifyContent: "space-between"
+                                                }, /* array */[
+                                                  ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
+                                                            -976970511,
+                                                            "fieldset"
+                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
+                                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_FormControlLabel.make(undefined, undefined, Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_Switch.make(/* `Bool */[
+                                                                                            737456202,
+                                                                                            layer[/* enabled */1]
+                                                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function (_, value) {
+                                                                                              return Curry._2(changeLayer, layer, /* record */[
+                                                                                                          /* content */layer[/* content */0],
+                                                                                                          /* enabled */value,
+                                                                                                          /* alpha */layer[/* alpha */2],
+                                                                                                          /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                                          /* rotation */layer[/* rotation */4],
+                                                                                                          /* transformMatrix */layer[/* transformMatrix */5],
+                                                                                                          /* filters */layer[/* filters */6],
+                                                                                                          /* id */layer[/* id */7]
+                                                                                                        ]);
+                                                                                            }), undefined, "enabled", undefined, undefined, /* array */[]))), undefined, undefined, "Active (include in render)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, undefined, undefined, undefined, /* array */[
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-width, width, "x", layer[/* transformMatrix */5][/* horizontalMoving */4], undefined, (function (newX) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */init[/* horizontalScaling */0],
+                                                                                                /* horizontalSkewing */init[/* horizontalSkewing */1],
+                                                                                                /* verticalSkewing */init[/* verticalSkewing */2],
+                                                                                                /* verticalScaling */init[/* verticalScaling */3],
+                                                                                                /* horizontalMoving */newX,
+                                                                                                /* verticalMoving */init[/* verticalMoving */5]
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[])),
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-5.0, 5.0, "scaleX", layer[/* transformMatrix */5][/* horizontalScaling */0], undefined, (function (newScaleX) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */newScaleX,
+                                                                                                /* horizontalSkewing */init[/* horizontalSkewing */1],
+                                                                                                /* verticalSkewing */init[/* verticalSkewing */2],
+                                                                                                /* verticalScaling */init[/* verticalScaling */3],
+                                                                                                /* horizontalMoving */init[/* horizontalMoving */4],
+                                                                                                /* verticalMoving */init[/* verticalMoving */5]
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[]))
+                                                                    ])),
+                                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, undefined, undefined, undefined, /* array */[
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-height, height, "y", layer[/* transformMatrix */5][/* verticalMoving */5], undefined, (function (newY) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */init[/* horizontalScaling */0],
+                                                                                                /* horizontalSkewing */init[/* horizontalSkewing */1],
+                                                                                                /* verticalSkewing */init[/* verticalSkewing */2],
+                                                                                                /* verticalScaling */init[/* verticalScaling */3],
+                                                                                                /* horizontalMoving */init[/* horizontalMoving */4],
+                                                                                                /* verticalMoving */-newY
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[])),
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-5.0, 5.0, "scaleY", layer[/* transformMatrix */5][/* verticalScaling */3], undefined, (function (newScaleY) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */init[/* horizontalScaling */0],
+                                                                                                /* horizontalSkewing */init[/* horizontalSkewing */1],
+                                                                                                /* verticalSkewing */init[/* verticalSkewing */2],
+                                                                                                /* verticalScaling */newScaleY,
+                                                                                                /* horizontalMoving */init[/* horizontalMoving */4],
+                                                                                                /* verticalMoving */init[/* verticalMoving */5]
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[]))
+                                                                    ])),
+                                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, undefined, undefined, undefined, /* array */[
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-5.0, 5.0, "skewX", layer[/* transformMatrix */5][/* horizontalSkewing */1], undefined, (function (newSkewX) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */init[/* horizontalScaling */0],
+                                                                                                /* horizontalSkewing */newSkewX,
+                                                                                                /* verticalSkewing */init[/* verticalSkewing */2],
+                                                                                                /* verticalScaling */init[/* verticalScaling */3],
+                                                                                                /* horizontalMoving */init[/* horizontalMoving */4],
+                                                                                                /* verticalMoving */init[/* verticalMoving */5]
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[])),
+                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-5.0, 5.0, "skewY", layer[/* transformMatrix */5][/* verticalSkewing */2], undefined, (function (newSkewY) {
+                                                                                  var init = layer[/* transformMatrix */5];
+                                                                                  return Curry._2(changeLayer, layer, /* record */[
+                                                                                              /* content */layer[/* content */0],
+                                                                                              /* enabled */layer[/* enabled */1],
+                                                                                              /* alpha */layer[/* alpha */2],
+                                                                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                              /* rotation */layer[/* rotation */4],
+                                                                                              /* transformMatrix : record */[
+                                                                                                /* horizontalScaling */init[/* horizontalScaling */0],
+                                                                                                /* horizontalSkewing */init[/* horizontalSkewing */1],
+                                                                                                /* verticalSkewing */newSkewY,
+                                                                                                /* verticalScaling */init[/* verticalScaling */3],
+                                                                                                /* horizontalMoving */init[/* horizontalMoving */4],
+                                                                                                /* verticalMoving */init[/* verticalMoving */5]
+                                                                                              ],
+                                                                                              /* filters */layer[/* filters */6],
+                                                                                              /* id */layer[/* id */7]
+                                                                                            ]);
+                                                                                }), /* array */[]))
+                                                                    ])),
+                                                            ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
+                                                                      365180284,
+                                                                      layer[/* rotation */4] / (Canvas$Gayer.tau / 360.0)
+                                                                    ], "Rotation", (function (value) {
+                                                                        return Curry._2(changeLayer, layer, /* record */[
+                                                                                    /* content */layer[/* content */0],
+                                                                                    /* enabled */layer[/* enabled */1],
+                                                                                    /* alpha */layer[/* alpha */2],
+                                                                                    /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                    /* rotation */value * (Canvas$Gayer.tau / 360.0),
+                                                                                    /* transformMatrix */layer[/* transformMatrix */5],
+                                                                                    /* filters */layer[/* filters */6],
+                                                                                    /* id */layer[/* id */7]
+                                                                                  ]);
+                                                                      }), /* array */[]))
+                                                          ])),
+                                                  ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
+                                                            -976970511,
+                                                            "fieldset"
+                                                          ], undefined, undefined, undefined, undefined, undefined, undefined, {
+                                                            display: "flex",
+                                                            justifyContent: "flex-start"
+                                                          }, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_TextField.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "filters", /* Normal */-453122489, undefined, undefined, undefined, (function (evt) {
+                                                                        var value = evt.target.value;
+                                                                        return Curry._2(changeLayer, layer, /* record */[
+                                                                                    /* content */layer[/* content */0],
+                                                                                    /* enabled */layer[/* enabled */1],
+                                                                                    /* alpha */layer[/* alpha */2],
+                                                                                    /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                    /* rotation */layer[/* rotation */4],
+                                                                                    /* transformMatrix */layer[/* transformMatrix */5],
+                                                                                    /* filters */value,
+                                                                                    /* id */layer[/* id */7]
+                                                                                  ]);
+                                                                      }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                                                      -976970511,
+                                                                      layer[/* filters */6]
+                                                                    ], undefined, /* array */[]))]))
+                                                ]))]))
                             ]));
             }),
-          /* initialState */component[/* initialState */10],
+          /* initialState */(function () {
+              return /* record */[/* expanded */false];
+            }),
           /* retainedProps */component[/* retainedProps */11],
-          /* reducer */component[/* reducer */12],
+          /* reducer */(function (_, state) {
+              return /* Update */Block.__(0, [/* record */[/* expanded */!state[/* expanded */0]]]);
+            }),
           /* subscriptions */component[/* subscriptions */13],
           /* jsElementWrapped */component[/* jsElementWrapped */14]
         ];

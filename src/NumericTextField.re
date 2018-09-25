@@ -9,15 +9,14 @@ let make = (~value, ~label, ~onChange, _children) => {
       onChange=(
         evt => {
           let v = ReactDOMRe.domElementToObj(ReactEventRe.Form.target(evt))##value;
-          Js.log(v);
-          /* onChange(float_of_string(v)); */
+          onChange(float_of_string(v));
           /* switch (value) { */
           /* | `Int(_) => onChange(`Int(int_of_string(v))) */
           /* | `Float(_) => onChange(`Float(float_of_string(v))) */
           /* }; */
         }
       )
-      /* type_="number" */
+      type_="number"
       margin=`None
     />,
 };
