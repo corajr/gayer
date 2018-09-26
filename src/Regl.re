@@ -10,6 +10,8 @@ type clearParams = {
 
 [@bs.send] external clear : (regl, clearParams) => unit = "";
 
+[@bs.send] external destroy : regl => unit = "";
+
 type texture;
 
 [@bs.send]
@@ -17,6 +19,10 @@ external texture :
   (regl, [@bs.unwrap] [ | `Canvas(Dom.element) | `Js(Js.t({..}))]) =>
   texture =
   "";
+
+let reinit: (texture, [@bs.unwrap] [ | `Canvas(Dom.element)]) => texture = [%bs.raw
+  (texture, src) => "return texture(src);"
+];
 
 type prop;
 

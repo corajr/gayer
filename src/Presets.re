@@ -180,6 +180,10 @@ let debussyFile = analyzer(AudioFile("media/la_cathedrale_engloutie.m4a"));
 
 let debussy = {...history, layers: [debussyFile, historyLayer, reader]};
 
+let equationFile = analyzer(AudioFile("media/equation.ogg"));
+
+let equation = {...history, layers: [equationFile, reader]};
+
 let droste = {
   ...defaultParams,
   readPosDelta: 0,
@@ -330,7 +334,7 @@ let presetsWithoutLayerIds = [
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),
   ("MIDI (requires MIDI keyboard)", midi),
-  /* ("Audio file", debussy), */
+  ("Audio file", equation),
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Mic feedback (may be loud!)", feedback), */

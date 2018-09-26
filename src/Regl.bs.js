@@ -4,6 +4,8 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 
+var reinit = function (texture,src){return texture(src);};
+
 var triangleSpec = {
   frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = color;\n     }\n  ",
   vert: "\n     precision mediump float;\n     attribute vec2 position;\n     void main () {\n       gl_Position = vec4(position, 0, 1);\n     }\n  ",
@@ -207,6 +209,7 @@ var DecodeReglOptions = /* module */[
 ];
 
 export {
+  reinit ,
   triangleSpec ,
   sobelSpec ,
   displaceSpec ,

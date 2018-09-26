@@ -101,7 +101,11 @@ let make =
           ),
         );
       onDrop(drake, makeDropFn(state));
-      onUnmount(() => destroy(drake));
+      onUnmount(() =>
+        try (destroy(drake)) {
+        | e => ()
+        }
+      );
       state.dragulaRef := Some(drake);
       ();
     | _ => ()

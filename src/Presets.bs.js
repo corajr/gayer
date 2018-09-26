@@ -969,6 +969,56 @@ var debussy = /* record */[
   debussy_014
 ];
 
+var equationFile = LayerGenerator$Gayer.analyzer(undefined, /* AudioFile */Block.__(0, ["media/equation.ogg"]));
+
+var equation_000 = history_000;
+
+var equation_001 = history_001;
+
+var equation_004 = history_004;
+
+var equation_005 = history_005;
+
+var equation_006 = history_006;
+
+var equation_007 = history_007;
+
+var equation_008 = history_008;
+
+var equation_009 = history_009;
+
+var equation_010 = history_010;
+
+var equation_011 = history_011;
+
+var equation_012 = history_012;
+
+var equation_014 = /* layers : :: */[
+  equationFile,
+  /* :: */[
+    LayerGenerator$Gayer.reader,
+    /* [] */0
+  ]
+];
+
+var equation = /* record */[
+  equation_000,
+  equation_001,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
+  equation_004,
+  equation_005,
+  equation_006,
+  equation_007,
+  equation_008,
+  equation_009,
+  equation_010,
+  equation_011,
+  equation_012,
+  /* shouldClear */false,
+  equation_014
+];
+
 var init$2 = LayerGenerator$Gayer.analyzer(undefined, /* Mic */2);
 
 var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
@@ -1968,26 +2018,32 @@ var presetsWithoutLayerIds_001 = /* :: */[
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Empty",
-                        /* record */[
-                          /* width */Params$Gayer.defaultParams[/* width */0],
-                          /* height */Params$Gayer.defaultParams[/* height */1],
-                          /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                          /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                          /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                          /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                          /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                          /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                          /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                          /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                          /* q */Params$Gayer.defaultParams[/* q */10],
-                          /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                          /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                          /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                          /* layers : [] */0
-                        ]
+                        "Audio file",
+                        equation
                       ],
-                      /* [] */0
+                      /* :: */[
+                        /* tuple */[
+                          "Empty",
+                          /* record */[
+                            /* width */Params$Gayer.defaultParams[/* width */0],
+                            /* height */Params$Gayer.defaultParams[/* height */1],
+                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                            /* q */Params$Gayer.defaultParams[/* q */10],
+                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                            /* layers : [] */0
+                          ]
+                        ],
+                        /* [] */0
+                      ]
                     ]
                   ]
                 ]
@@ -2072,6 +2128,8 @@ export {
   historyHalving ,
   debussyFile ,
   debussy ,
+  equationFile ,
+  equation ,
   droste ,
   fourSeasons ,
   handDrawnParams ,

@@ -4,7 +4,7 @@ let allImages = [|
   "media/hilbert_curve.png",
   "media/hubble_ultra_deep_field.jpg",
   "media/is_it_a_crime_large.png",
-  "media/king_wen.png",
+  "media/cyber_winnie.png",
   "media/les_tres_riches_heures.jpg",
   "media/suleiman.jpg",
 |];

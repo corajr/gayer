@@ -18,14 +18,27 @@ let copyLayerToTexture =
     ) =>
   switch (maybeRegl^, Belt.Map.String.get(layerRefs^, layerKey)) {
   | (Some(regl), Some(canvas)) =>
-    try (
-      {
-        let aTexture = texture(regl, `Canvas(canvas));
-        textureRefs := Belt.Map.String.set(textureRefs^, textureKey, aTexture);
-      }
-    ) {
-    | _ => ()
+    switch (texture(regl, `Canvas(canvas))) {
+    | tex => textureRefs := Belt.Map.String.set(textureRefs^, textureKey, tex)
+    | exception (Js.Exn.Error(_)) => ()
     }
+  /* textureRefs := */
+  /*   Belt.Map.String.update( */
+  /*     textureRefs^, */
+  /*     textureKey, */
+  /*     fun */
+  /*     | Some(t) => */
+  /*       switch (reinit(t, `Canvas(canvas))) { */
+  /*       | tex => Some(tex) */
+  /*       | exception (Js.Exn.Error(_)) => */
+  /*         Some(texture(regl, `Canvas(canvas))) */
+  /*       } */
+  /*     | None => */
+  /*       switch (texture(regl, `Canvas(canvas))) { */
+  /*       | tex => Some(tex) */
+  /*       | exception (Js.Exn.Error(_)) => None */
+  /*       }, */
+  /*   ) */
   | _ => ()
   };
 
@@ -159,6 +172,11 @@ let make =
         layerKey,
         makeTick(newSelf, layerRefs, opts, width, height),
       ),
+    willUnmount: self =>
+      switch (self.state.reglRef^) {
+      | Some(regl) => destroy(regl)
+      | None => ()
+      },
     render: self =>
       <canvas
         ref=(self.handle(handleSetRef))

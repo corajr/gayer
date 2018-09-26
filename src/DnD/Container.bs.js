@@ -94,8 +94,13 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, 
               }
             }));
       Curry._1(onUnmount, (function () {
-              destroy(drake);
-              return /* () */0;
+              try {
+                destroy(drake);
+                return /* () */0;
+              }
+              catch (e){
+                return /* () */0;
+              }
             }));
       state$1[/* dragulaRef */2][0] = Js_primitive.some(drake);
       return /* () */0;
