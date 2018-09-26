@@ -51,7 +51,7 @@ let rgbToHslFloat: (float, float, float) => hslFloat = [%bs.raw
 |}
 ];
 
-let hslToRgb = (h: float, s: float, l: float) : (int, int, int) => [%bs.raw
+let hslToRgb: (float, float, float) => (int, int, int) = [%bs.raw
   (h, s, l) => {|
      var r, g, b;
 

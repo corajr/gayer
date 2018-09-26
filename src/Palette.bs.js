@@ -2,6 +2,7 @@
 
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Color$Gayer from "./Color.bs.js";
+import * as HsluvJs from "hsluv/hsluv.js";
 
 var grayscale = $$Array.init(256, (function (i) {
         return /* tuple */[
@@ -17,7 +18,7 @@ var alpha = $$Array.init(256, (function (i) {
                 255,
                 255,
                 255,
-                i
+                255 - i | 0
               ];
       }));
 
@@ -48,6 +49,21 @@ var blue = $$Array.init(256, (function (i) {
               ];
       }));
 
+var rainbow = $$Array.init(256, (function (i) {
+        var h = i / 255.0 * 360.0;
+        var match = HsluvJs.hsluvToRgb(/* tuple */[
+              h,
+              100.0,
+              50.0
+            ]);
+        return /* tuple */[
+                match[0] * 255.0 | 0,
+                match[1] * 255.0 | 0,
+                match[2] * 255.0 | 0,
+                255
+              ];
+      }));
+
 var lightnessRainbow = $$Array.init(256, (function (i) {
         var h = i % 16 / 16.0;
         var l = i / 255.0;
@@ -60,7 +76,7 @@ var lightnessRainbow = $$Array.init(256, (function (i) {
               ];
       }));
 
-var saturationRainbow = $$Array.init(256, (function (i) {
+var saturationRainbowOld = $$Array.init(256, (function (i) {
         var h = i % 16 / 16.0;
         var s = i / 255.0;
         var match = Color$Gayer.hslToRgb(h, s, 0.5);
@@ -72,13 +88,31 @@ var saturationRainbow = $$Array.init(256, (function (i) {
               ];
       }));
 
+var saturationRainbow = $$Array.init(256, (function (i) {
+        var h = i % 16 / 16.0 * 360.0;
+        var s = i / 2.5;
+        var match = HsluvJs.hsluvToRgb(/* tuple */[
+              h,
+              s,
+              50.0
+            ]);
+        return /* tuple */[
+                match[0] * 255.0 | 0,
+                match[1] * 255.0 | 0,
+                match[2] * 255.0 | 0,
+                255
+              ];
+      }));
+
 export {
   grayscale ,
   alpha ,
   red ,
   green ,
   blue ,
+  rainbow ,
   lightnessRainbow ,
+  saturationRainbowOld ,
   saturationRainbow ,
   
 }

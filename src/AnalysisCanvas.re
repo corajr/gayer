@@ -135,6 +135,21 @@ let make =
       );
       self.onUnmount(() => maybeClearTimer(self.state.timerId));
     },
+    willUpdate: ({oldSelf, newSelf}) => {
+      maybeClearTimer(oldSelf.state.timerId);
+      setTimer(
+        newSelf.state.timerId,
+        () =>
+          switch (newSelf.state.canvasRef^) {
+          | Some(canvas) =>
+            let canvasElement = getFromReact(canvas);
+            let ctx = getContext(canvasElement);
+            drawCQTBar(ctx, newSelf.state, options, width, height);
+          | None => ()
+          },
+        millisPerTick,
+      );
+    },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>
       <canvas

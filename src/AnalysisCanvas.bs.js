@@ -86,7 +86,19 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
-          /* willUpdate */component[/* willUpdate */7],
+          /* willUpdate */(function (param) {
+              var newSelf = param[/* newSelf */1];
+              Timing$Gayer.maybeClearTimer(param[/* oldSelf */0][/* state */1][/* timerId */6]);
+              return Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */6], (function () {
+                            var match = newSelf[/* state */1][/* canvasRef */5][0];
+                            if (match !== undefined) {
+                              var ctx = Js_primitive.valFromOption(match).getContext("2d");
+                              return drawCQTBar(ctx, newSelf[/* state */1], options, width, height);
+                            } else {
+                              return /* () */0;
+                            }
+                          }), millisPerTick);
+            }),
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("canvas", {

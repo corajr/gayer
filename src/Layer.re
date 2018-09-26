@@ -593,7 +593,26 @@ let make =
               | Video(url) => <div />
               | RawAudioWriter(rawAudioFormat)
               | RawAudioReader(rawAudioFormat) => <div />
-              | Analysis(analysisOptions) => <div />
+              | Analysis(analysisOptions) =>
+                <div
+                  /* <ReaderType */
+                  /*   readerType=analysisOptions.readerType */
+                  /*   onChangeSetting=( */
+                  /*     newReaderType => */
+                  /*       changeLayer( */
+                  /*         layer, */
+                  /*         Some({ */
+                  /*           ...layer, */
+                  /*           content: */
+                  /*             Analysis({ */
+                  /*               ...analysisOptions, */
+                  /*               readerType: newReaderType, */
+                  /*             }), */
+                  /*         }), */
+                  /*       ) */
+                  /*   ) */
+                  /* /> */
+                />
               | Regl(reglOptions) =>
                 <div>
                   (

@@ -45,8 +45,7 @@ var rgbToHslFloat = function (r,g,b){
      return [h, s, l];
 };
 
-function hslToRgb(_, _$1, _$2) {
-  return function (h,s,l){
+var hslToRgb = function (h,s,l){
      var r, g, b;
 
      function hue2rgb(p, q, t) {
@@ -71,7 +70,6 @@ function hslToRgb(_, _$1, _$2) {
 
      return [r * 255, g * 255, b * 255];
 };
-}
 
 function hsl($staropt$star, h, s, l) {
   var a = $staropt$star !== undefined ? $staropt$star : 1.0;
