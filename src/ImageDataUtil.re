@@ -148,6 +148,27 @@ let makeImageData = (~cqtLine: array(int)) => {
   createImageData(output, 1, n);
 };
 
+let makeImageDataWithPalette =
+    (~palette: Palette.t=Palette.grayscale, ~cqtLine: array(int)) => {
+  let len = Array.length(cqtLine);
+  let n = len / 4;
+  let output = makeUint8ClampedArray(len);
+
+  for (i in 0 to n - 1) {
+    let offset = i * 4;
+    let cqtOffset = (n - i - 1) * 4;
+    let v = cqtLine[cqtOffset];
+    let (r, g, b, a) = palette[v];
+
+    output[offset] = r;
+    output[offset + 1] = g;
+    output[offset + 2] = b;
+    output[offset + 3] = a;
+  };
+
+  createImageData(output, 1, n);
+};
+
 let makeImageDataFromFloats: (array(float), int, int) => imageData =
   (input, w, h) => {
     let n = Array.length(input);

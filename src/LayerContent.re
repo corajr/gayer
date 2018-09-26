@@ -69,11 +69,13 @@ let make =
             saveRef=setRef
           />;
         | MIDIKeyboard => <MIDICanvas setRef height />
-        | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
-        | KeycodeReader =>
+        | KeycodeWriter(format) =>
+          <KeycodeCanvas layerKey layerRefs format setRef />
+        | KeycodeReader(format) =>
           <KeycodeReaderCanvas
             layerKey
             layerRefs
+            format
             setRef
             saveTick
             currentFilterValues

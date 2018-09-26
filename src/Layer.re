@@ -2,6 +2,7 @@ open AnalysisOptions;
 open Audio.AudioInput;
 open CameraOptions;
 open Canvas;
+open KeycodeUtil;
 open MIDICanvas;
 open Music;
 open RawAudio;
@@ -20,8 +21,8 @@ type layerContent =
   | Analysis(analysisOptions)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
-  | KeycodeReader
-  | KeycodeWriter
+  | KeycodeReader(keycodeFormat)
+  | KeycodeWriter(keycodeFormat)
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
   | Histogram
@@ -41,8 +42,8 @@ let readable_string_type_of_layerContent =
   | Analysis(_) => "Analyzer"
   | PitchClasses(_) => "Pitch classes"
   | MIDIKeyboard => "MIDI Input"
-  | KeycodeReader => "ASCII Reader"
-  | KeycodeWriter => "ASCII Writer"
+  | KeycodeReader(_) => "Key Reader"
+  | KeycodeWriter(_) => "Key Writer"
   | RawAudioWriter(_) => "Raw Audio Writer"
   | RawAudioReader(_) => "Raw Audio Reader"
   | Histogram => "Histogram"
@@ -62,8 +63,8 @@ let string_type_of_layerContent =
   | Analysis(_) => "analyzer"
   | PitchClasses(_) => "pitch-classes"
   | MIDIKeyboard => "midi-keyboard"
-  | KeycodeReader => "keycode-reader"
-  | KeycodeWriter => "keycode-writer"
+  | KeycodeReader(_) => "keycode-reader"
+  | KeycodeWriter(_) => "keycode-writer"
   | RawAudioWriter(_) => "raw-audio-writer"
   | RawAudioReader(_) => "raw-audio-reader"
   | Histogram => "histogram"
@@ -84,8 +85,8 @@ let icon_of_layerContent =
     | Analysis(_) => <Mic />
     | PitchClasses(_) => <Tonality />
     | MIDIKeyboard => <MusicNote />
-    | KeycodeReader => <Textsms />
-    | KeycodeWriter => <Keyboard />
+    | KeycodeReader(_) => <Textsms />
+    | KeycodeWriter(_) => <Keyboard />
     | RawAudioWriter(_) => <Voicemail />
     | RawAudioReader(_) => <Voicemail />
     | Histogram => <ShowChart />
@@ -164,10 +165,20 @@ module DecodeLayer = {
     Json.Decode.(
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
-      | "keycode-writer" => KeycodeWriter
-      | "keycode-reader" => KeycodeReader
       | "hand-drawn" => HandDrawn
       | "webcam" => Webcam
+      | "keycode-writer" =>
+        json
+        |> map(
+             o => KeycodeWriter(o),
+             field("fmt", DecodeKeycodeFormat.keycodeFormat),
+           )
+      | "keycode-reader" =>
+        json
+        |> map(
+             o => KeycodeReader(o),
+             field("fmt", DecodeKeycodeFormat.keycodeFormat),
+           )
       | "regl" =>
         json
         |> map(
@@ -335,8 +346,16 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
-      | KeycodeWriter => object_([("type", string("keycode-writer"))])
-      | KeycodeReader => object_([("type", string("keycode-reader"))])
+      | KeycodeWriter(fmt) =>
+        object_([
+          ("type", string("keycode-writer")),
+          ("fmt", EncodeKeycodeFormat.keycodeFormat(fmt)),
+        ])
+      | KeycodeReader(fmt) =>
+        object_([
+          ("type", string("keycode-reader")),
+          ("fmt", EncodeKeycodeFormat.keycodeFormat(fmt)),
+        ])
       | Histogram => object_([("type", string("histogram"))])
       | Regl(opts) =>
         object_([
@@ -419,8 +438,8 @@ let renderLayerPreview =
       | Video(_)
       | Analysis(_)
       | MIDIKeyboard
-      | KeycodeReader
-      | KeycodeWriter
+      | KeycodeReader(_)
+      | KeycodeWriter(_)
       | RawAudioWriter(_)
       | RawAudioReader(_)
       | Histogram
@@ -643,11 +662,49 @@ let make =
                     }
                   )
                 </div>
+              | KeycodeReader(fmt) =>
+                <div>
+                  <Typography color=`TextSecondary>
+                    (
+                      ReasonReact.string(
+                        "If keys are stuck, press SPACE to clear.",
+                      )
+                    )
+                  </Typography>
+                  <KeycodeFormatSelect
+                    currentSetting=fmt
+                    onChange=(
+                      newFmt =>
+                        changeLayer(
+                          layer,
+                          Some({...layer, content: KeycodeReader(newFmt)}),
+                        )
+                    )
+                  />
+                </div>
+              | KeycodeWriter(fmt) =>
+                <div>
+                  <Typography color=`TextSecondary>
+                    (
+                      ReasonReact.string(
+                        "If keys are stuck, press SPACE to clear.",
+                      )
+                    )
+                  </Typography>
+                  <KeycodeFormatSelect
+                    currentSetting=fmt
+                    onChange=(
+                      newFmt =>
+                        changeLayer(
+                          layer,
+                          Some({...layer, content: KeycodeWriter(newFmt)}),
+                        )
+                    )
+                  />
+                </div>
               | HandDrawn
               | Webcam
               | MIDIKeyboard
-              | KeycodeReader
-              | KeycodeWriter
               | Histogram =>
                 <MaterialUi.Typography color=`TextSecondary>
                   (ReasonReact.string("[no options]"))
@@ -811,7 +868,7 @@ let make =
                           ...layer,
                           transformMatrix: {
                             ...layer.transformMatrix,
-                            verticalMoving: -. newY,
+                            verticalMoving: newY,
                           },
                         }),
                       )

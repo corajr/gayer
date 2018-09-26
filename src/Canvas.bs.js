@@ -57,11 +57,11 @@ var tau = Math.PI * 2.0;
 var one_over_tau = 1.0 / tau;
 
 function degreesToRadians(degrees) {
-  return degrees * (360.0 / tau);
+  return degrees * (tau / 360.0);
 }
 
 function radiansToDegrees(radians) {
-  return radians * one_over_tau;
+  return radians * (360.0 * one_over_tau);
 }
 
 function string_of_compositeOperation(param) {

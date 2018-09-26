@@ -14,6 +14,8 @@ type clearParams = {
 
 type texture;
 
+[@bs.send] external destroyTexture : texture => unit = "destroy";
+
 [@bs.send]
 external texture :
   (regl, [@bs.unwrap] [ | `Canvas(Dom.element) | `Js(Js.t({..}))]) =>
@@ -109,16 +111,18 @@ let displaceSpec = regl => {
      uniform float time;
      uniform vec2 resolution;
      varying vec2 uv;
+     const float TAU = 6.28318530718;
 
      void main () {
 	   float x = 1.0 / resolution.x;
 	   float y = 1.0 / resolution.y;
-     float time_e      = time * 0.001;
-     vec2 uv_t         = vec2(uv.s + time_e, uv.t + time_e);
+     float time_e      = time * 0.1;
+     float x_t = 0.0;
+     float y_t = 0.0;
+     vec2 uv_t         = vec2(uv.s + x_t, uv.t + y_t);
      vec4 displace     = texture2D(displace_map, uv_t);
-     float displace_k  = displace.g * maximum;
-     vec2 uv_displaced = vec2(uv.x + (displace_k * x),
-       uv.y + (displace_k * y));
+     vec2 uv_displaced = vec2(uv.x + (displace.r * maximum * x),
+       uv.y + (displace.b * maximum * y));
 
      gl_FragColor = texture2D(texture, uv_displaced);
      }

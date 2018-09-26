@@ -28,7 +28,10 @@ let drawCQTBar = (ctx, state, options, width, height) => {
   | Channel(_) =>
     let outputImageData = makeImageData(~cqtLine);
     Ctx.putImageData(ctx, outputImageData, width - 1, 0);
-  | Saturation => ()
+  | Saturation =>
+    let outputImageData =
+      makeImageDataWithPalette(~cqtLine, ~palette=Palette.saturationRainbow);
+    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
   };
 };
 

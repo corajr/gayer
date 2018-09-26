@@ -157,7 +157,7 @@ var harmonyIntensified = /* record */[
   harmonyIntensified_014
 ];
 
-var init = LayerGenerator$Gayer.analyzer(undefined, /* Mic */2);
+var init = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
 
 var feedback_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -226,7 +226,7 @@ var feedback = /* record */[
   feedback_014
 ];
 
-var init$1 = LayerGenerator$Gayer.analyzer(undefined, /* Mic */2);
+var init$1 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
 
 var webcamParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -385,7 +385,7 @@ var slitscanParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 var slitscanParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var slitscanParams_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
   /* :: */[
     /* record */[
       /* content */LayerGenerator$Gayer.webcam[/* content */0],
@@ -453,7 +453,7 @@ var slitscanEdgeDetectParams_012 = /* stereo */Params$Gayer.defaultParams[/* ste
 var slitscanEdgeDetectParams_014 = /* layers : :: */[
   LayerGenerator$Gayer.slitscan,
   /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
     /* :: */[
       LayerGenerator$Gayer.historyLayer,
       /* :: */[
@@ -637,7 +637,7 @@ var isItACrime_014 = /* layers : :: */[
   LayerGenerator$Gayer.img("media/is_it_a_crime_large.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(11, [/* Channel */[/* A */3]]),
+      /* content : Reader */Block.__(13, [/* Channel */[/* A */3]]),
       /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
       /* alpha */LayerGenerator$Gayer.reader[/* alpha */2],
       /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
@@ -802,7 +802,7 @@ var history_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 var history_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var history_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
   /* :: */[
     /* record */[
       /* content */LayerGenerator$Gayer.reader[/* content */0],
@@ -859,7 +859,7 @@ var historyHalving_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 var historyHalving_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var historyHalving_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
   /* :: */[
     LayerGenerator$Gayer.squareColumnLayer,
     /* :: */[
@@ -916,7 +916,7 @@ var historyHalving = /* record */[
   historyHalving_014
 ];
 
-var debussyFile = LayerGenerator$Gayer.analyzer(undefined, /* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"]));
+var debussyFile = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"]));
 
 var debussy_000 = history_000;
 
@@ -969,7 +969,7 @@ var debussy = /* record */[
   debussy_014
 ];
 
-var equationFile = LayerGenerator$Gayer.analyzer(undefined, /* AudioFile */Block.__(0, ["media/equation.ogg"]));
+var equationFile = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFile */Block.__(0, ["media/equation.ogg"]));
 
 var equation_000 = history_000;
 
@@ -1019,7 +1019,7 @@ var equation = /* record */[
   equation_014
 ];
 
-var init$2 = LayerGenerator$Gayer.analyzer(undefined, /* Mic */2);
+var init$2 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
 
 var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1378,7 +1378,7 @@ var historyBackAndForth_011 = readFromCenterLine_011;
 var historyBackAndForth_012 = readFromCenterLine_012;
 
 var historyBackAndForth_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
   /* :: */[
     LayerGenerator$Gayer.historyBackAndForthLayer,
     /* :: */[
@@ -1429,9 +1429,9 @@ var vinyl_011 = readFromCenterLine_011;
 var vinyl_012 = readFromCenterLine_012;
 
 var vinyl_014 = /* layers : :: */[
-  LayerGenerator$Gayer.rotateLayer,
+  LayerGenerator$Gayer.rotateLayer(LayerGenerator$Gayer.degreesToRadians(1.0)),
   /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, /* Mic */2),
+    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
     /* :: */[
       LayerGenerator$Gayer.reader,
       /* [] */0
@@ -1490,7 +1490,7 @@ var video_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13]
 var video_014 = /* layers : :: */[
   LayerGenerator$Gayer.video(videoURL),
   /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, /* AudioFromVideo */Block.__(1, [videoURL])),
+    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFromVideo */Block.__(1, [videoURL])),
     /* :: */[
       LayerGenerator$Gayer.reader,
       /* [] */0
@@ -1865,62 +1865,56 @@ var welcomeAudio = /* record */[
   welcomeAudio_014
 ];
 
-var init$3 = LayerGenerator$Gayer.analyzer(true, /* Mic */2);
+var init$3 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
 
-var displaceParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+var displaceParams_000 = history_000;
 
-var displaceParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+var displaceParams_001 = history_001;
 
-var displaceParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+var displaceParams_004 = history_004;
 
-var displaceParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+var displaceParams_005 = history_005;
 
-var displaceParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+var displaceParams_006 = history_006;
 
-var displaceParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+var displaceParams_007 = history_007;
 
-var displaceParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+var displaceParams_008 = history_008;
 
-var displaceParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+var displaceParams_009 = history_009;
 
-var displaceParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+var displaceParams_010 = history_010;
 
-var displaceParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+var displaceParams_011 = history_011;
 
-var displaceParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
-
-var displaceParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
-
-var displaceParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
-
-var displaceParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+var displaceParams_012 = history_012;
 
 var displaceParams_014 = /* layers : :: */[
   /* record */[
-    /* content */LayerGenerator$Gayer.webcam[/* content */0],
-    /* enabled */LayerGenerator$Gayer.webcam[/* enabled */1],
-    /* alpha */0.0,
-    /* compositeOperation */LayerGenerator$Gayer.webcam[/* compositeOperation */3],
-    /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
-    /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
-    /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
-    /* id */"webcam"
+    /* content */init$3[/* content */0],
+    /* enabled */init$3[/* enabled */1],
+    /* alpha */init$3[/* alpha */2],
+    /* compositeOperation */init$3[/* compositeOperation */3],
+    /* rotation */init$3[/* rotation */4],
+    /* transformMatrix */init$3[/* transformMatrix */5],
+    /* filters */init$3[/* filters */6],
+    /* id */"analyzer"
   ],
   /* :: */[
-    LayerGenerator$Gayer.displace("webcam", "analyzer"),
+    LayerGenerator$Gayer.reader,
     /* :: */[
       /* record */[
-        /* content */init$3[/* content */0],
-        /* enabled */init$3[/* enabled */1],
-        /* alpha */0.1,
-        /* compositeOperation */init$3[/* compositeOperation */3],
-        /* rotation */init$3[/* rotation */4],
-        /* transformMatrix */init$3[/* transformMatrix */5],
-        /* filters */init$3[/* filters */6],
-        /* id */"analyzer"
+        /* content */LayerGenerator$Gayer.webcam[/* content */0],
+        /* enabled */LayerGenerator$Gayer.webcam[/* enabled */1],
+        /* alpha */0.0,
+        /* compositeOperation */LayerGenerator$Gayer.webcam[/* compositeOperation */3],
+        /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
+        /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
+        /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
+        /* id */"webcam"
       ],
       /* :: */[
-        LayerGenerator$Gayer.reader,
+        LayerGenerator$Gayer.displace("webcam", "analyzer"),
         /* [] */0
       ]
     ]
@@ -1930,8 +1924,8 @@ var displaceParams_014 = /* layers : :: */[
 var displaceParams = /* record */[
   displaceParams_000,
   displaceParams_001,
-  displaceParams_002,
-  displaceParams_003,
+  /* readPosDelta */0,
+  /* writePosDelta */0,
   displaceParams_004,
   displaceParams_005,
   displaceParams_006,
@@ -1941,7 +1935,7 @@ var displaceParams = /* record */[
   displaceParams_010,
   displaceParams_011,
   displaceParams_012,
-  displaceParams_013,
+  /* shouldClear */true,
   displaceParams_014
 ];
 

@@ -33,7 +33,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(11, [/* Channel */[/* R */0]]);
+var reader_000 = /* content : Reader */Block.__(13, [/* Channel */[/* R */0]]);
 
 var reader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -60,7 +60,7 @@ var reader = /* record */[
   reader_007
 ];
 
-var saturationReader_000 = /* content : Reader */Block.__(11, [/* Saturation */0]);
+var saturationReader_000 = /* content : Reader */Block.__(13, [/* Saturation */0]);
 
 var saturationReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -87,6 +87,8 @@ var saturationReader = /* record */[
   saturationReader_007
 ];
 
+var keycodeReader_000 = /* content : KeycodeReader */Block.__(8, [/* AsciiAsHeight */0]);
+
 var keycodeReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
 var keycodeReader_002 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */2];
@@ -102,7 +104,7 @@ var keycodeReader_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 var keycodeReader_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
 
 var keycodeReader = /* record */[
-  /* content : KeycodeReader */3,
+  keycodeReader_000,
   keycodeReader_001,
   keycodeReader_002,
   keycodeReader_003,
@@ -111,6 +113,8 @@ var keycodeReader = /* record */[
   keycodeReader_006,
   keycodeReader_007
 ];
+
+var keycodeWriter_000 = /* content : KeycodeWriter */Block.__(9, [/* AsciiAsHeight */0]);
 
 var keycodeWriter_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -127,7 +131,7 @@ var keycodeWriter_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 var keycodeWriter_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
 
 var keycodeWriter = /* record */[
-  /* content : KeycodeWriter */4,
+  keycodeWriter_000,
   keycodeWriter_001,
   keycodeWriter_002,
   keycodeWriter_003,
@@ -148,7 +152,7 @@ var histogram_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 var histogram_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
 
 var histogram = /* record */[
-  /* content : Histogram */5,
+  /* content : Histogram */3,
   histogram_001,
   /* alpha */1.0,
   /* compositeOperation : SourceOver */0,
@@ -162,12 +166,12 @@ var rawAudioFormat = /* record */[
   /* x */0,
   /* y */0,
   /* w */64,
-  /* h */32,
+  /* h */64,
   /* encoding : Int8 */[/* R */0],
   /* sampleRate */44100
 ];
 
-var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(8, [rawAudioFormat]);
+var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(10, [rawAudioFormat]);
 
 var rawAudioWriter_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -194,7 +198,7 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_007
 ];
 
-var rawAudioReader_000 = /* content : RawAudioReader */Block.__(9, [rawAudioFormat]);
+var rawAudioReader_000 = /* content : RawAudioReader */Block.__(11, [rawAudioFormat]);
 
 var rawAudioReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -325,7 +329,7 @@ function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, 
 
 function sobel(key) {
   return /* record */[
-          /* content : Regl */Block.__(10, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
+          /* content : Regl */Block.__(12, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -338,7 +342,7 @@ function sobel(key) {
 
 function displace(source, displace$1) {
   return /* record */[
-          /* content : Regl */Block.__(10, [/* Displacement */Block.__(1, [/* record */[
+          /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
                     /* displacementSourceLayer */source,
                     /* displacementMap */displace$1
                   ]])]),
@@ -352,17 +356,19 @@ function displace(source, displace$1) {
         ];
 }
 
-function analyzer($staropt$star, input) {
+function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
   var includeHistory = $staropt$star !== undefined ? $staropt$star : true;
+  var readerType = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Channel */[/* R */0];
+  var analysisSize = $staropt$star$2 !== undefined ? $staropt$star$2 : /* WithHistory */Block.__(0, [/* record */[
+          /* w : Width */0,
+          /* h : Height */1
+        ]]);
   if (includeHistory) {
     return /* record */[
             /* content : Analysis */Block.__(6, [/* record */[
                   /* input */input,
-                  /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
-                  /* analysisSize : WithHistory */Block.__(0, [/* record */[
-                        /* w : Width */0,
-                        /* h : Height */1
-                      ]])
+                  /* readerType */readerType,
+                  /* analysisSize */analysisSize
                 ]]),
             /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
             /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
@@ -542,25 +548,39 @@ var harmony = /* :: */[
   harmony_001
 ];
 
-var rotateLayer = drawGlobal(undefined, /* :: */[
-      /* Translate */Block.__(9, [
-          /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0]),
-          /* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])
-        ]),
-      /* :: */[
-        /* Rotate */Block.__(8, [Layer$Gayer.oneCompleteTurnAfterNTicks(Canvas$Gayer.defaultSize / 2 | 0)]),
-        /* :: */[
-          /* Translate */Block.__(9, [
-              /* Negate */Block.__(4, [/* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])]),
-              /* Negate */Block.__(4, [/* Pixels */Block.__(2, [Canvas$Gayer.defaultSize / 2 | 0])])
-            ]),
-          /* :: */[
-            drawSelfFullScreen,
-            /* [] */0
-          ]
-        ]
-      ]
-    ]);
+function rotateLayer(rotation) {
+  return drawGlobal(undefined, /* :: */[
+              /* Translate */Block.__(9, [
+                  /* Divide */Block.__(6, [
+                      /* Width */0,
+                      /* Constant */Block.__(0, [2])
+                    ]),
+                  /* Divide */Block.__(6, [
+                      /* Height */1,
+                      /* Constant */Block.__(0, [2])
+                    ])
+                ]),
+              /* :: */[
+                /* Rotate */Block.__(8, [rotation]),
+                /* :: */[
+                  /* Translate */Block.__(9, [
+                      /* Negate */Block.__(4, [/* Divide */Block.__(6, [
+                              /* Width */0,
+                              /* Constant */Block.__(0, [2])
+                            ])]),
+                      /* Negate */Block.__(4, [/* Divide */Block.__(6, [
+                              /* Width */0,
+                              /* Constant */Block.__(0, [2])
+                            ])])
+                    ]),
+                  /* :: */[
+                    drawSelfFullScreen,
+                    /* [] */0
+                  ]
+                ]
+              ]
+            ]);
+}
 
 var init$2 = drawGlobal(undefined, /* :: */[
       drawSelfFullScreen,
@@ -972,7 +992,7 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "analyzer",
-    analyzer(undefined, /* Mic */2)
+    analyzer(undefined, undefined, undefined, /* Mic */2)
   ],
   /* tuple */[
     "reader",
@@ -1030,8 +1050,12 @@ var allLayerTypes = /* array */[
     blurLayer
   ],
   /* tuple */[
-    "rotate",
-    rotateLayer
+    "rotate (1 deg)",
+    rotateLayer(Canvas$Gayer.degreesToRadians(1.0))
+  ],
+  /* tuple */[
+    "rotate (90 deg)",
+    rotateLayer(Canvas$Gayer.degreesToRadians(90.0))
   ],
   /* tuple */[
     "square values (column)",
@@ -1061,10 +1085,13 @@ var defaultTransform = Canvas$Gayer.defaultTransform;
 
 var tau = Canvas$Gayer.tau;
 
+var degreesToRadians = Canvas$Gayer.degreesToRadians;
+
 export {
   defaultSize ,
   defaultTransform ,
   tau ,
+  degreesToRadians ,
   img ,
   video ,
   reader ,

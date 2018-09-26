@@ -241,7 +241,7 @@ let historyBackAndForth = {
 
 let vinyl = {
   ...readFromCenterLine,
-  layers: [rotateLayer, analyzer(Mic), reader],
+  layers: [rotateLayer(degreesToRadians(1.0)), analyzer(Mic), reader],
 };
 
 let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
@@ -298,16 +298,13 @@ let welcomeAudio = {
 };
 
 let displaceParams = {
-  ...defaultParams,
+  ...history,
+  shouldClear: true,
   layers: [
+    {...analyzer(Mic, ~includeHistory=true), id: Some("analyzer")},
+    reader,
     {...webcam, alpha: 0.0, id: Some("webcam")},
     displace("webcam", "analyzer"),
-    {
-      ...analyzer(Mic, ~includeHistory=true),
-      alpha: 0.1,
-      id: Some("analyzer"),
-    },
-    reader,
   ],
 };
 

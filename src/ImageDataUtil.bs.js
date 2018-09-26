@@ -6,6 +6,7 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Color$Gayer from "./Color.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
+import * as Palette$Gayer from "./Palette.bs.js";
 import * as Caml_primitive from "bs-platform/lib/es6/caml_primitive.js";
 
 function mapRawData(rawData, f) {
@@ -147,6 +148,24 @@ function makeImageData(cqtLine) {
   return new ImageData(output, 1, n);
 }
 
+function makeImageDataWithPalette($staropt$star, cqtLine) {
+  var palette = $staropt$star !== undefined ? $staropt$star : Palette$Gayer.grayscale;
+  var len = cqtLine.length;
+  var n = len / 4 | 0;
+  var output = makeUint8ClampedArray(len);
+  for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
+    var offset = (i << 2);
+    var cqtOffset = (((n - i | 0) - 1 | 0) << 2);
+    var v = Caml_array.caml_array_get(cqtLine, cqtOffset);
+    var match = Caml_array.caml_array_get(palette, v);
+    Caml_array.caml_array_set(output, offset, match[0]);
+    Caml_array.caml_array_set(output, offset + 1 | 0, match[1]);
+    Caml_array.caml_array_set(output, offset + 2 | 0, match[2]);
+    Caml_array.caml_array_set(output, offset + 3 | 0, match[3]);
+  }
+  return new ImageData(output, 1, n);
+}
+
 function makeImageDataFromFloats(input, w, h) {
   var n = input.length;
   var len = (n << 2);
@@ -175,6 +194,7 @@ export {
   updateFilterValuesFromImageData ,
   makeUint8ClampedArray ,
   makeImageData ,
+  makeImageDataWithPalette ,
   makeImageDataFromFloats ,
   
 }

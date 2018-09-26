@@ -1,6 +1,5 @@
 open Canvas;
-
-let yToKeyCode = KeyboardManager.yToKeyCode;
+open KeycodeUtil;
 
 type state = {canvasRef: ref(option(Dom.element))};
 let component = ReasonReact.reducerComponent(__MODULE__);
@@ -9,6 +8,7 @@ let make =
     (
       ~layerKey,
       ~layerRefs,
+      ~format,
       ~setRef,
       ~saveTick,
       ~currentFilterValues,

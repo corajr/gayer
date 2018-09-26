@@ -55,7 +55,3 @@ let keyCode: Dom.keyboardEvent => int =
       0;
     };
   };
-
-let keyCodeToY = (height, keyCodeN) => height - (keyCodeN - 8) * 2 - 1;
-
-let yToKeyCode = (height, keyCodeY) => (height - (keyCodeY + 1)) / 2 + 8;

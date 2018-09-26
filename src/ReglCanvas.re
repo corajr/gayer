@@ -18,10 +18,17 @@ let copyLayerToTexture =
     ) =>
   switch (maybeRegl^, Belt.Map.String.get(layerRefs^, layerKey)) {
   | (Some(regl), Some(canvas)) =>
+    switch (Belt.Map.String.get(textureRefs^, textureKey)) {
+    | Some(tex) =>
+      try (destroyTexture(tex)) {
+      | _ => ()
+      }
+    | None => ()
+    };
     switch (texture(regl, `Canvas(canvas))) {
     | tex => textureRefs := Belt.Map.String.set(textureRefs^, textureKey, tex)
     | exception (Js.Exn.Error(_)) => ()
-    }
+    };
   /* textureRefs := */
   /*   Belt.Map.String.update( */
   /*     textureRefs^, */

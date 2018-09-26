@@ -1,9 +1,11 @@
 open AnalysisOptions;
 open Audio.AudioInput;
 open Canvas.DrawCommand;
+open KeycodeUtil;
 open Layer;
 open Music;
 open RawAudio;
+open ReaderType;
 open Regl;
 
 /* ## Layer definitions */
@@ -14,6 +16,7 @@ open Regl;
 let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
 let tau = Canvas.tau;
+let degreesToRadians = Canvas.degreesToRadians;
 
 let img = url => {...defaultLayer, content: Image(url)};
 let video = url => {...defaultLayer, content: Video(url)};
@@ -22,9 +25,9 @@ let reader = {...defaultLayer, content: Reader(Channel(R))};
 
 let saturationReader = {...defaultLayer, content: Reader(Saturation)};
 
-let keycodeReader = {...defaultLayer, content: KeycodeReader};
+let keycodeReader = {...defaultLayer, content: KeycodeReader(AsciiAsHeight)};
 
-let keycodeWriter = {...defaultLayer, content: KeycodeWriter};
+let keycodeWriter = {...defaultLayer, content: KeycodeWriter(AsciiAsHeight)};
 
 let histogram = {
   ...defaultLayer,
@@ -37,7 +40,7 @@ let rawAudioFormat = {
   x: 0,
   y: 0,
   w: 64,
-  h: 32,
+  h: 64,
   encoding: Int8(R),
   sampleRate: 44100,
 };
@@ -116,7 +119,13 @@ let displace = (source, displace) => {
     ),
 };
 
-let analyzer = (~includeHistory: bool=true, input: audioInputSetting) =>
+let analyzer =
+    (
+      ~includeHistory: bool=true,
+      ~readerType: readerType=Channel(R),
+      ~analysisSize: analysisSize=WithHistory({w: Width, h: Height}),
+      input: audioInputSetting,
+    ) =>
   if (includeHistory) {
     {
       ...defaultLayer,
@@ -124,7 +133,8 @@ let analyzer = (~includeHistory: bool=true, input: audioInputSetting) =>
         Analysis({
           ...defaultAnalysisOptions,
           input,
-          analysisSize: WithHistory({w: Width, h: Height}),
+          readerType,
+          analysisSize,
         }),
     };
   } else {
@@ -177,13 +187,13 @@ let harmony = [
   reader,
 ];
 
-let rotateLayer =
+let rotateLayer = rotation =>
   drawGlobal([
-    Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
-    Rotate(oneCompleteTurnAfterNTicks(defaultSize / 2)),
+    Translate(Divide(Width, Constant(2)), Divide(Height, Constant(2))),
+    Rotate(rotation),
     Translate(
-      Negate(Pixels(defaultSize / 2)),
-      Negate(Pixels(defaultSize / 2)),
+      Negate(Divide(Width, Constant(2))),
+      Negate(Divide(Width, Constant(2))),
     ),
     drawSelfFullScreen,
   ]);
@@ -342,7 +352,8 @@ let allLayerTypes = [|
   ("fill", fill(~alpha=0.0125, "white")),
   ("pitch filter", pitchFilter(cMajor)),
   ("blur", blurLayer),
-  ("rotate", rotateLayer),
+  ("rotate (1 deg)", rotateLayer(degreesToRadians(1.0))),
+  ("rotate (90 deg)", rotateLayer(degreesToRadians(90.0))),
   ("square values (column)", squareColumnLayer),
   ("square values (whole image)", squareLayer),
   ("raw-audio-writer", rawAudioWriter),

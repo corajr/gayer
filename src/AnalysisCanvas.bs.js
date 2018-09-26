@@ -7,6 +7,7 @@ import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
+import * as Palette$Gayer from "./Palette.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
@@ -24,6 +25,8 @@ function drawCQTBar(ctx, state, options, width, _) {
     ctx.putImageData(outputImageData, width - 1 | 0, 0);
     return /* () */0;
   } else {
+    var outputImageData$1 = ImageDataUtil$Gayer.makeImageDataWithPalette(Palette$Gayer.saturationRainbow, cqtLine);
+    ctx.putImageData(outputImageData$1, width - 1 | 0, 0);
     return /* () */0;
   }
 }

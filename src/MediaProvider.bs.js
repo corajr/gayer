@@ -77,7 +77,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawConte
                                               }
                                             }
                                             break;
-                                        case 8 : 
+                                        case 10 : 
                                             var match$2 = Curry._1(getAudio, /* Mic */2);
                                             var maybeInput$1 = match$2[1];
                                             if (maybeInput$1 !== undefined) {

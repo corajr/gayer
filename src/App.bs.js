@@ -354,10 +354,6 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       case 3 : 
-      case 4 : 
-          exit = 2;
-          break;
-      case 5 : 
           if (maybeLayerRef !== undefined) {
             var xToWrite = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), xToWrite, 0, 1, height);
@@ -404,6 +400,10 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       case 8 : 
+      case 9 : 
+          exit = 2;
+          break;
+      case 10 : 
           var match$4 = match$1[0];
           if (match$4[/* encoding */4]) {
             if (maybeLayerRef !== undefined) {
@@ -412,14 +412,14 @@ function drawLayer(ctx, width, height, state, layer) {
             
           }
           break;
-      case 9 : 
+      case 11 : 
           break;
-      case 10 : 
+      case 12 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
           break;
-      case 11 : 
+      case 13 : 
           var readerType = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);

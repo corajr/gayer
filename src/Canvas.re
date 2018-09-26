@@ -77,9 +77,10 @@ type rotation = float;
 let tau: rotation = Js.Math._PI *. 2.0;
 let one_over_tau: rotation = 1.0 /. tau;
 
-let degreesToRadians: float => rotation = degrees => degrees *. (360.0 /. tau);
+let degreesToRadians: float => rotation = degrees => degrees *. (tau /. 360.0);
 
-let radiansToDegrees: rotation => float = radians => radians *. one_over_tau;
+let radiansToDegrees: rotation => float =
+  radians => radians *. (360.0 *. one_over_tau);
 
 type rect = {
   x: dim,

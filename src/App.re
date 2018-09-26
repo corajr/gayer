@@ -325,8 +325,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
           classList,
         );
       };
-    | KeycodeReader
-    | KeycodeWriter =>
+    | KeycodeReader(_)
+    | KeycodeWriter(_) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(canvasEl) =>

@@ -17,6 +17,7 @@ import * as MaterialUi_Card from "@jsiebern/bs-material-ui/src/MaterialUi_Card.b
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 import * as FloatSlider$Gayer from "./FloatSlider.bs.js";
 import * as ImageSelect$Gayer from "./ImageSelect.bs.js";
+import * as KeycodeUtil$Gayer from "./KeycodeUtil.bs.js";
 import * as LayerSelect$Gayer from "./LayerSelect.bs.js";
 import * as MaterialUi_Switch from "@jsiebern/bs-material-ui/src/MaterialUi_Switch.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
@@ -45,10 +46,6 @@ function readable_string_type_of_layerContent(param) {
       case 2 : 
           return "MIDI Input";
       case 3 : 
-          return "ASCII Reader";
-      case 4 : 
-          return "ASCII Writer";
-      case 5 : 
           return "Histogram";
       
     }
@@ -71,12 +68,16 @@ function readable_string_type_of_layerContent(param) {
       case 7 : 
           return "Pitch classes";
       case 8 : 
-          return "Raw Audio Writer";
+          return "Key Reader";
       case 9 : 
-          return "Raw Audio Reader";
+          return "Key Writer";
       case 10 : 
-          return "Shader";
+          return "Raw Audio Writer";
       case 11 : 
+          return "Raw Audio Reader";
+      case 12 : 
+          return "Shader";
+      case 13 : 
           return "Reader";
       
     }
@@ -93,10 +94,6 @@ function string_type_of_layerContent(param) {
       case 2 : 
           return "midi-keyboard";
       case 3 : 
-          return "keycode-reader";
-      case 4 : 
-          return "keycode-writer";
-      case 5 : 
           return "histogram";
       
     }
@@ -119,12 +116,16 @@ function string_type_of_layerContent(param) {
       case 7 : 
           return "pitch-classes";
       case 8 : 
-          return "raw-audio-writer";
+          return "keycode-reader";
       case 9 : 
-          return "raw-audio-reader";
+          return "keycode-writer";
       case 10 : 
-          return "shader";
+          return "raw-audio-writer";
       case 11 : 
+          return "raw-audio-reader";
+      case 12 : 
+          return "shader";
+      case 13 : 
           return "reader";
       
     }
@@ -141,10 +142,6 @@ function icon_of_layerContent(param) {
       case 2 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.MusicNote[/* make */0](/* array */[]));
       case 3 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Textsms[/* make */0](/* array */[]));
-      case 4 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Keyboard[/* make */0](/* array */[]));
-      case 5 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.ShowChart[/* make */0](/* array */[]));
       
     }
@@ -166,11 +163,15 @@ function icon_of_layerContent(param) {
       case 7 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.Tonality[/* make */0](/* array */[]));
       case 8 : 
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Textsms[/* make */0](/* array */[]));
       case 9 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Voicemail[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Keyboard[/* make */0](/* array */[]));
       case 10 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Filter[/* make */0](/* array */[]));
       case 11 : 
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Voicemail[/* make */0](/* array */[]));
+      case 12 : 
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Filter[/* make */0](/* array */[]));
+      case 13 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.Speaker[/* make */0](/* array */[]));
       
     }
@@ -307,7 +308,7 @@ function layerByType(type_, json) {
     case "hand-drawn" : 
         return /* HandDrawn */0;
     case "histogram" : 
-        return /* Histogram */5;
+        return /* Histogram */3;
     case "image" : 
         return Json_decode.map((function (s) {
                       return /* Image */Block.__(4, [s]);
@@ -315,9 +316,19 @@ function layerByType(type_, json) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "keycode-reader" : 
-        return /* KeycodeReader */3;
+        var partial_arg$5 = KeycodeUtil$Gayer.DecodeKeycodeFormat[/* keycodeFormat */0];
+        return Json_decode.map((function (o) {
+                      return /* KeycodeReader */Block.__(8, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("fmt", partial_arg$5, param);
+                    }), json);
     case "keycode-writer" : 
-        return /* KeycodeWriter */4;
+        var partial_arg$6 = KeycodeUtil$Gayer.DecodeKeycodeFormat[/* keycodeFormat */0];
+        return Json_decode.map((function (o) {
+                      return /* KeycodeWriter */Block.__(9, [o]);
+                    }), (function (param) {
+                      return Json_decode.field("fmt", partial_arg$6, param);
+                    }), json);
     case "midi-keyboard" : 
         return /* MIDIKeyboard */2;
     case "pitchClasses" : 
@@ -330,36 +341,36 @@ function layerByType(type_, json) {
                     }), json);
     case "raw-audio-reader" : 
         return Json_decode.map((function (o) {
-                      return /* RawAudioReader */Block.__(9, [o]);
+                      return /* RawAudioReader */Block.__(11, [o]);
                     }), (function (param) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "raw-audio-writer" : 
         return Json_decode.map((function (o) {
-                      return /* RawAudioWriter */Block.__(8, [o]);
+                      return /* RawAudioWriter */Block.__(10, [o]);
                     }), (function (param) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "reader" : 
-        var partial_arg$5 = ReaderType$Gayer.DecodeReaderType[/* readerType */1];
+        var partial_arg$7 = ReaderType$Gayer.DecodeReaderType[/* readerType */1];
         return Json_decode.map((function (t) {
-                      return /* Reader */Block.__(11, [t]);
+                      return /* Reader */Block.__(13, [t]);
                     }), (function (param) {
-                      return Json_decode.field("readerType", partial_arg$5, param);
+                      return Json_decode.field("readerType", partial_arg$7, param);
                     }), json);
     case "regl" : 
-        var partial_arg$6 = Regl$Gayer.DecodeReglOptions[/* reglOptions */3];
+        var partial_arg$8 = Regl$Gayer.DecodeReglOptions[/* reglOptions */3];
         return Json_decode.map((function (o) {
-                      return /* Regl */Block.__(10, [o]);
+                      return /* Regl */Block.__(12, [o]);
                     }), (function (param) {
-                      return Json_decode.field("options", partial_arg$6, param);
+                      return Json_decode.field("options", partial_arg$8, param);
                     }), json);
     case "slitscan" : 
-        var partial_arg$7 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
+        var partial_arg$9 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
                       return /* Slitscan */Block.__(3, [s]);
                     }), (function (param) {
-                      return Json_decode.field("options", partial_arg$7, param);
+                      return Json_decode.field("options", partial_arg$9, param);
                     }), json);
     case "video" : 
         return Json_decode.map((function (s) {
@@ -532,22 +543,6 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
-                        "keycode-reader"
-                      ],
-                      /* [] */0
-                    ]);
-      case 4 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
-                        "keycode-writer"
-                      ],
-                      /* [] */0
-                    ]);
-      case 5 : 
-          return Json_encode.object_(/* :: */[
-                      /* tuple */[
-                        "type",
                         "histogram"
                       ],
                       /* [] */0
@@ -674,6 +669,34 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "keycode-reader"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "fmt",
+                          KeycodeUtil$Gayer.EncodeKeycodeFormat[/* keycodeFormat */0](r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 9 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "keycode-writer"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "fmt",
+                          KeycodeUtil$Gayer.EncodeKeycodeFormat[/* keycodeFormat */0](r[0])
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 10 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "raw-audio-writer"
                       ],
                       /* :: */[
@@ -684,7 +707,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 9 : 
+      case 11 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -698,7 +721,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 10 : 
+      case 12 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -712,7 +735,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 11 : 
+      case 13 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -832,7 +855,7 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
       case 0 : 
       case 2 : 
       case 7 : 
-      case 11 : 
+      case 13 : 
           tmp = null;
           break;
       default:
@@ -919,23 +942,51 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                 ]);
                                     }), /* array */[])));
                       break;
+                  case 8 : 
+                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])), ReasonReact.element(undefined, undefined, KeycodeUtil$Gayer.KeycodeFormatSelect[/* make */1](match[0], (function (newFmt) {
+                                      return Curry._2(changeLayer, layer, /* record */[
+                                                  /* content : KeycodeReader */Block.__(8, [newFmt]),
+                                                  /* enabled */layer[/* enabled */1],
+                                                  /* alpha */layer[/* alpha */2],
+                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                  /* rotation */layer[/* rotation */4],
+                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                  /* filters */layer[/* filters */6],
+                                                  /* id */layer[/* id */7]
+                                                ]);
+                                    }), /* array */[])));
+                      break;
+                  case 9 : 
+                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])), ReasonReact.element(undefined, undefined, KeycodeUtil$Gayer.KeycodeFormatSelect[/* make */1](match[0], (function (newFmt) {
+                                      return Curry._2(changeLayer, layer, /* record */[
+                                                  /* content : KeycodeWriter */Block.__(9, [newFmt]),
+                                                  /* enabled */layer[/* enabled */1],
+                                                  /* alpha */layer[/* alpha */2],
+                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                  /* rotation */layer[/* rotation */4],
+                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                  /* filters */layer[/* filters */6],
+                                                  /* id */layer[/* id */7]
+                                                ]);
+                                    }), /* array */[])));
+                      break;
                   case 1 : 
                   case 2 : 
                   case 3 : 
                   case 5 : 
                   case 6 : 
-                  case 8 : 
-                  case 9 : 
+                  case 10 : 
+                  case 11 : 
                       tmp = React.createElement("div", undefined);
                       break;
-                  case 10 : 
+                  case 12 : 
                       var reglOptions = match[0];
                       var tmp$1;
                       if (reglOptions.tag) {
                         var opts = reglOptions[0];
                         tmp$1 = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
-                                                    /* content : Regl */Block.__(10, [/* Displacement */Block.__(1, [/* record */[
+                                                    /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
                                                               /* displacementSourceLayer */newKey,
                                                               /* displacementMap */opts[/* displacementMap */1]
                                                             ]])]),
@@ -949,7 +1000,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   ]);
                                       }), opts[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
-                                                    /* content : Regl */Block.__(10, [/* Displacement */Block.__(1, [/* record */[
+                                                    /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
                                                               /* displacementSourceLayer */opts[/* displacementSourceLayer */0],
                                                               /* displacementMap */newKey
                                                             ]])]),
@@ -966,7 +1017,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                         var opts$1 = reglOptions[0];
                         tmp$1 = ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                     return Curry._2(changeLayer, layer, /* record */[
-                                                /* content : Regl */Block.__(10, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
+                                                /* content : Regl */Block.__(12, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
                                                 /* enabled */layer[/* enabled */1],
                                                 /* alpha */layer[/* alpha */2],
                                                 /* compositeOperation */layer[/* compositeOperation */3],
@@ -979,10 +1030,10 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                       }
                       tmp = React.createElement("div", undefined, tmp$1);
                       break;
-                  case 11 : 
+                  case 13 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, ReaderType$Gayer.make(match[0], (function (newReaderType) {
                                       return Curry._2(changeLayer, layer, /* record */[
-                                                  /* content : Reader */Block.__(11, [newReaderType]),
+                                                  /* content : Reader */Block.__(13, [newReaderType]),
                                                   /* enabled */layer[/* enabled */1],
                                                   /* alpha */layer[/* alpha */2],
                                                   /* compositeOperation */layer[/* compositeOperation */3],
@@ -1139,7 +1190,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                                 /* verticalSkewing */init[/* verticalSkewing */2],
                                                                                                 /* verticalScaling */init[/* verticalScaling */3],
                                                                                                 /* horizontalMoving */init[/* horizontalMoving */4],
-                                                                                                /* verticalMoving */-newY
+                                                                                                /* verticalMoving */newY
                                                                                               ],
                                                                                               /* filters */layer[/* filters */6],
                                                                                               /* id */layer[/* id */7]

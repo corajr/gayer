@@ -13,6 +13,15 @@ function copyLayerToTexture(maybeRegl, textureRefs, layerRefs, layerKey, texture
   var match = maybeRegl[0];
   var match$1 = Belt_MapString.get(layerRefs[0], layerKey);
   if (match !== undefined && match$1 !== undefined) {
+    var match$2 = Belt_MapString.get(textureRefs[0], textureKey);
+    if (match$2 !== undefined) {
+      try {
+        Js_primitive.valFromOption(match$2).destroy();
+      }
+      catch (exn){
+        
+      }
+    }
     var exit = 0;
     var tex;
     try {
@@ -20,11 +29,11 @@ function copyLayerToTexture(maybeRegl, textureRefs, layerRefs, layerKey, texture
       exit = 1;
     }
     catch (raw_exn){
-      var exn = Js_exn.internalToOCamlException(raw_exn);
-      if (exn[0] === Js_exn.$$Error) {
+      var exn$1 = Js_exn.internalToOCamlException(raw_exn);
+      if (exn$1[0] === Js_exn.$$Error) {
         return /* () */0;
       } else {
-        throw exn;
+        throw exn$1;
       }
     }
     if (exit === 1) {

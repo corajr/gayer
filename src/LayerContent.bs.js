@@ -48,12 +48,6 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
                   case 3 : 
-                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, setRef, saveTick, currentFilterValues, getReadAndWritePos, undefined, undefined, undefined, /* array */[]));
-                      break;
-                  case 4 : 
-                      tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, setRef, undefined, undefined, /* array */[]));
-                      break;
-                  case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
                       break;
                   
@@ -99,15 +93,21 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, options, millisPerTick, setRef, saveTick, /* array */[]));
                       break;
                   case 8 : 
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, layerContent[0], setRef, saveTick, currentFilterValues, getReadAndWritePos, undefined, undefined, undefined, /* array */[]));
+                      break;
+                  case 9 : 
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, layerContent[0], setRef, undefined, undefined, /* array */[]));
+                      break;
+                  case 10 : 
                       var match$4 = layerContent[0];
                       var h = match$4[/* h */3];
                       var w = match$4[/* w */2];
                       tmp = ReasonReact.element(undefined, undefined, RawAudioCanvas$Gayer.make(Caml_int32.imul(w, h), w, h, saveTick, layerKey, layerRefs, audioCtx, match$4[/* encoding */4], audioGraph, setRef, match$4[/* x */0], match$4[/* y */1], /* array */[]));
                       break;
-                  case 9 : 
+                  case 11 : 
                       tmp = ReasonReact.element(undefined, undefined, RawAudioReader$Gayer.make(layerKey, layerRefs, audioCtx, audioGraph, saveTick, layerContent[0], /* array */[]));
                       break;
-                  case 10 : 
+                  case 12 : 
                       tmp = ReasonReact.element(undefined, undefined, ReglCanvas$Gayer.make(layerRefs, layerContent[0], setRef, saveTick, layerKey, width, height, /* array */[]));
                       break;
                   default:
