@@ -78,7 +78,7 @@ type fillOrStroke =
   | Fill
   | Stroke;
 
-let text =
+let drawText =
     (
       ~x: length=Divide(Width, Constant(2)),
       ~y: length=Divide(Height, Constant(2)),
@@ -316,6 +316,8 @@ let midiColors = {
 
 let handDrawn = {...defaultLayer, content: HandDrawn};
 
+let text = s => {...defaultLayer, content: Text(s)};
+
 let idCounter = ref(0);
 
 let maybeAddId: layer => layer =
@@ -339,18 +341,17 @@ let maybeAddId: layer => layer =
 let allLayerTypes = [|
   ("image", hubble),
   ("analyzer", analyzer(Mic)),
+  ("pitch filter", pitchFilter(cMajor)),
   ("reader", reader),
   ("webcam", webcam),
   ("slitscan", slitscan),
   ("edge detect", sobel("root")),
-  ("displace", displace("root", "root")),
-  ("midi-keyboard", midiKeyboard),
+  ("displace map", displace("root", "root")),
+  ("midi keyboard", midiKeyboard),
   ("computer keyboard", keycodeWriter),
-  ("ASCII", keycodeReader),
-  ("mouse-drawGlobal", handDrawn),
+  ("keyboard display", keycodeReader),
   ("drawGlobal (commands)", drawGlobal([SetFillStyle("red")])),
   ("fill", fill(~alpha=0.0125, "white")),
-  ("pitch filter", pitchFilter(cMajor)),
   ("blur", blurLayer),
   ("rotate (1 deg)", rotateLayer(degreesToRadians(1.0))),
   ("rotate (90 deg)", rotateLayer(degreesToRadians(90.0))),
@@ -359,4 +360,5 @@ let allLayerTypes = [|
   ("raw-audio-writer", rawAudioWriter),
   ("raw-audio-reader", rawAudioReader),
   ("saturation reader", saturationReader),
+  ("mouse-draw (very slow :()", handDrawn),
 |];

@@ -13,6 +13,7 @@ type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
   | DrawGlobal(list(DrawCommand.command))
+  | Text(string)
   | HandDrawn
   | Webcam
   | Slitscan(cameraOptions)
@@ -37,6 +38,7 @@ let readable_string_type_of_layerContent =
   | HandDrawn => "Mouse"
   | Webcam => "Webcam"
   | Slitscan(_) => "Slitscan"
+  | Text(_) => "Text"
   | Image(_) => "Image"
   | Video(_) => "Video"
   | Analysis(_) => "Analyzer"
@@ -58,6 +60,7 @@ let string_type_of_layerContent =
   | HandDrawn => "mouse"
   | Webcam => "webcam"
   | Slitscan(_) => "slitscan"
+  | Text(_) => "text"
   | Image(_) => "image"
   | Video(_) => "video"
   | Analysis(_) => "analyzer"
@@ -77,6 +80,7 @@ let icon_of_layerContent =
     | Fill(_) => <FormatPaint />
     | Draw(_) => <FormatListBulleted />
     | DrawGlobal(_) => <FormatListBulleted />
+    | Text(_) => <TextFields />
     | HandDrawn => <Brush />
     | Webcam => <Videocam />
     | Slitscan(_) => <Flip />
@@ -179,6 +183,8 @@ module DecodeLayer = {
              o => KeycodeReader(o),
              field("fmt", DecodeKeycodeFormat.keycodeFormat),
            )
+      | "text" => json |> map(t => Text(t), field("text", string))
+
       | "regl" =>
         json
         |> map(
@@ -317,6 +323,8 @@ module EncodeLayer = {
           ("type", string("slitscan")),
           ("options", EncodeCameraOptions.cameraOptions(s)),
         ])
+      | Text(s) =>
+        object_([("type", string("text")), ("text", string(s))])
       | Image(url) =>
         object_([("type", string("image")), ("url", string(url))])
       | Video(url) =>
@@ -449,6 +457,7 @@ let renderLayerPreview =
       | Fill(_)
       | DrawGlobal(_)
       | PitchClasses(_)
+      | Text(_)
       | Reader(_) => ReasonReact.null
       }
     )
@@ -683,46 +692,61 @@ let make =
                 </div>
               | KeycodeReader(fmt) =>
                 <div>
-
-                    <Typography color=`TextSecondary>
-                      (
-                        ReasonReact.string(
-                          "If keys are stuck, press SPACE to clear.",
-                        )
+                  <Typography color=`TextSecondary>
+                    (
+                      ReasonReact.string(
+                        "If keys are stuck, press SPACE to clear.",
                       )
-                    </Typography>
-                  </div>
-                  /* <KeycodeFormatSelect */
-                  /*   currentSetting=fmt */
-                  /*   onChange=( */
-                  /*     newFmt => */
-                  /*       changeLayer( */
-                  /*         layer, */
-                  /*         Some({...layer, content: KeycodeReader(newFmt)}), */
-                  /*       ) */
-                  /*   ) */
-                  /* /> */
+                    )
+                  </Typography>
+                </div>
+              /* <KeycodeFormatSelect */
+              /*   currentSetting=fmt */
+              /*   onChange=( */
+              /*     newFmt => */
+              /*       changeLayer( */
+              /*         layer, */
+              /*         Some({...layer, content: KeycodeReader(newFmt)}), */
+              /*       ) */
+              /*   ) */
+              /* /> */
               | KeycodeWriter(fmt) =>
                 <div>
-
-                    <Typography color=`TextSecondary>
-                      (
-                        ReasonReact.string(
-                          "If keys are stuck, press SPACE to clear.",
-                        )
+                  <Typography color=`TextSecondary>
+                    (
+                      ReasonReact.string(
+                        "If keys are stuck, press SPACE to clear.",
                       )
-                    </Typography>
-                  </div>
-                  /* <KeycodeFormatSelect */
-                  /*   currentSetting=fmt */
-                  /*   onChange=( */
-                  /*     newFmt => */
-                  /*       changeLayer( */
-                  /*         layer, */
-                  /*         Some({...layer, content: KeycodeWriter(newFmt)}), */
-                  /*       ) */
-                  /*   ) */
-                  /* /> */
+                    )
+                  </Typography>
+                </div>
+              /* <KeycodeFormatSelect */
+              /*   currentSetting=fmt */
+              /*   onChange=( */
+              /*     newFmt => */
+              /*       changeLayer( */
+              /*         layer, */
+              /*         Some({...layer, content: KeycodeWriter(newFmt)}), */
+              /*       ) */
+              /*   ) */
+              /* /> */
+              | Text(s) =>
+                <TextField
+                  fullWidth=true
+                  multiline=true
+                  value=(`String(s))
+                  onChange=(
+                    evt => {
+                      let value = ReactDOMRe.domElementToObj(
+                                    ReactEventRe.Form.target(evt),
+                                  )##value;
+                      changeLayer(
+                        layer,
+                        Some({...layer, content: Text(value)}),
+                      );
+                    }
+                  )
+                />
               | HandDrawn
               | Webcam
               | MIDIKeyboard
@@ -744,67 +768,77 @@ let make =
               }
             )
           </CardContent>
-          <div
-            style=(
-              ReactDOMRe.Style.make(
-                ~flexDirection="column",
-                ~alignItems="flex-start",
-                ~marginRight="24px",
-                ~marginBottom="24px",
-                (),
-              )
-            )>
-            <FloatSlider
-              value=layer.alpha
-              label="Alpha"
-              onChange=(
-                value => changeLayer(layer, Some({...layer, alpha: value}))
-              )
-            />
-            /* <FloatSlider */
-            /*   min=((-0.5) *. tau) */
-            /*   max=(0.5 *. tau) */
-            /*   value=layer.rotation */
-            /*   label="Rotation" */
-            /*   step=0.01 */
-            /*   onChange=( */
-            /*     value => changeLayer(layer, {...layer, rotation: value}) */
-            /*   ) */
-            /* /> */
-            <FormGroup row=true>
-              <CompositeOperationSelect
-                compositeOperation=layer.compositeOperation
-                onChange=(
-                  newOperation =>
-                    changeLayer(
-                      layer,
-                      Some({...layer, compositeOperation: newOperation}),
-                    )
-                )
-              />
-            </FormGroup>
-            <FormGroup row=true>
-              <div style=(ReactDOMRe.Style.make(~flexGrow="1", ())) />
-              <IconButton
-                style=(ReactDOMRe.Style.make(~marginRight="-16px", ()))
-                onClick=(
-                  self.handle((_evt, {ReasonReact.send}) =>
-                    send(ToggleExpanded)
+          (
+            switch (layer.content) {
+            | Text(_) => ReasonReact.null
+            | _ =>
+              <div
+                style=(
+                  ReactDOMRe.Style.make(
+                    ~flexDirection="column",
+                    ~alignItems="flex-start",
+                    ~marginRight="24px",
+                    ~marginBottom="24px",
+                    (),
                   )
                 )>
-                (
-                  self.state.expanded ?
-                    <span
-                      style=(
-                        ReactDOMRe.Style.make(~transform="rotate(180deg)", ())
-                      )>
-                      <MaterialUIIcons.ExpandMore />
-                    </span> :
-                    <MaterialUIIcons.ExpandMore />
-                )
-              </IconButton>
-            </FormGroup>
-          </div>
+                <FloatSlider
+                  value=layer.alpha
+                  label="Alpha"
+                  onChange=(
+                    value =>
+                      changeLayer(layer, Some({...layer, alpha: value}))
+                  )
+                />
+                /* <FloatSlider */
+                /*   min=((-0.5) *. tau) */
+                /*   max=(0.5 *. tau) */
+                /*   value=layer.rotation */
+                /*   label="Rotation" */
+                /*   step=0.01 */
+                /*   onChange=( */
+                /*     value => changeLayer(layer, {...layer, rotation: value}) */
+                /*   ) */
+                /* /> */
+                <FormGroup row=true>
+                  <CompositeOperationSelect
+                    compositeOperation=layer.compositeOperation
+                    onChange=(
+                      newOperation =>
+                        changeLayer(
+                          layer,
+                          Some({...layer, compositeOperation: newOperation}),
+                        )
+                    )
+                  />
+                </FormGroup>
+                <FormGroup row=true>
+                  <div style=(ReactDOMRe.Style.make(~flexGrow="1", ())) />
+                  <IconButton
+                    style=(ReactDOMRe.Style.make(~marginRight="-16px", ()))
+                    onClick=(
+                      self.handle((_evt, {ReasonReact.send}) =>
+                        send(ToggleExpanded)
+                      )
+                    )>
+                    (
+                      self.state.expanded ?
+                        <span
+                          style=(
+                            ReactDOMRe.Style.make(
+                              ~transform="rotate(180deg)",
+                              (),
+                            )
+                          )>
+                          <MaterialUIIcons.ExpandMore />
+                        </span> :
+                        <MaterialUIIcons.ExpandMore />
+                    )
+                  </IconButton>
+                </FormGroup>
+              </div>
+            }
+          )
         </div>
         <Collapse in_=self.state.expanded>
           <CardContent
@@ -836,11 +870,9 @@ let make =
                 />
               </FormGroup>
               <FormGroup>
-                <FloatSlider
-                  label="x"
-                  value=layer.transformMatrix.horizontalMoving
-                  min=(-. float_of_int(width))
-                  max=(float_of_int(width))
+                <NumericTextField
+                  label=(ReasonReact.string("x"))
+                  value=(`Float(layer.transformMatrix.horizontalMoving))
                   onChange=(
                     newX =>
                       changeLayer(

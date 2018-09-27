@@ -58,26 +58,28 @@ function readable_string_type_of_layerContent(param) {
       case 2 : 
           return "Draw Commands (global)";
       case 3 : 
-          return "Slitscan";
+          return "Text";
       case 4 : 
-          return "Image";
+          return "Slitscan";
       case 5 : 
-          return "Video";
+          return "Image";
       case 6 : 
-          return "Analyzer";
+          return "Video";
       case 7 : 
-          return "Pitch classes";
+          return "Analyzer";
       case 8 : 
-          return "Key Reader";
+          return "Pitch classes";
       case 9 : 
-          return "Key Writer";
+          return "Key Reader";
       case 10 : 
-          return "Raw Audio Writer";
+          return "Key Writer";
       case 11 : 
-          return "Raw Audio Reader";
+          return "Raw Audio Writer";
       case 12 : 
-          return "Shader";
+          return "Raw Audio Reader";
       case 13 : 
+          return "Shader";
+      case 14 : 
           return "Reader";
       
     }
@@ -106,26 +108,28 @@ function string_type_of_layerContent(param) {
       case 2 : 
           return "draw-global";
       case 3 : 
-          return "slitscan";
+          return "text";
       case 4 : 
-          return "image";
+          return "slitscan";
       case 5 : 
-          return "video";
+          return "image";
       case 6 : 
-          return "analyzer";
+          return "video";
       case 7 : 
-          return "pitch-classes";
+          return "analyzer";
       case 8 : 
-          return "keycode-reader";
+          return "pitch-classes";
       case 9 : 
-          return "keycode-writer";
+          return "keycode-reader";
       case 10 : 
-          return "raw-audio-writer";
+          return "keycode-writer";
       case 11 : 
-          return "raw-audio-reader";
+          return "raw-audio-writer";
       case 12 : 
-          return "shader";
+          return "raw-audio-reader";
       case 13 : 
+          return "shader";
+      case 14 : 
           return "reader";
       
     }
@@ -153,25 +157,27 @@ function icon_of_layerContent(param) {
       case 2 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.FormatListBulleted[/* make */0](/* array */[]));
       case 3 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Flip[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.TextFields[/* make */0](/* array */[]));
       case 4 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Image[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Flip[/* make */0](/* array */[]));
       case 5 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Movie[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Image[/* make */0](/* array */[]));
       case 6 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Mic[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Movie[/* make */0](/* array */[]));
       case 7 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Tonality[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Mic[/* make */0](/* array */[]));
       case 8 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Textsms[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Tonality[/* make */0](/* array */[]));
       case 9 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Keyboard[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Textsms[/* make */0](/* array */[]));
       case 10 : 
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Keyboard[/* make */0](/* array */[]));
       case 11 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Voicemail[/* make */0](/* array */[]));
       case 12 : 
-          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Filter[/* make */0](/* array */[]));
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Voicemail[/* make */0](/* array */[]));
       case 13 : 
+          return ReasonReact.element(undefined, undefined, MaterialUIIcons.Filter[/* make */0](/* array */[]));
+      case 14 : 
           return ReasonReact.element(undefined, undefined, MaterialUIIcons.Speaker[/* make */0](/* array */[]));
       
     }
@@ -275,7 +281,7 @@ function layerByType(type_, json) {
     case "analysis" : 
         var partial_arg = AnalysisOptions$Gayer.DecodeAnalysisOptions[/* analysisOptions */2];
         return Json_decode.map((function (o) {
-                      return /* Analysis */Block.__(6, [o]);
+                      return /* Analysis */Block.__(7, [o]);
                     }), (function (param) {
                       return Json_decode.field("opts", partial_arg, param);
                     }), json);
@@ -311,21 +317,21 @@ function layerByType(type_, json) {
         return /* Histogram */3;
     case "image" : 
         return Json_decode.map((function (s) {
-                      return /* Image */Block.__(4, [s]);
+                      return /* Image */Block.__(5, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
     case "keycode-reader" : 
         var partial_arg$5 = KeycodeUtil$Gayer.DecodeKeycodeFormat[/* keycodeFormat */0];
         return Json_decode.map((function (o) {
-                      return /* KeycodeReader */Block.__(8, [o]);
+                      return /* KeycodeReader */Block.__(9, [o]);
                     }), (function (param) {
                       return Json_decode.field("fmt", partial_arg$5, param);
                     }), json);
     case "keycode-writer" : 
         var partial_arg$6 = KeycodeUtil$Gayer.DecodeKeycodeFormat[/* keycodeFormat */0];
         return Json_decode.map((function (o) {
-                      return /* KeycodeWriter */Block.__(9, [o]);
+                      return /* KeycodeWriter */Block.__(10, [o]);
                     }), (function (param) {
                       return Json_decode.field("fmt", partial_arg$6, param);
                     }), json);
@@ -333,7 +339,7 @@ function layerByType(type_, json) {
         return /* MIDIKeyboard */2;
     case "pitchClasses" : 
         return Json_decode.map((function (xs) {
-                      return /* PitchClasses */Block.__(7, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
+                      return /* PitchClasses */Block.__(8, [Curry._1(Music$Gayer.PitchSet[/* of_list */25], xs)]);
                     }), (function (param) {
                       return Json_decode.field("pc", (function (param) {
                                     return Json_decode.list(Json_decode.$$int, param);
@@ -341,40 +347,46 @@ function layerByType(type_, json) {
                     }), json);
     case "raw-audio-reader" : 
         return Json_decode.map((function (o) {
-                      return /* RawAudioReader */Block.__(11, [o]);
+                      return /* RawAudioReader */Block.__(12, [o]);
                     }), (function (param) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "raw-audio-writer" : 
         return Json_decode.map((function (o) {
-                      return /* RawAudioWriter */Block.__(10, [o]);
+                      return /* RawAudioWriter */Block.__(11, [o]);
                     }), (function (param) {
                       return Json_decode.field("format", rawAudioFormat, param);
                     }), json);
     case "reader" : 
         var partial_arg$7 = ReaderType$Gayer.DecodeReaderType[/* readerType */1];
         return Json_decode.map((function (t) {
-                      return /* Reader */Block.__(13, [t]);
+                      return /* Reader */Block.__(14, [t]);
                     }), (function (param) {
                       return Json_decode.field("readerType", partial_arg$7, param);
                     }), json);
     case "regl" : 
         var partial_arg$8 = Regl$Gayer.DecodeReglOptions[/* reglOptions */3];
         return Json_decode.map((function (o) {
-                      return /* Regl */Block.__(12, [o]);
+                      return /* Regl */Block.__(13, [o]);
                     }), (function (param) {
                       return Json_decode.field("options", partial_arg$8, param);
                     }), json);
     case "slitscan" : 
         var partial_arg$9 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
         return Json_decode.map((function (s) {
-                      return /* Slitscan */Block.__(3, [s]);
+                      return /* Slitscan */Block.__(4, [s]);
                     }), (function (param) {
                       return Json_decode.field("options", partial_arg$9, param);
                     }), json);
+    case "text" : 
+        return Json_decode.map((function (t) {
+                      return /* Text */Block.__(3, [t]);
+                    }), (function (param) {
+                      return Json_decode.field("text", Json_decode.string, param);
+                    }), json);
     case "video" : 
         return Json_decode.map((function (s) {
-                      return /* Video */Block.__(5, [s]);
+                      return /* Video */Block.__(6, [s]);
                     }), (function (param) {
                       return Json_decode.field("url", Json_decode.string, param);
                     }), json);
@@ -597,6 +609,20 @@ function layerContent$1(r) {
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
+                        "text"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "text",
+                          r[0]
+                        ],
+                        /* [] */0
+                      ]
+                    ]);
+      case 4 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
                         "slitscan"
                       ],
                       /* :: */[
@@ -607,7 +633,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 4 : 
+      case 5 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -621,7 +647,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 5 : 
+      case 6 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -635,7 +661,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 6 : 
+      case 7 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -649,7 +675,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 7 : 
+      case 8 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -665,7 +691,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 8 : 
+      case 9 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -679,7 +705,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 9 : 
+      case 10 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -693,7 +719,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 10 : 
+      case 11 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -707,7 +733,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 11 : 
+      case 12 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -721,7 +747,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 12 : 
+      case 13 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -735,7 +761,7 @@ function layerContent$1(r) {
                         /* [] */0
                       ]
                     ]);
-      case 13 : 
+      case 14 : 
           return Json_encode.object_(/* :: */[
                       /* tuple */[
                         "type",
@@ -854,8 +880,9 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
     switch (match.tag | 0) {
       case 0 : 
       case 2 : 
-      case 7 : 
-      case 13 : 
+      case 3 : 
+      case 8 : 
+      case 14 : 
           tmp = null;
           break;
       default:
@@ -878,7 +905,7 @@ function renderLayerPreview(layer, _, _$1, saveTick, onUnmount, layerRefs) {
 
 var component = ReasonReact.reducerComponent("Layer-Gayer");
 
-function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, savedImages, width, height, _) {
+function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, savedImages, _, height, _$1) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -914,10 +941,28 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                 match[0]
                               ], undefined, /* array */[]));
                       break;
-                  case 4 : 
+                  case 3 : 
+                      tmp = ReasonReact.element(undefined, undefined, MaterialUi_TextField.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, (function (evt) {
+                                  var value = evt.target.value;
+                                  return Curry._2(changeLayer, layer, /* record */[
+                                              /* content : Text */Block.__(3, [value]),
+                                              /* enabled */layer[/* enabled */1],
+                                              /* alpha */layer[/* alpha */2],
+                                              /* compositeOperation */layer[/* compositeOperation */3],
+                                              /* rotation */layer[/* rotation */4],
+                                              /* transformMatrix */layer[/* transformMatrix */5],
+                                              /* filters */layer[/* filters */6],
+                                              /* id */layer[/* id */7]
+                                            ]);
+                                }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
+                                -976970511,
+                                match[0]
+                              ], undefined, /* array */[]));
+                      break;
+                  case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, ImageSelect$Gayer.make(match[0], savedImages, (function (newUrl) {
                                   return Curry._2(changeLayer, layer, /* record */[
-                                              /* content : Image */Block.__(4, [newUrl]),
+                                              /* content : Image */Block.__(5, [newUrl]),
                                               /* enabled */layer[/* enabled */1],
                                               /* alpha */layer[/* alpha */2],
                                               /* compositeOperation */layer[/* compositeOperation */3],
@@ -928,10 +973,10 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                             ]);
                                 }), /* array */[]));
                       break;
-                  case 7 : 
+                  case 8 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
                                       return Curry._2(changeLayer, layer, /* record */[
-                                                  /* content : PitchClasses */Block.__(7, [newPitches]),
+                                                  /* content : PitchClasses */Block.__(8, [newPitches]),
                                                   /* enabled */layer[/* enabled */1],
                                                   /* alpha */layer[/* alpha */2],
                                                   /* compositeOperation */layer[/* compositeOperation */3],
@@ -942,27 +987,27 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                 ]);
                                     }), /* array */[])));
                       break;
-                  case 8 : 
                   case 9 : 
+                  case 10 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])));
                       break;
                   case 1 : 
                   case 2 : 
-                  case 3 : 
-                  case 5 : 
+                  case 4 : 
                   case 6 : 
-                  case 10 : 
+                  case 7 : 
                   case 11 : 
+                  case 12 : 
                       tmp = React.createElement("div", undefined);
                       break;
-                  case 12 : 
+                  case 13 : 
                       var reglOptions = match[0];
                       var tmp$1;
                       if (reglOptions.tag) {
                         var opts = reglOptions[0];
                         tmp$1 = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
-                                                    /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
+                                                    /* content : Regl */Block.__(13, [/* Displacement */Block.__(1, [/* record */[
                                                               /* displacementSourceLayer */newKey,
                                                               /* displacementMap */opts[/* displacementMap */1]
                                                             ]])]),
@@ -976,7 +1021,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   ]);
                                       }), opts[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
-                                                    /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
+                                                    /* content : Regl */Block.__(13, [/* Displacement */Block.__(1, [/* record */[
                                                               /* displacementSourceLayer */opts[/* displacementSourceLayer */0],
                                                               /* displacementMap */newKey
                                                             ]])]),
@@ -993,7 +1038,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                         var opts$1 = reglOptions[0];
                         tmp$1 = ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                     return Curry._2(changeLayer, layer, /* record */[
-                                                /* content : Regl */Block.__(12, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
+                                                /* content : Regl */Block.__(13, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
                                                 /* enabled */layer[/* enabled */1],
                                                 /* alpha */layer[/* alpha */2],
                                                 /* compositeOperation */layer[/* compositeOperation */3],
@@ -1006,10 +1051,10 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                       }
                       tmp = React.createElement("div", undefined, tmp$1);
                       break;
-                  case 13 : 
+                  case 14 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, ReaderType$Gayer.make(match[0], (function (newReaderType) {
                                       return Curry._2(changeLayer, layer, /* record */[
-                                                  /* content : Reader */Block.__(13, [newReaderType]),
+                                                  /* content : Reader */Block.__(14, [newReaderType]),
                                                   /* enabled */layer[/* enabled */1],
                                                   /* alpha */layer[/* alpha */2],
                                                   /* compositeOperation */layer[/* compositeOperation */3],
@@ -1023,7 +1068,62 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                   
                 }
               }
-              var match$1 = self[/* state */1][/* expanded */0];
+              var match$1 = layer[/* content */0];
+              var tmp$2;
+              var exit = 0;
+              if (typeof match$1 === "number" || match$1.tag !== 3) {
+                exit = 1;
+              } else {
+                tmp$2 = null;
+              }
+              if (exit === 1) {
+                var match$2 = self[/* state */1][/* expanded */0];
+                tmp$2 = React.createElement("div", {
+                      style: {
+                        marginRight: "24px",
+                        marginBottom: "24px",
+                        alignItems: "flex-start",
+                        flexDirection: "column"
+                      }
+                    }, ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */2], undefined, (function (value) {
+                                return Curry._2(changeLayer, layer, /* record */[
+                                            /* content */layer[/* content */0],
+                                            /* enabled */layer[/* enabled */1],
+                                            /* alpha */value,
+                                            /* compositeOperation */layer[/* compositeOperation */3],
+                                            /* rotation */layer[/* rotation */4],
+                                            /* transformMatrix */layer[/* transformMatrix */5],
+                                            /* filters */layer[/* filters */6],
+                                            /* id */layer[/* id */7]
+                                          ]);
+                              }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
+                                          return Curry._2(changeLayer, layer, /* record */[
+                                                      /* content */layer[/* content */0],
+                                                      /* enabled */layer[/* enabled */1],
+                                                      /* alpha */layer[/* alpha */2],
+                                                      /* compositeOperation */newOperation,
+                                                      /* rotation */layer[/* rotation */4],
+                                                      /* transformMatrix */layer[/* transformMatrix */5],
+                                                      /* filters */layer[/* filters */6],
+                                                      /* id */layer[/* id */7]
+                                                    ]);
+                                        }), /* array */[]))])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
+                              React.createElement("div", {
+                                    style: {
+                                      flexGrow: "1"
+                                    }
+                                  }),
+                              ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, Curry._1(self[/* handle */0], (function (_, param) {
+                                              return Curry._1(param[/* send */3], /* ToggleExpanded */0);
+                                            })), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
+                                        marginRight: "-16px"
+                                      }, /* array */[match$2 ? React.createElement("span", {
+                                                style: {
+                                                  transform: "rotate(180deg)"
+                                                }
+                                              }, ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))) : ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))]))
+                            ])));
+              }
               return ReasonReact.element(undefined, undefined, MaterialUi_Card.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                               ReasonReact.element(undefined, undefined, MaterialUi_CardHeader.make(Js_primitive.some(ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
                                                       return Curry._2(changeLayer, layer, undefined);
@@ -1040,51 +1140,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                     }
                                   }, ReasonReact.element(undefined, undefined, MaterialUi_CardMedia.make(undefined, undefined, undefined, "dummy", undefined, undefined, /* array */[renderLayerPreview(layer, changeLayer, Curry._1(onSetRef, layer), saveTick, self[/* onUnmount */4], layerRefs)])), ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                             flexGrow: "1"
-                                          }, /* array */[tmp])), React.createElement("div", {
-                                        style: {
-                                          marginRight: "24px",
-                                          marginBottom: "24px",
-                                          alignItems: "flex-start",
-                                          flexDirection: "column"
-                                        }
-                                      }, ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(undefined, undefined, "Alpha", layer[/* alpha */2], undefined, (function (value) {
-                                                  return Curry._2(changeLayer, layer, /* record */[
-                                                              /* content */layer[/* content */0],
-                                                              /* enabled */layer[/* enabled */1],
-                                                              /* alpha */value,
-                                                              /* compositeOperation */layer[/* compositeOperation */3],
-                                                              /* rotation */layer[/* rotation */4],
-                                                              /* transformMatrix */layer[/* transformMatrix */5],
-                                                              /* filters */layer[/* filters */6],
-                                                              /* id */layer[/* id */7]
-                                                            ]);
-                                                }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
-                                                            return Curry._2(changeLayer, layer, /* record */[
-                                                                        /* content */layer[/* content */0],
-                                                                        /* enabled */layer[/* enabled */1],
-                                                                        /* alpha */layer[/* alpha */2],
-                                                                        /* compositeOperation */newOperation,
-                                                                        /* rotation */layer[/* rotation */4],
-                                                                        /* transformMatrix */layer[/* transformMatrix */5],
-                                                                        /* filters */layer[/* filters */6],
-                                                                        /* id */layer[/* id */7]
-                                                                      ]);
-                                                          }), /* array */[]))])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
-                                                React.createElement("div", {
-                                                      style: {
-                                                        flexGrow: "1"
-                                                      }
-                                                    }),
-                                                ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, Curry._1(self[/* handle */0], (function (_, param) {
-                                                                return Curry._1(param[/* send */3], /* ToggleExpanded */0);
-                                                              })), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
-                                                          marginRight: "-16px"
-                                                        }, /* array */[match$1 ? React.createElement("span", {
-                                                                  style: {
-                                                                    transform: "rotate(180deg)"
-                                                                  }
-                                                                }, ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))) : ReasonReact.element(undefined, undefined, MaterialUIIcons.ExpandMore[/* make */0](/* array */[]))]))
-                                              ])))),
+                                          }, /* array */[tmp])), tmp$2),
                               ReasonReact.element(undefined, undefined, MaterialUi_Collapse.make(undefined, undefined, undefined, self[/* state */1][/* expanded */0], undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_CardContent.make(undefined, undefined, undefined, {
                                                   display: "flex",
                                                   flexDirection: "row",
@@ -1110,7 +1166,10 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                                         ]);
                                                                                             }), undefined, "enabled", undefined, undefined, /* array */[]))), undefined, undefined, "Active (include in render)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
                                                             ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, undefined, undefined, undefined, /* array */[
-                                                                      ReasonReact.element(undefined, undefined, FloatSlider$Gayer.make(-width, width, "x", layer[/* transformMatrix */5][/* horizontalMoving */4], undefined, (function (newX) {
+                                                                      ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
+                                                                                365180284,
+                                                                                layer[/* transformMatrix */5][/* horizontalMoving */4]
+                                                                              ], "x", (function (newX) {
                                                                                   var init = layer[/* transformMatrix */5];
                                                                                   return Curry._2(changeLayer, layer, /* record */[
                                                                                               /* content */layer[/* content */0],

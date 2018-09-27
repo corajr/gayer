@@ -184,3 +184,23 @@ let makeImageDataFromFloats: (array(float), int, int) => imageData =
     };
     createImageData(output, w, h);
   };
+
+let makeRainbowSquare = (width, height) : imageData => {
+  let output = makeUint8ClampedArray(width * height * 4);
+  for (i in 0 to height - 1) {
+    let h = float_of_int(i mod 12) /. 12.0;
+    let l = float_of_int(i) /. float_of_int(height);
+    for (j in 0 to width - 1) {
+      let s = float_of_int(j) /. float_of_int(width);
+      let (r, g, b) = hslToRgb(h, s, l);
+      let offset = (height - i - 1) * height + j;
+
+      output[offset] = r;
+      output[offset + 1] = g;
+      output[offset + 2] = b;
+      output[offset + 3] = 255;
+    };
+  };
+
+  createImageData(output, width, height);
+};

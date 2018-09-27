@@ -347,8 +347,45 @@ function field2(f, a, aDec, b, bDec, json) {
               }), json);
 }
 
-function imgSource() {
-  return "self";
+function imgSource(param) {
+  if (param) {
+    var match = param[0];
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "image"
+                ],
+                /* :: */[
+                  /* tuple */[
+                    "data",
+                    Json_encode.array((function (prim) {
+                            return prim;
+                          }), match[/* data */0])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "w",
+                      match[/* w */1]
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "h",
+                        match[/* h */2]
+                      ],
+                      /* [] */0
+                    ]
+                  ]
+                ]
+              ]);
+  } else {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "self"
+                ],
+                /* [] */0
+              ]);
+  }
 }
 
 function length(param) {
@@ -722,7 +759,7 @@ function command(param) {
                     /* :: */[
                       /* tuple */[
                         "src",
-                        "self"
+                        imgSource(param[0])
                       ],
                       /* :: */[
                         /* tuple */[
@@ -742,7 +779,7 @@ function command(param) {
                     /* :: */[
                       /* tuple */[
                         "src",
-                        "self"
+                        imgSource(param[0])
                       ],
                       /* :: */[
                         /* tuple */[
@@ -771,8 +808,21 @@ var EncodeDrawCommand = /* module */[
 ];
 
 function imgSource$1(json) {
-  Json_decode.string(json);
-  return /* Self */0;
+  var match = Json_decode.field("type", Json_decode.string, json);
+  switch (match) {
+    case "imageData" : 
+        return /* ImageData */[/* record */[
+                  /* data */Json_decode.field("data", (function (param) {
+                          return Json_decode.array(Json_decode.$$int, param);
+                        }), json),
+                  /* w */Json_decode.field("w", Json_decode.$$int, json),
+                  /* h */Json_decode.field("h", Json_decode.$$int, json)
+                ]];
+    case "self" : 
+        return /* Self */0;
+    default:
+      return /* Self */0;
+  }
 }
 
 function length$1(json) {
@@ -1092,12 +1142,14 @@ function drawCommand(drawContext, cmd) {
                     ]);
       case 10 : 
           var match$2 = cmd[1];
-          ctx.drawImage(ctx.canvas, getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
+          var realSrc = ctx.canvas;
+          ctx.drawImage(realSrc, getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
           return /* () */0;
       case 11 : 
           var match$3 = cmd[2];
           var match$4 = cmd[1];
-          ctx.drawImage(ctx.canvas, getLength(drawContext, match$4[/* x */0]), getLength(drawContext, match$4[/* y */1]), getLength(drawContext, match$4[/* w */2]), getLength(drawContext, match$4[/* h */3]), getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]));
+          var realSrc$1 = ctx.canvas;
+          ctx.drawImage(realSrc$1, getLength(drawContext, match$4[/* x */0]), getLength(drawContext, match$4[/* y */1]), getLength(drawContext, match$4[/* w */2]), getLength(drawContext, match$4[/* h */3]), getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]));
           return /* () */0;
       
     }

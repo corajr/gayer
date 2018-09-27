@@ -129,6 +129,7 @@ let make =
             audioCtx
             audioGraph
           />
+        | Text(_)
         | DrawGlobal(_)
         | PitchClasses(_)
         | Fill(_)

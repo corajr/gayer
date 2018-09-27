@@ -296,6 +296,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         Ctx.drawImage(ctx, canvasSource, 0, 0);
       }
     | HandDrawn
+    | Text(_)
     | Draw(_)
     | Slitscan(_)
     | Image(_)

@@ -9,7 +9,7 @@ import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 
 function img(url) {
   return /* record */[
-          /* content : Image */Block.__(4, [url]),
+          /* content : Image */Block.__(5, [url]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -22,7 +22,7 @@ function img(url) {
 
 function video(url) {
   return /* record */[
-          /* content : Video */Block.__(5, [url]),
+          /* content : Video */Block.__(6, [url]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -33,7 +33,7 @@ function video(url) {
         ];
 }
 
-var reader_000 = /* content : Reader */Block.__(13, [/* Channel */[/* R */0]]);
+var reader_000 = /* content : Reader */Block.__(14, [/* Channel */[/* R */0]]);
 
 var reader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -60,7 +60,7 @@ var reader = /* record */[
   reader_007
 ];
 
-var saturationReader_000 = /* content : Reader */Block.__(13, [/* Saturation */0]);
+var saturationReader_000 = /* content : Reader */Block.__(14, [/* Saturation */0]);
 
 var saturationReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -87,7 +87,7 @@ var saturationReader = /* record */[
   saturationReader_007
 ];
 
-var keycodeReader_000 = /* content : KeycodeReader */Block.__(8, [/* AsciiAsHeight */0]);
+var keycodeReader_000 = /* content : KeycodeReader */Block.__(9, [/* AsciiAsHeight */0]);
 
 var keycodeReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -114,7 +114,7 @@ var keycodeReader = /* record */[
   keycodeReader_007
 ];
 
-var keycodeWriter_000 = /* content : KeycodeWriter */Block.__(9, [/* AsciiAsHeight */0]);
+var keycodeWriter_000 = /* content : KeycodeWriter */Block.__(10, [/* AsciiAsHeight */0]);
 
 var keycodeWriter_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -171,7 +171,7 @@ var rawAudioFormat = /* record */[
   /* sampleRate */44100
 ];
 
-var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(10, [rawAudioFormat]);
+var rawAudioWriter_000 = /* content : RawAudioWriter */Block.__(11, [rawAudioFormat]);
 
 var rawAudioWriter_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -198,7 +198,7 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_007
 ];
 
-var rawAudioReader_000 = /* content : RawAudioReader */Block.__(11, [rawAudioFormat]);
+var rawAudioReader_000 = /* content : RawAudioReader */Block.__(12, [rawAudioFormat]);
 
 var rawAudioReader_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
@@ -227,7 +227,7 @@ var rawAudioReader = /* record */[
 
 function pitchFilter(pc) {
   return /* record */[
-          /* content : PitchClasses */Block.__(7, [pc]),
+          /* content : PitchClasses */Block.__(8, [pc]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -280,7 +280,7 @@ function draw($staropt$star, cmds) {
         ];
 }
 
-function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, $staropt$star$5, $staropt$star$6, s) {
+function drawText($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, $staropt$star$4, $staropt$star$5, $staropt$star$6, s) {
   var x = $staropt$star !== undefined ? $staropt$star : /* Divide */Block.__(6, [
         /* Width */0,
         /* Constant */Block.__(0, [2])
@@ -329,7 +329,7 @@ function text($staropt$star, $staropt$star$1, $staropt$star$2, $staropt$star$3, 
 
 function sobel(key) {
   return /* record */[
-          /* content : Regl */Block.__(12, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
+          /* content : Regl */Block.__(13, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */key]])]),
           /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
           /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
           /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
@@ -342,7 +342,7 @@ function sobel(key) {
 
 function displace(source, displace$1) {
   return /* record */[
-          /* content : Regl */Block.__(12, [/* Displacement */Block.__(1, [/* record */[
+          /* content : Regl */Block.__(13, [/* Displacement */Block.__(1, [/* record */[
                     /* displacementSourceLayer */source,
                     /* displacementMap */displace$1
                   ]])]),
@@ -365,7 +365,7 @@ function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
         ]]);
   if (includeHistory) {
     return /* record */[
-            /* content : Analysis */Block.__(6, [/* record */[
+            /* content : Analysis */Block.__(7, [/* record */[
                   /* input */input,
                   /* readerType */readerType,
                   /* analysisSize */analysisSize
@@ -380,7 +380,7 @@ function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
           ];
   } else {
     return /* record */[
-            /* content : Analysis */Block.__(6, [/* record */[
+            /* content : Analysis */Block.__(7, [/* record */[
                   /* input */input,
                   /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
                   /* analysisSize */AnalysisOptions$Gayer.defaultAnalysisOptions[/* analysisSize */2]
@@ -421,7 +421,7 @@ var webcam = /* record */[
   webcam_007
 ];
 
-var slitscan_000 = /* content : Slitscan */Block.__(3, [/* record */[
+var slitscan_000 = /* content : Slitscan */Block.__(4, [/* record */[
       /* sourceLayerKey */"webcam",
       /* slitscan : StaticX */Block.__(0, [320])
     ]]);
@@ -963,6 +963,19 @@ var handDrawn = /* record */[
   handDrawn_007
 ];
 
+function text(s) {
+  return /* record */[
+          /* content : Text */Block.__(3, [s]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
+}
+
 var idCounter = /* record */[/* contents */0];
 
 function maybeAddId(layer) {
@@ -995,6 +1008,10 @@ var allLayerTypes = /* array */[
     analyzer(undefined, undefined, undefined, /* Mic */2)
   ],
   /* tuple */[
+    "pitch filter",
+    pitchFilter(Music$Gayer.cMajor)
+  ],
+  /* tuple */[
     "reader",
     reader
   ],
@@ -1011,11 +1028,11 @@ var allLayerTypes = /* array */[
     sobel("root")
   ],
   /* tuple */[
-    "displace",
+    "displace map",
     displace("root", "root")
   ],
   /* tuple */[
-    "midi-keyboard",
+    "midi keyboard",
     midiKeyboard
   ],
   /* tuple */[
@@ -1023,12 +1040,8 @@ var allLayerTypes = /* array */[
     keycodeWriter
   ],
   /* tuple */[
-    "ASCII",
+    "keyboard display",
     keycodeReader
-  ],
-  /* tuple */[
-    "mouse-drawGlobal",
-    handDrawn
   ],
   /* tuple */[
     "drawGlobal (commands)",
@@ -1040,10 +1053,6 @@ var allLayerTypes = /* array */[
   /* tuple */[
     "fill",
     fill(0.0125, "white")
-  ],
-  /* tuple */[
-    "pitch filter",
-    pitchFilter(Music$Gayer.cMajor)
   ],
   /* tuple */[
     "blur",
@@ -1076,6 +1085,10 @@ var allLayerTypes = /* array */[
   /* tuple */[
     "saturation reader",
     saturationReader
+  ],
+  /* tuple */[
+    "mouse-draw (very slow :()",
+    handDrawn
   ]
 ];
 
@@ -1106,7 +1119,7 @@ export {
   fill ,
   drawGlobal ,
   draw ,
-  text ,
+  drawText ,
   sobel ,
   displace ,
   analyzer ,
@@ -1128,6 +1141,7 @@ export {
   midiKeyboard ,
   midiColors ,
   handDrawn ,
+  text ,
   idCounter ,
   maybeAddId ,
   allLayerTypes ,

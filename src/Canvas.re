@@ -510,8 +510,15 @@ module DrawCommand = {
     variables: Belt.Map.String.t(int),
   };
 
+  type imageData = {
+    data: array(int),
+    w: int,
+    h: int,
+  };
+
   type imgSource =
-    | Self;
+    | Self
+    | ImageData(imageData);
 
   type length =
     | Constant(int)
@@ -555,7 +562,19 @@ module DrawCommand = {
     );
 
   module EncodeDrawCommand = {
-    let imgSource = _r => Json.Encode.string("self");
+    let imgSource =
+      Json.Encode.(
+        fun
+        | Self => object_([("type", string("self"))])
+        | ImageData({data, w, h}) =>
+          object_([
+            ("type", string("image")),
+            ("data", array(int, data)),
+            ("w", int(w)),
+            ("h", int(h)),
+          ])
+      );
+
     let rec length =
       Json.Encode.(
         fun
@@ -670,7 +689,14 @@ module DrawCommand = {
   module DecodeDrawCommand = {
     let imgSource = json =>
       Json.Decode.(
-        switch (string(json)) {
+        switch (json |> field("type", string)) {
+        | "self" => Self
+        | "imageData" =>
+          ImageData({
+            data: json |> field("data", array(int)),
+            w: json |> field("w", int),
+            h: json |> field("h", int),
+          })
         | _ => Self
         }
       );
@@ -868,37 +894,40 @@ module DrawCommand = {
             getLength(drawContext, y),
           )
         | DrawImage(src, {x, y, w, h}) =>
-          switch (src) {
-          | Self =>
-            Ctx.drawImageDestRect(
-              ctx,
-              getCanvasAsSource(Ctx.canvas(ctx)),
-              getLength(drawContext, x),
-              getLength(drawContext, y),
-              getLength(drawContext, w),
-              getLength(drawContext, h),
-            )
-          }
+          let realSrc =
+            switch (src) {
+            | _ => getCanvasAsSource(Ctx.canvas(ctx))
+            /* | ImageData({data, w, h}) => createImageData(data, width, height) */
+            };
+          Ctx.drawImageDestRect(
+            ctx,
+            realSrc,
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+            getLength(drawContext, w),
+            getLength(drawContext, h),
+          );
         | DrawImageSourceDest(
             src,
             {x: srcX, y: srcY, w: srcW, h: srcH},
             {x, y, w, h},
           ) =>
-          switch (src) {
-          | Self =>
-            Ctx.drawImageSourceRectDestRect(
-              ctx,
-              getCanvasAsSource(Ctx.canvas(ctx)),
-              getLength(drawContext, srcX),
-              getLength(drawContext, srcY),
-              getLength(drawContext, srcW),
-              getLength(drawContext, srcH),
-              getLength(drawContext, x),
-              getLength(drawContext, y),
-              getLength(drawContext, w),
-              getLength(drawContext, h),
-            )
-          }
+          let realSrc =
+            switch (src) {
+            | _ => getCanvasAsSource(Ctx.canvas(ctx))
+            };
+          Ctx.drawImageSourceRectDestRect(
+            ctx,
+            realSrc,
+            getLength(drawContext, srcX),
+            getLength(drawContext, srcY),
+            getLength(drawContext, srcW),
+            getLength(drawContext, srcH),
+            getLength(drawContext, x),
+            getLength(drawContext, y),
+            getLength(drawContext, w),
+            getLength(drawContext, h),
+          );
         }
       | None => ()
       };

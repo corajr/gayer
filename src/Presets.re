@@ -12,7 +12,45 @@ open RawAudio;
    a variety of other parameters as well. Complete definitions are available in
    Params.re. */
 
-let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
+let singleNote = {
+  ...defaultParams,
+  millisPerTick: 100,
+  layers: [
+    text(
+      "GAYER is a tool to help you turn images into sound (and vice versa).\n"
+      ++ "You should be hearing a single note -- MIDI note 60, AKA middle C.\n\n"
+      ++ "If you don't hear anything, please check your volume settings.",
+    ),
+    singleNoteLayer(60),
+    reader,
+  ],
+};
+
+let rainbowCommands = {
+  let cmds = ref([]);
+  let width = 120;
+  let height = 120;
+  for (i in 0 to height - 1) {
+    let h = float_of_int(i mod 12) /. 12.0;
+    let l = float_of_int(i) /. float_of_int(height);
+    let oneBand = Divide(Height, Constant(height));
+    for (j in 0 to width - 1) {
+      let s = float_of_int(j) /. float_of_int(width);
+      cmds :=
+        [
+          FillRect({
+            x: Multiply(Constant(j), oneBand),
+            y: Multiply(oneBand, Constant(height - i - 1)),
+            w: oneBand,
+            h: oneBand,
+          }),
+          SetFillStyle(Color.hsl(h, s, l)),
+          ...cmds^,
+        ];
+    };
+  };
+  List.rev(cmds^);
+};
 
 let harmonyParams = {
   ...defaultParams,
@@ -125,7 +163,7 @@ let isItACrime = {
 
 let tughra = {
   ...defaultParams,
-  layers: [img("media/suleiman.jpg"), reader],
+  layers: [text(""), img("media/suleiman.jpg"), reader],
 };
 
 let iChing = {
@@ -288,11 +326,23 @@ let keycodeParams = {
   ],
 };
 
+let welcome = {
+  ...defaultParams,
+  layers: [
+    text(
+      "Welcome to GAYER, the Graphical Audio plaYER!\n"
+      ++ "Please press the >| button at the top of the screen to begin.",
+    ),
+    draw(rainbowCommands),
+    {...drawText("GAYER", ~color="black"), alpha: 0.5},
+  ],
+};
+
 let welcomeAudio = {
   ...defaultParams,
   layers: [
     fill("black"),
-    text("GAYER", ~color="red", ~fillOrStroke=Stroke),
+    drawText("GAYER", ~color="red", ~fillOrStroke=Stroke),
     saturationReader,
   ],
 };
@@ -309,12 +359,11 @@ let displaceParams = {
 };
 
 let presetsWithoutLayerIds = [
-  /* ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}), */
-  /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
-  /* ("Welcome (Audio)", welcomeAudio), */
-  ("Spacy", {...defaultParams, layers: spacy}),
+  ("Welcome", welcome),
   ("Single note", singleNote),
-  ("Mic (CQT analysis)", history),
+  ("Spacy", {...defaultParams, layers: spacy}),
+  ("Tughra of Suleiman", tughra),
+  ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
   ("Webcam (edge detection)", webcamEdgeDetect),
   /* ("Slitscan", slitscanParams), */
@@ -326,7 +375,6 @@ let presetsWithoutLayerIds = [
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
   /* ("Angle", droste), */
-  ("Tughra of Suleiman", tughra),
   ("Four Seasons", fourSeasons),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
   ("Is it a crime?", isItACrime),

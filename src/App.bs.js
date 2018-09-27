@@ -371,7 +371,7 @@ function drawLayer(ctx, width, height, state, layer) {
       case 2 : 
           Canvas$Gayer.DrawCommand[/* drawCommands */5](state[/* drawContext */22], match$1[0]);
           break;
-      case 6 : 
+      case 7 : 
           if (maybeLayerRef !== undefined) {
             var analysisCanvas = Js_primitive.valFromOption(maybeLayerRef);
             var analysisSize = match$1[0][/* analysisSize */2];
@@ -385,7 +385,7 @@ function drawLayer(ctx, width, height, state, layer) {
             }
           }
           break;
-      case 7 : 
+      case 8 : 
           var classList = Curry._1(Music$Gayer.PitchSet[/* elements */19], Curry._2(Music$Gayer.PitchSet[/* diff */8], Music$Gayer.allPitches, match$1[0]));
           ctx.fillStyle = "black";
           var pixelsPerSemitone = Canvas$Gayer.binsPerSemitone(height);
@@ -399,11 +399,11 @@ function drawLayer(ctx, width, height, state, layer) {
                 }(i)), classList);
           }
           break;
-      case 8 : 
       case 9 : 
+      case 10 : 
           exit = 2;
           break;
-      case 10 : 
+      case 11 : 
           var match$4 = match$1[0];
           if (match$4[/* encoding */4]) {
             if (maybeLayerRef !== undefined) {
@@ -412,14 +412,14 @@ function drawLayer(ctx, width, height, state, layer) {
             
           }
           break;
-      case 11 : 
-          break;
       case 12 : 
+          break;
+      case 13 : 
           if (maybeLayerRef !== undefined) {
             ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0);
           }
           break;
-      case 13 : 
+      case 14 : 
           var readerType = match$1[0];
           var xToRead = Canvas$Gayer.wrapCoord(state[/* readPos */2][0] + state[/* params */6][/* readPosOffset */4] | 0, 0, width);
           var slice = ctx.getImageData(xToRead, 0, 1, height);

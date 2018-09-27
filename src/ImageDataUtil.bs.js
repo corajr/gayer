@@ -4,6 +4,7 @@ import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Color$Gayer from "./Color.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Palette$Gayer from "./Palette.bs.js";
@@ -181,6 +182,24 @@ function makeImageDataFromFloats(input, w, h) {
   return new ImageData(output, w, h);
 }
 
+function makeRainbowSquare(width, height) {
+  var output = makeUint8ClampedArray((Caml_int32.imul(width, height) << 2));
+  for(var i = 0 ,i_finish = height - 1 | 0; i <= i_finish; ++i){
+    var h = i % 12 / 12.0;
+    var l = i / height;
+    for(var j = 0 ,j_finish = width - 1 | 0; j <= j_finish; ++j){
+      var s = j / width;
+      var match = Color$Gayer.hslToRgb(h, s, l);
+      var offset = Caml_int32.imul((height - i | 0) - 1 | 0, height) + j | 0;
+      Caml_array.caml_array_set(output, offset, match[0]);
+      Caml_array.caml_array_set(output, offset + 1 | 0, match[1]);
+      Caml_array.caml_array_set(output, offset + 2 | 0, match[2]);
+      Caml_array.caml_array_set(output, offset + 3 | 0, 255);
+    }
+  }
+  return new ImageData(output, width, height);
+}
+
 export {
   mapRawData ,
   mapImageData ,
@@ -196,6 +215,7 @@ export {
   makeImageData ,
   makeImageDataWithPalette ,
   makeImageDataFromFloats ,
+  makeRainbowSquare ,
   
 }
 /* Canvas-Gayer Not a pure module */

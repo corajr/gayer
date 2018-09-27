@@ -3,6 +3,7 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
+import * as Color$Gayer from "./Color.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as Params$Gayer from "./Params.bs.js";
 import * as LayerGenerator$Gayer from "./LayerGenerator.bs.js";
@@ -19,8 +20,6 @@ var singleNote_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOff
 
 var singleNote_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
 
-var singleNote_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
-
 var singleNote_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
 
 var singleNote_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
@@ -36,10 +35,13 @@ var singleNote_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var singleNote_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
 
 var singleNote_014 = /* layers : :: */[
-  LayerGenerator$Gayer.singleNoteLayer(60),
+  LayerGenerator$Gayer.text("GAYER is a tool to help you turn images into sound (and vice versa).\nYou should be hearing a single note -- MIDI note 60, AKA middle C.\n\nIf you don't hear anything, please check your volume settings."),
   /* :: */[
-    LayerGenerator$Gayer.reader,
-    /* [] */0
+    LayerGenerator$Gayer.singleNoteLayer(60),
+    /* :: */[
+      LayerGenerator$Gayer.reader,
+      /* [] */0
+    ]
   ]
 ];
 
@@ -50,7 +52,7 @@ var singleNote = /* record */[
   singleNote_003,
   singleNote_004,
   singleNote_005,
-  singleNote_006,
+  /* millisPerTick */100,
   singleNote_007,
   singleNote_008,
   singleNote_009,
@@ -60,6 +62,41 @@ var singleNote = /* record */[
   singleNote_013,
   singleNote_014
 ];
+
+var cmds = /* [] */0;
+
+for(var i = 0; i <= 119; ++i){
+  var h = i % 12 / 12.0;
+  var l = i / 120;
+  var oneBand_001 = /* Constant */Block.__(0, [120]);
+  var oneBand = /* Divide */Block.__(6, [
+      /* Height */1,
+      oneBand_001
+    ]);
+  for(var j = 0; j <= 119; ++j){
+    var s = j / 120;
+    cmds = /* :: */[
+      /* FillRect */Block.__(5, [/* record */[
+            /* x : Multiply */Block.__(7, [
+                /* Constant */Block.__(0, [j]),
+                oneBand
+              ]),
+            /* y : Multiply */Block.__(7, [
+                oneBand,
+                /* Constant */Block.__(0, [(120 - i | 0) - 1 | 0])
+              ]),
+            /* w */oneBand,
+            /* h */oneBand
+          ]]),
+      /* :: */[
+        /* SetFillStyle */Block.__(3, [Color$Gayer.hsl(undefined, h, s, l)]),
+        cmds
+      ]
+    ];
+  }
+}
+
+var rainbowCommands = List.rev(cmds);
 
 var harmonyParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -637,7 +674,7 @@ var isItACrime_014 = /* layers : :: */[
   LayerGenerator$Gayer.img("media/is_it_a_crime_large.png"),
   /* :: */[
     /* record */[
-      /* content : Reader */Block.__(13, [/* Channel */[/* A */3]]),
+      /* content : Reader */Block.__(14, [/* Channel */[/* A */3]]),
       /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
       /* alpha */LayerGenerator$Gayer.reader[/* alpha */2],
       /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
@@ -697,10 +734,13 @@ var tughra_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var tughra_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
 
 var tughra_014 = /* layers : :: */[
-  LayerGenerator$Gayer.img("media/suleiman.jpg"),
+  LayerGenerator$Gayer.text(""),
   /* :: */[
-    LayerGenerator$Gayer.reader,
-    /* [] */0
+    LayerGenerator$Gayer.img("media/suleiman.jpg"),
+    /* :: */[
+      LayerGenerator$Gayer.reader,
+      /* [] */0
+    ]
   ]
 ];
 
@@ -1808,6 +1848,74 @@ var keycodeParams = /* record */[
   keycodeParams_014
 ];
 
+var init$3 = LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "black", undefined, "GAYER");
+
+var welcome_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+
+var welcome_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+
+var welcome_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+
+var welcome_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var welcome_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var welcome_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+
+var welcome_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+
+var welcome_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+
+var welcome_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+
+var welcome_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+
+var welcome_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+
+var welcome_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+
+var welcome_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+
+var welcome_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
+var welcome_014 = /* layers : :: */[
+  LayerGenerator$Gayer.text("Welcome to GAYER, the Graphical Audio plaYER!\nPlease press the >| button at the top of the screen to begin."),
+  /* :: */[
+    LayerGenerator$Gayer.draw(undefined, rainbowCommands),
+    /* :: */[
+      /* record */[
+        /* content */init$3[/* content */0],
+        /* enabled */init$3[/* enabled */1],
+        /* alpha */0.5,
+        /* compositeOperation */init$3[/* compositeOperation */3],
+        /* rotation */init$3[/* rotation */4],
+        /* transformMatrix */init$3[/* transformMatrix */5],
+        /* filters */init$3[/* filters */6],
+        /* id */init$3[/* id */7]
+      ],
+      /* [] */0
+    ]
+  ]
+];
+
+var welcome = /* record */[
+  welcome_000,
+  welcome_001,
+  welcome_002,
+  welcome_003,
+  welcome_004,
+  welcome_005,
+  welcome_006,
+  welcome_007,
+  welcome_008,
+  welcome_009,
+  welcome_010,
+  welcome_011,
+  welcome_012,
+  welcome_013,
+  welcome_014
+];
+
 var welcomeAudio_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var welcomeAudio_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -1839,7 +1947,7 @@ var welcomeAudio_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClea
 var welcomeAudio_014 = /* layers : :: */[
   LayerGenerator$Gayer.fill(undefined, "black"),
   /* :: */[
-    LayerGenerator$Gayer.text(undefined, undefined, undefined, undefined, undefined, "red", /* Stroke */1, "GAYER"),
+    LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "red", /* Stroke */1, "GAYER"),
     /* :: */[
       LayerGenerator$Gayer.saturationReader,
       /* [] */0
@@ -1865,7 +1973,7 @@ var welcomeAudio = /* record */[
   welcomeAudio_014
 ];
 
-var init$3 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
+var init$4 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
 
 var displaceParams_000 = history_000;
 
@@ -1891,13 +1999,13 @@ var displaceParams_012 = history_012;
 
 var displaceParams_014 = /* layers : :: */[
   /* record */[
-    /* content */init$3[/* content */0],
-    /* enabled */init$3[/* enabled */1],
-    /* alpha */init$3[/* alpha */2],
-    /* compositeOperation */init$3[/* compositeOperation */3],
-    /* rotation */init$3[/* rotation */4],
-    /* transformMatrix */init$3[/* transformMatrix */5],
-    /* filters */init$3[/* filters */6],
+    /* content */init$4[/* content */0],
+    /* enabled */init$4[/* enabled */1],
+    /* alpha */init$4[/* alpha */2],
+    /* compositeOperation */init$4[/* compositeOperation */3],
+    /* rotation */init$4[/* rotation */4],
+    /* transformMatrix */init$4[/* transformMatrix */5],
+    /* filters */init$4[/* filters */6],
     /* id */"analyzer"
   ],
   /* :: */[
@@ -1940,24 +2048,8 @@ var displaceParams = /* record */[
 ];
 
 var presetsWithoutLayerIds_000 = /* tuple */[
-  "Spacy",
-  /* record */[
-    /* width */Params$Gayer.defaultParams[/* width */0],
-    /* height */Params$Gayer.defaultParams[/* height */1],
-    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-    /* q */Params$Gayer.defaultParams[/* q */10],
-    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-    /* layers */LayerGenerator$Gayer.spacy
-  ]
+  "Welcome",
+  welcome
 ];
 
 var presetsWithoutLayerIds_001 = /* :: */[
@@ -1967,76 +2059,98 @@ var presetsWithoutLayerIds_001 = /* :: */[
   ],
   /* :: */[
     /* tuple */[
-      "Mic (CQT analysis)",
-      history
+      "Spacy",
+      /* record */[
+        /* width */Params$Gayer.defaultParams[/* width */0],
+        /* height */Params$Gayer.defaultParams[/* height */1],
+        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+        /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+        /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+        /* q */Params$Gayer.defaultParams[/* q */10],
+        /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+        /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+        /* layers */LayerGenerator$Gayer.spacy
+      ]
     ],
     /* :: */[
       /* tuple */[
-        "Webcam (edge detection)",
-        webcamEdgeDetect
+        "Tughra of Suleiman",
+        tughra
       ],
       /* :: */[
         /* tuple */[
-          "Keycode",
-          keycodeParams
+          "Mic (CQT spectrogram)",
+          history
         ],
         /* :: */[
           /* tuple */[
-            "Displace",
-            displaceParams
+            "Webcam (edge detection)",
+            webcamEdgeDetect
           ],
           /* :: */[
             /* tuple */[
-              "Tughra of Suleiman",
-              tughra
+              "Keycode",
+              keycodeParams
             ],
             /* :: */[
               /* tuple */[
-                "Four Seasons",
-                fourSeasons
+                "Displace",
+                displaceParams
               ],
               /* :: */[
                 /* tuple */[
-                  "Les Très Riches Heures",
-                  lesTresRichesHeures
+                  "Four Seasons",
+                  fourSeasons
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Is it a crime?",
-                    isItACrime
+                    "Les Très Riches Heures",
+                    lesTresRichesHeures
                   ],
                   /* :: */[
                     /* tuple */[
-                      "MIDI (requires MIDI keyboard)",
-                      midi
+                      "Is it a crime?",
+                      isItACrime
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Audio file",
-                        equation
+                        "MIDI (requires MIDI keyboard)",
+                        midi
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Empty",
-                          /* record */[
-                            /* width */Params$Gayer.defaultParams[/* width */0],
-                            /* height */Params$Gayer.defaultParams[/* height */1],
-                            /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                            /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                            /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                            /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                            /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                            /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                            /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                            /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                            /* q */Params$Gayer.defaultParams[/* q */10],
-                            /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                            /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                            /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                            /* layers : [] */0
-                          ]
+                          "Audio file",
+                          equation
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "Empty",
+                            /* record */[
+                              /* width */Params$Gayer.defaultParams[/* width */0],
+                              /* height */Params$Gayer.defaultParams[/* height */1],
+                              /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                              /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                              /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                              /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                              /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                              /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                              /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                              /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                              /* q */Params$Gayer.defaultParams[/* q */10],
+                              /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                              /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                              /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                              /* layers : [] */0
+                            ]
+                          ],
+                          /* [] */0
+                        ]
                       ]
                     ]
                   ]
@@ -2106,6 +2220,7 @@ var exampleScore = /* record */[
 
 export {
   singleNote ,
+  rainbowCommands ,
   harmonyParams ,
   harmonyIntensified ,
   feedback ,
@@ -2139,6 +2254,7 @@ export {
   rawAudio ,
   rawAudioAndSpacy ,
   keycodeParams ,
+  welcome ,
   welcomeAudio ,
   displaceParams ,
   presetsWithoutLayerIds ,
