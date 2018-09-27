@@ -32,15 +32,15 @@ let makeKeyDownCallback = ({ReasonReact.state}, format, width, height, e) => {
       Ctx.fillRect(ctx, 0, keyCodeY, 1, 1);
     | PitchFilter =>
       Ctx.clearRect(ctx, 0, 0, width, height);
-      Ctx.setFillStyle(ctx, "white");
+      Ctx.setFillStyle(ctx, "black");
       let octaveHeight = height / 10;
       let pixelsPerSemitone = octaveHeight / 12;
-      let bits = readAllBitsOfInt(keyCodeN);
+      let bits = readAllBitsOfInt(binaryToGray(keyCodeN));
       for (i in 0 to height / 10) {
         let offset = i * octaveHeight;
         Array.iteri(
           (j, b) =>
-            if (b) {
+            if (! b) {
               Ctx.fillRect(
                 ctx,
                 0,

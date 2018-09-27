@@ -21,19 +21,19 @@ function makeKeyDownCallback(param, format, width, height, e) {
     var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
     if (format) {
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = "white";
+      ctx.fillStyle = "black";
       var octaveHeight = height / 10 | 0;
       var pixelsPerSemitone = octaveHeight / 12 | 0;
-      var bits = BitwiseOps$Gayer.readAllBitsOfInt(undefined, keyCodeN);
+      var bits = BitwiseOps$Gayer.readAllBitsOfInt(undefined, BitwiseOps$Gayer.binaryToGray(keyCodeN));
       for(var i = 0 ,i_finish = height / 10 | 0; i <= i_finish; ++i){
         var offset = Caml_int32.imul(i, octaveHeight);
         $$Array.iteri((function(offset){
             return function (j, b) {
               if (b) {
+                return 0;
+              } else {
                 ctx.fillRect(0, offset + Caml_int32.imul(j, pixelsPerSemitone) | 0, 1, pixelsPerSemitone);
                 return /* () */0;
-              } else {
-                return 0;
               }
             }
             }(offset)), bits);

@@ -683,44 +683,46 @@ let make =
                 </div>
               | KeycodeReader(fmt) =>
                 <div>
-                  <Typography color=`TextSecondary>
-                    (
-                      ReasonReact.string(
-                        "If keys are stuck, press SPACE to clear.",
-                      )
-                    )
-                  </Typography>
-                  <KeycodeFormatSelect
-                    currentSetting=fmt
-                    onChange=(
-                      newFmt =>
-                        changeLayer(
-                          layer,
-                          Some({...layer, content: KeycodeReader(newFmt)}),
+
+                    <Typography color=`TextSecondary>
+                      (
+                        ReasonReact.string(
+                          "If keys are stuck, press SPACE to clear.",
                         )
-                    )
-                  />
-                </div>
+                      )
+                    </Typography>
+                  </div>
+                  /* <KeycodeFormatSelect */
+                  /*   currentSetting=fmt */
+                  /*   onChange=( */
+                  /*     newFmt => */
+                  /*       changeLayer( */
+                  /*         layer, */
+                  /*         Some({...layer, content: KeycodeReader(newFmt)}), */
+                  /*       ) */
+                  /*   ) */
+                  /* /> */
               | KeycodeWriter(fmt) =>
                 <div>
-                  <Typography color=`TextSecondary>
-                    (
-                      ReasonReact.string(
-                        "If keys are stuck, press SPACE to clear.",
-                      )
-                    )
-                  </Typography>
-                  <KeycodeFormatSelect
-                    currentSetting=fmt
-                    onChange=(
-                      newFmt =>
-                        changeLayer(
-                          layer,
-                          Some({...layer, content: KeycodeWriter(newFmt)}),
+
+                    <Typography color=`TextSecondary>
+                      (
+                        ReasonReact.string(
+                          "If keys are stuck, press SPACE to clear.",
                         )
-                    )
-                  />
-                </div>
+                      )
+                    </Typography>
+                  </div>
+                  /* <KeycodeFormatSelect */
+                  /*   currentSetting=fmt */
+                  /*   onChange=( */
+                  /*     newFmt => */
+                  /*       changeLayer( */
+                  /*         layer, */
+                  /*         Some({...layer, content: KeycodeWriter(newFmt)}), */
+                  /*       ) */
+                  /*   ) */
+                  /* /> */
               | HandDrawn
               | Webcam
               | MIDIKeyboard

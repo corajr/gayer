@@ -943,32 +943,8 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                     }), /* array */[])));
                       break;
                   case 8 : 
-                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])), ReasonReact.element(undefined, undefined, KeycodeUtil$Gayer.KeycodeFormatSelect[/* make */1](match[0], (function (newFmt) {
-                                      return Curry._2(changeLayer, layer, /* record */[
-                                                  /* content : KeycodeReader */Block.__(8, [newFmt]),
-                                                  /* enabled */layer[/* enabled */1],
-                                                  /* alpha */layer[/* alpha */2],
-                                                  /* compositeOperation */layer[/* compositeOperation */3],
-                                                  /* rotation */layer[/* rotation */4],
-                                                  /* transformMatrix */layer[/* transformMatrix */5],
-                                                  /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
-                                                ]);
-                                    }), /* array */[])));
-                      break;
                   case 9 : 
-                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])), ReasonReact.element(undefined, undefined, KeycodeUtil$Gayer.KeycodeFormatSelect[/* make */1](match[0], (function (newFmt) {
-                                      return Curry._2(changeLayer, layer, /* record */[
-                                                  /* content : KeycodeWriter */Block.__(9, [newFmt]),
-                                                  /* enabled */layer[/* enabled */1],
-                                                  /* alpha */layer[/* alpha */2],
-                                                  /* compositeOperation */layer[/* compositeOperation */3],
-                                                  /* rotation */layer[/* rotation */4],
-                                                  /* transformMatrix */layer[/* transformMatrix */5],
-                                                  /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
-                                                ]);
-                                    }), /* array */[])));
+                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, MaterialUi_Typography.make(undefined, undefined, /* TextSecondary */-507693849, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */["If keys are stuck, press SPACE to clear."])));
                       break;
                   case 1 : 
                   case 2 : 
