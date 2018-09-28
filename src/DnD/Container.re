@@ -133,7 +133,7 @@ let make =
                  key=card.id
                  id=card.id
                  style=(ReactDOMRe.Style.make(~marginBottom="16px", ()))>
-                 <Layer
+                 <LayerControl
                    layer=card.layer
                    changeLayer=onChangeLayer
                    width=rootWidth

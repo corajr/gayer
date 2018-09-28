@@ -3,7 +3,6 @@
 import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Block from "bs-platform/lib/es6/block.js";
-import * as Color$Gayer from "./Color.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as Params$Gayer from "./Params.bs.js";
 import * as LayerGenerator$Gayer from "./LayerGenerator.bs.js";
@@ -62,41 +61,6 @@ var singleNote = /* record */[
   singleNote_013,
   singleNote_014
 ];
-
-var cmds = /* [] */0;
-
-for(var i = 0; i <= 119; ++i){
-  var h = i % 12 / 12.0;
-  var l = i / 120;
-  var oneBand_001 = /* Constant */Block.__(0, [120]);
-  var oneBand = /* Divide */Block.__(6, [
-      /* Height */1,
-      oneBand_001
-    ]);
-  for(var j = 0; j <= 119; ++j){
-    var s = j / 120;
-    cmds = /* :: */[
-      /* FillRect */Block.__(5, [/* record */[
-            /* x : Multiply */Block.__(7, [
-                /* Constant */Block.__(0, [j]),
-                oneBand
-              ]),
-            /* y : Multiply */Block.__(7, [
-                oneBand,
-                /* Constant */Block.__(0, [(120 - i | 0) - 1 | 0])
-              ]),
-            /* w */oneBand,
-            /* h */oneBand
-          ]]),
-      /* :: */[
-        /* SetFillStyle */Block.__(3, [Color$Gayer.hsl(undefined, h, s, l)]),
-        cmds
-      ]
-    ];
-  }
-}
-
-var rainbowCommands = List.rev(cmds);
 
 var harmonyParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1881,7 +1845,7 @@ var welcome_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */1
 var welcome_014 = /* layers : :: */[
   LayerGenerator$Gayer.text("Welcome to GAYER, the Graphical Audio plaYER!\nPlease press the >| button at the top of the screen to begin."),
   /* :: */[
-    LayerGenerator$Gayer.draw(undefined, rainbowCommands),
+    LayerGenerator$Gayer.fill(undefined, "white"),
     /* :: */[
       /* record */[
         /* content */init$3[/* content */0],
@@ -2220,7 +2184,6 @@ var exampleScore = /* record */[
 
 export {
   singleNote ,
-  rainbowCommands ,
   harmonyParams ,
   harmonyIntensified ,
   feedback ,

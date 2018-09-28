@@ -26,32 +26,6 @@ let singleNote = {
   ],
 };
 
-let rainbowCommands = {
-  let cmds = ref([]);
-  let width = 120;
-  let height = 120;
-  for (i in 0 to height - 1) {
-    let h = float_of_int(i mod 12) /. 12.0;
-    let l = float_of_int(i) /. float_of_int(height);
-    let oneBand = Divide(Height, Constant(height));
-    for (j in 0 to width - 1) {
-      let s = float_of_int(j) /. float_of_int(width);
-      cmds :=
-        [
-          FillRect({
-            x: Multiply(Constant(j), oneBand),
-            y: Multiply(oneBand, Constant(height - i - 1)),
-            w: oneBand,
-            h: oneBand,
-          }),
-          SetFillStyle(Color.hsl(h, s, l)),
-          ...cmds^,
-        ];
-    };
-  };
-  List.rev(cmds^);
-};
-
 let harmonyParams = {
   ...defaultParams,
   millisPerTick: 25,
@@ -333,7 +307,7 @@ let welcome = {
       "Welcome to GAYER, the Graphical Audio plaYER!\n"
       ++ "Please press the >| button at the top of the screen to begin.",
     ),
-    draw(rainbowCommands),
+    fill("white"),
     {...drawText("GAYER", ~color="black"), alpha: 0.5},
   ],
 };

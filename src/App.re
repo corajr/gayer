@@ -886,196 +886,204 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   render: self =>
     MaterialUi.(
       <div>
-        <CssBaseline />
-        <AppBar position=`Sticky>
-          <Toolbar>
-            <IconButton
-              color=`Inherit onClick=(_evt => self.send(TogglePresetDrawer))>
-              <MaterialUIIcons.Menu />
-            </IconButton>
-            <GrowTitle
+
+          <CssBaseline />
+          <AppBar position=`Sticky>
+            <Toolbar>
+              <IconButton
+                color=`Inherit
+                onClick=(_evt => self.send(TogglePresetDrawer))>
+                <MaterialUIIcons.Menu />
+              </IconButton>
+              <GrowTitle
+                render=(
+                  classes =>
+                    <Typography
+                      variant=`Title
+                      color=`Inherit
+                      classes=[Title(classes.grow)]>
+                      (ReasonReact.string("GAYER"))
+                    </Typography>
+                )
+              />
+              (
+                Belt.Option.isSome(self.state.score) ?
+                  <div>
+                    <IconButton
+                      color=`Inherit
+                      onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
+                      <MaterialUIIcons.SkipPrevious />
+                    </IconButton>
+                    <IconButton
+                      color=`Inherit
+                      onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
+                      <MaterialUIIcons.SkipNext />
+                    </IconButton>
+                  </div> :
+                  ReasonReact.null
+              )
+            </Toolbar>
+          </AppBar>
+          <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
+            <SizedDrawer
               render=(
                 classes =>
-                  <Typography
-                    variant=`Title
-                    color=`Inherit
-                    classes=[Title(classes.grow)]>
-                    (ReasonReact.string("GAYER"))
-                  </Typography>
+                  <Drawer
+                    variant=`Temporary
+                    open_=self.state.presetDrawerOpen
+                    classes=[Paper(classes.paper)]>
+                    <div
+                      style=(
+                        ReactDOMRe.Style.make(
+                          ~display="flex",
+                          ~alignItems="center",
+                          ~justifyContent="flex-end",
+                          ~padding="0 8px",
+                          (),
+                        )
+                      )>
+                      <IconButton
+                        onClick=(_evt => self.send(TogglePresetDrawer))
+                        color=`Inherit>
+                        <MaterialUIIcons.ChevronLeft />
+                      </IconButton>
+                    </div>
+                    <Divider />
+                    <div
+                      tabIndex=0
+                      role="button"
+                      onClick=(_evt => self.send(TogglePresetDrawer))
+                      onKeyDown=(_evt => self.send(TogglePresetDrawer))>
+                      <List component=(`String("nav"))>
+                        (
+                          ReasonReact.array(
+                            Array.of_list(presets)
+                            |> Array.map(((name, preset)) =>
+                                 <ListItem
+                                   key=name
+                                   button=true
+                                   onClick=(_evt => pushParamsState(preset))>
+                                   <ListItemText>
+                                     (ReasonReact.string(name))
+                                   </ListItemText>
+                                 </ListItem>
+                               ),
+                          )
+                        )
+                      </List>
+                    </div>
+                  </Drawer>
               )
             />
-            (
-              Belt.Option.isSome(self.state.score) ?
-                <div>
-                  <IconButton
-                    color=`Inherit
-                    onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
-                    <MaterialUIIcons.SkipPrevious />
-                  </IconButton>
-                  <IconButton
-                    color=`Inherit
-                    onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
-                    <MaterialUIIcons.SkipNext />
-                  </IconButton>
-                </div> :
-                ReasonReact.null
-            )
-          </Toolbar>
-        </AppBar>
-        <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
-          <SizedDrawer
-            render=(
-              classes =>
-                <Drawer
-                  variant=`Temporary
-                  open_=self.state.presetDrawerOpen
-                  classes=[Paper(classes.paper)]>
-                  <div
-                    style=(
-                      ReactDOMRe.Style.make(
-                        ~display="flex",
-                        ~alignItems="center",
-                        ~justifyContent="flex-end",
-                        ~padding="0 8px",
-                        (),
-                      )
-                    )>
-                    <IconButton
-                      onClick=(_evt => self.send(TogglePresetDrawer))
-                      color=`Inherit>
-                      <MaterialUIIcons.ChevronLeft />
-                    </IconButton>
-                  </div>
-                  <Divider />
-                  <div
-                    tabIndex=0
-                    role="button"
-                    onClick=(_evt => self.send(TogglePresetDrawer))
-                    onKeyDown=(_evt => self.send(TogglePresetDrawer))>
-                    <List component=(`String("nav"))>
-                      (
-                        ReasonReact.array(
-                          Array.of_list(presets)
-                          |> Array.map(((name, preset)) =>
-                               <ListItem
-                                 key=name
-                                 button=true
-                                 onClick=(_evt => pushParamsState(preset))>
-                                 <ListItemText>
-                                   (ReasonReact.string(name))
-                                 </ListItemText>
-                               </ListItem>
-                             ),
-                        )
-                      )
-                    </List>
-                  </div>
-                </Drawer>
-            )
-          />
-          <Grid container=true spacing=Grid.V24>
-            <Grid item=true xs=Grid.V6>
-              <Params
-                params=self.state.params
-                onMoveCard=(layers => self.send(SetLayers(layers)))
-                onChangeLayer=(
-                  (oldLayer, maybeNewLayer) =>
-                    self.send(ChangeLayer(oldLayer, maybeNewLayer))
-                )
-                onSetRef=(
-                  (layer, theRef) =>
-                    self.handle(setLayerRef(audioCtx), (layer, theRef))
-                )
-                layerRefs=self.state.layerRefs
-                onSetParams=(newParams => pushParamsState(newParams))
-                saveTick=(saveTick(self))
-                savedImages=self.state.savedImages
-              />
-            </Grid>
-            <Grid item=true xs=Grid.V6>
-              <div
-                id="main-display"
-                style=(
-                  ReactDOMRe.Style.make(
-                    ~marginBottom="24px",
-                    ~minHeight="400px",
-                    ~position="relative",
-                    (),
+            <Grid container=true spacing=Grid.V24>
+              <Grid item=true xs=Grid.V6>
+                <Params
+                  params=self.state.params
+                  onMoveCard=(layers => self.send(SetLayers(layers)))
+                  onChangeLayer=(
+                    (oldLayer, maybeNewLayer) =>
+                      self.send(ChangeLayer(oldLayer, maybeNewLayer))
                   )
-                )>
-                <MediaProvider
-                  audioCtx
-                  audioGraph=self.state.audioGraph
-                  globalDrawContext=self.state.drawContext
-                  getAudio=(getAnalysisInput(audioCtx, self.state))
                   onSetRef=(
                     (layer, theRef) =>
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
                   layerRefs=self.state.layerRefs
-                  currentFilterValues=self.state.currentFilterValues
-                  rootWidth=self.state.params.width
-                  rootHeight=self.state.params.height
-                  millisPerAudioTick=16
-                  getReadAndWritePos=(self.handle(getReadAndWritePos))
+                  onSetParams=(newParams => pushParamsState(newParams))
                   saveTick=(saveTick(self))
-                  layers=(sortLayers(self.state.params.layers))
+                  savedImages=self.state.savedImages
                 />
-                <canvas
-                  ref=(self.handle(setCanvasRef))
-                  width=(Js.Int.toString(self.state.params.width))
-                  height=(Js.Int.toString(self.state.params.height))
+              </Grid>
+              <Grid item=true xs=Grid.V4>
+                <div
+                  id="main-display"
                   style=(
                     ReactDOMRe.Style.make(
-                      ~imageRendering="crisp-edges",
-                      ~transform=
-                        "scale("
-                        ++ Js.Float.toString(
-                             400.0 /. float_of_int(self.state.params.height),
-                           )
-                        ++ ")",
-                      ~transformOrigin="top left",
+                      ~marginBottom="24px",
+                      ~minHeight="400px",
+                      ~position="fixed",
                       (),
                     )
-                  )
-                />
-              </div>
-              /* <Button */
-              /*   style=( */
-              /*     ReactDOMRe.Style.make( */
-              /*       ~position="absolute", */
-              /*       ~right="0px", */
-              /*       ~bottom="0px", */
-              /*       (), */
-              /*     ) */
-              /*   ) */
-              /*   variant=`Contained */
-              /*   onClick=(evt => self.send(ToggleFullscreen))> */
-              /*   ( */
-              /*     self.state.fullscreenCanvas ? */
-              /*       <MaterialUIIcons.FullscreenExit /> : */
-              /*       <MaterialUIIcons.Fullscreen /> */
-              /*   ) */
-              /*   (ReasonReact.string("Fullscreen")) */
-              /* </Button> */
-              <div>
+                  )>
+                  <MediaProvider
+                    audioCtx
+                    audioGraph=self.state.audioGraph
+                    globalDrawContext=self.state.drawContext
+                    getAudio=(getAnalysisInput(audioCtx, self.state))
+                    onSetRef=(
+                      (layer, theRef) =>
+                        self.handle(setLayerRef(audioCtx), (layer, theRef))
+                    )
+                    layerRefs=self.state.layerRefs
+                    currentFilterValues=self.state.currentFilterValues
+                    rootWidth=self.state.params.width
+                    rootHeight=self.state.params.height
+                    millisPerAudioTick=16
+                    getReadAndWritePos=(self.handle(getReadAndWritePos))
+                    saveTick=(saveTick(self))
+                    layers=(sortLayers(self.state.params.layers))
+                  />
+                  <canvas
+                    ref=(self.handle(setCanvasRef))
+                    width=(Js.Int.toString(self.state.params.width))
+                    height=(Js.Int.toString(self.state.params.height))
+                    style=(
+                      ReactDOMRe.Style.make(
+                        ~imageRendering="crisp-edges",
+                        ~transform=
+                          "scale("
+                          ++ Js.Float.toString(
+                               400.0 /. float_of_int(self.state.params.height),
+                             )
+                          ++ ")",
+                        ~transformOrigin="top left",
+                        (),
+                      )
+                    )
+                  />
+                </div>
+              </Grid>
+              <Grid item=true xs=Grid.V2>
                 <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
                   <Button
-                    variant=`Contained onClick=(_evt => self.send(SaveImage))>
+                    variant=`Contained
+                    onClick=(_evt => self.send(SaveImage))
+                    style=(ReactDOMRe.Style.make(~position="fixed", ()))>
                     <MaterialUIIcons.PhotoCamera />
                     (ReasonReact.string("Snapshot"))
                   </Button>
                 </div>
-                (
-                  self.state.savedImages
-                  |> Belt.Map.String.toArray
-                  |> Array.map(((key, url)) => <img key src=url />)
-                  |> ReasonReact.array
-                )
-              </div>
+                <div style=(ReactDOMRe.Style.make(~marginTop="24px", ()))>
+                  (
+                    self.state.savedImages
+                    |> Belt.Map.String.toArray
+                    |> Array.map(((key, url)) =>
+                         <img key width="100%" src=url />
+                       )
+                    |> ReasonReact.array
+                  )
+                </div>
+              </Grid>
             </Grid>
-          </Grid>
+          </div>
         </div>
-      </div>
+        /* <Button */
+        /*   style=( */
+        /*     ReactDOMRe.Style.make( */
+        /*       ~position="absolute", */
+        /*       ~right="0px", */
+        /*       ~bottom="0px", */
+        /*       (), */
+        /*     ) */
+        /*   ) */
+        /*   variant=`Contained */
+        /*   onClick=(evt => self.send(ToggleFullscreen))> */
+        /*   ( */
+        /*     self.state.fullscreenCanvas ? */
+        /*       <MaterialUIIcons.FullscreenExit /> : */
+        /*       <MaterialUIIcons.Fullscreen /> */
+        /*   ) */
+        /*   (ReasonReact.string("Fullscreen")) */
+        /* </Button> */
     ),
 };

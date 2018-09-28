@@ -834,13 +834,12 @@ function make($staropt$star, _) {
                                                           }), pushParamsState, (function (param, param$1, param$2) {
                                                             return saveTick(self, param, param$1, param$2);
                                                           }), self[/* state */1][/* savedImages */19], /* array */[]))])),
-                                      ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[
-                                                React.createElement("div", {
+                                      ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V4 */3, undefined, undefined, undefined, /* array */[React.createElement("div", {
                                                       id: "main-display",
                                                       style: {
                                                         marginBottom: "24px",
                                                         minHeight: "400px",
-                                                        position: "relative"
+                                                        position: "fixed"
                                                       }
                                                     }, ReasonReact.element(undefined, undefined, MediaProvider$Gayer.make(sortLayers(self[/* state */1][/* params */6][/* layers */14]), self[/* state */1][/* params */6][/* width */0], self[/* state */1][/* params */6][/* height */1], (function (layer, theRef) {
                                                                 return Curry._2(self[/* handle */0], (function (param, param$1) {
@@ -862,20 +861,29 @@ function make($staropt$star, _) {
                                                           },
                                                           height: self[/* state */1][/* params */6][/* height */1].toString(),
                                                           width: self[/* state */1][/* params */6][/* width */0].toString()
-                                                        })),
-                                                React.createElement("div", undefined, React.createElement("div", {
-                                                          style: {
-                                                            marginBottom: "24px"
-                                                          }
-                                                        }, ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                                    return Curry._1(self[/* send */3], /* SaveImage */3);
-                                                                  }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
-                                                                  ReasonReact.element(undefined, undefined, MaterialUIIcons.PhotoCamera[/* make */0](/* array */[])),
-                                                                  "Snapshot"
-                                                                ]))), $$Array.map((function (param) {
+                                                        }))])),
+                                      ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V2 */1, undefined, undefined, undefined, /* array */[
+                                                React.createElement("div", {
+                                                      style: {
+                                                        marginBottom: "24px"
+                                                      }
+                                                    }, ReasonReact.element(undefined, undefined, MaterialUi_Button.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* Contained */-515484397, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
+                                                                return Curry._1(self[/* send */3], /* SaveImage */3);
+                                                              }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, {
+                                                              position: "fixed"
+                                                            }, /* array */[
+                                                              ReasonReact.element(undefined, undefined, MaterialUIIcons.PhotoCamera[/* make */0](/* array */[])),
+                                                              "Snapshot"
+                                                            ]))),
+                                                React.createElement("div", {
+                                                      style: {
+                                                        marginTop: "24px"
+                                                      }
+                                                    }, $$Array.map((function (param) {
                                                             return React.createElement("img", {
                                                                         key: param[0],
-                                                                        src: param[1]
+                                                                        src: param[1],
+                                                                        width: "100%"
                                                                       });
                                                           }), Belt_MapString.toArray(self[/* state */1][/* savedImages */19])))
                                               ]))
