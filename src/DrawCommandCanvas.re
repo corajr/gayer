@@ -30,6 +30,7 @@ let make =
         maybeCtxRef: ref(None),
         width,
         height,
+        layerRefs,
         variables: Belt.Map.String.empty,
       },
     },

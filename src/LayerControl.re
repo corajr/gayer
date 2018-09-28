@@ -208,6 +208,7 @@ let make =
                   <div>
                     <StringEncodeSelect
                       allSettings=[|
+                        AnalysisOptions.Slit,
                         AnalysisOptions.History({w: Width, h: Height}),
                         AnalysisOptions.CircularBuffer({w: Width, h: Height}),
                       |]

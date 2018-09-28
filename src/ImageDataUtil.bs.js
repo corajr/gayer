@@ -132,12 +132,10 @@ function updateFilterValuesFromImageData(imageData, readerType, currentFilterVal
   }
 }
 
-var makeUint8ClampedArray = function (len){return new Uint8ClampedArray(len)};
-
 function makeImageData(cqtLine) {
   var len = cqtLine.length;
   var n = len / 4 | 0;
-  var output = makeUint8ClampedArray(len);
+  var output = new Uint8ClampedArray(len);
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     var offset = (i << 2);
     var cqtOffset = (((n - i | 0) - 1 | 0) << 2);
@@ -153,7 +151,7 @@ function makeImageDataWithPalette($staropt$star, cqtLine) {
   var palette = $staropt$star !== undefined ? $staropt$star : Palette$Gayer.grayscale;
   var len = cqtLine.length;
   var n = len / 4 | 0;
-  var output = makeUint8ClampedArray(len);
+  var output = new Uint8ClampedArray(len);
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     var offset = (i << 2);
     var cqtOffset = (((n - i | 0) - 1 | 0) << 2);
@@ -170,7 +168,7 @@ function makeImageDataWithPalette($staropt$star, cqtLine) {
 function makeImageDataFromFloats(input, w, h) {
   var n = input.length;
   var len = (n << 2);
-  var output = makeUint8ClampedArray(len);
+  var output = new Uint8ClampedArray(len);
   for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
     var offset = (i << 2);
     var v = Caml_array.caml_array_get(input, (n - i | 0) - 1 | 0) * 255.0 | 0;
@@ -183,7 +181,7 @@ function makeImageDataFromFloats(input, w, h) {
 }
 
 function makeRainbowSquare(width, height) {
-  var output = makeUint8ClampedArray((Caml_int32.imul(width, height) << 2));
+  var output = new Uint8ClampedArray((Caml_int32.imul(width, height) << 2));
   for(var i = 0 ,i_finish = height - 1 | 0; i <= i_finish; ++i){
     var h = i % 12 / 12.0;
     var l = i / height;
@@ -211,7 +209,6 @@ export {
   imageDataToStereo ,
   imageDataToHistogram ,
   updateFilterValuesFromImageData ,
-  makeUint8ClampedArray ,
   makeImageData ,
   makeImageDataWithPalette ,
   makeImageDataFromFloats ,

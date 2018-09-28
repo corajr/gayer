@@ -267,6 +267,8 @@ external getCanvasImageSource : image => canvasImageSource = "%identity";
 [@bs.new]
 external createImageData : (array(int), int, int) => imageData = "ImageData";
 
+external imageDataAsSource : imageData => canvasImageSource = "%identity";
+
 /* canvas api methods */
 module Ctx = {
   [@bs.get] external canvas : ctx => canvasElement = "";
@@ -505,6 +507,7 @@ let binsPerSemitone: int => int = height => height / 120;
 module DrawCommand = {
   type drawContext = {
     maybeCtxRef: ref(option(canvasRenderingContext2D)),
+    layerRefs: ref(Belt.Map.String.t(Dom.element)),
     width: int,
     height: int,
     variables: Belt.Map.String.t(int),
@@ -518,6 +521,7 @@ module DrawCommand = {
 
   type imgSource =
     | Self
+    | LayerByKey(string)
     | ImageData(imageData);
 
   type length =
@@ -566,6 +570,8 @@ module DrawCommand = {
       Json.Encode.(
         fun
         | Self => object_([("type", string("self"))])
+        | LayerByKey(k) =>
+          object_([("type", string("self")), ("key", string(k))])
         | ImageData({data, w, h}) =>
           object_([
             ("type", string("image")),
@@ -691,6 +697,7 @@ module DrawCommand = {
       Json.Decode.(
         switch (json |> field("type", string)) {
         | "self" => Self
+        | "layer" => LayerByKey(json |> field("key", string))
         | "imageData" =>
           ImageData({
             data: json |> field("data", array(int)),
@@ -850,6 +857,34 @@ module DrawCommand = {
       | Divide(a, b) => getLength(drawCtx, a) / getLength(drawCtx, b)
       };
 
+  let nullImage =
+    imageDataAsSource(
+      createImageData(
+        TypedArray.uint8ClampedArrayAsArray(
+          TypedArray.createUint8ClampedArray(4),
+        ),
+        1,
+        1,
+      ),
+    );
+
+  let getSource = (drawContext, src) : canvasImageSource =>
+    Belt.Option.getWithDefault(
+      switch (src) {
+      | Self =>
+        Belt.Option.map(drawContext.maybeCtxRef^, c =>
+          getCanvasAsSource(Ctx.canvas(c))
+        )
+      | LayerByKey(s) =>
+        Belt.Option.map(Belt.Map.String.get(drawContext.layerRefs^, s), d =>
+          getCanvasAsSource(getFromReact(d))
+        )
+      | ImageData({data, w, h}) =>
+        Some(imageDataAsSource(createImageData(data, w, h)))
+      },
+      nullImage,
+    );
+
   let drawCommand: (drawContext, command) => unit =
     (drawContext, cmd) =>
       switch (drawContext.maybeCtxRef^) {
@@ -894,11 +929,7 @@ module DrawCommand = {
             getLength(drawContext, y),
           )
         | DrawImage(src, {x, y, w, h}) =>
-          let realSrc =
-            switch (src) {
-            | _ => getCanvasAsSource(Ctx.canvas(ctx))
-            /* | ImageData({data, w, h}) => createImageData(data, width, height) */
-            };
+          let realSrc = getSource(drawContext, src);
           Ctx.drawImageDestRect(
             ctx,
             realSrc,
@@ -912,10 +943,7 @@ module DrawCommand = {
             {x: srcX, y: srcY, w: srcW, h: srcH},
             {x, y, w, h},
           ) =>
-          let realSrc =
-            switch (src) {
-            | _ => getCanvasAsSource(Ctx.canvas(ctx))
-            };
+          let realSrc = getSource(drawContext, src);
           Ctx.drawImageSourceRectDestRect(
             ctx,
             realSrc,

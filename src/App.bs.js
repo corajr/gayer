@@ -45,86 +45,48 @@ import * as MaterialUi_WithStyles from "@jsiebern/bs-material-ui/src/MaterialUi_
 import * as MaterialUi_CssBaseline from "@jsiebern/bs-material-ui/src/MaterialUi_CssBaseline.bs.js";
 import * as MaterialUi_ListItemText from "@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js";
 
-var defaultState_000 = /* animationStartTime : record */[/* contents */0.0];
-
-var defaultState_001 = /* animationLastUpdated : record */[/* contents */0.0];
-
-var defaultState_002 = /* readPos : record */[/* contents */0];
-
-var defaultState_003 = /* writePos : record */[/* contents */0];
-
-var defaultState_004 = /* freqFuncParams : record */[/* contents : tuple */[
-    1,
-    16
-  ]];
-
-var defaultState_006 = /* params */List.nth(Presets$Gayer.presets, 0)[1];
-
-var defaultState_007 = /* score */Presets$Gayer.exampleScore;
-
-var defaultState_010 = /* audioGraph : record */[/* contents */AudioGraph$Gayer.emptyAudioGraph];
-
-var defaultState_012 = /* cameraInput : record */[/* contents */undefined];
-
-var defaultState_013 = /* oscillatorBank : record */[/* contents */undefined];
-
-var defaultState_015 = /* compressor : record */[/* contents */undefined];
-
-var defaultState_016 = /* merger : record */[/* contents */undefined];
-
-var defaultState_017 = /* currentFilterValues : record */[/* contents */undefined];
-
-var defaultState_018 = /* layerRefs : record */[/* contents */Belt_MapString.empty];
-
-var defaultState_020 = /* loadedAudio : record */[/* contents */Belt_MapString.empty];
-
-var defaultState_021 = /* canvasRef : record */[/* contents */undefined];
-
-var defaultState_022 = /* drawContext : record */[
-  /* maybeCtxRef : record */[/* contents */undefined],
-  /* width */1,
-  /* height */1,
-  /* variables */Belt_MapString.empty
-];
-
-var defaultState_024 = /* startingIndexRef : record */[/* contents */0];
-
-var defaultState_025 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
-
-var defaultState_026 = /* tickCounter : record */[/* contents */0];
-
-var defaultState_027 = /* timerId : record */[/* contents */undefined];
-
-var defaultState = /* record */[
-  defaultState_000,
-  defaultState_001,
-  defaultState_002,
-  defaultState_003,
-  defaultState_004,
-  /* filterInput */undefined,
-  defaultState_006,
-  defaultState_007,
-  /* presetDrawerOpen */false,
-  /* mediaStream */undefined,
-  defaultState_010,
-  /* micInput */undefined,
-  defaultState_012,
-  defaultState_013,
-  /* filterBanks */undefined,
-  defaultState_015,
-  defaultState_016,
-  defaultState_017,
-  defaultState_018,
-  /* savedImages */Belt_MapString.empty,
-  defaultState_020,
-  defaultState_021,
-  defaultState_022,
-  /* fullscreenCanvas */false,
-  defaultState_024,
-  defaultState_025,
-  defaultState_026,
-  defaultState_027
-];
+function defaultState() {
+  var layerRefs = /* record */[/* contents */Belt_MapString.empty];
+  return /* record */[
+          /* animationStartTime : record */[/* contents */0.0],
+          /* animationLastUpdated : record */[/* contents */0.0],
+          /* readPos : record */[/* contents */0],
+          /* writePos : record */[/* contents */0],
+          /* freqFuncParams : record */[/* contents : tuple */[
+              1,
+              16
+            ]],
+          /* filterInput */undefined,
+          /* params */List.nth(Presets$Gayer.presets, 0)[1],
+          /* score */Presets$Gayer.exampleScore,
+          /* presetDrawerOpen */false,
+          /* mediaStream */undefined,
+          /* audioGraph : record */[/* contents */AudioGraph$Gayer.emptyAudioGraph],
+          /* micInput */undefined,
+          /* cameraInput : record */[/* contents */undefined],
+          /* oscillatorBank : record */[/* contents */undefined],
+          /* filterBanks */undefined,
+          /* compressor : record */[/* contents */undefined],
+          /* merger : record */[/* contents */undefined],
+          /* currentFilterValues : record */[/* contents */undefined],
+          /* layerRefs */layerRefs,
+          /* savedImages */Belt_MapString.empty,
+          /* loadedAudio : record */[/* contents */Belt_MapString.empty],
+          /* canvasRef : record */[/* contents */undefined],
+          /* drawContext : record */[
+            /* maybeCtxRef : record */[/* contents */undefined],
+            /* layerRefs */layerRefs,
+            /* width */1,
+            /* height */1,
+            /* variables */Belt_MapString.empty
+          ],
+          /* fullscreenCanvas */false,
+          /* startingIndexRef : record */[/* contents */0],
+          /* tickFunctions : record */[/* contents */Belt_MapString.empty],
+          /* tickCounter : record */[/* contents */0],
+          /* timerId : record */[/* contents */undefined]
+        ];
+}
 
 function setCanvasRef(theRef, param) {
   var state = param[/* state */1];
@@ -366,25 +328,30 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillRect(0, 0, width, height);
           break;
       case 2 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */5](state[/* drawContext */22], match$1[0]);
+          Canvas$Gayer.DrawCommand[/* drawCommands */7](state[/* drawContext */22], match$1[0]);
           break;
       case 7 : 
           if (maybeLayerRef !== undefined) {
             var analysisCanvas = Js_primitive.valFromOption(maybeLayerRef);
             var analysisSize = match$1[0][/* analysisSize */2];
             var exit$1 = 0;
-            switch (analysisSize.tag | 0) {
-              case 0 : 
-              case 1 : 
-                  exit$1 = 3;
-                  break;
-              case 2 : 
-                  var match$3 = analysisSize[0];
-                  var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* x */0]);
-                  var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* y */1]);
-                  ctx.drawImage(analysisCanvas, analysisX, analysisY);
-                  break;
-              
+            if (typeof analysisSize === "number") {
+              var x = Canvas$Gayer.wrapCoord(state[/* writePos */3][0] + state[/* params */6][/* writePosOffset */5] | 0, 0, width);
+              ctx.drawImage(analysisCanvas, x, 0, 1, height);
+            } else {
+              switch (analysisSize.tag | 0) {
+                case 0 : 
+                case 1 : 
+                    exit$1 = 3;
+                    break;
+                case 2 : 
+                    var match$3 = analysisSize[0];
+                    var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* x */0]);
+                    var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */22], match$3[/* y */1]);
+                    ctx.drawImage(analysisCanvas, analysisX, analysisY);
+                    break;
+                
+              }
             }
             if (exit$1 === 3) {
               ctx.drawImage(analysisCanvas, 0, 0, width, height);
@@ -915,9 +882,7 @@ function make($staropt$star, _) {
                                               ]))
                                     ]))));
             }),
-          /* initialState */(function () {
-              return defaultState;
-            }),
+          /* initialState */defaultState,
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (typeof action === "number") {
@@ -1047,9 +1012,10 @@ function make($staropt$star, _) {
                       var init = state[/* drawContext */22];
                       newrecord$7[/* drawContext */22] = /* record */[
                         /* maybeCtxRef */init[/* maybeCtxRef */0],
+                        /* layerRefs */init[/* layerRefs */1],
                         /* width */params[/* width */0],
                         /* height */params[/* height */1],
-                        /* variables */init[/* variables */3]
+                        /* variables */init[/* variables */4]
                       ];
                       return /* Update */Block.__(0, [newrecord$7]);
                   
@@ -1091,4 +1057,4 @@ export {
   make ,
   
 }
-/* defaultState Not a pure module */
+/* SizedDrawer Not a pure module */

@@ -126,14 +126,13 @@ let updateFilterValuesFromImageData =
   };
 };
 
-let makeUint8ClampedArray = [%bs.raw
-  len => {|return new Uint8ClampedArray(len)|}
-];
-
 let makeImageData = (~cqtLine: array(int)) => {
   let len = Array.length(cqtLine);
   let n = len / 4;
-  let output = makeUint8ClampedArray(len);
+  let output =
+    TypedArray.uint8ClampedArrayAsArray(
+      TypedArray.createUint8ClampedArray(len),
+    );
 
   for (i in 0 to n - 1) {
     let offset = i * 4;
@@ -152,7 +151,10 @@ let makeImageDataWithPalette =
     (~palette: Palette.t=Palette.grayscale, ~cqtLine: array(int)) => {
   let len = Array.length(cqtLine);
   let n = len / 4;
-  let output = makeUint8ClampedArray(len);
+  let output =
+    TypedArray.uint8ClampedArrayAsArray(
+      TypedArray.createUint8ClampedArray(len),
+    );
 
   for (i in 0 to n - 1) {
     let offset = i * 4;
@@ -173,7 +175,12 @@ let makeImageDataFromFloats: (array(float), int, int) => imageData =
   (input, w, h) => {
     let n = Array.length(input);
     let len = n * 4;
-    let output = makeUint8ClampedArray(len);
+
+    let output =
+      TypedArray.uint8ClampedArrayAsArray(
+        TypedArray.createUint8ClampedArray(len),
+      );
+
     for (i in 0 to n - 1) {
       let offset = i * 4;
       let v = int_of_float(input[n - i - 1] *. 255.0);
@@ -186,7 +193,10 @@ let makeImageDataFromFloats: (array(float), int, int) => imageData =
   };
 
 let makeRainbowSquare = (width, height) : imageData => {
-  let output = makeUint8ClampedArray(width * height * 4);
+  let output =
+    TypedArray.uint8ClampedArrayAsArray(
+      TypedArray.createUint8ClampedArray(width * height * 4),
+    );
   for (i in 0 to height - 1) {
     let h = float_of_int(i mod 12) /. 12.0;
     let l = float_of_int(i) /. float_of_int(height);

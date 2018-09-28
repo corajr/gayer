@@ -32,12 +32,14 @@ let onTick =
           maybeCtxRef: ref(Some(ctx)),
           width: canvasWidth(maybeCanvas),
           height: canvasHeight(maybeCanvas),
+          layerRefs,
           variables: Belt.Map.String.empty,
         }
       | exception _ => {
           maybeCtxRef: ref(None),
           width: 640,
           height: 480,
+          layerRefs,
           variables: Belt.Map.String.empty,
         }
       };
@@ -45,6 +47,7 @@ let onTick =
         maybeCtxRef: ref(None),
         width: 640,
         height: 480,
+        layerRefs,
         variables: Belt.Map.String.empty,
       }
     };

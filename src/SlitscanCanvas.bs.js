@@ -22,6 +22,7 @@ function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
     catch (exn){
       sourceDrawContext = /* record */[
         /* maybeCtxRef : record */[/* contents */undefined],
+        /* layerRefs */layerRefs,
         /* width */640,
         /* height */480,
         /* variables */Belt_MapString.empty
@@ -30,6 +31,7 @@ function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
     if (exit === 1) {
       sourceDrawContext = /* record */[
         /* maybeCtxRef : record */[/* contents */Js_primitive.some(ctx)],
+        /* layerRefs */layerRefs,
         /* width */el.width,
         /* height */el.height,
         /* variables */Belt_MapString.empty
@@ -39,6 +41,7 @@ function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
   } else {
     sourceDrawContext = /* record */[
       /* maybeCtxRef : record */[/* contents */undefined],
+      /* layerRefs */layerRefs,
       /* width */640,
       /* height */480,
       /* variables */Belt_MapString.empty

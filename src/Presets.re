@@ -315,10 +315,14 @@ let presetsWithoutLayerIds = [
   ("Single note", singleNote),
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Tughra of Suleiman", tughra),
+  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
+  ("Four Seasons", fourSeasons),
+  ("Is it a crime?", isItACrime),
+  ("Audio file", equation),
   ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
   ("Webcam (edge detection)", webcamEdgeDetect),
-  /* ("Slitscan", slitscanParams), */
+  ("Slitscan", slitscanParams),
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
   /* ("Slitscan (color histogram)", slitscanHistogramParams), */
   ("Keycode", keycodeParams),
@@ -326,16 +330,12 @@ let presetsWithoutLayerIds = [
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
-  /* ("Angle", droste), */
-  ("Four Seasons", fourSeasons),
-  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
-  ("Is it a crime?", isItACrime),
+  ("Angle", droste),
   ("MIDI (requires MIDI keyboard)", midi),
-  ("Audio file", equation),
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Mic feedback (may be loud!)", feedback), */
-  /* ("Raw audio (can feedback!)", rawAudio), */
+  ("Raw audio (can feedback!)", rawAudio),
   /* ("Raw audio and spacy", rawAudioAndSpacy), */
   ("Empty", {...defaultParams, layers: []}),
 ];

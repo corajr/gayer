@@ -180,6 +180,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                   case 7 : 
                       var analysisOptions = match[0];
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, StringEncodeSelect$Gayer.make(/* array */[
+                                    /* Slit */0,
                                     /* History */Block.__(1, [/* record */[
                                           /* w : Width */0,
                                           /* h : Height */1

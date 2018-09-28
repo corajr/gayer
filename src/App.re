@@ -50,40 +50,45 @@ type state = {
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let defaultState: state = {
-  animationStartTime: ref(0.0),
-  animationLastUpdated: ref(0.0),
-  readPos: ref(0),
-  writePos: ref(0),
-  freqFuncParams: ref((1, 16)),
-  presetDrawerOpen: false,
-  filterInput: None,
-  mediaStream: None,
-  audioGraph: ref(emptyAudioGraph),
-  micInput: None,
-  cameraInput: ref(None),
-  score: Some(exampleScore),
-  params: snd(List.nth(presets, 0)),
-  oscillatorBank: ref(None),
-  filterBanks: None,
-  currentFilterValues: ref(None),
-  compressor: ref(None),
-  merger: ref(None),
-  savedImages: Belt.Map.String.empty,
-  layerRefs: ref(Belt.Map.String.empty),
-  loadedAudio: ref(Belt.Map.String.empty),
-  canvasRef: ref(None),
-  drawContext: {
-    maybeCtxRef: ref(None),
-    width: 1,
-    height: 1,
-    variables: Belt.Map.String.empty,
-  },
-  startingIndexRef: ref(0),
-  fullscreenCanvas: false,
-  tickCounter: ref(0),
-  tickFunctions: ref(Belt.Map.String.empty),
-  timerId: ref(None),
+let defaultState = () => {
+  let layerRefs = ref(Belt.Map.String.empty);
+
+  {
+    animationStartTime: ref(0.0),
+    animationLastUpdated: ref(0.0),
+    readPos: ref(0),
+    writePos: ref(0),
+    freqFuncParams: ref((1, 16)),
+    presetDrawerOpen: false,
+    filterInput: None,
+    mediaStream: None,
+    audioGraph: ref(emptyAudioGraph),
+    micInput: None,
+    cameraInput: ref(None),
+    score: Some(exampleScore),
+    params: snd(List.nth(presets, 0)),
+    oscillatorBank: ref(None),
+    filterBanks: None,
+    currentFilterValues: ref(None),
+    compressor: ref(None),
+    merger: ref(None),
+    savedImages: Belt.Map.String.empty,
+    layerRefs,
+    loadedAudio: ref(Belt.Map.String.empty),
+    canvasRef: ref(None),
+    drawContext: {
+      maybeCtxRef: ref(None),
+      width: 1,
+      height: 1,
+      layerRefs,
+      variables: Belt.Map.String.empty,
+    },
+    startingIndexRef: ref(0),
+    fullscreenCanvas: false,
+    tickCounter: ref(0),
+    tickFunctions: ref(Belt.Map.String.empty),
+    timerId: ref(None),
+  };
 };
 
 type action =
@@ -250,6 +255,14 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         let canvasAsSource = getCanvasAsSource(canvasElt);
         DrawCommand.(
           switch (analysisSize) {
+          | Slit =>
+            let x =
+              wrapCoord(
+                state.writePos^ + state.params.writePosOffset,
+                0,
+                width,
+              );
+            Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
           | CircularBuffer(_)
           | History(_) =>
             Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height)
@@ -559,7 +572,7 @@ let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
 
 let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
-  initialState: () => defaultState,
+  initialState: defaultState,
   reducer: (action, state) =>
     switch (action) {
     | AddSavedImage(url) =>

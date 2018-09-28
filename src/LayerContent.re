@@ -54,6 +54,7 @@ let make =
           open Canvas.DrawCommand;
           let (w, h) =
             switch (options.analysisSize) {
+            | Slit => (Pixels(1), Height)
             | CircularBuffer({w, h}) => (w, h)
             | History({w, h}) => (w, h)
             | DestRect({w, h}) => (w, h)

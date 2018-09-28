@@ -22,16 +22,7 @@ function drawCQTBar(ctx, state, options, writePos, width, _) {
   var cqtLine = state[/* cqt */4][0].get_output_array();
   var match = options[/* analysisSize */2];
   var xToWrite;
-  switch (match.tag | 0) {
-    case 0 : 
-        xToWrite = Caml_int32.mod_(writePos[0], width);
-        break;
-    case 1 : 
-    case 2 : 
-        xToWrite = width - 1 | 0;
-        break;
-    
-  }
+  xToWrite = typeof match === "number" || match.tag ? width - 1 | 0 : Caml_int32.mod_(writePos[0], width);
   var match$1 = options[/* readerType */1];
   if (match$1) {
     var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
@@ -72,25 +63,20 @@ function make(width, height, layerKey, audioCtx, audioGraph, writePos, options, 
                     }));
               var match = options[/* analysisSize */2];
               var exit = 0;
-              switch (match.tag | 0) {
-                case 1 : 
-                    Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
-                            var match = self[/* state */1][/* canvasRef */5][0];
-                            if (match !== undefined) {
-                              var canvas = Js_primitive.valFromOption(match);
-                              var ctx = canvas.getContext("2d");
-                              ctx.drawImage(canvas, -1, 0);
-                              return /* () */0;
-                            } else {
-                              return /* () */0;
-                            }
-                          }));
-                    break;
-                case 0 : 
-                case 2 : 
-                    exit = 1;
-                    break;
-                
+              if (typeof match === "number" || match.tag !== 1) {
+                exit = 1;
+              } else {
+                Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
+                        var match = self[/* state */1][/* canvasRef */5][0];
+                        if (match !== undefined) {
+                          var canvas = Js_primitive.valFromOption(match);
+                          var ctx = canvas.getContext("2d");
+                          ctx.drawImage(canvas, -1, 0);
+                          return /* () */0;
+                        } else {
+                          return /* () */0;
+                        }
+                      }));
               }
               if (exit === 1) {
                 Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
@@ -117,27 +103,22 @@ function make(width, height, layerKey, audioCtx, audioGraph, writePos, options, 
               Timing$Gayer.maybeClearTimer(param[/* oldSelf */0][/* state */1][/* timerId */6]);
               var match = options[/* analysisSize */2];
               var exit = 0;
-              switch (match.tag | 0) {
-                case 1 : 
-                    Curry._3(saveTick, (function () {
-                            return /* () */0;
-                          }), layerKey, (function () {
-                            var match = newSelf[/* state */1][/* canvasRef */5][0];
-                            if (match !== undefined) {
-                              var canvas = Js_primitive.valFromOption(match);
-                              var ctx = canvas.getContext("2d");
-                              ctx.drawImage(canvas, -1, 0);
-                              return /* () */0;
-                            } else {
-                              return /* () */0;
-                            }
-                          }));
-                    break;
-                case 0 : 
-                case 2 : 
-                    exit = 1;
-                    break;
-                
+              if (typeof match === "number" || match.tag !== 1) {
+                exit = 1;
+              } else {
+                Curry._3(saveTick, (function () {
+                        return /* () */0;
+                      }), layerKey, (function () {
+                        var match = newSelf[/* state */1][/* canvasRef */5][0];
+                        if (match !== undefined) {
+                          var canvas = Js_primitive.valFromOption(match);
+                          var ctx = canvas.getContext("2d");
+                          ctx.drawImage(canvas, -1, 0);
+                          return /* () */0;
+                        } else {
+                          return /* () */0;
+                        }
+                      }));
               }
               if (exit === 1) {
                 Curry._3(saveTick, (function () {

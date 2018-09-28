@@ -8,18 +8,21 @@ type historyParams = {
 };
 
 type analysisSize =
+  | Slit
   | CircularBuffer(historyParams)
   | History(historyParams)
   | DestRect(rect);
 
 let string_of_analysisSize =
   fun
+  | Slit => "slit"
   | CircularBuffer(_) => "circular buffer"
   | History(_) => "history"
   | DestRect(_) => "";
 
 let analysisSize_of_string =
   fun
+  | "slit" => Slit
   | "circular buffer" => CircularBuffer({w: Width, h: Height})
   | _ => History({w: Width, h: Height});
 
@@ -32,7 +35,7 @@ type analysisOptions = {
 let defaultAnalysisOptions = {
   input: Mic,
   readerType: Channel(R),
-  analysisSize: History({w: Width, h: Height}),
+  analysisSize: Slit,
 };
 
 let destRect =
@@ -47,6 +50,7 @@ module DecodeAnalysisOptions = {
   let analysisSizeByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
+      | "slit" => Slit
       | "history" =>
         json
         |> field2(
@@ -88,6 +92,7 @@ module EncodeAnalysisOptions = {
   let analysisSize =
     Json.Encode.(
       fun
+      | Slit => object_([("type", string("slit"))])
       | CircularBuffer({w, h}) =>
         object_([
           ("type", string("circular-buffer")),

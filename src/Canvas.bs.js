@@ -5,6 +5,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Pervasives from "bs-platform/lib/es6/pervasives.js";
+import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
@@ -348,7 +349,15 @@ function field2(f, a, aDec, b, bDec, json) {
 }
 
 function imgSource(param) {
-  if (param) {
+  if (typeof param === "number") {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "self"
+                ],
+                /* [] */0
+              ]);
+  } else if (param.tag) {
     var match = param[0];
     return Json_encode.object_(/* :: */[
                 /* tuple */[
@@ -383,7 +392,13 @@ function imgSource(param) {
                   "type",
                   "self"
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "key",
+                    param[0]
+                  ],
+                  /* [] */0
+                ]
               ]);
   }
 }
@@ -811,13 +826,15 @@ function imgSource$1(json) {
   var match = Json_decode.field("type", Json_decode.string, json);
   switch (match) {
     case "imageData" : 
-        return /* ImageData */[/* record */[
-                  /* data */Json_decode.field("data", (function (param) {
-                          return Json_decode.array(Json_decode.$$int, param);
-                        }), json),
-                  /* w */Json_decode.field("w", Json_decode.$$int, json),
-                  /* h */Json_decode.field("h", Json_decode.$$int, json)
-                ]];
+        return /* ImageData */Block.__(1, [/* record */[
+                    /* data */Json_decode.field("data", (function (param) {
+                            return Json_decode.array(Json_decode.$$int, param);
+                          }), json),
+                    /* w */Json_decode.field("w", Json_decode.$$int, json),
+                    /* h */Json_decode.field("h", Json_decode.$$int, json)
+                  ]]);
+    case "layer" : 
+        return /* LayerByKey */Block.__(0, [Json_decode.field("key", Json_decode.string, json)]);
     case "self" : 
         return /* Self */0;
     default:
@@ -1070,19 +1087,19 @@ var DecodeDrawCommand = /* module */[
 function getLength(drawCtx, len) {
   if (typeof len === "number") {
     if (len === 0) {
-      return drawCtx[/* width */1];
+      return drawCtx[/* width */2];
     } else {
-      return drawCtx[/* height */2];
+      return drawCtx[/* height */3];
     }
   } else {
     switch (len.tag | 0) {
       case 1 : 
-          return Belt_MapString.getWithDefault(drawCtx[/* variables */3], len[0], len[1]);
+          return Belt_MapString.getWithDefault(drawCtx[/* variables */4], len[0], len[1]);
       case 0 : 
       case 2 : 
           return len[0];
       case 3 : 
-          var height = drawCtx[/* height */2];
+          var height = drawCtx[/* height */3];
           var pixelsPerSemitone = height / 120 | 0;
           return height - Caml_int32.imul(len[0], pixelsPerSemitone) | 0;
       case 4 : 
@@ -1096,6 +1113,25 @@ function getLength(drawCtx, len) {
       
     }
   }
+}
+
+var nullImage = new ImageData(new Uint8ClampedArray(4), 1, 1);
+
+function getSource(drawContext, src) {
+  var tmp;
+  if (typeof src === "number") {
+    tmp = Belt_Option.map(drawContext[/* maybeCtxRef */0][0], (function (c) {
+            return c.canvas;
+          }));
+  } else if (src.tag) {
+    var match = src[0];
+    tmp = Js_primitive.some(new ImageData(match[/* data */0], match[/* w */1], match[/* h */2]));
+  } else {
+    tmp = Belt_Option.map(Belt_MapString.get(drawContext[/* layerRefs */1][0], src[0]), (function (d) {
+            return d;
+          }));
+  }
+  return Belt_Option.getWithDefault(tmp, nullImage);
 }
 
 function drawCommand(drawContext, cmd) {
@@ -1142,13 +1178,13 @@ function drawCommand(drawContext, cmd) {
                     ]);
       case 10 : 
           var match$2 = cmd[1];
-          var realSrc = ctx.canvas;
+          var realSrc = getSource(drawContext, cmd[0]);
           ctx.drawImage(realSrc, getLength(drawContext, match$2[/* x */0]), getLength(drawContext, match$2[/* y */1]), getLength(drawContext, match$2[/* w */2]), getLength(drawContext, match$2[/* h */3]));
           return /* () */0;
       case 11 : 
           var match$3 = cmd[2];
           var match$4 = cmd[1];
-          var realSrc$1 = ctx.canvas;
+          var realSrc$1 = getSource(drawContext, cmd[0]);
           ctx.drawImage(realSrc$1, getLength(drawContext, match$4[/* x */0]), getLength(drawContext, match$4[/* y */1]), getLength(drawContext, match$4[/* w */2]), getLength(drawContext, match$4[/* h */3]), getLength(drawContext, match$3[/* x */0]), getLength(drawContext, match$3[/* y */1]), getLength(drawContext, match$3[/* w */2]), getLength(drawContext, match$3[/* h */3]));
           return /* () */0;
       
@@ -1169,6 +1205,8 @@ var DrawCommand = /* module */[
   /* EncodeDrawCommand */EncodeDrawCommand,
   /* DecodeDrawCommand */DecodeDrawCommand,
   /* getLength */getLength,
+  /* nullImage */nullImage,
+  /* getSource */getSource,
   /* drawCommand */drawCommand,
   /* drawCommands */drawCommands
 ];

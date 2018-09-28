@@ -9,28 +9,35 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 
 function string_of_analysisSize(param) {
-  switch (param.tag | 0) {
-    case 0 : 
-        return "circular buffer";
-    case 1 : 
-        return "history";
-    case 2 : 
-        return "";
-    
+  if (typeof param === "number") {
+    return "slit";
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          return "circular buffer";
+      case 1 : 
+          return "history";
+      case 2 : 
+          return "";
+      
+    }
   }
 }
 
 function analysisSize_of_string(param) {
-  if (param === "circular buffer") {
-    return /* CircularBuffer */Block.__(0, [/* record */[
-                /* w : Width */0,
-                /* h : Height */1
-              ]]);
-  } else {
-    return /* History */Block.__(1, [/* record */[
-                /* w : Width */0,
-                /* h : Height */1
-              ]]);
+  switch (param) {
+    case "circular buffer" : 
+        return /* CircularBuffer */Block.__(0, [/* record */[
+                    /* w : Width */0,
+                    /* h : Height */1
+                  ]]);
+    case "slit" : 
+        return /* Slit */0;
+    default:
+      return /* History */Block.__(1, [/* record */[
+                  /* w : Width */0,
+                  /* h : Height */1
+                ]]);
   }
 }
 
@@ -57,6 +64,8 @@ function analysisSizeByType(type_, json) {
                                   /* h */h
                                 ]]);
                     }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
+    case "slit" : 
+        return /* Slit */0;
     default:
       return /* History */Block.__(1, [/* record */[
                   /* w : Width */0,
@@ -86,64 +95,74 @@ var DecodeAnalysisOptions = /* module */[
 ];
 
 function analysisSize$1(param) {
-  switch (param.tag | 0) {
-    case 0 : 
-        var match = param[0];
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "circular-buffer"
-                    ],
-                    /* :: */[
+  if (typeof param === "number") {
+    return Json_encode.object_(/* :: */[
+                /* tuple */[
+                  "type",
+                  "slit"
+                ],
+                /* [] */0
+              ]);
+  } else {
+    switch (param.tag | 0) {
+      case 0 : 
+          var match = param[0];
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "w",
-                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
+                        "type",
+                        "circular-buffer"
                       ],
                       /* :: */[
                         /* tuple */[
-                          "h",
-                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                          "w",
+                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
                         ],
-                        /* [] */0
+                        /* :: */[
+                          /* tuple */[
+                            "h",
+                            Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                          ],
+                          /* [] */0
+                        ]
                       ]
-                    ]
-                  ]);
-    case 1 : 
-        var match$1 = param[0];
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "history"
-                    ],
-                    /* :: */[
+                    ]);
+      case 1 : 
+          var match$1 = param[0];
+          return Json_encode.object_(/* :: */[
                       /* tuple */[
-                        "w",
-                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* w */0])
+                        "type",
+                        "history"
                       ],
                       /* :: */[
                         /* tuple */[
-                          "h",
-                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* h */1])
+                          "w",
+                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* w */0])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "h",
+                            Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* h */1])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]);
+      case 2 : 
+          return Json_encode.object_(/* :: */[
+                      /* tuple */[
+                        "type",
+                        "dest-rect"
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "rect",
+                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
                         ],
                         /* [] */0
                       ]
-                    ]
-                  ]);
-    case 2 : 
-        return Json_encode.object_(/* :: */[
-                    /* tuple */[
-                      "type",
-                      "dest-rect"
-                    ],
-                    /* :: */[
-                      /* tuple */[
-                        "rect",
-                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
-                      ],
-                      /* [] */0
-                    ]
-                  ]);
-    
+                    ]);
+      
+    }
   }
 }
 
@@ -177,10 +196,7 @@ var EncodeAnalysisOptions = /* module */[
 var defaultAnalysisOptions = /* record */[
   /* input : Mic */2,
   /* readerType : Channel */[/* R */0],
-  /* analysisSize : History */Block.__(1, [/* record */[
-        /* w : Width */0,
-        /* h : Height */1
-      ]])
+  /* analysisSize : Slit */0
 ];
 
 var destRect = /* DestRect */Block.__(2, [/* record */[
