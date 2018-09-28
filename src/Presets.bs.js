@@ -401,11 +401,8 @@ var slitscanParams_014 = /* layers : :: */[
     /* :: */[
       LayerGenerator$Gayer.slitscan,
       /* :: */[
-        LayerGenerator$Gayer.sobel("root"),
-        /* :: */[
-          LayerGenerator$Gayer.reader,
-          /* [] */0
-        ]
+        LayerGenerator$Gayer.reader,
+        /* [] */0
       ]
     ]
   ]
@@ -698,13 +695,10 @@ var tughra_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 var tughra_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
 
 var tughra_014 = /* layers : :: */[
-  LayerGenerator$Gayer.text(""),
+  LayerGenerator$Gayer.img("media/suleiman.jpg"),
   /* :: */[
-    LayerGenerator$Gayer.img("media/suleiman.jpg"),
-    /* :: */[
-      LayerGenerator$Gayer.reader,
-      /* [] */0
-    ]
+    LayerGenerator$Gayer.reader,
+    /* [] */0
   ]
 ];
 

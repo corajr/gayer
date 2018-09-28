@@ -8,8 +8,20 @@ type historyParams = {
 };
 
 type analysisSize =
-  | WithHistory(historyParams)
+  | CircularBuffer(historyParams)
+  | History(historyParams)
   | DestRect(rect);
+
+let string_of_analysisSize =
+  fun
+  | CircularBuffer(_) => "circular buffer"
+  | History(_) => "history"
+  | DestRect(_) => "";
+
+let analysisSize_of_string =
+  fun
+  | "circular buffer" => CircularBuffer({w: Width, h: Height})
+  | _ => History({w: Width, h: Height});
 
 type analysisOptions = {
   input: audioInputSetting,
@@ -20,7 +32,7 @@ type analysisOptions = {
 let defaultAnalysisOptions = {
   input: Mic,
   readerType: Channel(R),
-  analysisSize: WithHistory({w: Width, h: Height}),
+  analysisSize: History({w: Width, h: Height}),
 };
 
 let destRect =
@@ -35,10 +47,19 @@ module DecodeAnalysisOptions = {
   let analysisSizeByType = (type_, json) =>
     Json.Decode.(
       switch (type_) {
-      | "with-history" =>
+      | "history" =>
         json
         |> field2(
-             (w, h) => WithHistory({w, h}),
+             (w, h) => History({w, h}),
+             "w",
+             DecodeDrawCommand.length,
+             "h",
+             DecodeDrawCommand.length,
+           )
+      | "circular-buffer" =>
+        json
+        |> field2(
+             (w, h) => CircularBuffer({w, h}),
              "w",
              DecodeDrawCommand.length,
              "h",
@@ -46,7 +67,7 @@ module DecodeAnalysisOptions = {
            )
       | "dest-rect" =>
         json |> map(r => DestRect(r), field("rect", DecodeDrawCommand.rect))
-      | _ => WithHistory({w: Width, h: Height})
+      | _ => History({w: Width, h: Height})
       }
     );
 
@@ -67,9 +88,15 @@ module EncodeAnalysisOptions = {
   let analysisSize =
     Json.Encode.(
       fun
-      | WithHistory({w, h}) =>
+      | CircularBuffer({w, h}) =>
         object_([
-          ("type", string("with-history")),
+          ("type", string("circular-buffer")),
+          ("w", EncodeDrawCommand.length(w)),
+          ("h", EncodeDrawCommand.length(h)),
+        ])
+      | History({w, h}) =>
+        object_([
+          ("type", string("history")),
           ("w", EncodeDrawCommand.length(w)),
           ("h", EncodeDrawCommand.length(h)),
         ])

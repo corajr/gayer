@@ -58,7 +58,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, DrawCommandCanvas$Gayer.make(layerContent[0], layerKey, layerRefs, setRef, saveTick, width, height, /* array */[]));
                       break;
                   case 4 : 
-                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, layerContent[0][/* sourceLayerKey */0], width, height, saveTick, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, width, height, saveTick, globalDrawContext, layerContent[0], /* array */[]));
                       break;
                   case 5 : 
                       tmp = React.createElement("img", {
@@ -75,13 +75,22 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       var options = layerContent[0];
                       var match = options[/* analysisSize */2];
                       var match$1;
-                      if (match.tag) {
-                        var match$2 = match[0];
-                        match$1 = /* tuple */[
-                          match$2[/* w */2],
-                          match$2[/* h */3]
-                        ];
-                      } else {
+                      var exit = 0;
+                      switch (match.tag | 0) {
+                        case 0 : 
+                        case 1 : 
+                            exit = 1;
+                            break;
+                        case 2 : 
+                            var match$2 = match[0];
+                            match$1 = /* tuple */[
+                              match$2[/* w */2],
+                              match$2[/* h */3]
+                            ];
+                            break;
+                        
+                      }
+                      if (exit === 1) {
                         var match$3 = match[0];
                         match$1 = /* tuple */[
                           match$3[/* w */0],

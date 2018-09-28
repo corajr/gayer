@@ -91,7 +91,6 @@ let slitscanParams = {
     /* squareColumnLayer, */
     {...webcam, alpha: 0.0},
     slitscan,
-    sobel("root"),
     /* pitchFilter(cMajor), */
     reader,
   ],
@@ -137,7 +136,7 @@ let isItACrime = {
 
 let tughra = {
   ...defaultParams,
-  layers: [text(""), img("media/suleiman.jpg"), reader],
+  layers: [img("media/suleiman.jpg"), reader],
 };
 
 let iChing = {

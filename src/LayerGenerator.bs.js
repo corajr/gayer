@@ -5,6 +5,7 @@ import * as Layer$Gayer from "./Layer.bs.js";
 import * as Music$Gayer from "./Music.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
+import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 
 function img(url) {
@@ -359,7 +360,7 @@ function displace(source, displace$1) {
 function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
   var includeHistory = $staropt$star !== undefined ? $staropt$star : true;
   var readerType = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Channel */[/* R */0];
-  var analysisSize = $staropt$star$2 !== undefined ? $staropt$star$2 : /* WithHistory */Block.__(0, [/* record */[
+  var analysisSize = $staropt$star$2 !== undefined ? $staropt$star$2 : /* History */Block.__(1, [/* record */[
           /* w : Width */0,
           /* h : Height */1
         ]]);
@@ -421,10 +422,7 @@ var webcam = /* record */[
   webcam_007
 ];
 
-var slitscan_000 = /* content : Slitscan */Block.__(4, [/* record */[
-      /* sourceLayerKey */"webcam",
-      /* slitscan : StaticX */Block.__(0, [320])
-    ]]);
+var slitscan_000 = /* content : Slitscan */Block.__(4, [CameraOptions$Gayer.slitscanDefaults]);
 
 var slitscan_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 

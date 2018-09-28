@@ -8,24 +8,57 @@ import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
 
+function string_of_analysisSize(param) {
+  switch (param.tag | 0) {
+    case 0 : 
+        return "circular buffer";
+    case 1 : 
+        return "history";
+    case 2 : 
+        return "";
+    
+  }
+}
+
+function analysisSize_of_string(param) {
+  if (param === "circular buffer") {
+    return /* CircularBuffer */Block.__(0, [/* record */[
+                /* w : Width */0,
+                /* h : Height */1
+              ]]);
+  } else {
+    return /* History */Block.__(1, [/* record */[
+                /* w : Width */0,
+                /* h : Height */1
+              ]]);
+  }
+}
+
 function analysisSizeByType(type_, json) {
   switch (type_) {
+    case "circular-buffer" : 
+        return Canvas$Gayer.DrawCommand[/* field2 */0]((function (w, h) {
+                      return /* CircularBuffer */Block.__(0, [/* record */[
+                                  /* w */w,
+                                  /* h */h
+                                ]]);
+                    }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
     case "dest-rect" : 
         var partial_arg = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2];
         return Json_decode.map((function (r) {
-                      return /* DestRect */Block.__(1, [r]);
+                      return /* DestRect */Block.__(2, [r]);
                     }), (function (param) {
                       return Json_decode.field("rect", partial_arg, param);
                     }), json);
-    case "with-history" : 
+    case "history" : 
         return Canvas$Gayer.DrawCommand[/* field2 */0]((function (w, h) {
-                      return /* WithHistory */Block.__(0, [/* record */[
+                      return /* History */Block.__(1, [/* record */[
                                   /* w */w,
                                   /* h */h
                                 ]]);
                     }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
     default:
-      return /* WithHistory */Block.__(0, [/* record */[
+      return /* History */Block.__(1, [/* record */[
                   /* w : Width */0,
                   /* h : Height */1
                 ]]);
@@ -53,41 +86,64 @@ var DecodeAnalysisOptions = /* module */[
 ];
 
 function analysisSize$1(param) {
-  if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "dest-rect"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "rect",
-                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    var match = param[0];
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "with-history"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "w",
-                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
-                  ],
-                  /* :: */[
+  switch (param.tag | 0) {
+    case 0 : 
+        var match = param[0];
+        return Json_encode.object_(/* :: */[
                     /* tuple */[
-                      "h",
-                      Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                      "type",
+                      "circular-buffer"
                     ],
-                    /* [] */0
-                  ]
-                ]
-              ]);
+                    /* :: */[
+                      /* tuple */[
+                        "w",
+                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "h",
+                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 1 : 
+        var match$1 = param[0];
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "history"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "w",
+                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* w */0])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "h",
+                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* h */1])
+                        ],
+                        /* [] */0
+                      ]
+                    ]
+                  ]);
+    case 2 : 
+        return Json_encode.object_(/* :: */[
+                    /* tuple */[
+                      "type",
+                      "dest-rect"
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "rect",
+                        Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
+                      ],
+                      /* [] */0
+                    ]
+                  ]);
+    
   }
 }
 
@@ -121,13 +177,13 @@ var EncodeAnalysisOptions = /* module */[
 var defaultAnalysisOptions = /* record */[
   /* input : Mic */2,
   /* readerType : Channel */[/* R */0],
-  /* analysisSize : WithHistory */Block.__(0, [/* record */[
+  /* analysisSize : History */Block.__(1, [/* record */[
         /* w : Width */0,
         /* h : Height */1
       ]])
 ];
 
-var destRect = /* DestRect */Block.__(1, [/* record */[
+var destRect = /* DestRect */Block.__(2, [/* record */[
       /* x : Add */Block.__(5, [
           /* Width */0,
           /* Pixels */Block.__(2, [-1])
@@ -138,6 +194,8 @@ var destRect = /* DestRect */Block.__(1, [/* record */[
     ]]);
 
 export {
+  string_of_analysisSize ,
+  analysisSize_of_string ,
   defaultAnalysisOptions ,
   destRect ,
   DecodeAnalysisOptions ,

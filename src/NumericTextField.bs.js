@@ -9,8 +9,9 @@ import * as MaterialUi_TextField from "@jsiebern/bs-material-ui/src/MaterialUi_T
 
 var component = ReasonReact.statelessComponent("NumericTextField");
 
-function make(value, label, onChange, $staropt$star, _) {
-  var margin = $staropt$star !== undefined ? $staropt$star : /* None */870530776;
+function make(value, label, onChange, $staropt$star, $staropt$star$1, _) {
+  var style = $staropt$star !== undefined ? Js_primitive.valFromOption($staropt$star) : { };
+  var margin = $staropt$star$1 !== undefined ? $staropt$star$1 : /* None */870530776;
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -23,10 +24,7 @@ function make(value, label, onChange, $staropt$star, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function () {
               return React.createElement("div", {
-                          style: {
-                            marginRight: "5%",
-                            width: "45%"
-                          }
+                          style: style
                         }, ReasonReact.element(undefined, undefined, MaterialUi_TextField.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, Js_primitive.some(label), margin, undefined, undefined, undefined, (function (evt) {
                                     var v = evt.target.value;
                                     return Curry._1(onChange, Caml_format.caml_float_of_string(v));

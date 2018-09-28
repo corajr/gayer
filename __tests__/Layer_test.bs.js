@@ -2,26 +2,18 @@
 
 import * as Jest from "@glennsl/bs-jest/src/jest.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
-import * as Block from "bs-platform/lib/es6/block.js";
 import * as Layer$Gayer from "../src/Layer.bs.js";
 import * as CameraOptions$Gayer from "../src/CameraOptions.bs.js";
 import * as LayerGenerator$Gayer from "../src/LayerGenerator.bs.js";
 
-var slitscan = /* StaticX */Block.__(0, [320]);
-
-var cameraOptExamples_000 = /* record */[
-  /* sourceLayerKey */"blah",
-  /* slitscan */slitscan
-];
-
 var cameraOptExamples = /* :: */[
-  cameraOptExamples_000,
+  CameraOptions$Gayer.slitscanDefaults,
   /* [] */0
 ];
 
 describe("EncodeCameraOptions <=> DecodeCameraOptions", (function () {
         return Jest.testAll("decode inverts encode", cameraOptExamples, (function (cameraOptions) {
-                      return Jest.Expect[/* toEqual */12](cameraOptions, Jest.Expect[/* expect */0](CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1](CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */1](cameraOptions))));
+                      return Jest.Expect[/* toEqual */12](cameraOptions, Jest.Expect[/* expect */0](CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */0](CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */0](cameraOptions))));
                     }));
       }));
 
@@ -34,7 +26,6 @@ describe("EncodeLayer <=> DecodeLayer", (function () {
       }));
 
 export {
-  slitscan ,
   cameraOptExamples ,
   
 }

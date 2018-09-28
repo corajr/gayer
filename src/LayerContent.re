@@ -31,9 +31,10 @@ let make =
           <SlitscanCanvas
             layerKey
             layerRefs
-            sourceKey=opts.sourceLayerKey
             setRef
             saveTick
+            globalDrawContext
+            opts
             width
             height
           />
@@ -51,7 +52,8 @@ let make =
           open Canvas.DrawCommand;
           let (w, h) =
             switch (options.analysisSize) {
-            | WithHistory({w, h}) => (w, h)
+            | CircularBuffer({w, h}) => (w, h)
+            | History({w, h}) => (w, h)
             | DestRect({w, h}) => (w, h)
             };
 

@@ -3,8 +3,14 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
+import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
 import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
+
+var numericTextFieldStyle = {
+  marginRight: "5%",
+  width: "45%"
+};
 
 var component = ReasonReact.statelessComponent("TransformMatrixSettings-Gayer");
 
@@ -43,7 +49,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[])),
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[])),
                                   ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                             365180284,
                                             layer[/* transformMatrix */5][/* verticalMoving */5]
@@ -66,7 +72,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[]))
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[]))
                                 ])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
                                   ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                             365180284,
@@ -90,7 +96,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[])),
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[])),
                                   ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                             365180284,
                                             layer[/* transformMatrix */5][/* verticalScaling */3]
@@ -113,7 +119,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[]))
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[]))
                                 ])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
                                   ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                             365180284,
@@ -137,7 +143,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[])),
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[])),
                                   ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                             365180284,
                                             layer[/* transformMatrix */5][/* verticalSkewing */2]
@@ -160,7 +166,7 @@ function make(layer, changeLayer, _) {
                                                           /* filters */layer[/* filters */6],
                                                           /* id */layer[/* id */7]
                                                         ]);
-                                            }), /* Dense */-363472001, /* array */[]))
+                                            }), Js_primitive.some(numericTextFieldStyle), /* Dense */-363472001, /* array */[]))
                                 ])));
             }),
           /* initialState */component[/* initialState */10],
@@ -172,6 +178,7 @@ function make(layer, changeLayer, _) {
 }
 
 export {
+  numericTextFieldStyle ,
   component ,
   make ,
   

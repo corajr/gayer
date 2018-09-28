@@ -351,7 +351,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("options", partial_arg$8, param);
                     }), json);
     case "slitscan" : 
-        var partial_arg$9 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */1];
+        var partial_arg$9 = CameraOptions$Gayer.DecodeCameraOptions[/* cameraOptions */0];
         return Json_decode.map((function (s) {
                       return /* Slitscan */Block.__(4, [s]);
                     }), (function (param) {
@@ -607,7 +607,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "options",
-                          CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */1](r[0])
+                          CameraOptions$Gayer.EncodeCameraOptions[/* cameraOptions */0](r[0])
                         ],
                         /* [] */0
                       ]

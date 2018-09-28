@@ -1,6 +1,9 @@
 open Canvas;
 open Layer;
 
+let numericTextFieldStyle =
+  ReactDOMRe.Style.make(~width="45%", ~marginRight="5%", ());
+
 let component = ReasonReact.statelessComponent(__MODULE__);
 
 let make = (~layer, ~changeLayer, _children) => {
@@ -10,6 +13,7 @@ let make = (~layer, ~changeLayer, _children) => {
       <div>
         <FormGroup row=true>
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("x"))
             value=(`Float(layer.transformMatrix.horizontalMoving))
@@ -28,6 +32,7 @@ let make = (~layer, ~changeLayer, _children) => {
             )
           />
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("y"))
             value=(`Float(layer.transformMatrix.verticalMoving))
@@ -48,6 +53,7 @@ let make = (~layer, ~changeLayer, _children) => {
         </FormGroup>
         <FormGroup row=true>
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("scaleX"))
             value=(`Float(layer.transformMatrix.horizontalScaling))
@@ -66,6 +72,7 @@ let make = (~layer, ~changeLayer, _children) => {
             )
           />
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("scaleY"))
             value=(`Float(layer.transformMatrix.verticalScaling))
@@ -86,6 +93,7 @@ let make = (~layer, ~changeLayer, _children) => {
         </FormGroup>
         <FormGroup row=true>
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("skewX"))
             value=(`Float(layer.transformMatrix.horizontalSkewing))
@@ -104,6 +112,7 @@ let make = (~layer, ~changeLayer, _children) => {
             )
           />
           <NumericTextField
+            style=numericTextFieldStyle
             margin=`Dense
             label=(ReasonReact.string("skewY"))
             value=(`Float(layer.transformMatrix.verticalSkewing))

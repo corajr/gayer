@@ -170,7 +170,24 @@ let make =
                 />
               | Draw(cmds) => <div />
               | DrawGlobal(cmds) => <div />
-              | Slitscan(cameraOptions) => <div />
+              | Slitscan(opts) =>
+                <div>
+                  <LayerSelect
+                    layerKeys
+                    currentValue=opts.sourceLayerKey
+                    onChange=(
+                      newKey =>
+                        changeLayer(
+                          layer,
+                          Some({
+                            ...layer,
+                            content:
+                              Slitscan({...opts, sourceLayerKey: newKey}),
+                          }),
+                        )
+                    )
+                  />
+                </div>
               | Image(url) =>
                 <ImageSelect
                   url
@@ -187,25 +204,50 @@ let make =
               | RawAudioWriter(rawAudioFormat)
               | RawAudioReader(rawAudioFormat) => <div />
               | Analysis(analysisOptions) =>
-                <div
-                  /* <ReaderType */
-                  /*   readerType=analysisOptions.readerType */
-                  /*   onChangeSetting=( */
-                  /*     newReaderType => */
-                  /*       changeLayer( */
-                  /*         layer, */
-                  /*         Some({ */
-                  /*           ...layer, */
-                  /*           content: */
-                  /*             Analysis({ */
-                  /*               ...analysisOptions, */
-                  /*               readerType: newReaderType, */
-                  /*             }), */
-                  /*         }), */
-                  /*       ) */
-                  /*   ) */
-                  /* /> */
-                />
+                AnalysisOptions.(
+                  <div>
+                    <StringEncodeSelect
+                      allSettings=[|
+                        AnalysisOptions.History({w: Width, h: Height}),
+                        AnalysisOptions.CircularBuffer({w: Width, h: Height}),
+                      |]
+                      currentSetting=analysisOptions.analysisSize
+                      encoder=string_of_analysisSize
+                      decoder=analysisSize_of_string
+                      onChange=(
+                        newSetting =>
+                          changeLayer(
+                            layer,
+                            Some({
+                              ...layer,
+                              content:
+                                Analysis({
+                                  ...analysisOptions,
+                                  analysisSize: newSetting,
+                                }),
+                            }),
+                          )
+                      )
+                    />
+                  </div>
+                )
+              /* <ReaderType */
+              /*   readerType=analysisOptions.readerType */
+              /*   onChangeSetting=( */
+              /*     newReaderType => */
+              /*       changeLayer( */
+              /*         layer, */
+              /*         Some({ */
+              /*           ...layer, */
+              /*           content: */
+              /*             Analysis({ */
+              /*               ...analysisOptions, */
+              /*               readerType: newReaderType, */
+              /*             }), */
+              /*         }), */
+              /*       ) */
+              /*   ) */
+              /* /> */
               | Regl(reglOptions) =>
                 <div>
                   (

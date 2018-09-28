@@ -1,9 +1,17 @@
 let component = ReasonReact.statelessComponent("NumericTextField");
 
-let make = (~value, ~label, ~onChange, ~margin=`None, _children) => {
+let make =
+    (
+      ~value,
+      ~label,
+      ~onChange,
+      ~style=ReactDOMRe.Style.make(),
+      ~margin=`None,
+      _children,
+    ) => {
   ...component,
   render: self =>
-    <div style=(ReactDOMRe.Style.make(~width="45%", ~marginRight="5%", ()))>
+    <div style>
       <MaterialUi.TextField
         value
         label

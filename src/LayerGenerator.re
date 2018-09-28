@@ -123,7 +123,7 @@ let analyzer =
     (
       ~includeHistory: bool=true,
       ~readerType: readerType=Channel(R),
-      ~analysisSize: analysisSize=WithHistory({w: Width, h: Height}),
+      ~analysisSize: analysisSize=History({w: Width, h: Height}),
       input: audioInputSetting,
     ) =>
   if (includeHistory) {
@@ -145,7 +145,7 @@ let webcam = {...defaultLayer, content: Webcam};
 
 let slitscan = {
   ...defaultLayer,
-  content: Slitscan({sourceLayerKey: "webcam", slitscan: StaticX(320)}),
+  content: Slitscan(CameraOptions.slitscanDefaults),
 };
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");

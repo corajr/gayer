@@ -12,7 +12,7 @@ import * as LayerContent$Gayer from "./LayerContent.bs.js";
 
 var component = ReasonReact.statelessComponent("MediaProvider");
 
-function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawContext, audioGraph, audioCtx, layerRefs, currentFilterValues, saveTick, getReadAndWritePos, millisPerAudioTick, _) {
+function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawContext, audioGraph, audioCtx, layerRefs, currentFilterValues, saveTick, getReadAndWritePos, millisPerTick, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -115,7 +115,7 @@ function make(layers, rootWidth, rootHeight, onSetRef, getAudio, globalDrawConte
                                     return React.createElement("div", {
                                                 key: key,
                                                 style: tmp
-                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerAudioTick, rootWidth, rootHeight, getReadAndWritePos, globalDrawContext, currentFilterValues, layer[/* content */0], /* array */[])));
+                                              }, maybeAudio, ReasonReact.element(undefined, undefined, LayerContent$Gayer.make(key, audioCtx, audioGraph, layerRefs, Curry._1(onSetRef, layer), saveTick, millisPerTick, rootWidth, rootHeight, getReadAndWritePos, globalDrawContext, currentFilterValues, layer[/* content */0], /* array */[])));
                                   }), layers)));
             }),
           /* initialState */component[/* initialState */10],

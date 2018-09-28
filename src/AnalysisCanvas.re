@@ -14,6 +14,7 @@ type state = {
   cqt: ref(CQT.t),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
+  writePos: ref(int),
 };
 
 let drawCQTBar = (ctx, state, options, width, height) => {
@@ -24,14 +25,24 @@ let drawCQTBar = (ctx, state, options, width, height) => {
   CQT.calc(state.cqt^);
   CQT.renderLine(state.cqt^, 1);
   let cqtLine = CQT.getOutputArray(state.cqt^);
+
+  let xToWrite =
+    switch (options.analysisSize) {
+    | CircularBuffer(_) =>
+      let x = wrapCoord(state.writePos^, 1, width);
+      state.writePos := x;
+      x;
+    | _ => width - 1
+    };
+
   switch (options.readerType) {
   | Channel(_) =>
     let outputImageData = makeImageData(~cqtLine);
-    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+    Ctx.putImageData(ctx, outputImageData, xToWrite, 0);
   | Saturation =>
     let outputImageData =
       makeImageDataWithPalette(~cqtLine, ~palette=Palette.saturationRainbow);
-    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
+    Ctx.putImageData(ctx, outputImageData, xToWrite, 0);
   };
 };
 
@@ -89,6 +100,7 @@ let make =
         cqt: ref(cqt),
         canvasRef: ref(None),
         timerId: ref(None),
+        writePos: ref(0),
       };
     },
     didMount: self => {
@@ -107,7 +119,7 @@ let make =
       );
 
       switch (options.analysisSize) {
-      | WithHistory(_) =>
+      | History(_) =>
         saveTick(self.onUnmount, layerKey, _t =>
           switch (self.state.canvasRef^) {
           | Some(canvas) =>
@@ -118,7 +130,7 @@ let make =
           | None => ()
           }
         )
-      | _ => ()
+      | _ => saveTick(self.onUnmount, layerKey, _t => ())
       };
 
       setTimer(
@@ -137,6 +149,24 @@ let make =
     },
     willUpdate: ({oldSelf, newSelf}) => {
       maybeClearTimer(oldSelf.state.timerId);
+      switch (options.analysisSize) {
+      | History(_) =>
+        saveTick(
+          _f => (),
+          layerKey,
+          _t =>
+            switch (newSelf.state.canvasRef^) {
+            | Some(canvas) =>
+              let canvasElement = getFromReact(canvas);
+              let ctx = getContext(canvasElement);
+
+              Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
+            | None => ()
+            },
+        )
+      | _ => saveTick(_f => (), layerKey, _t => ())
+      };
+
       setTimer(
         newSelf.state.timerId,
         () =>

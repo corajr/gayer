@@ -26,7 +26,7 @@ type state = {
   freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
-  score: option((score, ref(int))),
+  score: option((score, int)),
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
   audioGraph: ref(audioGraph),
@@ -60,7 +60,7 @@ let defaultState: state = {
   audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
-  score: Some((exampleScore, ref(0))),
+  score: Some((exampleScore, 0)),
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
@@ -89,6 +89,7 @@ type action =
   | TogglePresetDrawer
   | SaveImage
   | ToggleFullscreen
+  | SetScoreEventIndexDirectly(int)
   | SetScoreEventIndex(int)
   | AdjustScoreEventIndex(int)
   | AddSavedImage(string)
@@ -205,10 +206,15 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
-let pushParamsState = newParams => {
+let pushParamsState = (~maybeI=None, newParams) => {
   let newParamsJson =
     encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
-  ReasonReact.Router.push("#" ++ newParamsJson);
+  let maybeScoreIndex =
+    switch (maybeI) {
+    | Some(i) => "?" ++ string_of_int(i)
+    | None => ""
+    };
+  ReasonReact.Router.push(maybeScoreIndex ++ "#" ++ newParamsJson);
 };
 
 let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => {
@@ -258,13 +264,12 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         let canvasAsSource = getCanvasAsSource(canvasElt);
         DrawCommand.(
           switch (analysisSize) {
-          | WithHistory(_) =>
+          | CircularBuffer(_)
+          | History(_) =>
             Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height)
           | DestRect({x, y}) =>
             let analysisX = getLength(state.drawContext, x);
             let analysisY = getLength(state.drawContext, y);
-            /* let x = */
-            /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
             Ctx.drawImage(ctx, canvasAsSource, analysisX, analysisY);
           }
         );
@@ -594,27 +599,74 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
-    | SetScoreEventIndex(i) => ReasonReact.NoUpdate
+    | SetScoreEventIndexDirectly(i) =>
+      switch (state.score) {
+      | Some((score, eventIndex)) =>
+        ReasonReact.Update({...state, score: Some((score, i))})
+      | None => ReasonReact.NoUpdate
+      }
+    | SetScoreEventIndex(i) =>
+      switch (state.score) {
+      | Some((score, eventIndex)) =>
+        let {events} = score;
+        ReasonReact.UpdateWithSideEffects(
+          {
+            ...state,
+            score:
+              Some((
+                score,
+                clamp(~minVal=0, ~maxVal=Array.length(events) - 1, i),
+              )),
+          },
+          (
+            self =>
+              switch (self.state.score) {
+              | Some(({events}, eventIndex)) =>
+                pushParamsState(
+                  ~maybeI=Some(eventIndex),
+                  events[eventIndex].params,
+                );
+                Js.log({j|Set score index; score now at $(eventIndex)|j});
+              | None => ()
+              }
+          ),
+        );
+      | None => ReasonReact.NoUpdate
+      }
     | AdjustScoreEventIndex(i) =>
-      ReasonReact.SideEffects(
-        (
-          _self =>
-            switch (state.score) {
-            | Some(({events}, eventIndexRef)) =>
-              eventIndexRef :=
+      switch (state.score) {
+      | Some((score, eventIndex)) =>
+        let {events} = score;
+        ReasonReact.UpdateWithSideEffects(
+          {
+            ...state,
+            score:
+              Some((
+                score,
                 clamp(
                   ~minVal=0,
                   ~maxVal=Array.length(events) - 1,
-                  eventIndexRef^ + i,
+                  eventIndex + i,
+                ),
+              )),
+          },
+          (
+            self =>
+              switch (self.state.score) {
+              | Some(({events}, eventIndex)) =>
+                pushParamsState(
+                  ~maybeI=Some(eventIndex),
+                  events[eventIndex].params,
                 );
-              let eventIndex = eventIndexRef^;
-
-              pushParamsState(events[eventIndex].params);
-              Js.log({j|Adjusting score index; score now at $(eventIndex)|j});
-            | None => ()
-            }
-        ),
-      )
+                Js.log(
+                  {j|Adjusted score index; score now at $(eventIndex)|j},
+                );
+              | None => ()
+              }
+          ),
+        );
+      | None => ReasonReact.NoUpdate
+      }
     | ToggleFullscreen =>
       ReasonReact.Update({
         ...state,
@@ -800,6 +852,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
+        switch (int_of_string(url.search)) {
+        | i => self.send(SetScoreEventIndexDirectly(i))
+        | exception _ => ()
+        };
+
         let hash = decodeURIComponent(url.hash);
 
         switch (Json.parse(hash)) {
@@ -814,9 +871,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     if (url.hash === "") {
-      pushParamsState(snd(List.nth(presets, 0)));
+      pushParamsState(~maybeI=Some(0), snd(List.nth(presets, 0)));
+    } else if (url.search === "") {
+      pushParamsState(~maybeI=Some(0), snd(List.nth(presets, 0)));
     } else {
-      ReasonReact.Router.push("#" ++ url.hash);
+      ReasonReact.Router.push("?" ++ url.search ++ "#" ++ url.hash);
     };
   },
   didUpdate: ({oldSelf, newSelf}) => {
@@ -907,20 +966,40 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 )
               />
               (
-                Belt.Option.isSome(self.state.score) ?
-                  <div>
+                switch (self.state.score) {
+                | Some((_, eventIndex)) =>
+                  <div
+                    style=(
+                      ReactDOMRe.Style.make(
+                        ~display="flex",
+                        ~flexDirection="row",
+                        ~flexWrap="nowrap",
+                        (),
+                      )
+                    )>
                     <IconButton
                       color=`Inherit
                       onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
                       <MaterialUIIcons.SkipPrevious />
                     </IconButton>
+                    <span style=(ReactDOMRe.Style.make(~width="4em", ()))>
+                      <NumericTextField
+                        label=ReasonReact.null
+                        value=(`Int(eventIndex))
+                        onChange=(
+                          i =>
+                            self.send(SetScoreEventIndex(int_of_float(i)))
+                        )
+                      />
+                    </span>
                     <IconButton
                       color=`Inherit
                       onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
                       <MaterialUIIcons.SkipNext />
                     </IconButton>
-                  </div> :
-                  ReasonReact.null
+                  </div>
+                | None => ReasonReact.null
+                }
               )
             </Toolbar>
           </AppBar>
@@ -1018,7 +1097,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                     currentFilterValues=self.state.currentFilterValues
                     rootWidth=self.state.params.width
                     rootHeight=self.state.params.height
-                    millisPerAudioTick=16
+                    millisPerTick=self.state.params.millisPerTick
                     getReadAndWritePos=(self.handle(getReadAndWritePos))
                     saveTick=(saveTick(self))
                     layers=(sortLayers(self.state.params.layers))
@@ -1044,16 +1123,14 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                 </div>
               </Grid>
               <Grid item=true xs=Grid.V2>
-                <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
-                  <Button
-                    variant=`Contained
-                    onClick=(_evt => self.send(SaveImage))
-                    style=(ReactDOMRe.Style.make(~position="fixed", ()))>
-                    <MaterialUIIcons.PhotoCamera />
-                    (ReasonReact.string("Snapshot"))
-                  </Button>
-                </div>
-                <div style=(ReactDOMRe.Style.make(~marginTop="24px", ()))>
+                <Button
+                  variant=`Contained
+                  onClick=(_evt => self.send(SaveImage))
+                  style=(ReactDOMRe.Style.make(~position="fixed", ()))>
+                  <MaterialUIIcons.PhotoCamera />
+                  (ReasonReact.string("Snapshot"))
+                </Button>
+                <div style=(ReactDOMRe.Style.make(~marginTop="48px", ()))>
                   (
                     self.state.savedImages
                     |> Belt.Map.String.toArray

@@ -19,6 +19,7 @@ import * as MaterialUi_Collapse from "@jsiebern/bs-material-ui/src/MaterialUi_Co
 import * as MaterialUi_CardMedia from "@jsiebern/bs-material-ui/src/MaterialUi_CardMedia.bs.js";
 import * as MaterialUi_FormGroup from "@jsiebern/bs-material-ui/src/MaterialUi_FormGroup.bs.js";
 import * as MaterialUi_TextField from "@jsiebern/bs-material-ui/src/MaterialUi_TextField.bs.js";
+import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
 import * as MaterialUi_CardHeader from "@jsiebern/bs-material-ui/src/MaterialUi_CardHeader.bs.js";
 import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
@@ -26,6 +27,7 @@ import * as MaterialUi_CardContent from "@jsiebern/bs-material-ui/src/MaterialUi
 import * as MaterialUi_FormControl from "@jsiebern/bs-material-ui/src/MaterialUi_FormControl.bs.js";
 import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 import * as PitchSetSelector$Gayer from "./PitchSetSelector.bs.js";
+import * as StringEncodeSelect$Gayer from "./StringEncodeSelect.bs.js";
 import * as MaterialUi_FormControlLabel from "@jsiebern/bs-material-ui/src/MaterialUi_FormControlLabel.bs.js";
 import * as TransformMatrixSettings$Gayer from "./TransformMatrixSettings.bs.js";
 import * as CompositeOperationSelect$Gayer from "./CompositeOperationSelect.bs.js";
@@ -138,6 +140,29 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                 match[0]
                               ], undefined, /* array */[]));
                       break;
+                  case 4 : 
+                      var opts = match[0];
+                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
+                                      return Curry._2(changeLayer, layer, /* record */[
+                                                  /* content : Slitscan */Block.__(4, [/* record */[
+                                                        /* sourceLayerKey */newKey,
+                                                        /* sourceRect */opts[/* sourceRect */1],
+                                                        /* destRect */opts[/* destRect */2],
+                                                        /* sourceXDelta */opts[/* sourceXDelta */3],
+                                                        /* sourceYDelta */opts[/* sourceYDelta */4],
+                                                        /* destXDelta */opts[/* destXDelta */5],
+                                                        /* destYDelta */opts[/* destYDelta */6]
+                                                      ]]),
+                                                  /* enabled */layer[/* enabled */1],
+                                                  /* alpha */layer[/* alpha */2],
+                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                  /* rotation */layer[/* rotation */4],
+                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                  /* filters */layer[/* filters */6],
+                                                  /* id */layer[/* id */7]
+                                                ]);
+                                    }), opts[/* sourceLayerKey */0], /* array */[])));
+                      break;
                   case 5 : 
                       tmp = ReasonReact.element(undefined, undefined, ImageSelect$Gayer.make(match[0], savedImages, (function (newUrl) {
                                   return Curry._2(changeLayer, layer, /* record */[
@@ -151,6 +176,34 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                               /* id */layer[/* id */7]
                                             ]);
                                 }), /* array */[]));
+                      break;
+                  case 7 : 
+                      var analysisOptions = match[0];
+                      tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, StringEncodeSelect$Gayer.make(/* array */[
+                                    /* History */Block.__(1, [/* record */[
+                                          /* w : Width */0,
+                                          /* h : Height */1
+                                        ]]),
+                                    /* CircularBuffer */Block.__(0, [/* record */[
+                                          /* w : Width */0,
+                                          /* h : Height */1
+                                        ]])
+                                  ], analysisOptions[/* analysisSize */2], (function (newSetting) {
+                                      return Curry._2(changeLayer, layer, /* record */[
+                                                  /* content : Analysis */Block.__(7, [/* record */[
+                                                        /* input */analysisOptions[/* input */0],
+                                                        /* readerType */analysisOptions[/* readerType */1],
+                                                        /* analysisSize */newSetting
+                                                      ]]),
+                                                  /* enabled */layer[/* enabled */1],
+                                                  /* alpha */layer[/* alpha */2],
+                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                  /* rotation */layer[/* rotation */4],
+                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                  /* filters */layer[/* filters */6],
+                                                  /* id */layer[/* id */7]
+                                                ]);
+                                    }), AnalysisOptions$Gayer.string_of_analysisSize, AnalysisOptions$Gayer.analysisSize_of_string, /* array */[])));
                       break;
                   case 8 : 
                       tmp = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, PitchSetSelector$Gayer.make(match[0], (function (newPitches) {
@@ -172,9 +225,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                       break;
                   case 1 : 
                   case 2 : 
-                  case 4 : 
                   case 6 : 
-                  case 7 : 
                   case 11 : 
                   case 12 : 
                       tmp = React.createElement("div", undefined);
@@ -183,12 +234,12 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                       var reglOptions = match[0];
                       var tmp$1;
                       if (reglOptions.tag) {
-                        var opts = reglOptions[0];
+                        var opts$1 = reglOptions[0];
                         tmp$1 = React.createElement("div", undefined, ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
                                                     /* content : Regl */Block.__(13, [/* Displacement */Block.__(1, [/* record */[
                                                               /* displacementSourceLayer */newKey,
-                                                              /* displacementMap */opts[/* displacementMap */1]
+                                                              /* displacementMap */opts$1[/* displacementMap */1]
                                                             ]])]),
                                                     /* enabled */layer[/* enabled */1],
                                                     /* alpha */layer[/* alpha */2],
@@ -198,10 +249,10 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                     /* filters */layer[/* filters */6],
                                                     /* id */layer[/* id */7]
                                                   ]);
-                                      }), opts[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
+                                      }), opts$1[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
                                                     /* content : Regl */Block.__(13, [/* Displacement */Block.__(1, [/* record */[
-                                                              /* displacementSourceLayer */opts[/* displacementSourceLayer */0],
+                                                              /* displacementSourceLayer */opts$1[/* displacementSourceLayer */0],
                                                               /* displacementMap */newKey
                                                             ]])]),
                                                     /* enabled */layer[/* enabled */1],
@@ -212,9 +263,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                     /* filters */layer[/* filters */6],
                                                     /* id */layer[/* id */7]
                                                   ]);
-                                      }), opts[/* displacementMap */1], /* array */[])));
+                                      }), opts$1[/* displacementMap */1], /* array */[])));
                       } else {
-                        var opts$1 = reglOptions[0];
+                        var opts$2 = reglOptions[0];
                         tmp$1 = ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                     return Curry._2(changeLayer, layer, /* record */[
                                                 /* content : Regl */Block.__(13, [/* Sobel */Block.__(0, [/* record */[/* sourceLayer */newKey]])]),
@@ -226,7 +277,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                 /* filters */layer[/* filters */6],
                                                 /* id */layer[/* id */7]
                                               ]);
-                                  }), opts$1[/* sourceLayer */0], /* array */[]));
+                                  }), opts$2[/* sourceLayer */0], /* array */[]));
                       }
                       tmp = React.createElement("div", undefined, tmp$1);
                       break;
@@ -359,7 +410,7 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                     /* filters */layer[/* filters */6],
                                                                                     /* id */layer[/* id */7]
                                                                                   ]);
-                                                                      }), undefined, /* array */[]))
+                                                                      }), undefined, undefined, /* array */[]))
                                                           ])),
                                                   ReasonReact.element(undefined, undefined, MaterialUi_FormControl.make(undefined, /* `String */[
                                                             -976970511,
