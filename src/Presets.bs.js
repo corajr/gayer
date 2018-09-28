@@ -363,13 +363,21 @@ var webcamEdgeDetect = /* record */[
   webcamEdgeDetect_014
 ];
 
+var init$2 = LayerGenerator$Gayer.sobel("webcam4slitscan");
+
+var init$3 = LayerGenerator$Gayer.slitscan(undefined, "sobel4slitscan");
+
 var slitscanParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var slitscanParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var slitscanParams_004 = /* readPosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
+var slitscanParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var slitscanParams_005 = /* writePosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
+var slitscanParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var slitscanParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+
+var slitscanParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
 
 var slitscanParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
@@ -385,8 +393,10 @@ var slitscanParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 
 var slitscanParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
+var slitscanParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+
 var slitscanParams_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
+  LayerGenerator$Gayer.analysisCircular(/* Mic */2),
   /* :: */[
     /* record */[
       /* content */LayerGenerator$Gayer.webcam[/* content */0],
@@ -396,13 +406,34 @@ var slitscanParams_014 = /* layers : :: */[
       /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
       /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
       /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
-      /* id */LayerGenerator$Gayer.webcam[/* id */7]
+      /* id */"webcam4slitscan"
     ],
     /* :: */[
-      LayerGenerator$Gayer.slitscan,
+      /* record */[
+        /* content */init$2[/* content */0],
+        /* enabled */init$2[/* enabled */1],
+        /* alpha */0.0,
+        /* compositeOperation */init$2[/* compositeOperation */3],
+        /* rotation */init$2[/* rotation */4],
+        /* transformMatrix */init$2[/* transformMatrix */5],
+        /* filters */init$2[/* filters */6],
+        /* id */"sobel4slitscan"
+      ],
       /* :: */[
-        LayerGenerator$Gayer.reader,
-        /* [] */0
+        /* record */[
+          /* content */init$3[/* content */0],
+          /* enabled */init$3[/* enabled */1],
+          /* alpha */0.5,
+          /* compositeOperation */init$3[/* compositeOperation */3],
+          /* rotation */init$3[/* rotation */4],
+          /* transformMatrix */init$3[/* transformMatrix */5],
+          /* filters */init$3[/* filters */6],
+          /* id */init$3[/* id */7]
+        ],
+        /* :: */[
+          LayerGenerator$Gayer.reader,
+          /* [] */0
+        ]
       ]
     ]
   ]
@@ -411,8 +442,8 @@ var slitscanParams_014 = /* layers : :: */[
 var slitscanParams = /* record */[
   slitscanParams_000,
   slitscanParams_001,
-  /* readPosDelta */0,
-  /* writePosDelta */0,
+  slitscanParams_002,
+  slitscanParams_003,
   slitscanParams_004,
   slitscanParams_005,
   slitscanParams_006,
@@ -422,67 +453,17 @@ var slitscanParams = /* record */[
   slitscanParams_010,
   slitscanParams_011,
   slitscanParams_012,
-  /* shouldClear */false,
+  slitscanParams_013,
   slitscanParams_014
-];
-
-var slitscanEdgeDetectParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
-
-var slitscanEdgeDetectParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
-
-var slitscanEdgeDetectParams_004 = /* readPosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
-
-var slitscanEdgeDetectParams_005 = /* writePosOffset */LayerGenerator$Gayer.defaultSize - 1 | 0;
-
-var slitscanEdgeDetectParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
-
-var slitscanEdgeDetectParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
-
-var slitscanEdgeDetectParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
-
-var slitscanEdgeDetectParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
-
-var slitscanEdgeDetectParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
-
-var slitscanEdgeDetectParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
-
-var slitscanEdgeDetectParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
-
-var slitscanEdgeDetectParams_014 = /* layers : :: */[
-  LayerGenerator$Gayer.slitscan,
-  /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
-    /* :: */[
-      LayerGenerator$Gayer.historyLayer,
-      /* :: */[
-        LayerGenerator$Gayer.reader,
-        /* [] */0
-      ]
-    ]
-  ]
-];
-
-var slitscanEdgeDetectParams = /* record */[
-  slitscanEdgeDetectParams_000,
-  slitscanEdgeDetectParams_001,
-  /* readPosDelta */0,
-  /* writePosDelta */0,
-  slitscanEdgeDetectParams_004,
-  slitscanEdgeDetectParams_005,
-  slitscanEdgeDetectParams_006,
-  slitscanEdgeDetectParams_007,
-  slitscanEdgeDetectParams_008,
-  slitscanEdgeDetectParams_009,
-  slitscanEdgeDetectParams_010,
-  slitscanEdgeDetectParams_011,
-  slitscanEdgeDetectParams_012,
-  /* shouldClear */false,
-  slitscanEdgeDetectParams_014
 ];
 
 var slitscanHistogramParams_000 = slitscanParams_000;
 
 var slitscanHistogramParams_001 = slitscanParams_001;
+
+var slitscanHistogramParams_002 = slitscanParams_002;
+
+var slitscanHistogramParams_003 = slitscanParams_003;
 
 var slitscanHistogramParams_004 = slitscanParams_004;
 
@@ -502,10 +483,12 @@ var slitscanHistogramParams_011 = slitscanParams_011;
 
 var slitscanHistogramParams_012 = slitscanParams_012;
 
+var slitscanHistogramParams_013 = slitscanParams_013;
+
 var slitscanHistogramParams_014 = /* layers : :: */[
   LayerGenerator$Gayer.webcam,
   /* :: */[
-    LayerGenerator$Gayer.slitscan,
+    LayerGenerator$Gayer.slitscan(undefined, "root"),
     /* :: */[
       LayerGenerator$Gayer.histogram,
       /* :: */[
@@ -522,8 +505,8 @@ var slitscanHistogramParams_014 = /* layers : :: */[
 var slitscanHistogramParams = /* record */[
   slitscanHistogramParams_000,
   slitscanHistogramParams_001,
-  /* readPosDelta */0,
-  /* writePosDelta */0,
+  slitscanHistogramParams_002,
+  slitscanHistogramParams_003,
   slitscanHistogramParams_004,
   slitscanHistogramParams_005,
   slitscanHistogramParams_006,
@@ -533,7 +516,7 @@ var slitscanHistogramParams = /* record */[
   slitscanHistogramParams_010,
   slitscanHistogramParams_011,
   slitscanHistogramParams_012,
-  /* shouldClear */false,
+  slitscanHistogramParams_013,
   slitscanHistogramParams_014
 ];
 
@@ -1017,7 +1000,7 @@ var equation = /* record */[
   equation_014
 ];
 
-var init$2 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
+var init$4 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
 
 var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1043,11 +1026,11 @@ var droste_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var droste_014 = /* layers : :: */[
   /* record */[
-    /* content */init$2[/* content */0],
-    /* enabled */init$2[/* enabled */1],
-    /* alpha */init$2[/* alpha */2],
-    /* compositeOperation */init$2[/* compositeOperation */3],
-    /* rotation */init$2[/* rotation */4],
+    /* content */init$4[/* content */0],
+    /* enabled */init$4[/* enabled */1],
+    /* alpha */init$4[/* alpha */2],
+    /* compositeOperation */init$4[/* compositeOperation */3],
+    /* rotation */init$4[/* rotation */4],
     /* transformMatrix : record */[
       /* horizontalScaling */LayerGenerator$Gayer.defaultSize,
       /* horizontalSkewing */LayerGenerator$Gayer.defaultTransform[/* horizontalSkewing */1],
@@ -1056,8 +1039,8 @@ var droste_014 = /* layers : :: */[
       /* horizontalMoving */LayerGenerator$Gayer.defaultTransform[/* horizontalMoving */4],
       /* verticalMoving */LayerGenerator$Gayer.defaultTransform[/* verticalMoving */5]
     ],
-    /* filters */init$2[/* filters */6],
-    /* id */init$2[/* id */7]
+    /* filters */init$4[/* filters */6],
+    /* id */init$4[/* id */7]
   ],
   /* :: */[
     LayerGenerator$Gayer.drosteLayer,
@@ -1806,7 +1789,7 @@ var keycodeParams = /* record */[
   keycodeParams_014
 ];
 
-var init$3 = LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "black", undefined, "GAYER");
+var init$5 = LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "black", undefined, "GAYER");
 
 var welcome_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1842,14 +1825,14 @@ var welcome_014 = /* layers : :: */[
     LayerGenerator$Gayer.fill(undefined, "white"),
     /* :: */[
       /* record */[
-        /* content */init$3[/* content */0],
-        /* enabled */init$3[/* enabled */1],
+        /* content */init$5[/* content */0],
+        /* enabled */init$5[/* enabled */1],
         /* alpha */0.5,
-        /* compositeOperation */init$3[/* compositeOperation */3],
-        /* rotation */init$3[/* rotation */4],
-        /* transformMatrix */init$3[/* transformMatrix */5],
-        /* filters */init$3[/* filters */6],
-        /* id */init$3[/* id */7]
+        /* compositeOperation */init$5[/* compositeOperation */3],
+        /* rotation */init$5[/* rotation */4],
+        /* transformMatrix */init$5[/* transformMatrix */5],
+        /* filters */init$5[/* filters */6],
+        /* id */init$5[/* id */7]
       ],
       /* [] */0
     ]
@@ -1931,7 +1914,7 @@ var welcomeAudio = /* record */[
   welcomeAudio_014
 ];
 
-var init$4 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
+var init$6 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
 
 var displaceParams_000 = history_000;
 
@@ -1957,13 +1940,13 @@ var displaceParams_012 = history_012;
 
 var displaceParams_014 = /* layers : :: */[
   /* record */[
-    /* content */init$4[/* content */0],
-    /* enabled */init$4[/* enabled */1],
-    /* alpha */init$4[/* alpha */2],
-    /* compositeOperation */init$4[/* compositeOperation */3],
-    /* rotation */init$4[/* rotation */4],
-    /* transformMatrix */init$4[/* transformMatrix */5],
-    /* filters */init$4[/* filters */6],
+    /* content */init$6[/* content */0],
+    /* enabled */init$6[/* enabled */1],
+    /* alpha */init$6[/* alpha */2],
+    /* compositeOperation */init$6[/* compositeOperation */3],
+    /* rotation */init$6[/* rotation */4],
+    /* transformMatrix */init$6[/* transformMatrix */5],
+    /* filters */init$6[/* filters */6],
     /* id */"analyzer"
   ],
   /* :: */[
@@ -2184,7 +2167,6 @@ export {
   webcamParams ,
   webcamEdgeDetect ,
   slitscanParams ,
-  slitscanEdgeDetectParams ,
   slitscanHistogramParams ,
   whiteboardParams ,
   isItACrime ,

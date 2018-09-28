@@ -7,15 +7,43 @@ import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 
-function onTick(opts, globalDrawContext, layerRefs, _, _$1, param) {
+function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
   var state = param[/* state */1];
-  var sourceDrawContext_000 = /* maybeCtxRef : record */[/* contents */undefined];
-  var sourceDrawContext = /* record */[
-    sourceDrawContext_000,
-    /* width */640,
-    /* height */480,
-    /* variables */Belt_MapString.empty
-  ];
+  var match = Belt_MapString.get(layerRefs[0], opts[/* sourceLayerKey */0]);
+  var sourceDrawContext;
+  if (match !== undefined) {
+    var el = Js_primitive.valFromOption(match);
+    var exit = 0;
+    var ctx;
+    try {
+      ctx = el.getContext("2d");
+      exit = 1;
+    }
+    catch (exn){
+      sourceDrawContext = /* record */[
+        /* maybeCtxRef : record */[/* contents */undefined],
+        /* width */640,
+        /* height */480,
+        /* variables */Belt_MapString.empty
+      ];
+    }
+    if (exit === 1) {
+      sourceDrawContext = /* record */[
+        /* maybeCtxRef : record */[/* contents */Js_primitive.some(ctx)],
+        /* width */el.width,
+        /* height */el.height,
+        /* variables */Belt_MapString.empty
+      ];
+    }
+    
+  } else {
+    sourceDrawContext = /* record */[
+      /* maybeCtxRef : record */[/* contents */undefined],
+      /* width */640,
+      /* height */480,
+      /* variables */Belt_MapString.empty
+    ];
+  }
   var sourceRect_000 = /* x */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* x */0]);
   var sourceRect_001 = /* y */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* y */1]);
   var sourceRect_002 = /* w */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* w */2]);
@@ -38,7 +66,7 @@ function onTick(opts, globalDrawContext, layerRefs, _, _$1, param) {
     destRect_002,
     destRect_003
   ];
-  var destWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Width */0);
+  Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Width */0);
   var destHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Height */1);
   state[/* sourceRectReal */1][0] = sourceRect;
   state[/* sourceXDelta */3][0] = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceXDelta */3]);
@@ -60,7 +88,7 @@ function onTick(opts, globalDrawContext, layerRefs, _, _$1, param) {
         ];
         var currentDestRect = state[/* destRectReal */2][0];
         state[/* destRectReal */2][0] = /* record */[
-          /* x */Canvas$Gayer.wrapCoord(currentDestRect[/* x */0], state[/* destXDelta */5][0], destWidth),
+          /* x */writePos[0],
           /* y */Canvas$Gayer.wrapCoord(currentDestRect[/* y */1], state[/* destYDelta */6][0], destHeight),
           /* w */currentDestRect[/* w */2],
           /* h */currentDestRect[/* h */3]
@@ -75,7 +103,7 @@ function onTick(opts, globalDrawContext, layerRefs, _, _$1, param) {
 
 var component = ReasonReact.reducerComponent("SlitscanCanvas-Gayer");
 
-function make(setRef, layerKey, layerRefs, width, height, saveTick, globalDrawContext, opts, _) {
+function make(setRef, layerKey, layerRefs, width, height, writePos, saveTick, globalDrawContext, opts, _) {
   var saveRef = function (aRef, param) {
     Curry._1(setRef, aRef);
     var maybeRef = (aRef == null) ? undefined : Js_primitive.some(aRef);
@@ -88,14 +116,14 @@ function make(setRef, layerKey, layerRefs, width, height, saveTick, globalDrawCo
           /* handedOffState */component[/* handedOffState */2],
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
-              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, onTick(opts, globalDrawContext, layerRefs, width, height, self));
+              return Curry._3(saveTick, self[/* onUnmount */4], layerKey, onTick(opts, globalDrawContext, layerRefs, writePos, width, height, self));
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
           /* willUpdate */(function (param) {
               return Curry._3(saveTick, (function () {
                             return /* () */0;
-                          }), layerKey, onTick(opts, globalDrawContext, layerRefs, width, height, param[/* newSelf */1]));
+                          }), layerKey, onTick(opts, globalDrawContext, layerRefs, writePos, width, height, param[/* newSelf */1]));
             }),
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {

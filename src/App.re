@@ -995,10 +995,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                     )
                     layerRefs=self.state.layerRefs
                     currentFilterValues=self.state.currentFilterValues
+                    readPos=self.state.readPos
+                    writePos=self.state.writePos
                     rootWidth=self.state.params.width
                     rootHeight=self.state.params.height
                     millisPerTick=self.state.params.millisPerTick
-                    getReadAndWritePos=(self.handle(getReadAndWritePos))
                     saveTick=(saveTick(self))
                     layers=(sortLayers(self.state.params.layers))
                   />

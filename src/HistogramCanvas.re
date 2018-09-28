@@ -13,7 +13,7 @@ let make =
       ~layerRefs,
       ~saveTick,
       ~rootHeight,
-      ~getReadAndWritePos,
+      ~readPos,
       ~width,
       ~height,
       _children,
@@ -29,9 +29,7 @@ let make =
     | (Some(rootCanvas), Some(histogramCanvas)) =>
       let rootCtx = getContext(getFromReact(rootCanvas));
       let ctx = getContext(getFromReact(histogramCanvas));
-      let xToRead = ref(0);
-      getReadAndWritePos((toRead, _) => xToRead := toRead);
-      let slice = Ctx.getImageData(rootCtx, xToRead^, 0, 1, rootHeight);
+      let slice = Ctx.getImageData(rootCtx, readPos^, 0, 1, rootHeight);
 
       let bins = 120;
       let binFn = ({r, g, b, a}) => {

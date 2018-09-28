@@ -19,7 +19,7 @@ import * as KeycodeReaderCanvas$Gayer from "./KeycodeReaderCanvas.bs.js";
 
 var component = ReasonReact.statelessComponent("LayerContent");
 
-function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, millisPerTick, width, height, getReadAndWritePos, globalDrawContext, currentFilterValues, layerContent, _) {
+function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, millisPerTick, width, height, readPos, writePos, globalDrawContext, currentFilterValues, layerContent, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -48,7 +48,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, MIDICanvas$Gayer.make(height, setRef, /* array */[]));
                       break;
                   case 3 : 
-                      tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, getReadAndWritePos, 1, 120, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, HistogramCanvas$Gayer.make(setRef, layerKey, layerRefs, saveTick, height, readPos, 1, 120, /* array */[]));
                       break;
                   
                 }
@@ -58,7 +58,7 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       tmp = ReasonReact.element(undefined, undefined, DrawCommandCanvas$Gayer.make(layerContent[0], layerKey, layerRefs, setRef, saveTick, width, height, /* array */[]));
                       break;
                   case 4 : 
-                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, width, height, saveTick, globalDrawContext, layerContent[0], /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, SlitscanCanvas$Gayer.make(setRef, layerKey, layerRefs, width, height, writePos, saveTick, globalDrawContext, layerContent[0], /* array */[]));
                       break;
                   case 5 : 
                       tmp = React.createElement("img", {
@@ -99,10 +99,10 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                       }
                       var analysisWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[0]);
                       var analysisHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[1]);
-                      tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, options, millisPerTick, setRef, saveTick, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, writePos, options, millisPerTick, setRef, saveTick, /* array */[]));
                       break;
                   case 9 : 
-                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, layerContent[0], setRef, saveTick, currentFilterValues, getReadAndWritePos, undefined, undefined, undefined, /* array */[]));
+                      tmp = ReasonReact.element(undefined, undefined, KeycodeReaderCanvas$Gayer.make(layerKey, layerRefs, layerContent[0], setRef, saveTick, currentFilterValues, writePos, undefined, undefined, undefined, /* array */[]));
                       break;
                   case 10 : 
                       tmp = ReasonReact.element(undefined, undefined, KeycodeCanvas$Gayer.make(layerKey, layerRefs, layerContent[0], setRef, undefined, undefined, /* array */[]));

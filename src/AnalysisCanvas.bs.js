@@ -3,16 +3,16 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as CQT$Gayer from "./CQT.bs.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
 import * as Palette$Gayer from "./Palette.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
-function drawCQTBar(ctx, state, options, width, _) {
+function drawCQTBar(ctx, state, options, writePos, width, _) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
   var audioDataR = state[/* cqt */4][0].get_input_array(1);
   state[/* analyserL */0][0].getFloatTimeDomainData(audioDataL);
@@ -24,9 +24,7 @@ function drawCQTBar(ctx, state, options, width, _) {
   var xToWrite;
   switch (match.tag | 0) {
     case 0 : 
-        var x = Canvas$Gayer.wrapCoord(state[/* writePos */7][0], 1, width);
-        state[/* writePos */7][0] = x;
-        xToWrite = x;
+        xToWrite = Caml_int32.mod_(writePos[0], width);
         break;
     case 1 : 
     case 2 : 
@@ -48,7 +46,7 @@ function drawCQTBar(ctx, state, options, width, _) {
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerTick, saveRef, saveTick, _) {
+function make(width, height, layerKey, audioCtx, audioGraph, writePos, options, millisPerTick, saveRef, saveTick, _) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     return Curry._1(saveRef, theRef);
@@ -103,7 +101,7 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       var match = self[/* state */1][/* canvasRef */5][0];
                       if (match !== undefined) {
                         var ctx = Js_primitive.valFromOption(match).getContext("2d");
-                        return drawCQTBar(ctx, self[/* state */1], options, width, height);
+                        return drawCQTBar(ctx, self[/* state */1], options, writePos, width, height);
                       } else {
                         return /* () */0;
                       }
@@ -152,7 +150,7 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                             var match = newSelf[/* state */1][/* canvasRef */5][0];
                             if (match !== undefined) {
                               var ctx = Js_primitive.valFromOption(match).getContext("2d");
-                              return drawCQTBar(ctx, newSelf[/* state */1], options, width, height);
+                              return drawCQTBar(ctx, newSelf[/* state */1], options, writePos, width, height);
                             } else {
                               return /* () */0;
                             }
@@ -196,8 +194,7 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       /* stereoPanner : record */[/* contents */stereoPanner],
                       /* cqt : record */[/* contents */cqt],
                       /* canvasRef : record */[/* contents */undefined],
-                      /* timerId : record */[/* contents */undefined],
-                      /* writePos : record */[/* contents */0]
+                      /* timerId : record */[/* contents */undefined]
                     ];
             }),
           /* retainedProps */component[/* retainedProps */11],

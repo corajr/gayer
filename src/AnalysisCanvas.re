@@ -14,10 +14,9 @@ type state = {
   cqt: ref(CQT.t),
   canvasRef: ref(option(Dom.element)),
   timerId: ref(option(Js.Global.intervalId)),
-  writePos: ref(int),
 };
 
-let drawCQTBar = (ctx, state, options, width, height) => {
+let drawCQTBar = (ctx, state, options, writePos, width, height) => {
   let audioDataL = CQT.getInputArray(state.cqt^, 0);
   let audioDataR = CQT.getInputArray(state.cqt^, 1);
   getFloatTimeDomainData(state.analyserL^, audioDataL);
@@ -28,10 +27,7 @@ let drawCQTBar = (ctx, state, options, width, height) => {
 
   let xToWrite =
     switch (options.analysisSize) {
-    | CircularBuffer(_) =>
-      let x = wrapCoord(state.writePos^, 1, width);
-      state.writePos := x;
-      x;
+    | CircularBuffer(_) => writePos^ mod width
     | _ => width - 1
     };
 
@@ -55,6 +51,7 @@ let make =
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
+      ~writePos,
       ~options,
       ~millisPerTick,
       ~saveRef,
@@ -100,7 +97,6 @@ let make =
         cqt: ref(cqt),
         canvasRef: ref(None),
         timerId: ref(None),
-        writePos: ref(0),
       };
     },
     didMount: self => {
@@ -140,7 +136,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state, options, width, height);
+            drawCQTBar(ctx, self.state, options, writePos, width, height);
           | None => ()
           },
         millisPerTick,
@@ -174,7 +170,7 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, newSelf.state, options, width, height);
+            drawCQTBar(ctx, newSelf.state, options, writePos, width, height);
           | None => ()
           },
         millisPerTick,

@@ -397,6 +397,13 @@ function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
   }
 }
 
+function analysisCircular(input) {
+  return analyzer(undefined, undefined, /* CircularBuffer */Block.__(0, [/* record */[
+                  /* w : Width */0,
+                  /* h : Height */1
+                ]]), input);
+}
+
 var webcam_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
 
 var webcam_002 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */2];
@@ -422,32 +429,27 @@ var webcam = /* record */[
   webcam_007
 ];
 
-var slitscan_000 = /* content : Slitscan */Block.__(4, [CameraOptions$Gayer.slitscanDefaults]);
-
-var slitscan_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
-
-var slitscan_002 = /* alpha */Layer$Gayer.defaultLayer[/* alpha */2];
-
-var slitscan_003 = /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3];
-
-var slitscan_004 = /* rotation */Layer$Gayer.defaultLayer[/* rotation */4];
-
-var slitscan_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5];
-
-var slitscan_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
-
-var slitscan_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
-
-var slitscan = /* record */[
-  slitscan_000,
-  slitscan_001,
-  slitscan_002,
-  slitscan_003,
-  slitscan_004,
-  slitscan_005,
-  slitscan_006,
-  slitscan_007
-];
+function slitscan($staropt$star, sourceLayerKey) {
+  var opts = $staropt$star !== undefined ? $staropt$star : CameraOptions$Gayer.slitscanDefaults;
+  return /* record */[
+          /* content : Slitscan */Block.__(4, [/* record */[
+                /* sourceLayerKey */sourceLayerKey,
+                /* sourceRect */opts[/* sourceRect */1],
+                /* destRect */opts[/* destRect */2],
+                /* sourceXDelta */opts[/* sourceXDelta */3],
+                /* sourceYDelta */opts[/* sourceYDelta */4],
+                /* destXDelta */opts[/* destXDelta */5],
+                /* destYDelta */opts[/* destYDelta */6]
+              ]]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
+}
 
 var hubble = img("media/hubble_ultra_deep_field.jpg");
 
@@ -1019,7 +1021,7 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "slitscan",
-    slitscan
+    slitscan(undefined, "root")
   ],
   /* tuple */[
     "edge detect",
@@ -1121,6 +1123,7 @@ export {
   sobel ,
   displace ,
   analyzer ,
+  analysisCircular ,
   webcam ,
   slitscan ,
   hubble ,

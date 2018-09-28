@@ -141,11 +141,14 @@ let analyzer =
     {...defaultLayer, content: Analysis({...defaultAnalysisOptions, input})};
   };
 
+let analysisCircular = input =>
+  analyzer(input, ~analysisSize=CircularBuffer({w: Width, h: Height}));
+
 let webcam = {...defaultLayer, content: Webcam};
 
-let slitscan = {
+let slitscan = (~opts=CameraOptions.slitscanDefaults, sourceLayerKey: string) => {
   ...defaultLayer,
-  content: Slitscan(CameraOptions.slitscanDefaults),
+  content: Slitscan({...opts, sourceLayerKey}),
 };
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -344,7 +347,7 @@ let allLayerTypes = [|
   ("pitch filter", pitchFilter(cMajor)),
   ("reader", reader),
   ("webcam", webcam),
-  ("slitscan", slitscan),
+  ("slitscan", slitscan("root")),
   ("edge detect", sobel("root")),
   ("displace map", displace("root", "root")),
   ("midi keyboard", midiKeyboard),

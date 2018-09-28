@@ -18,7 +18,8 @@ let make =
       ~layerRefs,
       ~currentFilterValues,
       ~saveTick,
-      ~getReadAndWritePos,
+      ~readPos,
+      ~writePos,
       ~millisPerTick,
       _children,
     ) => {
@@ -104,7 +105,8 @@ let make =
                 millisPerTick
                 width=rootWidth
                 height=rootHeight
-                getReadAndWritePos
+                readPos
+                writePos
                 globalDrawContext
                 currentFilterValues
                 layerContent=layer.content

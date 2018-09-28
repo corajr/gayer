@@ -882,7 +882,7 @@ function make($staropt$star, _) {
                                                                 return getAnalysisInput(audioCtx, partial_arg, param);
                                                               }), self[/* state */1][/* drawContext */22], self[/* state */1][/* audioGraph */10], audioCtx, self[/* state */1][/* layerRefs */18], self[/* state */1][/* currentFilterValues */17], (function (param, param$1, param$2) {
                                                                 return saveTick(self, param, param$1, param$2);
-                                                              }), Curry._1(self[/* handle */0], getReadAndWritePos), self[/* state */1][/* params */6][/* millisPerTick */6], /* array */[])), React.createElement("canvas", {
+                                                              }), self[/* state */1][/* readPos */2], self[/* state */1][/* writePos */3], self[/* state */1][/* params */6][/* millisPerTick */6], /* array */[])), React.createElement("canvas", {
                                                           ref: Curry._1(self[/* handle */0], setCanvasRef),
                                                           style: {
                                                             transform: "scale(" + ((400.0 / self[/* state */1][/* params */6][/* height */1]).toString() + ")"),

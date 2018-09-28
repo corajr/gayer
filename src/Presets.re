@@ -81,41 +81,20 @@ let webcamEdgeDetect = {
 
 let slitscanParams = {
   ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
-  readPosOffset: defaultSize - 1,
-  writePosOffset: defaultSize - 1,
-  shouldClear: false,
   layers: [
-    analyzer(Mic),
+    analysisCircular(Mic),
     /* squareColumnLayer, */
-    {...webcam, alpha: 0.0},
-    slitscan,
+    {...webcam, alpha: 0.0, id: Some("webcam4slitscan")},
+    {...sobel("webcam4slitscan"), alpha: 0.0, id: Some("sobel4slitscan")},
+    {...slitscan("sobel4slitscan"), alpha: 0.5},
     /* pitchFilter(cMajor), */
-    reader,
-  ],
-};
-
-let slitscanEdgeDetectParams = {
-  ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
-  readPosOffset: defaultSize - 1,
-  writePosOffset: defaultSize - 1,
-  shouldClear: false,
-  layers: [
-    slitscan,
-    /* sobel, */
-    analyzer(Mic),
-    /* pitchFilter(cMajor), */
-    historyLayer,
     reader,
   ],
 };
 
 let slitscanHistogramParams = {
   ...slitscanParams,
-  layers: [webcam, slitscan, histogram, historyLayer, reader],
+  layers: [webcam, slitscan("root"), histogram, historyLayer, reader],
 };
 let whiteboardParams = {
   ...defaultParams,

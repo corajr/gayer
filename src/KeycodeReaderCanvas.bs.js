@@ -12,7 +12,7 @@ import * as KeycodeUtil$Gayer from "./KeycodeUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("KeycodeReaderCanvas-Gayer");
 
-function make(layerKey, _, _$1, setRef, saveTick, currentFilterValues, getReadAndWritePos, $staropt$star, $staropt$star$1, $staropt$star$2, _$2) {
+function make(layerKey, _, _$1, setRef, saveTick, currentFilterValues, writePos, $staropt$star, $staropt$star$1, $staropt$star$2, _$2) {
   var width = $staropt$star !== undefined ? $staropt$star : 240;
   var height = $staropt$star$1 !== undefined ? $staropt$star$1 : 240;
   var fontSize = $staropt$star$2 !== undefined ? $staropt$star$2 : 12;
@@ -32,11 +32,6 @@ function make(layerKey, _, _$1, setRef, saveTick, currentFilterValues, getReadAn
                             var match$1 = self[/* state */1][/* canvasRef */0][0];
                             if (match !== undefined && match$1 !== undefined) {
                               var values = match[0];
-                              var writePos = /* record */[/* contents */0];
-                              Curry._1(getReadAndWritePos, (function (_, w) {
-                                      writePos[0] = w;
-                                      return /* () */0;
-                                    }));
                               var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
                               ctx.fillStyle = Canvas$Gayer.rgba(0, 0, 0, 0.008);
                               ctx.fillRect(0, 0, width, height);

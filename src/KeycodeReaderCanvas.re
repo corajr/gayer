@@ -12,7 +12,7 @@ let make =
       ~setRef,
       ~saveTick,
       ~currentFilterValues,
-      ~getReadAndWritePos,
+      ~writePos,
       ~width=240,
       ~height=240,
       ~fontSize=12,
@@ -33,8 +33,6 @@ let make =
         switch (currentFilterValues^, self.state.canvasRef^) {
         | (Some(Audio.Stereo(values, _)), Some(canvas))
         | (Some(Audio.Mono(values)), Some(canvas)) =>
-          let writePos = ref(0);
-          getReadAndWritePos((_, w) => writePos := w);
           let ctx = getContext(getFromReact(canvas));
           Ctx.setFillStyle(ctx, rgba(0, 0, 0, 0.008));
           Ctx.fillRect(ctx, 0, 0, width, height);

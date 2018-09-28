@@ -15,7 +15,8 @@ let make =
       ~millisPerTick,
       ~width,
       ~height,
-      ~getReadAndWritePos,
+      ~readPos,
+      ~writePos,
       ~globalDrawContext,
       ~currentFilterValues,
       ~layerContent,
@@ -34,6 +35,7 @@ let make =
             setRef
             saveTick
             globalDrawContext
+            writePos
             opts
             width
             height
@@ -67,6 +69,7 @@ let make =
             audioGraph
             options
             millisPerTick
+            writePos
             saveTick
             saveRef=setRef
           />;
@@ -81,7 +84,7 @@ let make =
             setRef
             saveTick
             currentFilterValues
-            getReadAndWritePos
+            writePos
           />
         | Draw(cmds) =>
           <DrawCommandCanvas
@@ -117,7 +120,7 @@ let make =
             width=1
             rootHeight=height
             height=120
-            getReadAndWritePos
+            readPos
             saveTick
           />
         | Regl(opts) =>

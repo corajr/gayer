@@ -12,16 +12,42 @@ type state = {
 };
 
 let onTick =
-    (opts, globalDrawContext, layerRefs, width, height, {ReasonReact.state}) => {
+    (
+      opts,
+      globalDrawContext,
+      layerRefs,
+      writePos,
+      width,
+      height,
+      {ReasonReact.state},
+    ) => {
   open DrawCommand;
 
-  /* HACK: this obviously isn't right. */
-  let sourceDrawContext = {
-    maybeCtxRef: ref(None),
-    width: 640,
-    height: 480,
-    variables: Belt.Map.String.empty,
-  };
+  let sourceDrawContext =
+    switch (Belt.Map.String.get(layerRefs^, opts.sourceLayerKey)) {
+    | Some(el) =>
+      let maybeCanvas = getFromReact(el);
+      switch (getContext(maybeCanvas)) {
+      | ctx => {
+          maybeCtxRef: ref(Some(ctx)),
+          width: canvasWidth(maybeCanvas),
+          height: canvasHeight(maybeCanvas),
+          variables: Belt.Map.String.empty,
+        }
+      | exception _ => {
+          maybeCtxRef: ref(None),
+          width: 640,
+          height: 480,
+          variables: Belt.Map.String.empty,
+        }
+      };
+    | None => {
+        maybeCtxRef: ref(None),
+        width: 640,
+        height: 480,
+        variables: Belt.Map.String.empty,
+      }
+    };
 
   /* HACK: this obviously isn't right. */
   let destDrawContext = globalDrawContext;
@@ -78,7 +104,7 @@ let onTick =
       state.destRectReal :=
         {
           ...currentDestRect,
-          x: wrapCoord(currentDestRect.x, state.destXDelta^, destWidth),
+          x: writePos^,
           y: wrapCoord(currentDestRect.y, state.destYDelta^, destHeight),
         };
 
@@ -107,6 +133,7 @@ let make =
       ~layerRefs,
       ~width,
       ~height,
+      ~writePos,
       ~saveTick,
       ~globalDrawContext,
       ~opts,
@@ -134,13 +161,29 @@ let make =
       saveTick(
         self.onUnmount,
         layerKey,
-        onTick(opts, globalDrawContext, layerRefs, width, height, self),
+        onTick(
+          opts,
+          globalDrawContext,
+          layerRefs,
+          writePos,
+          width,
+          height,
+          self,
+        ),
       ),
     willUpdate: ({oldSelf, newSelf}) =>
       saveTick(
         _f => (),
         layerKey,
-        onTick(opts, globalDrawContext, layerRefs, width, height, newSelf),
+        onTick(
+          opts,
+          globalDrawContext,
+          layerRefs,
+          writePos,
+          width,
+          height,
+          newSelf,
+        ),
       ),
     render: self =>
       <canvas

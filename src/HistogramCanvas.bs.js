@@ -12,7 +12,7 @@ import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("HistogramCanvas");
 
-function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWritePos, width, height, _) {
+function make(setRef, layerKey, layerRefs, saveTick, rootHeight, readPos, width, height, _) {
   var saveRef = function (aRef, param) {
     Curry._1(setRef, aRef);
     var maybeRef = (aRef == null) ? undefined : Js_primitive.some(aRef);
@@ -32,12 +32,7 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                             if (match !== undefined && match$1 !== undefined) {
                               var rootCtx = Js_primitive.valFromOption(match).getContext("2d");
                               var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
-                              var xToRead = /* record */[/* contents */0];
-                              Curry._1(getReadAndWritePos, (function (toRead, _) {
-                                      xToRead[0] = toRead;
-                                      return /* () */0;
-                                    }));
-                              var slice = rootCtx.getImageData(xToRead[0], 0, 1, rootHeight);
+                              var slice = rootCtx.getImageData(readPos[0], 0, 1, rootHeight);
                               var binFn = function (param) {
                                 var match = Color$Gayer.rgbToHslFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
                                 var octave = match[2] * 9.0 | 0;
