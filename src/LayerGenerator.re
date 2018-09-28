@@ -121,28 +121,14 @@ let displace = (source, displace) => {
 
 let analyzer =
     (
-      ~includeHistory: bool=true,
       ~readerType: readerType=Channel(R),
       ~analysisSize: analysisSize=History({w: Width, h: Height}),
       input: audioInputSetting,
-    ) =>
-  if (includeHistory) {
-    {
-      ...defaultLayer,
-      content:
-        Analysis({
-          ...defaultAnalysisOptions,
-          input,
-          readerType,
-          analysisSize,
-        }),
-    };
-  } else {
-    {...defaultLayer, content: Analysis({...defaultAnalysisOptions, input})};
-  };
-
-let analysisCircular = input =>
-  analyzer(input, ~analysisSize=CircularBuffer({w: Width, h: Height}));
+    ) => {
+  ...defaultLayer,
+  content:
+    Analysis({...defaultAnalysisOptions, input, readerType, analysisSize}),
+};
 
 let webcam = {...defaultLayer, content: Webcam};
 

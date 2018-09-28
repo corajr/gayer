@@ -59,16 +59,24 @@ function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
   ];
   var sourceWidth = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, /* Width */0);
   var sourceHeight = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, /* Height */1);
-  var destRect_000 = /* x */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destRect */2][/* x */0]);
-  var destRect_001 = /* y */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destRect */2][/* y */1]);
-  var destRect_002 = /* w */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destRect */2][/* w */2]);
-  var destRect_003 = /* h */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destRect */2][/* h */3]);
-  var destRect = /* record */[
-    destRect_000,
-    destRect_001,
-    destRect_002,
-    destRect_003
-  ];
+  var match$1 = opts[/* destRect */2];
+  var destRect;
+  if (match$1 !== undefined) {
+    var destRect$1 = match$1;
+    destRect = /* record */[
+      /* x */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* x */0]),
+      /* y */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* y */1]),
+      /* w */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* w */2]),
+      /* h */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* h */3])
+    ];
+  } else {
+    destRect = /* record */[
+      /* x */0,
+      /* y */0,
+      /* w */1,
+      /* h */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Height */1)
+    ];
+  }
   Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Width */0);
   var destHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Height */1);
   state[/* sourceRectReal */1][0] = sourceRect;

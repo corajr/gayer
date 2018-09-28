@@ -7,10 +7,13 @@ import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 
 function cameraOptions(json) {
+  var partial_arg = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2];
   return /* record */[
           /* sourceLayerKey */Json_decode.field("source", Json_decode.string, json),
           /* sourceRect */Json_decode.field("sourceRect", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2], json),
-          /* destRect */Json_decode.field("destRect", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2], json),
+          /* destRect */Json_decode.optional((function (param) {
+                  return Json_decode.field("destRect", partial_arg, param);
+                }), json),
           /* sourceXDelta */Json_decode.field("sourceXDelta", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json),
           /* sourceYDelta */Json_decode.field("sourceYDelta", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json),
           /* destXDelta */Json_decode.field("destXDelta", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json),
@@ -34,7 +37,7 @@ function cameraOptions$1(r) {
                 /* :: */[
                   /* tuple */[
                     "destRect",
-                    Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */2])
+                    Json_encode.nullable(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], r[/* destRect */2])
                   ],
                   /* :: */[
                     /* tuple */[
@@ -79,7 +82,7 @@ var slitscanDefaults = /* record */[
     /* w : Pixels */Block.__(2, [1]),
     /* h : Height */1
   ],
-  /* destRect : record */[
+  /* destRect *//* record */[
     /* x : Pixels */Block.__(2, [0]),
     /* y : Pixels */Block.__(2, [0]),
     /* w : Pixels */Block.__(2, [1]),

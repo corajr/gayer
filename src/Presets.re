@@ -81,8 +81,9 @@ let webcamEdgeDetect = {
 
 let slitscanParams = {
   ...defaultParams,
+  shouldClear: false,
   layers: [
-    analysisCircular(Mic),
+    analyzer(Mic, ~analysisSize=Slit),
     /* squareColumnLayer, */
     {...webcam, alpha: 0.0, id: Some("webcam4slitscan")},
     {...sobel("webcam4slitscan"), alpha: 0.0, id: Some("sobel4slitscan")},
@@ -303,7 +304,10 @@ let displaceParams = {
   ...history,
   shouldClear: true,
   layers: [
-    {...analyzer(Mic, ~includeHistory=true), id: Some("analyzer")},
+    {
+      ...analyzer(Mic, ~analysisSize=History({w: Width, h: Height})),
+      id: Some("analyzer"),
+    },
     reader,
     {...webcam, alpha: 0.0, id: Some("webcam")},
     displace("webcam", "analyzer"),
@@ -319,9 +323,9 @@ let presetsWithoutLayerIds = [
   ("Four Seasons", fourSeasons),
   ("Is it a crime?", isItACrime),
   ("Audio file", equation),
+  ("Webcam (edge detection)", webcamEdgeDetect),
   ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
-  ("Webcam (edge detection)", webcamEdgeDetect),
   ("Slitscan", slitscanParams),
   /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
   /* ("Slitscan (color histogram)", slitscanHistogramParams), */

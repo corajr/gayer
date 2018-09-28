@@ -770,7 +770,7 @@ function make($staropt$star, _) {
                                                                         /* [] */0
                                                                       ], undefined, /* array */["GAYER"]));
                                                       }), /* array */[])),
-                                            match !== undefined ? ReasonReact.element(undefined, undefined, ScoreControl$Gayer.make(match, self[/* state */1][/* startingIndexRef */24], /* array */[])) : null
+                                            match !== undefined ? ReasonReact.element(undefined, undefined, ScoreControl$Gayer.make(match, /* array */[])) : null
                                           ]))])), React.createElement("div", {
                               style: {
                                 padding: "12px"

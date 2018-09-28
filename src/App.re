@@ -906,11 +906,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               />
               (
                 switch (self.state.score) {
-                | Some(score) =>
-                  <ScoreControl
-                    score
-                    startingIndexRef=self.state.startingIndexRef
-                  />
+                | Some(score) => <ScoreControl score />
                 | None => ReasonReact.null
                 }
               )

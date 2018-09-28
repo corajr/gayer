@@ -158,7 +158,7 @@ var harmonyIntensified = /* record */[
   harmonyIntensified_014
 ];
 
-var init = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
+var init = LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2);
 
 var feedback_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -227,7 +227,7 @@ var feedback = /* record */[
   feedback_014
 ];
 
-var init$1 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
+var init$1 = LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2);
 
 var webcamParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -393,10 +393,8 @@ var slitscanParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 
 var slitscanParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
-var slitscanParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
-
 var slitscanParams_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analysisCircular(/* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, /* Slit */0, /* Mic */2),
   /* :: */[
     /* record */[
       /* content */LayerGenerator$Gayer.webcam[/* content */0],
@@ -453,7 +451,7 @@ var slitscanParams = /* record */[
   slitscanParams_010,
   slitscanParams_011,
   slitscanParams_012,
-  slitscanParams_013,
+  /* shouldClear */false,
   slitscanParams_014
 ];
 
@@ -482,8 +480,6 @@ var slitscanHistogramParams_010 = slitscanParams_010;
 var slitscanHistogramParams_011 = slitscanParams_011;
 
 var slitscanHistogramParams_012 = slitscanParams_012;
-
-var slitscanHistogramParams_013 = slitscanParams_013;
 
 var slitscanHistogramParams_014 = /* layers : :: */[
   LayerGenerator$Gayer.webcam,
@@ -516,7 +512,7 @@ var slitscanHistogramParams = /* record */[
   slitscanHistogramParams_010,
   slitscanHistogramParams_011,
   slitscanHistogramParams_012,
-  slitscanHistogramParams_013,
+  /* shouldClear */false,
   slitscanHistogramParams_014
 ];
 
@@ -783,7 +779,7 @@ var history_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 var history_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var history_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2),
   /* :: */[
     /* record */[
       /* content */LayerGenerator$Gayer.reader[/* content */0],
@@ -840,7 +836,7 @@ var historyHalving_011 = /* transpose */Params$Gayer.defaultParams[/* transpose 
 var historyHalving_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var historyHalving_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2),
   /* :: */[
     LayerGenerator$Gayer.squareColumnLayer,
     /* :: */[
@@ -897,7 +893,7 @@ var historyHalving = /* record */[
   historyHalving_014
 ];
 
-var debussyFile = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"]));
+var debussyFile = LayerGenerator$Gayer.analyzer(undefined, undefined, /* AudioFile */Block.__(0, ["media/la_cathedrale_engloutie.m4a"]));
 
 var debussy_000 = history_000;
 
@@ -950,7 +946,7 @@ var debussy = /* record */[
   debussy_014
 ];
 
-var equationFile = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFile */Block.__(0, ["media/equation.ogg"]));
+var equationFile = LayerGenerator$Gayer.analyzer(undefined, undefined, /* AudioFile */Block.__(0, ["media/equation.ogg"]));
 
 var equation_000 = history_000;
 
@@ -1000,7 +996,7 @@ var equation = /* record */[
   equation_014
 ];
 
-var init$4 = LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2);
+var init$4 = LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2);
 
 var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1359,7 +1355,7 @@ var historyBackAndForth_011 = readFromCenterLine_011;
 var historyBackAndForth_012 = readFromCenterLine_012;
 
 var historyBackAndForth_014 = /* layers : :: */[
-  LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
+  LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2),
   /* :: */[
     LayerGenerator$Gayer.historyBackAndForthLayer,
     /* :: */[
@@ -1412,7 +1408,7 @@ var vinyl_012 = readFromCenterLine_012;
 var vinyl_014 = /* layers : :: */[
   LayerGenerator$Gayer.rotateLayer(LayerGenerator$Gayer.degreesToRadians(1.0)),
   /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* Mic */2),
+    LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2),
     /* :: */[
       LayerGenerator$Gayer.reader,
       /* [] */0
@@ -1471,7 +1467,7 @@ var video_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13]
 var video_014 = /* layers : :: */[
   LayerGenerator$Gayer.video(videoURL),
   /* :: */[
-    LayerGenerator$Gayer.analyzer(undefined, undefined, undefined, /* AudioFromVideo */Block.__(1, [videoURL])),
+    LayerGenerator$Gayer.analyzer(undefined, undefined, /* AudioFromVideo */Block.__(1, [videoURL])),
     /* :: */[
       LayerGenerator$Gayer.reader,
       /* [] */0
@@ -1914,7 +1910,10 @@ var welcomeAudio = /* record */[
   welcomeAudio_014
 ];
 
-var init$6 = LayerGenerator$Gayer.analyzer(true, undefined, undefined, /* Mic */2);
+var init$6 = LayerGenerator$Gayer.analyzer(undefined, /* History */Block.__(1, [/* record */[
+          /* w : Width */0,
+          /* h : Height */1
+        ]]), /* Mic */2);
 
 var displaceParams_000 = history_000;
 
@@ -2046,13 +2045,13 @@ var presetsWithoutLayerIds_001 = /* :: */[
               ],
               /* :: */[
                 /* tuple */[
-                  "Mic (CQT spectrogram)",
-                  history
+                  "Webcam (edge detection)",
+                  webcamEdgeDetect
                 ],
                 /* :: */[
                   /* tuple */[
-                    "Webcam (edge detection)",
-                    webcamEdgeDetect
+                    "Mic (CQT spectrogram)",
+                    history
                   ],
                   /* :: */[
                     /* tuple */[

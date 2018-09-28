@@ -357,51 +357,26 @@ function displace(source, displace$1) {
         ];
 }
 
-function analyzer($staropt$star, $staropt$star$1, $staropt$star$2, input) {
-  var includeHistory = $staropt$star !== undefined ? $staropt$star : true;
-  var readerType = $staropt$star$1 !== undefined ? $staropt$star$1 : /* Channel */[/* R */0];
-  var analysisSize = $staropt$star$2 !== undefined ? $staropt$star$2 : /* History */Block.__(1, [/* record */[
+function analyzer($staropt$star, $staropt$star$1, input) {
+  var readerType = $staropt$star !== undefined ? $staropt$star : /* Channel */[/* R */0];
+  var analysisSize = $staropt$star$1 !== undefined ? $staropt$star$1 : /* History */Block.__(1, [/* record */[
           /* w : Width */0,
           /* h : Height */1
         ]]);
-  if (includeHistory) {
-    return /* record */[
-            /* content : Analysis */Block.__(7, [/* record */[
-                  /* input */input,
-                  /* readerType */readerType,
-                  /* analysisSize */analysisSize
-                ]]),
-            /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
-            /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
-            /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
-            /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
-            /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
-            /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-            /* id */Layer$Gayer.defaultLayer[/* id */7]
-          ];
-  } else {
-    return /* record */[
-            /* content : Analysis */Block.__(7, [/* record */[
-                  /* input */input,
-                  /* readerType */AnalysisOptions$Gayer.defaultAnalysisOptions[/* readerType */1],
-                  /* analysisSize */AnalysisOptions$Gayer.defaultAnalysisOptions[/* analysisSize */2]
-                ]]),
-            /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
-            /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
-            /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
-            /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
-            /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
-            /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-            /* id */Layer$Gayer.defaultLayer[/* id */7]
-          ];
-  }
-}
-
-function analysisCircular(input) {
-  return analyzer(undefined, undefined, /* CircularBuffer */Block.__(0, [/* record */[
-                  /* w : Width */0,
-                  /* h : Height */1
-                ]]), input);
+  return /* record */[
+          /* content : Analysis */Block.__(7, [/* record */[
+                /* input */input,
+                /* readerType */readerType,
+                /* analysisSize */analysisSize
+              ]]),
+          /* enabled */Layer$Gayer.defaultLayer[/* enabled */1],
+          /* alpha */Layer$Gayer.defaultLayer[/* alpha */2],
+          /* compositeOperation */Layer$Gayer.defaultLayer[/* compositeOperation */3],
+          /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
+          /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
+          /* filters */Layer$Gayer.defaultLayer[/* filters */6],
+          /* id */Layer$Gayer.defaultLayer[/* id */7]
+        ];
 }
 
 var webcam_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
@@ -1005,7 +980,7 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "analyzer",
-    analyzer(undefined, undefined, undefined, /* Mic */2)
+    analyzer(undefined, undefined, /* Mic */2)
   ],
   /* tuple */[
     "pitch filter",
@@ -1123,7 +1098,6 @@ export {
   sobel ,
   displace ,
   analyzer ,
-  analysisCircular ,
   webcam ,
   slitscan ,
   hubble ,

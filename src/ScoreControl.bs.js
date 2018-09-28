@@ -4,6 +4,7 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
+import * as Caml_format from "bs-platform/lib/es6/caml_format.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
@@ -14,7 +15,7 @@ import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 
 var component = ReasonReact.reducerComponent("ScoreControl-Gayer");
 
-function make(score, startingIndexRef, _) {
+function make(score, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -48,7 +49,15 @@ function make(score, startingIndexRef, _) {
                                   }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.SkipNext[/* make */0](/* array */[]))])));
             }),
           /* initialState */(function () {
-              return /* record */[/* eventIndex */startingIndexRef[0]];
+              var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
+              var startingIndex;
+              try {
+                startingIndex = Caml_format.caml_int_of_string(url[/* search */2]);
+              }
+              catch (exn){
+                startingIndex = 0;
+              }
+              return /* record */[/* eventIndex */startingIndex];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {

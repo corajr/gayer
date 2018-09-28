@@ -11,9 +11,18 @@ type state = {eventIndex: int};
 
 let component = ReasonReact.reducerComponent(__MODULE__);
 
-let make = (~score, ~startingIndexRef, _children) => {
+let make = (~score, _children) => {
   ...component,
-  initialState: () => {eventIndex: startingIndexRef^},
+  initialState: () => {
+    let url = ReasonReact.Router.dangerouslyGetInitialUrl();
+    let startingIndex =
+      switch (int_of_string(url.search)) {
+      | i => i
+      | exception _ => 0
+      };
+
+    {eventIndex: startingIndex};
+  },
   reducer: (action, state) =>
     switch (action) {
     | SetEventIndex(i) =>

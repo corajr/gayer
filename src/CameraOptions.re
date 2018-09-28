@@ -3,7 +3,7 @@ open Canvas.DrawCommand;
 type cameraOptions = {
   sourceLayerKey: string,
   sourceRect: rect,
-  destRect: rect,
+  destRect: option(rect),
   sourceXDelta: length,
   sourceYDelta: length,
   destXDelta: length,
@@ -18,12 +18,7 @@ let slitscanDefaults = {
     w: Pixels(1),
     h: Height,
   },
-  destRect: {
-    x: Pixels(0),
-    y: Pixels(0),
-    w: Pixels(1),
-    h: Height,
-  },
+  destRect: Some({x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Height}),
   sourceXDelta: Pixels(0),
   sourceYDelta: Pixels(0),
   destXDelta: Pixels(1),
@@ -35,7 +30,7 @@ module DecodeCameraOptions = {
     Json.Decode.{
       sourceLayerKey: json |> field("source", string),
       sourceRect: json |> field("sourceRect", DecodeDrawCommand.rect),
-      destRect: json |> field("destRect", DecodeDrawCommand.rect),
+      destRect: json |> optional(field("destRect", DecodeDrawCommand.rect)),
       sourceXDelta: json |> field("sourceXDelta", DecodeDrawCommand.length),
       sourceYDelta: json |> field("sourceYDelta", DecodeDrawCommand.length),
       destXDelta: json |> field("destXDelta", DecodeDrawCommand.length),
@@ -49,7 +44,7 @@ module EncodeCameraOptions = {
       object_([
         ("source", string(r.sourceLayerKey)),
         ("sourceRect", EncodeDrawCommand.rect(r.sourceRect)),
-        ("destRect", EncodeDrawCommand.rect(r.destRect)),
+        ("destRect", nullable(EncodeDrawCommand.rect, r.destRect)),
         ("sourceXDelta", EncodeDrawCommand.length(r.sourceXDelta)),
         ("sourceYDelta", EncodeDrawCommand.length(r.sourceYDelta)),
         ("destXDelta", EncodeDrawCommand.length(r.destXDelta)),

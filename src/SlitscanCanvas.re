@@ -65,12 +65,16 @@ let onTick =
   let sourceWidth = getLength(sourceDrawContext, Width);
   let sourceHeight = getLength(sourceDrawContext, Height);
 
-  let destRect: Canvas.rect = {
-    x: getLength(destDrawContext, opts.destRect.x),
-    y: getLength(destDrawContext, opts.destRect.y),
-    w: getLength(destDrawContext, opts.destRect.w),
-    h: getLength(destDrawContext, opts.destRect.h),
-  };
+  let destRect: Canvas.rect =
+    switch (opts.destRect) {
+    | Some(destRect) => {
+        x: getLength(destDrawContext, destRect.x),
+        y: getLength(destDrawContext, destRect.y),
+        w: getLength(destDrawContext, destRect.w),
+        h: getLength(destDrawContext, destRect.h),
+      }
+    | None => {x: 0, y: 0, w: 1, h: getLength(globalDrawContext, Height)}
+    };
 
   let destWidth = getLength(destDrawContext, Width);
   let destHeight = getLength(destDrawContext, Height);
