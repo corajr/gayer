@@ -500,10 +500,13 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
         ];
 }
 
+var nth = List.nth;
+
 export {
   defaultParams ,
   DecodeParams ,
   EncodeParams ,
+  nth ,
   component ,
   make ,
   
