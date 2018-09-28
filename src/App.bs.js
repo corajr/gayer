@@ -20,6 +20,7 @@ import * as Video$Gayer from "./Video.bs.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Params$Gayer from "./Params.bs.js";
+import * as Routes$Gayer from "./Routes.bs.js";
 import * as Timing$Gayer from "./Timing.bs.js";
 import * as Presets$Gayer from "./Presets.bs.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
@@ -34,6 +35,7 @@ import * as MaterialUi_Button from "@jsiebern/bs-material-ui/src/MaterialUi_Butt
 import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js";
 import * as MaterialUi_Divider from "@jsiebern/bs-material-ui/src/MaterialUi_Divider.bs.js";
 import * as MaterialUi_Toolbar from "@jsiebern/bs-material-ui/src/MaterialUi_Toolbar.bs.js";
+import * as ScoreControl$Gayer from "./ScoreControl.bs.js";
 import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 import * as MaterialUi_ListItem from "@jsiebern/bs-material-ui/src/MaterialUi_ListItem.bs.js";
 import * as MediaProvider$Gayer from "./MediaProvider.bs.js";
@@ -41,7 +43,6 @@ import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_
 import * as MaterialUi_Typography from "@jsiebern/bs-material-ui/src/MaterialUi_Typography.bs.js";
 import * as MaterialUi_WithStyles from "@jsiebern/bs-material-ui/src/MaterialUi_WithStyles.bs.js";
 import * as MaterialUi_CssBaseline from "@jsiebern/bs-material-ui/src/MaterialUi_CssBaseline.bs.js";
-import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 import * as MaterialUi_ListItemText from "@jsiebern/bs-material-ui/src/MaterialUi_ListItemText.bs.js";
 
 var defaultState_000 = /* animationStartTime : record */[/* contents */0.0];
@@ -59,10 +60,7 @@ var defaultState_004 = /* freqFuncParams : record */[/* contents : tuple */[
 
 var defaultState_006 = /* params */List.nth(Presets$Gayer.presets, 0)[1];
 
-var defaultState_007 = /* score *//* tuple */[
-  Presets$Gayer.exampleScore,
-  0
-];
+var defaultState_007 = /* score */Presets$Gayer.exampleScore;
 
 var defaultState_010 = /* audioGraph : record */[/* contents */AudioGraph$Gayer.emptyAudioGraph];
 
@@ -89,11 +87,13 @@ var defaultState_022 = /* drawContext : record */[
   /* variables */Belt_MapString.empty
 ];
 
-var defaultState_024 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
+var defaultState_024 = /* startingIndexRef : record */[/* contents */0];
 
-var defaultState_025 = /* tickCounter : record */[/* contents */0];
+var defaultState_025 = /* tickFunctions : record */[/* contents */Belt_MapString.empty];
 
-var defaultState_026 = /* timerId : record */[/* contents */undefined];
+var defaultState_026 = /* tickCounter : record */[/* contents */0];
+
+var defaultState_027 = /* timerId : record */[/* contents */undefined];
 
 var defaultState = /* record */[
   defaultState_000,
@@ -122,7 +122,8 @@ var defaultState = /* record */[
   /* fullscreenCanvas */false,
   defaultState_024,
   defaultState_025,
-  defaultState_026
+  defaultState_026,
+  defaultState_027
 ];
 
 function setCanvasRef(theRef, param) {
@@ -313,13 +314,6 @@ function clearCanvas(canvasElement, width, height) {
   return /* () */0;
 }
 
-function pushParamsState($staropt$star, newParams) {
-  var maybeI = $staropt$star !== undefined ? Js_primitive.valFromOption($staropt$star) : undefined;
-  var newParamsJson = encodeURIComponent(JSON.stringify(Params$Gayer.EncodeParams[/* params */0](newParams)));
-  var maybeScoreIndex = maybeI !== undefined ? "?" + String(maybeI) : "";
-  return ReasonReact.Router[/* push */0](maybeScoreIndex + ("#" + newParamsJson));
-}
-
 function getReadAndWritePos(f, param) {
   var state = param[/* state */1];
   var width = state[/* params */6][/* width */0];
@@ -335,9 +329,9 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.rotate(layer[/* rotation */4]);
   ctx.filter = layer[/* filters */6];
   var layerKey = Layer$Gayer.getLayerKey(layer);
-  var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey);
+  var match = Belt_MapString.get(state[/* tickFunctions */25][0], layerKey);
   if (match !== undefined) {
-    Curry._1(match, state[/* tickCounter */25][0]);
+    Curry._1(match, state[/* tickCounter */26][0]);
   }
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */18][0], layerKey);
   window.performance.mark(layerKey + "start");
@@ -477,7 +471,7 @@ function drawLayer(ctx, width, height, state, layer) {
   window.performance.mark(layerKey + "end");
   window.performance.measure(layerKey, layerKey + "start", layerKey + "end");
   setTimeout((function () {
-          var match = Belt_MapString.get(state[/* tickFunctions */24][0], layerKey + "preview");
+          var match = Belt_MapString.get(state[/* tickFunctions */25][0], layerKey + "preview");
           if (match !== undefined) {
             return Curry._1(match, 0.0);
           } else {
@@ -585,14 +579,14 @@ function generateNewFilterBanks(audioCtx, param) {
         Caml_array.caml_make_vect(state[/* params */6][/* height */1], 0.0),
         Caml_array.caml_make_vect(state[/* params */6][/* height */1], 0.0)
       ]);
-    return Curry._1(send, /* SetFilterBanks */Block.__(7, [/* StereoBanks */Block.__(1, [
+    return Curry._1(send, /* SetFilterBanks */Block.__(4, [/* StereoBanks */Block.__(1, [
                       filterBankL,
                       filterBankR
                     ])]));
   } else {
     var filterBank = Audio$Gayer.makeFilterBank(audioCtx, state[/* params */6][/* height */1], state[/* params */6][/* q */10], freqFunc);
     state[/* currentFilterValues */17][0] = /* Mono */Block.__(0, [Caml_array.caml_make_vect(state[/* params */6][/* height */1], 0.0)]);
-    return Curry._1(send, /* SetFilterBanks */Block.__(7, [/* MonoBank */Block.__(0, [filterBank])]));
+    return Curry._1(send, /* SetFilterBanks */Block.__(4, [/* MonoBank */Block.__(0, [filterBank])]));
   }
 }
 
@@ -637,9 +631,9 @@ function updateFilterBanks(param) {
 
 function saveTick(param, onUnmount, key, tickFn) {
   var state = param[/* state */1];
-  state[/* tickFunctions */24][0] = Belt_MapString.set(state[/* tickFunctions */24][0], key, tickFn);
+  state[/* tickFunctions */25][0] = Belt_MapString.set(state[/* tickFunctions */25][0], key, tickFn);
   return Curry._1(onUnmount, (function () {
-                state[/* tickFunctions */24][0] = Belt_MapString.remove(state[/* tickFunctions */24][0], key);
+                state[/* tickFunctions */25][0] = Belt_MapString.remove(state[/* tickFunctions */25][0], key);
                 return /* () */0;
               }));
 }
@@ -657,7 +651,7 @@ function make($staropt$star, _) {
               var compressor = Audio$Gayer.makeCompressor(audioCtx, Audio$Gayer.defaultCompressorValues);
               self[/* state */1][/* compressor */15][0] = Js_primitive.some(compressor);
               var noise = Audio$Gayer.pinkNoise(audioCtx);
-              Curry._1(self[/* send */3], /* SetFilterInput */Block.__(4, [noise]));
+              Curry._1(self[/* send */3], /* SetFilterInput */Block.__(1, [noise]));
               self[/* state */1][/* audioGraph */10][0] = AudioGraph$Gayer.updateConnections(AudioGraph$Gayer.addEdge(/* tuple */[
                         "compressor",
                         "sink",
@@ -682,18 +676,18 @@ function make($staropt$star, _) {
               var match = UserMedia$Gayer.getAudioVisualStream(/* () */0);
               if (match !== undefined) {
                 Js_primitive.valFromOption(match).then((function (stream) {
-                        Curry._1(self[/* send */3], /* SetMediaStream */Block.__(6, [stream]));
+                        Curry._1(self[/* send */3], /* SetMediaStream */Block.__(3, [stream]));
                         var audio = audioCtx.createMediaStreamSource(stream);
-                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(5, [audio]));
+                        Curry._1(self[/* send */3], /* SetMicInput */Block.__(2, [audio]));
                         return Promise.resolve(/* () */0);
                       }));
               }
               Curry._1(self[/* send */3], /* Clear */0);
-              Timing$Gayer.setTimer(self[/* state */1][/* timerId */26], (function () {
+              Timing$Gayer.setTimer(self[/* state */1][/* timerId */27], (function () {
                       return Curry._1(self[/* send */3], /* Tick */1);
                     }), self[/* state */1][/* params */6][/* millisPerTick */6]);
               Curry._1(self[/* onUnmount */4], (function () {
-                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */26]);
+                      return Timing$Gayer.maybeClearTimer(self[/* state */1][/* timerId */27]);
                     }));
               var watcherID = ReasonReact.Router[/* watchUrl */1]((function (url) {
                       var exit = 0;
@@ -706,14 +700,15 @@ function make($staropt$star, _) {
                         
                       }
                       if (exit === 1) {
-                        Curry._1(self[/* send */3], /* SetScoreEventIndexDirectly */Block.__(0, [i]));
+                        self[/* state */1][/* startingIndexRef */24][0] = i;
+                        i;
                       }
                       var hash = decodeURIComponent(url[/* hash */1]);
                       var match = Json.parse(hash);
                       if (match !== undefined) {
                         var match$1 = Json_decode.optional(Params$Gayer.DecodeParams[/* params */0], Js_primitive.valFromOption(match));
                         if (match$1 !== undefined) {
-                          return Curry._1(self[/* send */3], /* SetParams */Block.__(10, [match$1]));
+                          return Curry._1(self[/* send */3], /* SetParams */Block.__(7, [match$1]));
                         } else {
                           console.log("unable to decode params");
                           return /* () */0;
@@ -728,8 +723,20 @@ function make($staropt$star, _) {
                     }));
               var url = ReasonReact.Router[/* dangerouslyGetInitialUrl */3](/* () */0);
               if (url[/* hash */1] === "" || url[/* search */2] === "") {
-                return pushParamsState(0, List.nth(Presets$Gayer.presets, 0)[1]);
+                return Routes$Gayer.pushParamsState(0, List.nth(Presets$Gayer.presets, 0)[1]);
               } else {
+                var exit = 0;
+                var i;
+                try {
+                  i = Caml_format.caml_int_of_string(url[/* search */2]);
+                  exit = 1;
+                }
+                catch (exn){
+                  
+                }
+                if (exit === 1) {
+                  self[/* state */1][/* startingIndexRef */24][0] = i;
+                }
                 return ReasonReact.Router[/* push */0]("?" + (url[/* search */2] + ("#" + url[/* hash */1])));
               }
             }),
@@ -743,7 +750,7 @@ function make($staropt$star, _) {
                 var match = getAnalysisInput(audioCtx, newSelf[/* state */1], newSelf[/* state */1][/* params */6][/* audioInputSetting */7]);
                 var audio = match[1];
                 if (audio !== undefined) {
-                  Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(4, [audio]));
+                  Curry._1(newSelf[/* send */3], /* SetFilterInput */Block.__(1, [audio]));
                 }
                 
               }
@@ -757,7 +764,7 @@ function make($staropt$star, _) {
                 generateNewFilterBanks(audioCtx, newSelf);
               }
               if (oldSelf[/* state */1][/* params */6][/* millisPerTick */6] !== newSelf[/* state */1][/* params */6][/* millisPerTick */6]) {
-                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */26], (function () {
+                Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */27], (function () {
                         return Curry._1(newSelf[/* send */3], /* Tick */1);
                       }), newSelf[/* state */1][/* params */6][/* millisPerTick */6]);
               }
@@ -796,26 +803,7 @@ function make($staropt$star, _) {
                                                                         /* [] */0
                                                                       ], undefined, /* array */["GAYER"]));
                                                       }), /* array */[])),
-                                            match !== undefined ? React.createElement("div", {
-                                                    style: {
-                                                      display: "flex",
-                                                      flexDirection: "row",
-                                                      flexWrap: "nowrap"
-                                                    }
-                                                  }, ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                              return Curry._1(self[/* send */3], /* AdjustScoreEventIndex */Block.__(2, [-1]));
-                                                            }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.SkipPrevious[/* make */0](/* array */[]))])), React.createElement("span", {
-                                                        style: {
-                                                          width: "4em"
-                                                        }
-                                                      }, ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Int */[
-                                                                3654863,
-                                                                match[1]
-                                                              ], null, (function (i) {
-                                                                  return Curry._1(self[/* send */3], /* SetScoreEventIndex */Block.__(1, [i | 0]));
-                                                                }), undefined, undefined, /* array */[]))), ReasonReact.element(undefined, undefined, MaterialUi_IconButton.make(undefined, /* Inherit */-72987685, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                              return Curry._1(self[/* send */3], /* AdjustScoreEventIndex */Block.__(2, [1]));
-                                                            }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUIIcons.SkipNext[/* make */0](/* array */[]))]))) : null
+                                            match !== undefined ? ReasonReact.element(undefined, undefined, ScoreControl$Gayer.make(match, self[/* state */1][/* startingIndexRef */24], /* array */[])) : null
                                           ]))])), React.createElement("div", {
                               style: {
                                 padding: "12px"
@@ -852,13 +840,13 @@ function make($staropt$star, _) {
                                                                               var preset = param[1];
                                                                               var name = param[0];
                                                                               return ReasonReact.element(name, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                                                                return pushParamsState(undefined, preset);
+                                                                                                return Routes$Gayer.pushParamsState(undefined, preset);
                                                                                               }), undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[name]))]));
                                                                             }), $$Array.of_list(Presets$Gayer.presets))])))
                                                       ]));
                                       }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, /* V24 */3, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[
                                       ReasonReact.element(undefined, undefined, MaterialUi_Grid.make(undefined, undefined, undefined, undefined, undefined, undefined, true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* V6 */5, undefined, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, Params$Gayer.make(self[/* state */1][/* params */6], (function (layers) {
-                                                            return Curry._1(self[/* send */3], /* SetLayers */Block.__(9, [layers]));
+                                                            return Curry._1(self[/* send */3], /* SetLayers */Block.__(6, [layers]));
                                                           }), (function (layer, theRef) {
                                                             return Curry._2(self[/* handle */0], (function (param, param$1) {
                                                                           return setLayerRef(audioCtx, param, param$1);
@@ -867,12 +855,12 @@ function make($staropt$star, _) {
                                                                         theRef
                                                                       ]);
                                                           }), self[/* state */1][/* layerRefs */18], (function (oldLayer, maybeNewLayer) {
-                                                            return Curry._1(self[/* send */3], /* ChangeLayer */Block.__(8, [
+                                                            return Curry._1(self[/* send */3], /* ChangeLayer */Block.__(5, [
                                                                           oldLayer,
                                                                           maybeNewLayer
                                                                         ]));
                                                           }), (function (newParams) {
-                                                            return pushParamsState(undefined, newParams);
+                                                            return Routes$Gayer.pushParamsState(undefined, newParams);
                                                           }), (function (param, param$1, param$2) {
                                                             return saveTick(self, param, param$1, param$2);
                                                           }), self[/* state */1][/* savedImages */19], /* array */[]))])),
@@ -942,7 +930,7 @@ function make($staropt$star, _) {
                                   })]);
                   case 1 : 
                       return /* SideEffects */Block.__(1, [(function (self) {
-                                    state[/* tickCounter */25][0] = state[/* tickCounter */25][0] + 1 | 0;
+                                    state[/* tickCounter */26][0] = state[/* tickCounter */26][0] + 1 | 0;
                                     state[/* readPos */2][0] = Canvas$Gayer.wrapCoord(state[/* readPos */2][0], state[/* params */6][/* readPosDelta */2], state[/* params */6][/* width */0]);
                                     state[/* writePos */3][0] = Canvas$Gayer.wrapCoord(state[/* writePos */3][0], state[/* params */6][/* writePosDelta */3], state[/* params */6][/* width */0]);
                                     return maybeUpdateCanvas(state[/* canvasRef */21], (function (canvas) {
@@ -969,7 +957,7 @@ function make($staropt$star, _) {
                                     var match = state[/* canvasRef */21][0];
                                     if (match !== undefined) {
                                       var url = Js_primitive.valFromOption(match).toDataURL();
-                                      return Curry._1(self[/* send */3], /* AddSavedImage */Block.__(3, [url]));
+                                      return Curry._1(self[/* send */3], /* AddSavedImage */Block.__(0, [url]));
                                     } else {
                                       return /* () */0;
                                     }
@@ -982,101 +970,37 @@ function make($staropt$star, _) {
               } else {
                 switch (action.tag | 0) {
                   case 0 : 
-                      var match = state[/* score */7];
-                      if (match !== undefined) {
-                        var newrecord$2 = Caml_array.caml_array_dup(state);
-                        return /* Update */Block.__(0, [(newrecord$2[/* score */7] = /* tuple */[
-                                      match[0],
-                                      action[0]
-                                    ], newrecord$2)]);
-                      } else {
-                        return /* NoUpdate */0;
-                      }
-                  case 1 : 
-                      var match$1 = state[/* score */7];
-                      if (match$1 !== undefined) {
-                        var score = match$1[0];
-                        var newrecord$3 = Caml_array.caml_array_dup(state);
-                        return /* UpdateWithSideEffects */Block.__(2, [
-                                  (newrecord$3[/* score */7] = /* tuple */[
-                                      score,
-                                      Canvas$Gayer.clamp(0, score[/* events */0].length - 1 | 0, action[0])
-                                    ], newrecord$3),
-                                  (function (self) {
-                                      var match = self[/* state */1][/* score */7];
-                                      if (match !== undefined) {
-                                        var match$1 = match;
-                                        var eventIndex = match$1[1];
-                                        pushParamsState(Js_primitive.some(eventIndex), Caml_array.caml_array_get(match$1[0][/* events */0], eventIndex)[/* params */0]);
-                                        console.log("Set score index; score now at " + (String(eventIndex) + ""));
-                                        return /* () */0;
-                                      } else {
-                                        return /* () */0;
-                                      }
-                                    })
-                                ]);
-                      } else {
-                        return /* NoUpdate */0;
-                      }
-                  case 2 : 
-                      var match$2 = state[/* score */7];
-                      if (match$2 !== undefined) {
-                        var match$3 = match$2;
-                        var score$1 = match$3[0];
-                        var newrecord$4 = Caml_array.caml_array_dup(state);
-                        return /* UpdateWithSideEffects */Block.__(2, [
-                                  (newrecord$4[/* score */7] = /* tuple */[
-                                      score$1,
-                                      Canvas$Gayer.clamp(0, score$1[/* events */0].length - 1 | 0, match$3[1] + action[0] | 0)
-                                    ], newrecord$4),
-                                  (function (self) {
-                                      var match = self[/* state */1][/* score */7];
-                                      if (match !== undefined) {
-                                        var match$1 = match;
-                                        var eventIndex = match$1[1];
-                                        pushParamsState(Js_primitive.some(eventIndex), Caml_array.caml_array_get(match$1[0][/* events */0], eventIndex)[/* params */0]);
-                                        console.log("Adjusted score index; score now at " + (String(eventIndex) + ""));
-                                        return /* () */0;
-                                      } else {
-                                        return /* () */0;
-                                      }
-                                    })
-                                ]);
-                      } else {
-                        return /* NoUpdate */0;
-                      }
-                  case 3 : 
                       var timestamp = (new Date().toISOString());
+                      var newrecord$2 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$2[/* savedImages */19] = Belt_MapString.set(state[/* savedImages */19], timestamp, action[0]), newrecord$2)]);
+                  case 1 : 
+                      var newrecord$3 = Caml_array.caml_array_dup(state);
+                      return /* UpdateWithSideEffects */Block.__(2, [
+                                (newrecord$3[/* filterInput */5] = action[0], newrecord$3),
+                                (function (self) {
+                                    return connectInputs(self[/* state */1]);
+                                  })
+                              ]);
+                  case 2 : 
+                      var newrecord$4 = Caml_array.caml_array_dup(state);
+                      return /* Update */Block.__(0, [(newrecord$4[/* micInput */11] = action[0], newrecord$4)]);
+                  case 3 : 
                       var newrecord$5 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$5[/* savedImages */19] = Belt_MapString.set(state[/* savedImages */19], timestamp, action[0]), newrecord$5)]);
+                      return /* Update */Block.__(0, [(newrecord$5[/* mediaStream */9] = Js_primitive.some(action[0]), newrecord$5)]);
                   case 4 : 
                       var newrecord$6 = Caml_array.caml_array_dup(state);
                       return /* UpdateWithSideEffects */Block.__(2, [
-                                (newrecord$6[/* filterInput */5] = action[0], newrecord$6),
+                                (newrecord$6[/* filterBanks */14] = action[0], newrecord$6),
                                 (function (self) {
                                     return connectInputs(self[/* state */1]);
                                   })
                               ]);
                   case 5 : 
-                      var newrecord$7 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$7[/* micInput */11] = action[0], newrecord$7)]);
-                  case 6 : 
-                      var newrecord$8 = Caml_array.caml_array_dup(state);
-                      return /* Update */Block.__(0, [(newrecord$8[/* mediaStream */9] = Js_primitive.some(action[0]), newrecord$8)]);
-                  case 7 : 
-                      var newrecord$9 = Caml_array.caml_array_dup(state);
-                      return /* UpdateWithSideEffects */Block.__(2, [
-                                (newrecord$9[/* filterBanks */14] = action[0], newrecord$9),
-                                (function (self) {
-                                    return connectInputs(self[/* state */1]);
-                                  })
-                              ]);
-                  case 8 : 
                       var maybeNewLayer = action[1];
                       var oldLayer = action[0];
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     var init = self[/* state */1][/* params */6];
-                                    return pushParamsState(undefined, /* record */[
+                                    return Routes$Gayer.pushParamsState(undefined, /* record */[
                                                 /* width */init[/* width */0],
                                                 /* height */init[/* height */1],
                                                 /* readPosDelta */init[/* readPosDelta */2],
@@ -1094,11 +1018,11 @@ function make($staropt$star, _) {
                                                 /* layers */changeLayer(oldLayer, maybeNewLayer, self[/* state */1][/* params */6][/* layers */14])
                                               ]);
                                   })]);
-                  case 9 : 
+                  case 6 : 
                       var layers = action[0];
                       return /* SideEffects */Block.__(1, [(function (self) {
                                     var init = self[/* state */1][/* params */6];
-                                    return pushParamsState(undefined, /* record */[
+                                    return Routes$Gayer.pushParamsState(undefined, /* record */[
                                                 /* width */init[/* width */0],
                                                 /* height */init[/* height */1],
                                                 /* readPosDelta */init[/* readPosDelta */2],
@@ -1116,18 +1040,18 @@ function make($staropt$star, _) {
                                                 /* layers */layers
                                               ]);
                                   })]);
-                  case 10 : 
+                  case 7 : 
                       var params = action[0];
-                      var newrecord$10 = Caml_array.caml_array_dup(state);
-                      newrecord$10[/* params */6] = params;
+                      var newrecord$7 = Caml_array.caml_array_dup(state);
+                      newrecord$7[/* params */6] = params;
                       var init = state[/* drawContext */22];
-                      newrecord$10[/* drawContext */22] = /* record */[
+                      newrecord$7[/* drawContext */22] = /* record */[
                         /* maybeCtxRef */init[/* maybeCtxRef */0],
                         /* width */params[/* width */0],
                         /* height */params[/* height */1],
                         /* variables */init[/* variables */3]
                       ];
-                      return /* Update */Block.__(0, [newrecord$10]);
+                      return /* Update */Block.__(0, [newrecord$7]);
                   
                 }
               }
@@ -1154,7 +1078,6 @@ export {
   connectInputs ,
   disconnectInputs ,
   clearCanvas ,
-  pushParamsState ,
   getReadAndWritePos ,
   drawLayer ,
   drawCanvas ,

@@ -8,6 +8,7 @@ open Layer;
 open Params;
 open Performance;
 open Presets;
+open Routes;
 open Score;
 open Timing;
 open UserMedia;
@@ -26,7 +27,7 @@ type state = {
   freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
-  score: option((score, int)),
+  score: option(score),
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
   audioGraph: ref(audioGraph),
@@ -43,6 +44,7 @@ type state = {
   canvasRef: ref(option(Dom.element)),
   drawContext: DrawCommand.drawContext,
   fullscreenCanvas: bool,
+  startingIndexRef: ref(int),
   tickFunctions: ref(Belt.Map.String.t(float => unit)),
   tickCounter: ref(int),
   timerId: ref(option(Js.Global.intervalId)),
@@ -60,7 +62,7 @@ let defaultState: state = {
   audioGraph: ref(emptyAudioGraph),
   micInput: None,
   cameraInput: ref(None),
-  score: Some((exampleScore, 0)),
+  score: Some(exampleScore),
   params: snd(List.nth(presets, 0)),
   oscillatorBank: ref(None),
   filterBanks: None,
@@ -77,6 +79,7 @@ let defaultState: state = {
     height: 1,
     variables: Belt.Map.String.empty,
   },
+  startingIndexRef: ref(0),
   fullscreenCanvas: false,
   tickCounter: ref(0),
   tickFunctions: ref(Belt.Map.String.empty),
@@ -89,9 +92,6 @@ type action =
   | TogglePresetDrawer
   | SaveImage
   | ToggleFullscreen
-  | SetScoreEventIndexDirectly(int)
-  | SetScoreEventIndex(int)
-  | AdjustScoreEventIndex(int)
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -100,9 +100,6 @@ type action =
   | ChangeLayer(layer, option(layer))
   | SetLayers(list(layer))
   | SetParams(params);
-
-[@bs.val] external decodeURIComponent : string => string = "";
-[@bs.val] external encodeURIComponent : string => string = "";
 
 let setCanvasRef = (theRef, {ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
@@ -204,17 +201,6 @@ let disconnectInputs: state => unit =
 let clearCanvas = (canvasElement, width, height) => {
   let ctx = getContext(canvasElement);
   Ctx.clearRect(ctx, 0, 0, width, height);
-};
-
-let pushParamsState = (~maybeI=None, newParams) => {
-  let newParamsJson =
-    encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
-  let maybeScoreIndex =
-    switch (maybeI) {
-    | Some(i) => "?" ++ string_of_int(i)
-    | None => ""
-    };
-  ReasonReact.Router.push(maybeScoreIndex ++ "#" ++ newParamsJson);
 };
 
 let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => {
@@ -599,74 +585,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
-    | SetScoreEventIndexDirectly(i) =>
-      switch (state.score) {
-      | Some((score, eventIndex)) =>
-        ReasonReact.Update({...state, score: Some((score, i))})
-      | None => ReasonReact.NoUpdate
-      }
-    | SetScoreEventIndex(i) =>
-      switch (state.score) {
-      | Some((score, eventIndex)) =>
-        let {events} = score;
-        ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            score:
-              Some((
-                score,
-                clamp(~minVal=0, ~maxVal=Array.length(events) - 1, i),
-              )),
-          },
-          (
-            self =>
-              switch (self.state.score) {
-              | Some(({events}, eventIndex)) =>
-                pushParamsState(
-                  ~maybeI=Some(eventIndex),
-                  events[eventIndex].params,
-                );
-                Js.log({j|Set score index; score now at $(eventIndex)|j});
-              | None => ()
-              }
-          ),
-        );
-      | None => ReasonReact.NoUpdate
-      }
-    | AdjustScoreEventIndex(i) =>
-      switch (state.score) {
-      | Some((score, eventIndex)) =>
-        let {events} = score;
-        ReasonReact.UpdateWithSideEffects(
-          {
-            ...state,
-            score:
-              Some((
-                score,
-                clamp(
-                  ~minVal=0,
-                  ~maxVal=Array.length(events) - 1,
-                  eventIndex + i,
-                ),
-              )),
-          },
-          (
-            self =>
-              switch (self.state.score) {
-              | Some(({events}, eventIndex)) =>
-                pushParamsState(
-                  ~maybeI=Some(eventIndex),
-                  events[eventIndex].params,
-                );
-                Js.log(
-                  {j|Adjusted score index; score now at $(eventIndex)|j},
-                );
-              | None => ()
-              }
-          ),
-        );
-      | None => ReasonReact.NoUpdate
-      }
     | ToggleFullscreen =>
       ReasonReact.Update({
         ...state,
@@ -852,10 +770,13 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
-        switch (int_of_string(url.search)) {
-        | i => self.send(SetScoreEventIndexDirectly(i))
-        | exception _ => ()
-        };
+        let maybeIndex =
+          switch (int_of_string(url.search)) {
+          | i =>
+            self.state.startingIndexRef := i;
+            Some(i);
+          | exception _ => None
+          };
 
         let hash = decodeURIComponent(url.hash);
 
@@ -868,6 +789,7 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         | None => Js.log("Could not parse json")
         };
       });
+
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     if (url.hash === "") {
@@ -875,6 +797,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     } else if (url.search === "") {
       pushParamsState(~maybeI=Some(0), snd(List.nth(presets, 0)));
     } else {
+      switch (int_of_string(url.search)) {
+      | i => self.state.startingIndexRef := i
+      | exception _ => ()
+      };
       ReasonReact.Router.push("?" ++ url.search ++ "#" ++ url.hash);
     };
   },
@@ -967,37 +893,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
               />
               (
                 switch (self.state.score) {
-                | Some((_, eventIndex)) =>
-                  <div
-                    style=(
-                      ReactDOMRe.Style.make(
-                        ~display="flex",
-                        ~flexDirection="row",
-                        ~flexWrap="nowrap",
-                        (),
-                      )
-                    )>
-                    <IconButton
-                      color=`Inherit
-                      onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
-                      <MaterialUIIcons.SkipPrevious />
-                    </IconButton>
-                    <span style=(ReactDOMRe.Style.make(~width="4em", ()))>
-                      <NumericTextField
-                        label=ReasonReact.null
-                        value=(`Int(eventIndex))
-                        onChange=(
-                          i =>
-                            self.send(SetScoreEventIndex(int_of_float(i)))
-                        )
-                      />
-                    </span>
-                    <IconButton
-                      color=`Inherit
-                      onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
-                      <MaterialUIIcons.SkipNext />
-                    </IconButton>
-                  </div>
+                | Some(score) =>
+                  <ScoreControl
+                    score
+                    startingIndexRef=self.state.startingIndexRef
+                  />
                 | None => ReasonReact.null
                 }
               )
