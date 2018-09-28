@@ -279,7 +279,7 @@ let historyBackAndForthLayer = {
 let drosteLayer = {
   ...defaultLayer,
   content:
-    Draw([
+    DrawGlobal([
       DrawImage(
         Self,
         {
@@ -338,7 +338,7 @@ let allLayerTypes = [|
   ("displace map", displace("root", "root")),
   ("midi keyboard", midiKeyboard),
   ("computer keyboard", keycodeWriter),
-  ("keyboard display", keycodeReader),
+  ("keycode display", {...keycodeReader, tickPeriod: 5}),
   ("drawGlobal (commands)", drawGlobal([SetFillStyle("red")])),
   ("fill", fill(~alpha=0.0125, "white")),
   ("blur", blurLayer),

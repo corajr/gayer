@@ -496,6 +496,46 @@ let make =
                   label=(ReasonReact.string("Active (include in render)"))
                 />
               </FormGroup>
+              <FormGroup row=true>
+                <div style=(ReactDOMRe.Style.make(~width="45%", ()))>
+                  <MaterialUi.TextField
+                    label=(ReasonReact.string("fire every N ticks"))
+                    value=(`Int(layer.tickPeriod))
+                    onChange=(
+                      evt => {
+                        let value = ReactDOMRe.domElementToObj(
+                                      ReactEventRe.Form.target(evt),
+                                    )##value;
+                        changeLayer(
+                          layer,
+                          Some({...layer, tickPeriod: int_of_string(value)}),
+                        );
+                      }
+                    )
+                    type_="number"
+                    margin=`Normal
+                  />
+                </div>
+                <div style=(ReactDOMRe.Style.make(~width="45%", ()))>
+                  <MaterialUi.TextField
+                    label=(ReasonReact.string("adjust tick phase"))
+                    value=(`Int(layer.tickPhase))
+                    onChange=(
+                      evt => {
+                        let value = ReactDOMRe.domElementToObj(
+                                      ReactEventRe.Form.target(evt),
+                                    )##value;
+                        changeLayer(
+                          layer,
+                          Some({...layer, tickPhase: int_of_string(value)}),
+                        );
+                      }
+                    )
+                    type_="number"
+                    margin=`Normal
+                  />
+                </div>
+              </FormGroup>
               <TransformMatrixSettings layer changeLayer />
               <NumericTextField
                 label=(ReasonReact.string("Rotation (degrees)"))

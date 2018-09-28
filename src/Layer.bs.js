@@ -173,6 +173,8 @@ var defaultLayer = /* record */[
   /* rotation */0.0,
   /* transformMatrix */Canvas$Gayer.defaultTransform,
   /* filters */"none",
+  /* tickPeriod */1,
+  /* tickPhase */0,
   /* id */undefined
 ];
 
@@ -396,6 +398,8 @@ function layer(json) {
           /* rotation */Json_decode.field("rotation", rotation, json),
           /* transformMatrix */Json_decode.field("transformMatrix", transformMatrix, json),
           /* filters */Json_decode.field("filters", Json_decode.string, json),
+          /* tickPeriod */Json_decode.field("tickPeriod", Json_decode.$$int, json),
+          /* tickPhase */Json_decode.field("tickPhase", Json_decode.$$int, json),
           /* id */Json_decode.field("id", (function (param) {
                   return Json_decode.optional(Json_decode.string, param);
                 }), json)
@@ -769,7 +773,7 @@ function layer$1(r) {
                 "id",
                 Json_encode.nullable((function (prim) {
                         return prim;
-                      }), r[/* id */7])
+                      }), r[/* id */9])
               ],
               /* :: */[
                 /* tuple */[
@@ -806,7 +810,25 @@ function layer$1(r) {
                               "filters",
                               r[/* filters */6]
                             ],
-                            /* [] */0
+                            /* :: */[
+                              /* tuple */[
+                                "tickPeriod",
+                                r[/* tickPeriod */7]
+                              ],
+                              /* :: */[
+                                /* tuple */[
+                                  "tickPhase",
+                                  r[/* tickPhase */8]
+                                ],
+                                /* :: */[
+                                  /* tuple */[
+                                    "filters",
+                                    r[/* filters */6]
+                                  ],
+                                  /* [] */0
+                                ]
+                              ]
+                            ]
                           ]
                         ]
                       ]
@@ -827,7 +849,7 @@ var EncodeLayer = /* module */[
 ];
 
 function getLayerKey(layer) {
-  return Belt_Option.getWithDefault(layer[/* id */7], JSON.stringify(layerContent$1(layer[/* content */0])));
+  return Belt_Option.getWithDefault(layer[/* id */9], JSON.stringify(layerContent$1(layer[/* content */0])));
 }
 
 export {

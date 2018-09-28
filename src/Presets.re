@@ -177,19 +177,13 @@ let equation = {...history, layers: [equationFile, reader]};
 
 let droste = {
   ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
+  writePosOffset: 4,
   shouldClear: false,
   layers: [
-    {
-      ...analyzer(Mic),
-      transformMatrix: {
-        ...defaultTransform,
-        horizontalScaling: float_of_int(defaultSize),
-      },
-    },
-    drosteLayer,
-    reader,
+    analyzer(Mic, ~analysisSize=Slit),
+    {...fill("red"), compositeOperation: Multiply},
+    {...drosteLayer, alpha: 0.9},
+    {...reader, alpha: 0.0},
   ],
 };
 
@@ -248,7 +242,8 @@ let video = {
 
 let lesTresRichesHeures = {
   ...defaultParams,
-  outputGain: 0.05,
+  outputGain: 0.1,
+  readPosDelta: (-1),
   layers: [
     img("media/les_tres_riches_heures.jpg"),
     sobel("root"),
@@ -334,7 +329,7 @@ let presetsWithoutLayerIds = [
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
-  ("Angle", droste),
+  ("Dissolve", droste),
   ("MIDI (requires MIDI keyboard)", midi),
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */

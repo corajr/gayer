@@ -106,6 +106,8 @@ type layer = {
   rotation,
   transformMatrix,
   filters: string,
+  tickPeriod: int,
+  tickPhase: int,
   id: option(string),
 };
 
@@ -117,6 +119,8 @@ let defaultLayer = {
   transformMatrix: defaultTransform,
   rotation: 0.0,
   filters: "none",
+  tickPeriod: 1,
+  tickPhase: 0,
   id: None,
 };
 
@@ -254,6 +258,8 @@ module DecodeLayer = {
       content: json |> field("content", layerContent),
       enabled: json |> field("enabled", bool),
       alpha: json |> field("alpha", float),
+      tickPeriod: json |> field("tickPeriod", int),
+      tickPhase: json |> field("tickPhase", int),
       compositeOperation:
         json
         |> map(
@@ -405,6 +411,9 @@ module EncodeLayer = {
         ),
         ("transformMatrix", transformMatrix(r.transformMatrix)),
         ("rotation", rotation(r.rotation)),
+        ("filters", string(r.filters)),
+        ("tickPeriod", int(r.tickPeriod)),
+        ("tickPhase", int(r.tickPhase)),
         ("filters", string(r.filters)),
       ])
     );

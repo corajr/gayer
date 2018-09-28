@@ -197,7 +197,9 @@ var feedback_014 = /* layers : :: */[
       /* rotation */init[/* rotation */4],
       /* transformMatrix */init[/* transformMatrix */5],
       /* filters */init[/* filters */6],
-      /* id */init[/* id */7]
+      /* tickPeriod */init[/* tickPeriod */7],
+      /* tickPhase */init[/* tickPhase */8],
+      /* id */init[/* id */9]
     ],
     /* :: */[
       LayerGenerator$Gayer.pitchFilter(Music$Gayer.cMajor),
@@ -265,7 +267,9 @@ var webcamParams_014 = /* layers : :: */[
       /* verticalMoving */LayerGenerator$Gayer.defaultTransform[/* verticalMoving */5]
     ],
     /* filters */init$1[/* filters */6],
-    /* id */init$1[/* id */7]
+    /* tickPeriod */init$1[/* tickPeriod */7],
+    /* tickPhase */init$1[/* tickPhase */8],
+    /* id */init$1[/* id */9]
   ],
   /* :: */[
     /* record */[
@@ -276,7 +280,9 @@ var webcamParams_014 = /* layers : :: */[
       /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
       /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
       /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
-      /* id */LayerGenerator$Gayer.webcam[/* id */7]
+      /* tickPeriod */LayerGenerator$Gayer.webcam[/* tickPeriod */7],
+      /* tickPhase */LayerGenerator$Gayer.webcam[/* tickPhase */8],
+      /* id */LayerGenerator$Gayer.webcam[/* id */9]
     ],
     /* :: */[
       LayerGenerator$Gayer.reader,
@@ -404,6 +410,8 @@ var slitscanParams_014 = /* layers : :: */[
       /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
       /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
       /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
+      /* tickPeriod */LayerGenerator$Gayer.webcam[/* tickPeriod */7],
+      /* tickPhase */LayerGenerator$Gayer.webcam[/* tickPhase */8],
       /* id */"webcam4slitscan"
     ],
     /* :: */[
@@ -415,6 +423,8 @@ var slitscanParams_014 = /* layers : :: */[
         /* rotation */init$2[/* rotation */4],
         /* transformMatrix */init$2[/* transformMatrix */5],
         /* filters */init$2[/* filters */6],
+        /* tickPeriod */init$2[/* tickPeriod */7],
+        /* tickPhase */init$2[/* tickPhase */8],
         /* id */"sobel4slitscan"
       ],
       /* :: */[
@@ -426,7 +436,9 @@ var slitscanParams_014 = /* layers : :: */[
           /* rotation */init$3[/* rotation */4],
           /* transformMatrix */init$3[/* transformMatrix */5],
           /* filters */init$3[/* filters */6],
-          /* id */init$3[/* id */7]
+          /* tickPeriod */init$3[/* tickPeriod */7],
+          /* tickPhase */init$3[/* tickPhase */8],
+          /* id */init$3[/* id */9]
         ],
         /* :: */[
           LayerGenerator$Gayer.reader,
@@ -553,7 +565,9 @@ var whiteboardParams_014 = /* layers : :: */[
     /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
     /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
     /* filters */"contrast(300%) invert(100%)",
-    /* id */LayerGenerator$Gayer.webcam[/* id */7]
+    /* tickPeriod */LayerGenerator$Gayer.webcam[/* tickPeriod */7],
+    /* tickPhase */LayerGenerator$Gayer.webcam[/* tickPhase */8],
+    /* id */LayerGenerator$Gayer.webcam[/* id */9]
   ],
   /* :: */[
     LayerGenerator$Gayer.pitchFilter(Music$Gayer.pentatonic),
@@ -621,7 +635,9 @@ var isItACrime_014 = /* layers : :: */[
       /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
       /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
       /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-      /* id */LayerGenerator$Gayer.reader[/* id */7]
+      /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+      /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+      /* id */LayerGenerator$Gayer.reader[/* id */9]
     ],
     /* [] */0
   ]
@@ -789,7 +805,9 @@ var history_014 = /* layers : :: */[
       /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
       /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
       /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-      /* id */LayerGenerator$Gayer.reader[/* id */7]
+      /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+      /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+      /* id */LayerGenerator$Gayer.reader[/* id */9]
     ],
     /* [] */0
   ]
@@ -866,7 +884,9 @@ var historyHalving_014 = /* layers : :: */[
             /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
             /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
             /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-            /* id */LayerGenerator$Gayer.reader[/* id */7]
+            /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+            /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+            /* id */LayerGenerator$Gayer.reader[/* id */9]
           ],
           /* [] */0
         ]
@@ -996,15 +1016,17 @@ var equation = /* record */[
   equation_014
 ];
 
-var init$4 = LayerGenerator$Gayer.analyzer(undefined, undefined, /* Mic */2);
+var init$4 = LayerGenerator$Gayer.fill(undefined, "red");
 
 var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var droste_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var droste_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+var droste_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var droste_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+var droste_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+
+var droste_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
 
 var droste_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
@@ -1021,28 +1043,48 @@ var droste_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 var droste_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
 var droste_014 = /* layers : :: */[
-  /* record */[
-    /* content */init$4[/* content */0],
-    /* enabled */init$4[/* enabled */1],
-    /* alpha */init$4[/* alpha */2],
-    /* compositeOperation */init$4[/* compositeOperation */3],
-    /* rotation */init$4[/* rotation */4],
-    /* transformMatrix : record */[
-      /* horizontalScaling */LayerGenerator$Gayer.defaultSize,
-      /* horizontalSkewing */LayerGenerator$Gayer.defaultTransform[/* horizontalSkewing */1],
-      /* verticalSkewing */LayerGenerator$Gayer.defaultTransform[/* verticalSkewing */2],
-      /* verticalScaling */LayerGenerator$Gayer.defaultTransform[/* verticalScaling */3],
-      /* horizontalMoving */LayerGenerator$Gayer.defaultTransform[/* horizontalMoving */4],
-      /* verticalMoving */LayerGenerator$Gayer.defaultTransform[/* verticalMoving */5]
-    ],
-    /* filters */init$4[/* filters */6],
-    /* id */init$4[/* id */7]
-  ],
+  LayerGenerator$Gayer.analyzer(undefined, /* Slit */0, /* Mic */2),
   /* :: */[
-    LayerGenerator$Gayer.drosteLayer,
+    /* record */[
+      /* content */init$4[/* content */0],
+      /* enabled */init$4[/* enabled */1],
+      /* alpha */init$4[/* alpha */2],
+      /* compositeOperation : Multiply */11,
+      /* rotation */init$4[/* rotation */4],
+      /* transformMatrix */init$4[/* transformMatrix */5],
+      /* filters */init$4[/* filters */6],
+      /* tickPeriod */init$4[/* tickPeriod */7],
+      /* tickPhase */init$4[/* tickPhase */8],
+      /* id */init$4[/* id */9]
+    ],
     /* :: */[
-      LayerGenerator$Gayer.reader,
-      /* [] */0
+      /* record */[
+        /* content */LayerGenerator$Gayer.drosteLayer[/* content */0],
+        /* enabled */LayerGenerator$Gayer.drosteLayer[/* enabled */1],
+        /* alpha */0.9,
+        /* compositeOperation */LayerGenerator$Gayer.drosteLayer[/* compositeOperation */3],
+        /* rotation */LayerGenerator$Gayer.drosteLayer[/* rotation */4],
+        /* transformMatrix */LayerGenerator$Gayer.drosteLayer[/* transformMatrix */5],
+        /* filters */LayerGenerator$Gayer.drosteLayer[/* filters */6],
+        /* tickPeriod */LayerGenerator$Gayer.drosteLayer[/* tickPeriod */7],
+        /* tickPhase */LayerGenerator$Gayer.drosteLayer[/* tickPhase */8],
+        /* id */LayerGenerator$Gayer.drosteLayer[/* id */9]
+      ],
+      /* :: */[
+        /* record */[
+          /* content */LayerGenerator$Gayer.reader[/* content */0],
+          /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
+          /* alpha */0.0,
+          /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
+          /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
+          /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
+          /* filters */LayerGenerator$Gayer.reader[/* filters */6],
+          /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+          /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+          /* id */LayerGenerator$Gayer.reader[/* id */9]
+        ],
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -1050,10 +1092,10 @@ var droste_014 = /* layers : :: */[
 var droste = /* record */[
   droste_000,
   droste_001,
-  /* readPosDelta */0,
-  /* writePosDelta */0,
+  droste_002,
+  droste_003,
   droste_004,
-  droste_005,
+  /* writePosOffset */4,
   droste_006,
   droste_007,
   droste_008,
@@ -1214,7 +1256,9 @@ var midi_014 = /* layers : :: */[
         /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
         /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
         /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-        /* id */LayerGenerator$Gayer.reader[/* id */7]
+        /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+        /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+        /* id */LayerGenerator$Gayer.reader[/* id */9]
       ],
       /* [] */0
     ]
@@ -1243,9 +1287,11 @@ var midiDroste_000 = droste_000;
 
 var midiDroste_001 = droste_001;
 
-var midiDroste_004 = droste_004;
+var midiDroste_002 = droste_002;
 
-var midiDroste_005 = droste_005;
+var midiDroste_003 = droste_003;
+
+var midiDroste_004 = droste_004;
 
 var midiDroste_006 = droste_006;
 
@@ -1275,10 +1321,10 @@ var midiDroste_014 = /* layers : :: */[
 var midiDroste = /* record */[
   midiDroste_000,
   midiDroste_001,
-  /* readPosDelta */0,
-  /* writePosDelta */0,
+  midiDroste_002,
+  midiDroste_003,
   midiDroste_004,
-  midiDroste_005,
+  /* writePosOffset */4,
   midiDroste_006,
   midiDroste_007,
   midiDroste_008,
@@ -1497,8 +1543,6 @@ var lesTresRichesHeures_000 = /* width */Params$Gayer.defaultParams[/* width */0
 
 var lesTresRichesHeures_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var lesTresRichesHeures_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
-
 var lesTresRichesHeures_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
 
 var lesTresRichesHeures_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
@@ -1536,14 +1580,14 @@ var lesTresRichesHeures_014 = /* layers : :: */[
 var lesTresRichesHeures = /* record */[
   lesTresRichesHeures_000,
   lesTresRichesHeures_001,
-  lesTresRichesHeures_002,
+  /* readPosDelta */-1,
   lesTresRichesHeures_003,
   lesTresRichesHeures_004,
   lesTresRichesHeures_005,
   lesTresRichesHeures_006,
   lesTresRichesHeures_007,
   lesTresRichesHeures_008,
-  /* outputGain */0.05,
+  /* outputGain */0.1,
   lesTresRichesHeures_010,
   lesTresRichesHeures_011,
   lesTresRichesHeures_012,
@@ -1759,7 +1803,9 @@ var keycodeParams_014 = /* layers : :: */[
           /* rotation */LayerGenerator$Gayer.keycodeReader[/* rotation */4],
           /* transformMatrix */LayerGenerator$Gayer.keycodeReader[/* transformMatrix */5],
           /* filters */LayerGenerator$Gayer.keycodeReader[/* filters */6],
-          /* id */LayerGenerator$Gayer.keycodeReader[/* id */7]
+          /* tickPeriod */LayerGenerator$Gayer.keycodeReader[/* tickPeriod */7],
+          /* tickPhase */LayerGenerator$Gayer.keycodeReader[/* tickPhase */8],
+          /* id */LayerGenerator$Gayer.keycodeReader[/* id */9]
         ],
         /* [] */0
       ]
@@ -1828,7 +1874,9 @@ var welcome_014 = /* layers : :: */[
         /* rotation */init$5[/* rotation */4],
         /* transformMatrix */init$5[/* transformMatrix */5],
         /* filters */init$5[/* filters */6],
-        /* id */init$5[/* id */7]
+        /* tickPeriod */init$5[/* tickPeriod */7],
+        /* tickPhase */init$5[/* tickPhase */8],
+        /* id */init$5[/* id */9]
       ],
       /* [] */0
     ]
@@ -1946,6 +1994,8 @@ var displaceParams_014 = /* layers : :: */[
     /* rotation */init$6[/* rotation */4],
     /* transformMatrix */init$6[/* transformMatrix */5],
     /* filters */init$6[/* filters */6],
+    /* tickPeriod */init$6[/* tickPeriod */7],
+    /* tickPhase */init$6[/* tickPhase */8],
     /* id */"analyzer"
   ],
   /* :: */[
@@ -1959,6 +2009,8 @@ var displaceParams_014 = /* layers : :: */[
         /* rotation */LayerGenerator$Gayer.webcam[/* rotation */4],
         /* transformMatrix */LayerGenerator$Gayer.webcam[/* transformMatrix */5],
         /* filters */LayerGenerator$Gayer.webcam[/* filters */6],
+        /* tickPeriod */LayerGenerator$Gayer.webcam[/* tickPeriod */7],
+        /* tickPhase */LayerGenerator$Gayer.webcam[/* tickPhase */8],
         /* id */"webcam"
       ],
       /* :: */[
@@ -2070,7 +2122,7 @@ var presetsWithoutLayerIds_001 = /* :: */[
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Angle",
+                            "Dissolve",
                             droste
                           ],
                           /* :: */[

@@ -233,9 +233,11 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     Ctx._setFilter(ctx, layer.filters);
 
     let layerKey = getLayerKey(layer);
-    switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
-    | None => ()
-    | Some(f) => f(float_of_int(state.tickCounter^))
+    if (state.tickCounter^ mod layer.tickPeriod === layer.tickPhase) {
+      switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
+      | None => ()
+      | Some(f) => f(float_of_int(state.tickCounter^))
+      };
     };
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
@@ -946,11 +948,17 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
                         (
                           ReasonReact.array(
                             Array.of_list(presets)
-                            |> Array.map(((name, preset)) =>
+                            |> Array.mapi((i, (name, preset)) =>
                                  <ListItem
                                    key=name
                                    button=true
-                                   onClick=(_evt => pushParamsState(preset))>
+                                   onClick=(
+                                     _evt =>
+                                       pushParamsState(
+                                         ~maybeI=Some(i),
+                                         preset,
+                                       )
+                                   )>
                                    <ListItemText>
                                      (ReasonReact.string(name))
                                    </ListItemText>

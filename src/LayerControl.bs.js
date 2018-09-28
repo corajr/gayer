@@ -3,6 +3,7 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Caml_format from "bs-platform/lib/es6/caml_format.js";
 import * as Layer$Gayer from "./Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
@@ -115,7 +116,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                               /* rotation */layer[/* rotation */4],
                                               /* transformMatrix */layer[/* transformMatrix */5],
                                               /* filters */layer[/* filters */6],
-                                              /* id */layer[/* id */7]
+                                              /* tickPeriod */layer[/* tickPeriod */7],
+                                              /* tickPhase */layer[/* tickPhase */8],
+                                              /* id */layer[/* id */9]
                                             ]);
                                 }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                 -976970511,
@@ -133,7 +136,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                               /* rotation */layer[/* rotation */4],
                                               /* transformMatrix */layer[/* transformMatrix */5],
                                               /* filters */layer[/* filters */6],
-                                              /* id */layer[/* id */7]
+                                              /* tickPeriod */layer[/* tickPeriod */7],
+                                              /* tickPhase */layer[/* tickPhase */8],
+                                              /* id */layer[/* id */9]
                                             ]);
                                 }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                 -976970511,
@@ -159,7 +164,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   /* rotation */layer[/* rotation */4],
                                                   /* transformMatrix */layer[/* transformMatrix */5],
                                                   /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
+                                                  /* tickPeriod */layer[/* tickPeriod */7],
+                                                  /* tickPhase */layer[/* tickPhase */8],
+                                                  /* id */layer[/* id */9]
                                                 ]);
                                     }), opts[/* sourceLayerKey */0], /* array */[])));
                       break;
@@ -173,7 +180,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                               /* rotation */layer[/* rotation */4],
                                               /* transformMatrix */layer[/* transformMatrix */5],
                                               /* filters */layer[/* filters */6],
-                                              /* id */layer[/* id */7]
+                                              /* tickPeriod */layer[/* tickPeriod */7],
+                                              /* tickPhase */layer[/* tickPhase */8],
+                                              /* id */layer[/* id */9]
                                             ]);
                                 }), /* array */[]));
                       break;
@@ -202,7 +211,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   /* rotation */layer[/* rotation */4],
                                                   /* transformMatrix */layer[/* transformMatrix */5],
                                                   /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
+                                                  /* tickPeriod */layer[/* tickPeriod */7],
+                                                  /* tickPhase */layer[/* tickPhase */8],
+                                                  /* id */layer[/* id */9]
                                                 ]);
                                     }), AnalysisOptions$Gayer.string_of_analysisSize, AnalysisOptions$Gayer.analysisSize_of_string, /* array */[])));
                       break;
@@ -216,7 +227,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   /* rotation */layer[/* rotation */4],
                                                   /* transformMatrix */layer[/* transformMatrix */5],
                                                   /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
+                                                  /* tickPeriod */layer[/* tickPeriod */7],
+                                                  /* tickPhase */layer[/* tickPhase */8],
+                                                  /* id */layer[/* id */9]
                                                 ]);
                                     }), /* array */[])));
                       break;
@@ -248,7 +261,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                     /* rotation */layer[/* rotation */4],
                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                     /* filters */layer[/* filters */6],
-                                                    /* id */layer[/* id */7]
+                                                    /* tickPeriod */layer[/* tickPeriod */7],
+                                                    /* tickPhase */layer[/* tickPhase */8],
+                                                    /* id */layer[/* id */9]
                                                   ]);
                                       }), opts$1[/* displacementSourceLayer */0], /* array */[])), ReasonReact.element(undefined, undefined, LayerSelect$Gayer.make(layerKeys, (function (newKey) {
                                         return Curry._2(changeLayer, layer, /* record */[
@@ -262,7 +277,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                     /* rotation */layer[/* rotation */4],
                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                     /* filters */layer[/* filters */6],
-                                                    /* id */layer[/* id */7]
+                                                    /* tickPeriod */layer[/* tickPeriod */7],
+                                                    /* tickPhase */layer[/* tickPhase */8],
+                                                    /* id */layer[/* id */9]
                                                   ]);
                                       }), opts$1[/* displacementMap */1], /* array */[])));
                       } else {
@@ -276,7 +293,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                 /* rotation */layer[/* rotation */4],
                                                 /* transformMatrix */layer[/* transformMatrix */5],
                                                 /* filters */layer[/* filters */6],
-                                                /* id */layer[/* id */7]
+                                                /* tickPeriod */layer[/* tickPeriod */7],
+                                                /* tickPhase */layer[/* tickPhase */8],
+                                                /* id */layer[/* id */9]
                                               ]);
                                   }), opts$2[/* sourceLayer */0], /* array */[]));
                       }
@@ -292,7 +311,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                   /* rotation */layer[/* rotation */4],
                                                   /* transformMatrix */layer[/* transformMatrix */5],
                                                   /* filters */layer[/* filters */6],
-                                                  /* id */layer[/* id */7]
+                                                  /* tickPeriod */layer[/* tickPeriod */7],
+                                                  /* tickPhase */layer[/* tickPhase */8],
+                                                  /* id */layer[/* id */9]
                                                 ]);
                                     }), /* array */[])));
                       break;
@@ -325,7 +346,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                             /* rotation */layer[/* rotation */4],
                                             /* transformMatrix */layer[/* transformMatrix */5],
                                             /* filters */layer[/* filters */6],
-                                            /* id */layer[/* id */7]
+                                            /* tickPeriod */layer[/* tickPeriod */7],
+                                            /* tickPhase */layer[/* tickPhase */8],
+                                            /* id */layer[/* id */9]
                                           ]);
                               }), /* array */[])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, CompositeOperationSelect$Gayer.make(layer[/* compositeOperation */3], (function (newOperation) {
                                           return Curry._2(changeLayer, layer, /* record */[
@@ -336,7 +359,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                       /* rotation */layer[/* rotation */4],
                                                       /* transformMatrix */layer[/* transformMatrix */5],
                                                       /* filters */layer[/* filters */6],
-                                                      /* id */layer[/* id */7]
+                                                      /* tickPeriod */layer[/* tickPeriod */7],
+                                                      /* tickPhase */layer[/* tickPhase */8],
+                                                      /* id */layer[/* id */9]
                                                     ]);
                                         }), /* array */[]))])), ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
                               React.createElement("div", {
@@ -393,9 +418,57 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                                           /* rotation */layer[/* rotation */4],
                                                                                                           /* transformMatrix */layer[/* transformMatrix */5],
                                                                                                           /* filters */layer[/* filters */6],
-                                                                                                          /* id */layer[/* id */7]
+                                                                                                          /* tickPeriod */layer[/* tickPeriod */7],
+                                                                                                          /* tickPhase */layer[/* tickPhase */8],
+                                                                                                          /* id */layer[/* id */9]
                                                                                                         ]);
                                                                                             }), undefined, "enabled", undefined, undefined, /* array */[]))), undefined, undefined, "Active (include in render)", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                            ReasonReact.element(undefined, undefined, MaterialUi_FormGroup.make(undefined, true, undefined, undefined, /* array */[
+                                                                      React.createElement("div", {
+                                                                            style: {
+                                                                              width: "45%"
+                                                                            }
+                                                                          }, ReasonReact.element(undefined, undefined, MaterialUi_TextField.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "fire every N ticks", /* Normal */-453122489, undefined, undefined, undefined, (function (evt) {
+                                                                                      var value = evt.target.value;
+                                                                                      return Curry._2(changeLayer, layer, /* record */[
+                                                                                                  /* content */layer[/* content */0],
+                                                                                                  /* enabled */layer[/* enabled */1],
+                                                                                                  /* alpha */layer[/* alpha */2],
+                                                                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                                  /* rotation */layer[/* rotation */4],
+                                                                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                                                                  /* filters */layer[/* filters */6],
+                                                                                                  /* tickPeriod */Caml_format.caml_int_of_string(value),
+                                                                                                  /* tickPhase */layer[/* tickPhase */8],
+                                                                                                  /* id */layer[/* id */9]
+                                                                                                ]);
+                                                                                    }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, "number", /* `Int */[
+                                                                                    3654863,
+                                                                                    layer[/* tickPeriod */7]
+                                                                                  ], undefined, /* array */[]))),
+                                                                      React.createElement("div", {
+                                                                            style: {
+                                                                              width: "45%"
+                                                                            }
+                                                                          }, ReasonReact.element(undefined, undefined, MaterialUi_TextField.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "adjust tick phase", /* Normal */-453122489, undefined, undefined, undefined, (function (evt) {
+                                                                                      var value = evt.target.value;
+                                                                                      return Curry._2(changeLayer, layer, /* record */[
+                                                                                                  /* content */layer[/* content */0],
+                                                                                                  /* enabled */layer[/* enabled */1],
+                                                                                                  /* alpha */layer[/* alpha */2],
+                                                                                                  /* compositeOperation */layer[/* compositeOperation */3],
+                                                                                                  /* rotation */layer[/* rotation */4],
+                                                                                                  /* transformMatrix */layer[/* transformMatrix */5],
+                                                                                                  /* filters */layer[/* filters */6],
+                                                                                                  /* tickPeriod */layer[/* tickPeriod */7],
+                                                                                                  /* tickPhase */Caml_format.caml_int_of_string(value),
+                                                                                                  /* id */layer[/* id */9]
+                                                                                                ]);
+                                                                                    }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, "number", /* `Int */[
+                                                                                    3654863,
+                                                                                    layer[/* tickPhase */8]
+                                                                                  ], undefined, /* array */[])))
+                                                                    ])),
                                                             ReasonReact.element(undefined, undefined, TransformMatrixSettings$Gayer.make(layer, changeLayer, /* array */[])),
                                                             ReasonReact.element(undefined, undefined, NumericTextField$Gayer.make(/* `Float */[
                                                                       365180284,
@@ -409,7 +482,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                     /* rotation */Canvas$Gayer.degreesToRadians(value),
                                                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                                                     /* filters */layer[/* filters */6],
-                                                                                    /* id */layer[/* id */7]
+                                                                                    /* tickPeriod */layer[/* tickPeriod */7],
+                                                                                    /* tickPhase */layer[/* tickPhase */8],
+                                                                                    /* id */layer[/* id */9]
                                                                                   ]);
                                                                       }), undefined, undefined, /* array */[]))
                                                           ])),
@@ -429,7 +504,9 @@ function make(layer, layerKeys, layerRefs, onSetRef, saveTick, changeLayer, save
                                                                                     /* rotation */layer[/* rotation */4],
                                                                                     /* transformMatrix */layer[/* transformMatrix */5],
                                                                                     /* filters */value,
-                                                                                    /* id */layer[/* id */7]
+                                                                                    /* tickPeriod */layer[/* tickPeriod */7],
+                                                                                    /* tickPhase */layer[/* tickPhase */8],
+                                                                                    /* id */layer[/* id */9]
                                                                                   ]);
                                                                       }), undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* `String */[
                                                                       -976970511,

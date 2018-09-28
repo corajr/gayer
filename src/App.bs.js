@@ -291,9 +291,12 @@ function drawLayer(ctx, width, height, state, layer) {
   ctx.rotate(layer[/* rotation */4]);
   ctx.filter = layer[/* filters */6];
   var layerKey = Layer$Gayer.getLayerKey(layer);
-  var match = Belt_MapString.get(state[/* tickFunctions */25][0], layerKey);
-  if (match !== undefined) {
-    Curry._1(match, state[/* tickCounter */26][0]);
+  if (Caml_int32.mod_(state[/* tickCounter */26][0], layer[/* tickPeriod */7]) === layer[/* tickPhase */8]) {
+    var match = Belt_MapString.get(state[/* tickFunctions */25][0], layerKey);
+    if (match !== undefined) {
+      Curry._1(match, state[/* tickCounter */26][0]);
+    }
+    
   }
   var maybeLayerRef = Belt_MapString.get(state[/* layerRefs */18][0], layerKey);
   window.performance.mark(layerKey + "start");
@@ -803,11 +806,11 @@ function make($staropt$star, _) {
                                                             }, ReasonReact.element(undefined, undefined, MaterialUi_List.make(undefined, /* `String */[
                                                                       -976970511,
                                                                       "nav"
-                                                                    ], undefined, undefined, undefined, undefined, undefined, /* array */[$$Array.map((function (param) {
+                                                                    ], undefined, undefined, undefined, undefined, undefined, /* array */[$$Array.mapi((function (i, param) {
                                                                               var preset = param[1];
                                                                               var name = param[0];
                                                                               return ReasonReact.element(name, undefined, MaterialUi_ListItem.make(true, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, (function () {
-                                                                                                return Routes$Gayer.pushParamsState(undefined, preset);
+                                                                                                return Routes$Gayer.pushParamsState(Js_primitive.some(i), preset);
                                                                                               }), undefined, undefined, /* array */[ReasonReact.element(undefined, undefined, MaterialUi_ListItemText.make(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, /* array */[name]))]));
                                                                             }), $$Array.of_list(Presets$Gayer.presets))])))
                                                       ]));

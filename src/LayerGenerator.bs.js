@@ -17,7 +17,9 @@ function img(url) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -30,7 +32,9 @@ function video(url) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -48,7 +52,11 @@ var reader_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatri
 
 var reader_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var reader_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var reader_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var reader_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var reader_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var reader = /* record */[
   reader_000,
@@ -58,7 +66,9 @@ var reader = /* record */[
   reader_004,
   reader_005,
   reader_006,
-  reader_007
+  reader_007,
+  reader_008,
+  reader_009
 ];
 
 var saturationReader_000 = /* content : Reader */Block.__(14, [/* Saturation */0]);
@@ -75,7 +85,11 @@ var saturationReader_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* tran
 
 var saturationReader_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var saturationReader_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var saturationReader_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var saturationReader_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var saturationReader_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var saturationReader = /* record */[
   saturationReader_000,
@@ -85,7 +99,9 @@ var saturationReader = /* record */[
   saturationReader_004,
   saturationReader_005,
   saturationReader_006,
-  saturationReader_007
+  saturationReader_007,
+  saturationReader_008,
+  saturationReader_009
 ];
 
 var keycodeReader_000 = /* content : KeycodeReader */Block.__(9, [/* AsciiAsHeight */0]);
@@ -102,7 +118,11 @@ var keycodeReader_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transfo
 
 var keycodeReader_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var keycodeReader_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var keycodeReader_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var keycodeReader_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var keycodeReader_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var keycodeReader = /* record */[
   keycodeReader_000,
@@ -112,7 +132,9 @@ var keycodeReader = /* record */[
   keycodeReader_004,
   keycodeReader_005,
   keycodeReader_006,
-  keycodeReader_007
+  keycodeReader_007,
+  keycodeReader_008,
+  keycodeReader_009
 ];
 
 var keycodeWriter_000 = /* content : KeycodeWriter */Block.__(10, [/* AsciiAsHeight */0]);
@@ -129,7 +151,11 @@ var keycodeWriter_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transfo
 
 var keycodeWriter_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var keycodeWriter_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var keycodeWriter_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var keycodeWriter_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var keycodeWriter_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var keycodeWriter = /* record */[
   keycodeWriter_000,
@@ -139,7 +165,9 @@ var keycodeWriter = /* record */[
   keycodeWriter_004,
   keycodeWriter_005,
   keycodeWriter_006,
-  keycodeWriter_007
+  keycodeWriter_007,
+  keycodeWriter_008,
+  keycodeWriter_009
 ];
 
 var histogram_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
@@ -150,7 +178,11 @@ var histogram_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMa
 
 var histogram_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var histogram_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var histogram_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var histogram_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var histogram_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var histogram = /* record */[
   /* content : Histogram */3,
@@ -160,7 +192,9 @@ var histogram = /* record */[
   histogram_004,
   histogram_005,
   histogram_006,
-  histogram_007
+  histogram_007,
+  histogram_008,
+  histogram_009
 ];
 
 var rawAudioFormat = /* record */[
@@ -186,7 +220,11 @@ var rawAudioWriter_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transf
 
 var rawAudioWriter_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var rawAudioWriter_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var rawAudioWriter_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var rawAudioWriter_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var rawAudioWriter_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var rawAudioWriter = /* record */[
   rawAudioWriter_000,
@@ -196,7 +234,9 @@ var rawAudioWriter = /* record */[
   rawAudioWriter_004,
   rawAudioWriter_005,
   rawAudioWriter_006,
-  rawAudioWriter_007
+  rawAudioWriter_007,
+  rawAudioWriter_008,
+  rawAudioWriter_009
 ];
 
 var rawAudioReader_000 = /* content : RawAudioReader */Block.__(12, [rawAudioFormat]);
@@ -213,7 +253,11 @@ var rawAudioReader_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transf
 
 var rawAudioReader_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var rawAudioReader_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var rawAudioReader_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var rawAudioReader_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var rawAudioReader_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var rawAudioReader = /* record */[
   rawAudioReader_000,
@@ -223,7 +267,9 @@ var rawAudioReader = /* record */[
   rawAudioReader_004,
   rawAudioReader_005,
   rawAudioReader_006,
-  rawAudioReader_007
+  rawAudioReader_007,
+  rawAudioReader_008,
+  rawAudioReader_009
 ];
 
 function pitchFilter(pc) {
@@ -235,7 +281,9 @@ function pitchFilter(pc) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -249,7 +297,9 @@ function fill($staropt$star, fillStyle) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -263,7 +313,9 @@ function drawGlobal($staropt$star, cmds) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -277,7 +329,9 @@ function draw($staropt$star, cmds) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -337,7 +391,9 @@ function sobel(key) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -353,7 +409,9 @@ function displace(source, displace$1) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -375,7 +433,9 @@ function analyzer($staropt$star, $staropt$star$1, input) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -391,7 +451,11 @@ var webcam_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatri
 
 var webcam_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var webcam_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var webcam_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var webcam_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var webcam_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var webcam = /* record */[
   /* content : Webcam */1,
@@ -401,7 +465,9 @@ var webcam = /* record */[
   webcam_004,
   webcam_005,
   webcam_006,
-  webcam_007
+  webcam_007,
+  webcam_008,
+  webcam_009
 ];
 
 function slitscan($staropt$star, sourceLayerKey) {
@@ -422,7 +488,9 @@ function slitscan($staropt$star, sourceLayerKey) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -492,7 +560,9 @@ var harmony_000 = /* record */[
     /* verticalMoving */48.0
   ],
   /* filters */"blur(2px)",
-  /* id */init[/* id */7]
+  /* tickPeriod */init[/* tickPeriod */7],
+  /* tickPhase */init[/* tickPhase */8],
+  /* id */init[/* id */9]
 ];
 
 var harmony_001 = /* :: */[
@@ -506,7 +576,9 @@ var harmony_001 = /* :: */[
       /* rotation */init$1[/* rotation */4],
       /* transformMatrix */init$1[/* transformMatrix */5],
       /* filters */init$1[/* filters */6],
-      /* id */init$1[/* id */7]
+      /* tickPeriod */init$1[/* tickPeriod */7],
+      /* tickPhase */init$1[/* tickPhase */8],
+      /* id */init$1[/* id */9]
     ],
     /* :: */[
       pitchFilter(Music$Gayer.cSharpMajor),
@@ -574,7 +646,11 @@ var blurLayer_004 = /* rotation */init$2[/* rotation */4];
 
 var blurLayer_005 = /* transformMatrix */init$2[/* transformMatrix */5];
 
-var blurLayer_007 = /* id */init$2[/* id */7];
+var blurLayer_007 = /* tickPeriod */init$2[/* tickPeriod */7];
+
+var blurLayer_008 = /* tickPhase */init$2[/* tickPhase */8];
+
+var blurLayer_009 = /* id */init$2[/* id */9];
 
 var blurLayer = /* record */[
   blurLayer_000,
@@ -584,7 +660,9 @@ var blurLayer = /* record */[
   blurLayer_004,
   blurLayer_005,
   /* filters */"blur(2px)",
-  blurLayer_007
+  blurLayer_007,
+  blurLayer_008,
+  blurLayer_009
 ];
 
 var init$3 = drawGlobal(undefined, /* :: */[
@@ -622,7 +700,11 @@ var squareColumnLayer_005 = /* transformMatrix */init$3[/* transformMatrix */5];
 
 var squareColumnLayer_006 = /* filters */init$3[/* filters */6];
 
-var squareColumnLayer_007 = /* id */init$3[/* id */7];
+var squareColumnLayer_007 = /* tickPeriod */init$3[/* tickPeriod */7];
+
+var squareColumnLayer_008 = /* tickPhase */init$3[/* tickPhase */8];
+
+var squareColumnLayer_009 = /* id */init$3[/* id */9];
 
 var squareColumnLayer = /* record */[
   squareColumnLayer_000,
@@ -632,7 +714,9 @@ var squareColumnLayer = /* record */[
   squareColumnLayer_004,
   squareColumnLayer_005,
   squareColumnLayer_006,
-  squareColumnLayer_007
+  squareColumnLayer_007,
+  squareColumnLayer_008,
+  squareColumnLayer_009
 ];
 
 var squareLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
@@ -658,7 +742,11 @@ var squareLayer_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transform
 
 var squareLayer_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var squareLayer_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var squareLayer_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var squareLayer_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var squareLayer_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var squareLayer = /* record */[
   squareLayer_000,
@@ -668,7 +756,9 @@ var squareLayer = /* record */[
   squareLayer_004,
   squareLayer_005,
   squareLayer_006,
-  squareLayer_007
+  squareLayer_007,
+  squareLayer_008,
+  squareLayer_009
 ];
 
 function singleNoteDrawCommands() {
@@ -695,7 +785,9 @@ function singleNoteLayer(note) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
@@ -724,7 +816,11 @@ var historyLayer_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transfor
 
 var historyLayer_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var historyLayer_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var historyLayer_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var historyLayer_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var historyLayer_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var historyLayer = /* record */[
   historyLayer_000,
@@ -734,7 +830,9 @@ var historyLayer = /* record */[
   historyLayer_004,
   historyLayer_005,
   historyLayer_006,
-  historyLayer_007
+  historyLayer_007,
+  historyLayer_008,
+  historyLayer_009
 ];
 
 var historyBackAndForthLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
@@ -806,7 +904,11 @@ var historyBackAndForthLayer_005 = /* transformMatrix */Layer$Gayer.defaultLayer
 
 var historyBackAndForthLayer_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var historyBackAndForthLayer_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var historyBackAndForthLayer_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var historyBackAndForthLayer_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var historyBackAndForthLayer_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var historyBackAndForthLayer = /* record */[
   historyBackAndForthLayer_000,
@@ -816,10 +918,12 @@ var historyBackAndForthLayer = /* record */[
   historyBackAndForthLayer_004,
   historyBackAndForthLayer_005,
   historyBackAndForthLayer_006,
-  historyBackAndForthLayer_007
+  historyBackAndForthLayer_007,
+  historyBackAndForthLayer_008,
+  historyBackAndForthLayer_009
 ];
 
-var drosteLayer_000 = /* content : Draw */Block.__(1, [/* :: */[
+var drosteLayer_000 = /* content : DrawGlobal */Block.__(2, [/* :: */[
       /* DrawImage */Block.__(10, [
           /* Self */0,
           /* record */[
@@ -850,7 +954,11 @@ var drosteLayer_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transform
 
 var drosteLayer_006 = /* filters */"hue-rotate(" + ((1.0 / 30.0 * (5.0 / 6.0)).toString() + "turn)");
 
-var drosteLayer_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var drosteLayer_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var drosteLayer_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var drosteLayer_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var drosteLayer = /* record */[
   drosteLayer_000,
@@ -860,7 +968,9 @@ var drosteLayer = /* record */[
   drosteLayer_004,
   drosteLayer_005,
   drosteLayer_006,
-  drosteLayer_007
+  drosteLayer_007,
+  drosteLayer_008,
+  drosteLayer_009
 ];
 
 var midiKeyboard_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
@@ -875,7 +985,11 @@ var midiKeyboard_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transfor
 
 var midiKeyboard_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var midiKeyboard_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var midiKeyboard_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var midiKeyboard_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var midiKeyboard_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var midiKeyboard = /* record */[
   /* content : MIDIKeyboard */2,
@@ -885,7 +999,9 @@ var midiKeyboard = /* record */[
   midiKeyboard_004,
   midiKeyboard_005,
   midiKeyboard_006,
-  midiKeyboard_007
+  midiKeyboard_007,
+  midiKeyboard_008,
+  midiKeyboard_009
 ];
 
 var midiColors_000 = /* content : Draw */Block.__(1, [MIDICanvas$Gayer.makeNoteColors(MIDICanvas$Gayer.oneRainbow)]);
@@ -900,7 +1016,11 @@ var midiColors_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformM
 
 var midiColors_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var midiColors_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var midiColors_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var midiColors_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var midiColors_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var midiColors = /* record */[
   midiColors_000,
@@ -910,7 +1030,9 @@ var midiColors = /* record */[
   midiColors_004,
   midiColors_005,
   midiColors_006,
-  midiColors_007
+  midiColors_007,
+  midiColors_008,
+  midiColors_009
 ];
 
 var handDrawn_001 = /* enabled */Layer$Gayer.defaultLayer[/* enabled */1];
@@ -925,7 +1047,11 @@ var handDrawn_005 = /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMa
 
 var handDrawn_006 = /* filters */Layer$Gayer.defaultLayer[/* filters */6];
 
-var handDrawn_007 = /* id */Layer$Gayer.defaultLayer[/* id */7];
+var handDrawn_007 = /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7];
+
+var handDrawn_008 = /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8];
+
+var handDrawn_009 = /* id */Layer$Gayer.defaultLayer[/* id */9];
 
 var handDrawn = /* record */[
   /* content : HandDrawn */0,
@@ -935,7 +1061,9 @@ var handDrawn = /* record */[
   handDrawn_004,
   handDrawn_005,
   handDrawn_006,
-  handDrawn_007
+  handDrawn_007,
+  handDrawn_008,
+  handDrawn_009
 ];
 
 function text(s) {
@@ -947,14 +1075,16 @@ function text(s) {
           /* rotation */Layer$Gayer.defaultLayer[/* rotation */4],
           /* transformMatrix */Layer$Gayer.defaultLayer[/* transformMatrix */5],
           /* filters */Layer$Gayer.defaultLayer[/* filters */6],
-          /* id */Layer$Gayer.defaultLayer[/* id */7]
+          /* tickPeriod */Layer$Gayer.defaultLayer[/* tickPeriod */7],
+          /* tickPhase */Layer$Gayer.defaultLayer[/* tickPhase */8],
+          /* id */Layer$Gayer.defaultLayer[/* id */9]
         ];
 }
 
 var idCounter = /* record */[/* contents */0];
 
 function maybeAddId(layer) {
-  var match = layer[/* id */7];
+  var match = layer[/* id */9];
   if (match !== undefined) {
     return layer;
   } else {
@@ -968,6 +1098,8 @@ function maybeAddId(layer) {
             /* rotation */layer[/* rotation */4],
             /* transformMatrix */layer[/* transformMatrix */5],
             /* filters */layer[/* filters */6],
+            /* tickPeriod */layer[/* tickPeriod */7],
+            /* tickPhase */layer[/* tickPhase */8],
             /* id */Layer$Gayer.string_type_of_layerContent(layer[/* content */0]) + ("-" + String(nextId))
           ];
   }
@@ -1015,8 +1147,19 @@ var allLayerTypes = /* array */[
     keycodeWriter
   ],
   /* tuple */[
-    "keyboard display",
-    keycodeReader
+    "keycode display",
+    /* record */[
+      /* content : KeycodeReader */Block.__(9, [/* AsciiAsHeight */0]),
+      keycodeReader_001,
+      keycodeReader_002,
+      keycodeReader_003,
+      keycodeReader_004,
+      keycodeReader_005,
+      keycodeReader_006,
+      /* tickPeriod */5,
+      keycodeReader_008,
+      keycodeReader_009
+    ]
   ],
   /* tuple */[
     "drawGlobal (commands)",

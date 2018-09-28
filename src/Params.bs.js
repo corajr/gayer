@@ -482,7 +482,7 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                         ]
                                                       ]);
                                           }), /* array */[])))), ReasonReact.element(undefined, undefined, Container$Gayer.make(List.map((function (layer) {
-                                        var match = layer[/* id */7];
+                                        var match = layer[/* id */9];
                                         var id = "card" + (
                                           match !== undefined ? match : String(Hashtbl.hash(layer))
                                         );
