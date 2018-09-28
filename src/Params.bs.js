@@ -233,6 +233,44 @@ function make(params, onMoveCard, onSetRef, layerRefs, onChangeLayer, onSetParam
                                                                                                             /* layers */params[/* layers */14]
                                                                                                           ]);
                                                                                               }), undefined, "shouldClear", undefined, undefined, /* array */[]))), undefined, undefined, "Clear between frames", undefined, undefined, undefined, undefined, undefined, /* array */[]))])),
+                                                              ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(120, 720, undefined, "Width", params[/* width */0], 120, (function (width) {
+                                                                          return Curry._1(onSetParams, /* record */[
+                                                                                      /* width */width,
+                                                                                      /* height */params[/* height */1],
+                                                                                      /* readPosDelta */params[/* readPosDelta */2],
+                                                                                      /* writePosDelta */params[/* writePosDelta */3],
+                                                                                      /* readPosOffset */params[/* readPosOffset */4],
+                                                                                      /* writePosOffset */params[/* writePosOffset */5],
+                                                                                      /* millisPerTick */params[/* millisPerTick */6],
+                                                                                      /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                      /* inputGain */params[/* inputGain */8],
+                                                                                      /* outputGain */params[/* outputGain */9],
+                                                                                      /* q */params[/* q */10],
+                                                                                      /* transpose */params[/* transpose */11],
+                                                                                      /* stereo */params[/* stereo */12],
+                                                                                      /* shouldClear */params[/* shouldClear */13],
+                                                                                      /* layers */params[/* layers */14]
+                                                                                    ]);
+                                                                        }), /* array */[])),
+                                                              ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(120, 720, undefined, "Height", params[/* height */1], 120, (function (height) {
+                                                                          return Curry._1(onSetParams, /* record */[
+                                                                                      /* width */params[/* width */0],
+                                                                                      /* height */height,
+                                                                                      /* readPosDelta */params[/* readPosDelta */2],
+                                                                                      /* writePosDelta */params[/* writePosDelta */3],
+                                                                                      /* readPosOffset */params[/* readPosOffset */4],
+                                                                                      /* writePosOffset */params[/* writePosOffset */5],
+                                                                                      /* millisPerTick */params[/* millisPerTick */6],
+                                                                                      /* audioInputSetting */params[/* audioInputSetting */7],
+                                                                                      /* inputGain */params[/* inputGain */8],
+                                                                                      /* outputGain */params[/* outputGain */9],
+                                                                                      /* q */params[/* q */10],
+                                                                                      /* transpose */params[/* transpose */11],
+                                                                                      /* stereo */params[/* stereo */12],
+                                                                                      /* shouldClear */params[/* shouldClear */13],
+                                                                                      /* layers */params[/* layers */14]
+                                                                                    ]);
+                                                                        }), /* array */[])),
                                                               ReasonReact.element(undefined, undefined, IntSlider$Gayer.make(0, params[/* width */0] - 1 | 0, undefined, "Read position offset", params[/* readPosOffset */4], 1, (function (readPosOffset) {
                                                                           return Curry._1(onSetParams, /* record */[
                                                                                       /* width */params[/* width */0],
