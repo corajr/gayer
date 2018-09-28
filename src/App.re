@@ -36,6 +36,7 @@ type state = {
   oscillatorBank: ref(option(bank(oscillator))),
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
+  masterGain: ref(option(gainNode)),
   merger: ref(option(channelMerger)),
   currentFilterValues: ref(option(filterValues)),
   layerRefs: ref(Belt.Map.String.t(Dom.element)),
@@ -71,6 +72,7 @@ let defaultState = () => {
     filterBanks: None,
     currentFilterValues: ref(None),
     compressor: ref(None),
+    masterGain: ref(None),
     merger: ref(None),
     savedImages: Belt.Map.String.empty,
     layerRefs,
@@ -717,7 +719,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     let compressor =
       makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
 
+    let masterGain = createGain(audioCtx);
+
     self.state.compressor := Some(compressor);
+    self.state.masterGain := Some(masterGain);
+    setValueAtTime(masterGain |. gain_Get, currentTime(audioCtx), 0.5);
 
     let noise = pinkNoise(audioCtx);
     self.send(SetFilterInput(noise));
@@ -726,9 +732,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
       self.state.audioGraph^
       |> addNode(("merger", unwrapChannelMerger(merger)))
       |> addNode(("compressor", unwrapCompressor(compressor)))
+      |> addNode(("masterGain", unwrapGain(masterGain)))
       |> addNode(("sink", defaultSink(audioCtx)))
       |> addEdge(("merger", "compressor", 0, 0))
-      |> addEdge(("compressor", "sink", 0, 0))
+      |> addEdge(("compressor", "masterGain", 0, 0))
+      |> addEdge(("masterGain", "sink", 0, 0))
       |> updateConnections;
 
     generateNewFilterBanks(audioCtx, self);

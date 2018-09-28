@@ -257,7 +257,16 @@ let histogram = {
   layers: [hubble, pitchFilter(cMajor), histogram],
 };
 
-let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
+let rawAudio = {
+  ...defaultParams,
+  millisPerTick: 92,
+  layers: [
+    webcam,
+    {...fill("cyan"), compositeOperation: Multiply},
+    {...rawAudioWriter, compositeOperation: Lighter},
+    rawAudioReader,
+  ],
+};
 
 let rawAudioAndSpacy = {
   ...defaultParams,
@@ -309,6 +318,18 @@ let displaceParams = {
   ],
 };
 
+let rawAudioWarning = {
+  ...defaultParams,
+  layers: [
+    text(
+      "WARNING! The next mode has a high potential for audio feedback.\n"
+      ++ "Please lower your volume before continuing.",
+    ),
+    fill("red"),
+    drawText("WARNING!", ~color="black"),
+  ],
+};
+
 let presetsWithoutLayerIds = [
   ("Welcome", welcome),
   ("Single note", singleNote),
@@ -334,6 +355,7 @@ let presetsWithoutLayerIds = [
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
   /* ("Mic feedback (may be loud!)", feedback), */
+  ("Raw Audio Warning", rawAudioWarning),
   ("Raw audio (can feedback!)", rawAudio),
   /* ("Raw audio and spacy", rawAudioAndSpacy), */
   ("Empty", {...defaultParams, layers: []}),
