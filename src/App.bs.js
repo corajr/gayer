@@ -30,6 +30,7 @@ import * as MaterialUi_List from "@jsiebern/bs-material-ui/src/MaterialUi_List.b
 import * as RList$Rationale from "rationale/src/RList.js";
 import * as UserMedia$Gayer from "./UserMedia.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 import * as MaterialUi_AppBar from "@jsiebern/bs-material-ui/src/MaterialUi_AppBar.bs.js";
 import * as MaterialUi_Button from "@jsiebern/bs-material-ui/src/MaterialUi_Button.bs.js";
 import * as MaterialUi_Drawer from "@jsiebern/bs-material-ui/src/MaterialUi_Drawer.bs.js";
@@ -332,7 +333,7 @@ function drawLayer(ctx, width, height, state, layer) {
           ctx.fillRect(0, 0, width, height);
           break;
       case 2 : 
-          Canvas$Gayer.DrawCommand[/* drawCommands */7](state[/* drawContext */23], match$1[0]);
+          DrawCommand$Gayer.drawCommands(state[/* drawContext */23], match$1[0]);
           break;
       case 7 : 
           if (maybeLayerRef !== undefined) {
@@ -350,8 +351,8 @@ function drawLayer(ctx, width, height, state, layer) {
                     break;
                 case 2 : 
                     var match$3 = analysisSize[0];
-                    var analysisX = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */23], match$3[/* x */0]);
-                    var analysisY = Canvas$Gayer.DrawCommand[/* getLength */3](state[/* drawContext */23], match$3[/* y */1]);
+                    var analysisX = DrawCommand$Gayer.getLength(state[/* drawContext */23], match$3[/* x */0]);
+                    var analysisY = DrawCommand$Gayer.getLength(state[/* drawContext */23], match$3[/* y */1]);
                     ctx.drawImage(analysisCanvas, analysisX, analysisY);
                     break;
                 

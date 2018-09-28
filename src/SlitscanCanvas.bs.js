@@ -6,6 +6,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 
 function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
   var state = param[/* state */1];
@@ -47,44 +48,44 @@ function onTick(opts, globalDrawContext, layerRefs, writePos, _, _$1, param) {
       /* variables */Belt_MapString.empty
     ];
   }
-  var sourceRect_000 = /* x */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* x */0]);
-  var sourceRect_001 = /* y */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* y */1]);
-  var sourceRect_002 = /* w */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* w */2]);
-  var sourceRect_003 = /* h */Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceRect */1][/* h */3]);
+  var sourceRect_000 = /* x */DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceRect */1][/* x */0]);
+  var sourceRect_001 = /* y */DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceRect */1][/* y */1]);
+  var sourceRect_002 = /* w */DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceRect */1][/* w */2]);
+  var sourceRect_003 = /* h */DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceRect */1][/* h */3]);
   var sourceRect = /* record */[
     sourceRect_000,
     sourceRect_001,
     sourceRect_002,
     sourceRect_003
   ];
-  var sourceWidth = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, /* Width */0);
-  var sourceHeight = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, /* Height */1);
+  var sourceWidth = DrawCommand$Gayer.getLength(sourceDrawContext, /* Width */0);
+  var sourceHeight = DrawCommand$Gayer.getLength(sourceDrawContext, /* Height */1);
   var match$1 = opts[/* destRect */2];
   var destRect;
   if (match$1 !== undefined) {
     var destRect$1 = match$1;
     destRect = /* record */[
-      /* x */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* x */0]),
-      /* y */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* y */1]),
-      /* w */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* w */2]),
-      /* h */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, destRect$1[/* h */3])
+      /* x */DrawCommand$Gayer.getLength(globalDrawContext, destRect$1[/* x */0]),
+      /* y */DrawCommand$Gayer.getLength(globalDrawContext, destRect$1[/* y */1]),
+      /* w */DrawCommand$Gayer.getLength(globalDrawContext, destRect$1[/* w */2]),
+      /* h */DrawCommand$Gayer.getLength(globalDrawContext, destRect$1[/* h */3])
     ];
   } else {
     destRect = /* record */[
       /* x */0,
       /* y */0,
       /* w */1,
-      /* h */Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Height */1)
+      /* h */DrawCommand$Gayer.getLength(globalDrawContext, /* Height */1)
     ];
   }
-  Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Width */0);
-  var destHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, /* Height */1);
+  DrawCommand$Gayer.getLength(globalDrawContext, /* Width */0);
+  var destHeight = DrawCommand$Gayer.getLength(globalDrawContext, /* Height */1);
   state[/* sourceRectReal */1][0] = sourceRect;
-  state[/* sourceXDelta */3][0] = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceXDelta */3]);
-  state[/* sourceYDelta */4][0] = Canvas$Gayer.DrawCommand[/* getLength */3](sourceDrawContext, opts[/* sourceYDelta */4]);
+  state[/* sourceXDelta */3][0] = DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceXDelta */3]);
+  state[/* sourceYDelta */4][0] = DrawCommand$Gayer.getLength(sourceDrawContext, opts[/* sourceYDelta */4]);
   state[/* destRectReal */2][0] = destRect;
-  state[/* destXDelta */5][0] = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destXDelta */5]);
-  state[/* destYDelta */6][0] = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, opts[/* destYDelta */6]);
+  state[/* destXDelta */5][0] = DrawCommand$Gayer.getLength(globalDrawContext, opts[/* destXDelta */5]);
+  state[/* destYDelta */6][0] = DrawCommand$Gayer.getLength(globalDrawContext, opts[/* destYDelta */6]);
   return (function () {
       var match = state[/* canvasRef */0][0];
       var match$1 = Belt_MapString.get(layerRefs[0], opts[/* sourceLayerKey */0]);

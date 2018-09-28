@@ -1,5 +1,5 @@
 open Audio.AudioInput;
-open Canvas.DrawCommand;
+open DrawCommand;
 open ReaderType;
 
 type historyParams = {

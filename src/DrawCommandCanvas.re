@@ -1,5 +1,5 @@
 open Canvas;
-open Canvas.DrawCommand;
+open DrawCommand;
 
 type state = {drawContext};
 let component = ReasonReact.reducerComponent(__MODULE__);

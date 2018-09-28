@@ -51,7 +51,7 @@ let make =
           />
         | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
         | Analysis(options) =>
-          open Canvas.DrawCommand;
+          open DrawCommand;
           let (w, h) =
             switch (options.analysisSize) {
             | Slit => (Pixels(1), Height)

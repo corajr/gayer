@@ -4,10 +4,10 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as React from "react";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as VideoFile$Gayer from "./VideoFile.bs.js";
 import * as MIDICanvas$Gayer from "./MIDICanvas.bs.js";
 import * as ReglCanvas$Gayer from "./ReglCanvas.bs.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 import * as KeycodeCanvas$Gayer from "./KeycodeCanvas.bs.js";
 import * as AnalysisCanvas$Gayer from "./AnalysisCanvas.bs.js";
 import * as RawAudioCanvas$Gayer from "./RawAudioCanvas.bs.js";
@@ -105,8 +105,8 @@ function make(layerKey, audioCtx, audioGraph, layerRefs, setRef, saveTick, milli
                           match$3[/* h */1]
                         ];
                       }
-                      var analysisWidth = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[0]);
-                      var analysisHeight = Canvas$Gayer.DrawCommand[/* getLength */3](globalDrawContext, match$1[1]);
+                      var analysisWidth = DrawCommand$Gayer.getLength(globalDrawContext, match$1[0]);
+                      var analysisHeight = DrawCommand$Gayer.getLength(globalDrawContext, match$1[1]);
                       tmp = ReasonReact.element(undefined, undefined, AnalysisCanvas$Gayer.make(analysisWidth, analysisHeight, layerKey, audioCtx, audioGraph, writePos, options, millisPerTick, setRef, saveTick, /* array */[]));
                       break;
                   case 9 : 

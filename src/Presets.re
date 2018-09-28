@@ -1,5 +1,5 @@
 open Audio;
-open Canvas.DrawCommand;
+open DrawCommand;
 open Layer;
 open LayerGenerator;
 open Music;

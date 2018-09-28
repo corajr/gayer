@@ -11,6 +11,7 @@ import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 import * as KeycodeUtil$Gayer from "./KeycodeUtil.bs.js";
 import * as CameraOptions$Gayer from "./CameraOptions.bs.js";
 import * as AnalysisOptions$Gayer from "./AnalysisOptions.bs.js";
@@ -267,7 +268,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("opts", partial_arg, param);
                     }), json);
     case "draw" : 
-        var partial_arg$1 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* command */4];
+        var partial_arg$1 = DrawCommand$Gayer.DecodeDrawCommand[/* command */4];
         var partial_arg$2 = function (param) {
           return Json_decode.list(partial_arg$1, param);
         };
@@ -277,7 +278,7 @@ function layerByType(type_, json) {
                       return Json_decode.field("cmds", partial_arg$2, param);
                     }), json);
     case "draw-global" : 
-        var partial_arg$3 = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* command */4];
+        var partial_arg$3 = DrawCommand$Gayer.DecodeDrawCommand[/* command */4];
         var partial_arg$4 = function (param) {
           return Json_decode.list(partial_arg$3, param);
         };
@@ -569,7 +570,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "cmds",
-                          Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* command */3], r[0])
+                          Json_encode.list(DrawCommand$Gayer.EncodeDrawCommand[/* command */3], r[0])
                         ],
                         /* [] */0
                       ]
@@ -583,7 +584,7 @@ function layerContent$1(r) {
                       /* :: */[
                         /* tuple */[
                           "cmds",
-                          Json_encode.list(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* command */3], r[0])
+                          Json_encode.list(DrawCommand$Gayer.EncodeDrawCommand[/* command */3], r[0])
                         ],
                         /* [] */0
                       ]

@@ -5,8 +5,8 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as ReaderType$Gayer from "./ReaderType.bs.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 
 function string_of_analysisSize(param) {
   if (typeof param === "number") {
@@ -44,26 +44,26 @@ function analysisSize_of_string(param) {
 function analysisSizeByType(type_, json) {
   switch (type_) {
     case "circular-buffer" : 
-        return Canvas$Gayer.DrawCommand[/* field2 */0]((function (w, h) {
+        return DrawCommand$Gayer.field2((function (w, h) {
                       return /* CircularBuffer */Block.__(0, [/* record */[
                                   /* w */w,
                                   /* h */h
                                 ]]);
-                    }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
+                    }), "w", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], "h", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json);
     case "dest-rect" : 
-        var partial_arg = Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* rect */2];
+        var partial_arg = DrawCommand$Gayer.DecodeDrawCommand[/* rect */2];
         return Json_decode.map((function (r) {
                       return /* DestRect */Block.__(2, [r]);
                     }), (function (param) {
                       return Json_decode.field("rect", partial_arg, param);
                     }), json);
     case "history" : 
-        return Canvas$Gayer.DrawCommand[/* field2 */0]((function (w, h) {
+        return DrawCommand$Gayer.field2((function (w, h) {
                       return /* History */Block.__(1, [/* record */[
                                   /* w */w,
                                   /* h */h
                                 ]]);
-                    }), "w", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], "h", Canvas$Gayer.DrawCommand[/* DecodeDrawCommand */2][/* length */1], json);
+                    }), "w", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], "h", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json);
     case "slit" : 
         return /* Slit */0;
     default:
@@ -115,12 +115,12 @@ function analysisSize$1(param) {
                       /* :: */[
                         /* tuple */[
                           "w",
-                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* w */0])
+                          DrawCommand$Gayer.EncodeDrawCommand[/* length */1](match[/* w */0])
                         ],
                         /* :: */[
                           /* tuple */[
                             "h",
-                            Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match[/* h */1])
+                            DrawCommand$Gayer.EncodeDrawCommand[/* length */1](match[/* h */1])
                           ],
                           /* [] */0
                         ]
@@ -136,12 +136,12 @@ function analysisSize$1(param) {
                       /* :: */[
                         /* tuple */[
                           "w",
-                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* w */0])
+                          DrawCommand$Gayer.EncodeDrawCommand[/* length */1](match$1[/* w */0])
                         ],
                         /* :: */[
                           /* tuple */[
                             "h",
-                            Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* length */1], match$1[/* h */1])
+                            DrawCommand$Gayer.EncodeDrawCommand[/* length */1](match$1[/* h */1])
                           ],
                           /* [] */0
                         ]
@@ -156,7 +156,7 @@ function analysisSize$1(param) {
                       /* :: */[
                         /* tuple */[
                           "rect",
-                          Curry._1(Canvas$Gayer.DrawCommand[/* EncodeDrawCommand */1][/* rect */2], param[0])
+                          DrawCommand$Gayer.EncodeDrawCommand[/* rect */2](param[0])
                         ],
                         /* [] */0
                       ]

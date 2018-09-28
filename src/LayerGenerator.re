@@ -1,6 +1,6 @@
 open AnalysisOptions;
 open Audio.AudioInput;
-open Canvas.DrawCommand;
+open DrawCommand;
 open KeycodeUtil;
 open Layer;
 open Music;

@@ -1,4 +1,4 @@
-open Canvas.DrawCommand;
+open DrawCommand;
 
 type cameraOptions = {
   sourceLayerKey: string,
