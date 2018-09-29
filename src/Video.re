@@ -9,6 +9,8 @@ let attachVideoStream: (Dom.element, mediaStream) => canvasImageSource = [%bs.ra
 ];
 
 let unmute = [%bs.raw video => "video.muted = false;"];
+let getWidth = [%bs.raw video => "return video.width;"];
+let getHeight = [%bs.raw video => "return video.height;"];
 
 let component = ReasonReact.statelessComponent("Video");
 

@@ -6,7 +6,8 @@ type midiNoteAndVelocity = (noteNumber, velocity);
 
 type midiChannelEvent =
   | NoteOn(midiNoteAndVelocity)
-  | NoteOff(midiNoteAndVelocity);
+  | NoteOff(midiNoteAndVelocity)
+  | ControlChange((int, float));
 
 type midiEvent = midiChannelEvent;
 
@@ -20,4 +21,5 @@ let update: (midiState, midiEvent) => unit =
     | NoteOn((noteNumber, velocity)) =>
       midiState.notesOn[noteNumber] = velocity
     | NoteOff((noteNumber, _)) => midiState.notesOn[noteNumber] = 0.0
+    | ControlChange(_) => ()
     };

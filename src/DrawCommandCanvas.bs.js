@@ -4,13 +4,13 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as Belt_Option from "bs-platform/lib/es6/belt_Option.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
-import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 
 var component = ReasonReact.reducerComponent("DrawCommandCanvas-Gayer");
 
-function make(cmds, layerKey, _, setRef, saveTick, width, height, _$1) {
+function make(cmds, layerKey, layerRefs, setRef, saveTick, width, height, _) {
   var setCanvasRef = function (theRef, param) {
     var maybeCanvas = (theRef == null) ? undefined : Js_primitive.some(theRef);
     param[/* state */1][/* drawContext */0][/* maybeCtxRef */0][0] = Belt_Option.map(maybeCanvas, (function (x) {
@@ -25,7 +25,7 @@ function make(cmds, layerKey, _, setRef, saveTick, width, height, _$1) {
           /* willReceiveProps */component[/* willReceiveProps */3],
           /* didMount */(function (self) {
               return Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
-                            return Canvas$Gayer.DrawCommand[/* drawCommands */5](self[/* state */1][/* drawContext */0], cmds);
+                            return DrawCommand$Gayer.drawCommands(self[/* state */1][/* drawContext */0], cmds);
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
@@ -42,6 +42,7 @@ function make(cmds, layerKey, _, setRef, saveTick, width, height, _$1) {
           /* initialState */(function () {
               return /* record */[/* drawContext : record */[
                         /* maybeCtxRef : record */[/* contents */undefined],
+                        /* layerRefs */layerRefs,
                         /* width */width,
                         /* height */height,
                         /* variables */Belt_MapString.empty

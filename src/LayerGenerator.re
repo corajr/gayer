@@ -1,9 +1,11 @@
 open AnalysisOptions;
 open Audio.AudioInput;
-open Canvas.DrawCommand;
+open DrawCommand;
+open KeycodeUtil;
 open Layer;
 open Music;
 open RawAudio;
+open ReaderType;
 open Regl;
 
 /* ## Layer definitions */
@@ -14,6 +16,7 @@ open Regl;
 let defaultSize = Canvas.defaultSize;
 let defaultTransform = Canvas.defaultTransform;
 let tau = Canvas.tau;
+let degreesToRadians = Canvas.degreesToRadians;
 
 let img = url => {...defaultLayer, content: Image(url)};
 let video = url => {...defaultLayer, content: Video(url)};
@@ -22,9 +25,9 @@ let reader = {...defaultLayer, content: Reader(Channel(R))};
 
 let saturationReader = {...defaultLayer, content: Reader(Saturation)};
 
-let keycodeReader = {...defaultLayer, content: KeycodeReader};
+let keycodeReader = {...defaultLayer, content: KeycodeReader(AsciiAsHeight)};
 
-let keycodeWriter = {...defaultLayer, content: KeycodeWriter};
+let keycodeWriter = {...defaultLayer, content: KeycodeWriter(AsciiAsHeight)};
 
 let histogram = {
   ...defaultLayer,
@@ -37,7 +40,7 @@ let rawAudioFormat = {
   x: 0,
   y: 0,
   w: 64,
-  h: 32,
+  h: 64,
   encoding: Int8(R),
   sampleRate: 44100,
 };
@@ -75,7 +78,7 @@ type fillOrStroke =
   | Fill
   | Stroke;
 
-let text =
+let drawText =
     (
       ~x: length=Divide(Width, Constant(2)),
       ~y: length=Divide(Height, Constant(2)),
@@ -116,26 +119,22 @@ let displace = (source, displace) => {
     ),
 };
 
-let analyzer = (~includeHistory: bool=true, input: audioInputSetting) =>
-  if (includeHistory) {
-    {
-      ...defaultLayer,
-      content:
-        Analysis({
-          ...defaultAnalysisOptions,
-          input,
-          analysisSize: WithHistory({w: Width, h: Height}),
-        }),
-    };
-  } else {
-    {...defaultLayer, content: Analysis({...defaultAnalysisOptions, input})};
-  };
+let analyzer =
+    (
+      ~readerType: readerType=Channel(R),
+      ~analysisSize: analysisSize=History({w: Width, h: Height}),
+      input: audioInputSetting,
+    ) => {
+  ...defaultLayer,
+  content:
+    Analysis({...defaultAnalysisOptions, input, readerType, analysisSize}),
+};
 
 let webcam = {...defaultLayer, content: Webcam};
 
-let slitscan = {
+let slitscan = (~opts=CameraOptions.slitscanDefaults, sourceLayerKey: string) => {
   ...defaultLayer,
-  content: Slitscan({sourceLayerKey: "webcam", slitscan: StaticX(320)}),
+  content: Slitscan({...opts, sourceLayerKey}),
 };
 
 let hubble = img("media/hubble_ultra_deep_field.jpg");
@@ -177,13 +176,13 @@ let harmony = [
   reader,
 ];
 
-let rotateLayer =
+let rotateLayer = rotation =>
   drawGlobal([
-    Translate(Pixels(defaultSize / 2), Pixels(defaultSize / 2)),
-    Rotate(oneCompleteTurnAfterNTicks(defaultSize / 2)),
+    Translate(Divide(Width, Constant(2)), Divide(Height, Constant(2))),
+    Rotate(rotation),
     Translate(
-      Negate(Pixels(defaultSize / 2)),
-      Negate(Pixels(defaultSize / 2)),
+      Negate(Divide(Width, Constant(2))),
+      Negate(Divide(Width, Constant(2))),
     ),
     drawSelfFullScreen,
   ]);
@@ -280,7 +279,7 @@ let historyBackAndForthLayer = {
 let drosteLayer = {
   ...defaultLayer,
   content:
-    Draw([
+    DrawGlobal([
       DrawImage(
         Self,
         {
@@ -306,6 +305,8 @@ let midiColors = {
 
 let handDrawn = {...defaultLayer, content: HandDrawn};
 
+let text = s => {...defaultLayer, content: Text(s)};
+
 let idCounter = ref(0);
 
 let maybeAddId: layer => layer =
@@ -329,23 +330,25 @@ let maybeAddId: layer => layer =
 let allLayerTypes = [|
   ("image", hubble),
   ("analyzer", analyzer(Mic)),
+  ("pitch filter", pitchFilter(cMajor)),
   ("reader", reader),
   ("webcam", webcam),
-  ("slitscan", slitscan),
+  ("hue histogram", histogram),
+  ("slitscan", slitscan("root")),
   ("edge detect", sobel("root")),
-  ("displace", displace("root", "root")),
-  ("midi-keyboard", midiKeyboard),
+  ("displace map", displace("root", "root")),
+  ("midi keyboard", midiKeyboard),
   ("computer keyboard", keycodeWriter),
-  ("ASCII", keycodeReader),
-  ("mouse-drawGlobal", handDrawn),
+  ("keycode display", {...keycodeReader, tickPeriod: 5}),
   ("drawGlobal (commands)", drawGlobal([SetFillStyle("red")])),
-  ("fill", fill(~alpha=0.0125, "white")),
-  ("pitch filter", pitchFilter(cMajor)),
+  ("fill", {...fill(~alpha=0.0125, "red"), compositeOperation: Multiply}),
   ("blur", blurLayer),
-  ("rotate", rotateLayer),
+  ("rotate (1 deg)", rotateLayer(degreesToRadians(1.0))),
+  ("rotate (90 deg)", rotateLayer(degreesToRadians(90.0))),
   ("square values (column)", squareColumnLayer),
   ("square values (whole image)", squareLayer),
   ("raw-audio-writer", rawAudioWriter),
   ("raw-audio-reader", rawAudioReader),
   ("saturation reader", saturationReader),
+  ("mouse-draw (very slow :()", handDrawn),
 |];

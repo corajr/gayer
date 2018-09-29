@@ -2,6 +2,7 @@ open AnalysisOptions;
 open Audio.AudioInput;
 open CameraOptions;
 open Canvas;
+open KeycodeUtil;
 open MIDICanvas;
 open Music;
 open RawAudio;
@@ -12,6 +13,7 @@ type layerContent =
   | Fill(string)
   | Draw(list(DrawCommand.command))
   | DrawGlobal(list(DrawCommand.command))
+  | Text(string)
   | HandDrawn
   | Webcam
   | Slitscan(cameraOptions)
@@ -20,8 +22,8 @@ type layerContent =
   | Analysis(analysisOptions)
   | PitchClasses(PitchSet.t)
   | MIDIKeyboard
-  | KeycodeReader
-  | KeycodeWriter
+  | KeycodeReader(keycodeFormat)
+  | KeycodeWriter(keycodeFormat)
   | RawAudioWriter(rawAudioFormat)
   | RawAudioReader(rawAudioFormat)
   | Histogram
@@ -36,13 +38,14 @@ let readable_string_type_of_layerContent =
   | HandDrawn => "Mouse"
   | Webcam => "Webcam"
   | Slitscan(_) => "Slitscan"
+  | Text(_) => "Text"
   | Image(_) => "Image"
   | Video(_) => "Video"
   | Analysis(_) => "Analyzer"
   | PitchClasses(_) => "Pitch classes"
   | MIDIKeyboard => "MIDI Input"
-  | KeycodeReader => "ASCII Reader"
-  | KeycodeWriter => "ASCII Writer"
+  | KeycodeReader(_) => "Key Reader"
+  | KeycodeWriter(_) => "Key Writer"
   | RawAudioWriter(_) => "Raw Audio Writer"
   | RawAudioReader(_) => "Raw Audio Reader"
   | Histogram => "Histogram"
@@ -57,13 +60,14 @@ let string_type_of_layerContent =
   | HandDrawn => "mouse"
   | Webcam => "webcam"
   | Slitscan(_) => "slitscan"
+  | Text(_) => "text"
   | Image(_) => "image"
   | Video(_) => "video"
   | Analysis(_) => "analyzer"
   | PitchClasses(_) => "pitch-classes"
   | MIDIKeyboard => "midi-keyboard"
-  | KeycodeReader => "keycode-reader"
-  | KeycodeWriter => "keycode-writer"
+  | KeycodeReader(_) => "keycode-reader"
+  | KeycodeWriter(_) => "keycode-writer"
   | RawAudioWriter(_) => "raw-audio-writer"
   | RawAudioReader(_) => "raw-audio-reader"
   | Histogram => "histogram"
@@ -76,6 +80,7 @@ let icon_of_layerContent =
     | Fill(_) => <FormatPaint />
     | Draw(_) => <FormatListBulleted />
     | DrawGlobal(_) => <FormatListBulleted />
+    | Text(_) => <TextFields />
     | HandDrawn => <Brush />
     | Webcam => <Videocam />
     | Slitscan(_) => <Flip />
@@ -84,8 +89,8 @@ let icon_of_layerContent =
     | Analysis(_) => <Mic />
     | PitchClasses(_) => <Tonality />
     | MIDIKeyboard => <MusicNote />
-    | KeycodeReader => <Textsms />
-    | KeycodeWriter => <Keyboard />
+    | KeycodeReader(_) => <Textsms />
+    | KeycodeWriter(_) => <Keyboard />
     | RawAudioWriter(_) => <Voicemail />
     | RawAudioReader(_) => <Voicemail />
     | Histogram => <ShowChart />
@@ -101,6 +106,8 @@ type layer = {
   rotation,
   transformMatrix,
   filters: string,
+  tickPeriod: int,
+  tickPhase: int,
   id: option(string),
 };
 
@@ -112,6 +119,8 @@ let defaultLayer = {
   transformMatrix: defaultTransform,
   rotation: 0.0,
   filters: "none",
+  tickPeriod: 1,
+  tickPhase: 0,
   id: None,
 };
 
@@ -164,10 +173,22 @@ module DecodeLayer = {
     Json.Decode.(
       switch (type_) {
       | "midi-keyboard" => MIDIKeyboard
-      | "keycode-writer" => KeycodeWriter
-      | "keycode-reader" => KeycodeReader
       | "hand-drawn" => HandDrawn
       | "webcam" => Webcam
+      | "keycode-writer" =>
+        json
+        |> map(
+             o => KeycodeWriter(o),
+             field("fmt", DecodeKeycodeFormat.keycodeFormat),
+           )
+      | "keycode-reader" =>
+        json
+        |> map(
+             o => KeycodeReader(o),
+             field("fmt", DecodeKeycodeFormat.keycodeFormat),
+           )
+      | "text" => json |> map(t => Text(t), field("text", string))
+
       | "regl" =>
         json
         |> map(
@@ -237,6 +258,8 @@ module DecodeLayer = {
       content: json |> field("content", layerContent),
       enabled: json |> field("enabled", bool),
       alpha: json |> field("alpha", float),
+      tickPeriod: json |> field("tickPeriod", int),
+      tickPhase: json |> field("tickPhase", int),
       compositeOperation:
         json
         |> map(
@@ -306,6 +329,8 @@ module EncodeLayer = {
           ("type", string("slitscan")),
           ("options", EncodeCameraOptions.cameraOptions(s)),
         ])
+      | Text(s) =>
+        object_([("type", string("text")), ("text", string(s))])
       | Image(url) =>
         object_([("type", string("image")), ("url", string(url))])
       | Video(url) =>
@@ -335,8 +360,16 @@ module EncodeLayer = {
           ("cmds", list(DrawCommand.EncodeDrawCommand.command, cmds)),
         ])
       | MIDIKeyboard => object_([("type", string("midi-keyboard"))])
-      | KeycodeWriter => object_([("type", string("keycode-writer"))])
-      | KeycodeReader => object_([("type", string("keycode-reader"))])
+      | KeycodeWriter(fmt) =>
+        object_([
+          ("type", string("keycode-writer")),
+          ("fmt", EncodeKeycodeFormat.keycodeFormat(fmt)),
+        ])
+      | KeycodeReader(fmt) =>
+        object_([
+          ("type", string("keycode-reader")),
+          ("fmt", EncodeKeycodeFormat.keycodeFormat(fmt)),
+        ])
       | Histogram => object_([("type", string("histogram"))])
       | Regl(opts) =>
         object_([
@@ -379,6 +412,9 @@ module EncodeLayer = {
         ("transformMatrix", transformMatrix(r.transformMatrix)),
         ("rotation", rotation(r.rotation)),
         ("filters", string(r.filters)),
+        ("tickPeriod", int(r.tickPeriod)),
+        ("tickPhase", int(r.tickPhase)),
+        ("filters", string(r.filters)),
       ])
     );
 };
@@ -389,309 +425,3 @@ let getLayerKey: layer => string =
       layer.id,
       Js.Json.stringify(EncodeLayer.layerContent(layer.content)),
     );
-
-let renderLayerPreview =
-    (~layer, ~changeLayer, ~setRef, ~saveTick, ~onUnmount, ~layerRefs) => {
-  let layerKey = getLayerKey(layer);
-  let savePreviewRef = aRef =>
-    switch (Js.Nullable.toOption(aRef)) {
-    | Some(previewCanvas) =>
-      saveTick(onUnmount, layerKey ++ "preview", _t =>
-        switch (Belt.Map.String.get(layerRefs^, layerKey)) {
-        | Some(layer) =>
-          let ctx = getContext(getFromReact(previewCanvas));
-          let src = getElementAsImageSource(layer);
-          Ctx.setFillStyle(ctx, "black");
-          Ctx.fillRect(ctx, 0, 0, 120, 120);
-          Ctx.drawImageDestRect(ctx, src, 0, 0, 120, 120);
-        | _ => ()
-        }
-      )
-    | None => ()
-    };
-  <div style=(ReactDOMRe.Style.make(~display="flex", ()))>
-    (
-      switch (layer.content) {
-      | HandDrawn
-      | Webcam
-      | Slitscan(_)
-      | Image(_)
-      | Video(_)
-      | Analysis(_)
-      | MIDIKeyboard
-      | KeycodeReader
-      | KeycodeWriter
-      | RawAudioWriter(_)
-      | RawAudioReader(_)
-      | Histogram
-      | Draw(_)
-      | Regl(_) =>
-        <div> <canvas ref=savePreviewRef width="120" height="120" /> </div>
-      | Fill(_)
-      | DrawGlobal(_)
-      | PitchClasses(_)
-      | Reader(_) => ReasonReact.null
-      }
-    )
-  </div>;
-};
-
-let component = ReasonReact.statelessComponent("Layer");
-
-let make =
-    (
-      ~layer,
-      ~layerKeys,
-      ~layerRefs,
-      ~onSetRef,
-      ~saveTick,
-      ~changeLayer,
-      ~width,
-      ~height,
-      _children,
-    ) => {
-  ...component,
-  render: self =>
-    MaterialUi.(
-      <Card>
-        <CardHeader
-          avatar=(icon_of_layerContent(layer.content))
-          title={
-            <Typography
-              variant=`Subheading
-              style=(ReactDOMRe.Style.make(~marginTop="-4px", ()))>
-              (
-                ReasonReact.string(
-                  readable_string_type_of_layerContent(layer.content),
-                )
-              )
-            </Typography>
-          }
-          action={
-            <IconButton onClick=(_evt => changeLayer(layer, None))>
-              <MaterialUIIcons.Delete />
-            </IconButton>
-          }
-          style=(
-            ReactDOMRe.Style.make(~paddingTop="8px", ~paddingBottom="0px", ())
-          )
-        />
-        <div
-          style=(
-            ReactDOMRe.Style.make(
-              ~display="flex",
-              ~justifyContent="flex-start",
-              (),
-            )
-          )>
-          <CardMedia src="dummy">
-            (
-              renderLayerPreview(
-                ~layer,
-                ~saveTick,
-                ~onUnmount=self.onUnmount,
-                ~setRef=onSetRef(layer),
-                ~changeLayer,
-                ~layerRefs,
-              )
-            )
-          </CardMedia>
-          <CardContent style=(ReactDOMRe.Style.make(~flexGrow="1", ()))>
-            (
-              switch (layer.content) {
-              | PitchClasses(xs) =>
-                <div>
-                  <PitchSetSelector
-                    pitchSet=xs
-                    onChangeSetting=(
-                      newPitches =>
-                        changeLayer(
-                          layer,
-                          Some({
-                            ...layer,
-                            content: PitchClasses(newPitches),
-                          }),
-                        )
-                    )
-                  />
-                </div>
-              | Reader(readerType) =>
-                <div>
-                  <ReaderType
-                    readerType
-                    onChangeSetting=(
-                      newReaderType =>
-                        changeLayer(
-                          layer,
-                          Some({...layer, content: Reader(newReaderType)}),
-                        )
-                    )
-                  />
-                </div>
-              | Fill(v) =>
-                <MaterialUi.TextField
-                  label=(ReasonReact.string("style"))
-                  value=(`String(v))
-                  onChange=(
-                    evt => {
-                      let value = ReactDOMRe.domElementToObj(
-                                    ReactEventRe.Form.target(evt),
-                                  )##value;
-                      changeLayer(
-                        layer,
-                        Some({...layer, content: Fill(value)}),
-                      );
-                    }
-                  )
-                  margin=`Normal
-                />
-              | Draw(cmds) => <div />
-              | DrawGlobal(cmds) => <div />
-              | Slitscan(cameraOptions) => <div />
-              | Image(string)
-              | Video(string) => <div />
-              | RawAudioWriter(rawAudioFormat)
-              | RawAudioReader(rawAudioFormat) => <div />
-              | Analysis(analysisOptions) => <div />
-              | Regl(reglOptions) =>
-                <div>
-                  (
-                    switch (reglOptions) {
-                    | Sobel(opts) =>
-                      <LayerSelect
-                        layerKeys
-                        currentValue=opts.sourceLayer
-                        onChange=(
-                          newKey =>
-                            changeLayer(
-                              layer,
-                              Some({
-                                ...layer,
-                                content:
-                                  Regl(
-                                    Sobel({...opts, sourceLayer: newKey}),
-                                  ),
-                              }),
-                            )
-                        )
-                      />
-                    | Displacement(opts) =>
-                      <div>
-                        <LayerSelect
-                          layerKeys
-                          currentValue=opts.displacementSourceLayer
-                          onChange=(
-                            newKey =>
-                              changeLayer(
-                                layer,
-                                Some({
-                                  ...layer,
-                                  content:
-                                    Regl(
-                                      Displacement({
-                                        ...opts,
-                                        displacementSourceLayer: newKey,
-                                      }),
-                                    ),
-                                }),
-                              )
-                          )
-                        />
-                        <LayerSelect
-                          layerKeys
-                          currentValue=opts.displacementMap
-                          onChange=(
-                            newKey =>
-                              changeLayer(
-                                layer,
-                                Some({
-                                  ...layer,
-                                  content:
-                                    Regl(
-                                      Displacement({
-                                        ...opts,
-                                        displacementMap: newKey,
-                                      }),
-                                    ),
-                                }),
-                              )
-                          )
-                        />
-                      </div>
-                    }
-                  )
-                </div>
-              | HandDrawn
-              | Webcam
-              | MIDIKeyboard
-              | KeycodeReader
-              | KeycodeWriter
-              | Histogram =>
-                <MaterialUi.Typography color=`TextSecondary>
-                  (ReasonReact.string("[no options]"))
-                </MaterialUi.Typography>
-              | _ =>
-                <MaterialUi.Typography>
-                  (
-                    ReasonReact.string(
-                      Js.Json.stringifyWithSpace(
-                        EncodeLayer.layerContent(layer.content),
-                        2,
-                      ),
-                    )
-                  )
-                </MaterialUi.Typography>
-              }
-            )
-          </CardContent>
-          <div
-            style=(
-              ReactDOMRe.Style.make(
-                ~flexDirection="column",
-                ~alignItems="flex-start",
-                ~marginRight="16px",
-                ~marginBottom="24px",
-                (),
-              )
-            )>
-            <FloatSlider
-              value=layer.alpha
-              label="Alpha"
-              onChange=(
-                value => changeLayer(layer, Some({...layer, alpha: value}))
-              )
-            />
-            /* <FloatSlider */
-            /*   min=((-0.5) *. tau) */
-            /*   max=(0.5 *. tau) */
-            /*   value=layer.rotation */
-            /*   label="Rotation" */
-            /*   step=0.01 */
-            /*   onChange=( */
-            /*     value => changeLayer(layer, {...layer, rotation: value}) */
-            /*   ) */
-            /* /> */
-            /* <NumericTextField */
-            /*   label=(ReasonReact.string("Rotation")) */
-            /*   value=(`Float(layer.rotation)) */
-            /*   onChange=( */
-            /*     value => changeLayer(layer, {...layer, rotation: value}) */
-            /*   ) */
-            /* /> */
-            <FormGroup row=true>
-              <CompositeOperationSelect
-                compositeOperation=layer.compositeOperation
-                onChange=(
-                  newOperation =>
-                    changeLayer(
-                      layer,
-                      Some({...layer, compositeOperation: newOperation}),
-                    )
-                )
-              />
-            </FormGroup>
-          </div>
-        </div>
-      </Card>
-    ),
-};

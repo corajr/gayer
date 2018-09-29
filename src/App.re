@@ -8,6 +8,7 @@ open Layer;
 open Params;
 open Performance;
 open Presets;
+open Routes;
 open Score;
 open Timing;
 open UserMedia;
@@ -26,7 +27,7 @@ type state = {
   freqFuncParams: ref((int, int)),
   filterInput: option(audioNode),
   params,
-  score: option((score, ref(int))),
+  score: option(score),
   presetDrawerOpen: bool,
   mediaStream: option(mediaStream),
   audioGraph: ref(audioGraph),
@@ -35,52 +36,61 @@ type state = {
   oscillatorBank: ref(option(bank(oscillator))),
   filterBanks: option(filterBanks),
   compressor: ref(option(compressor)),
+  masterGain: ref(option(gainNode)),
   merger: ref(option(channelMerger)),
   currentFilterValues: ref(option(filterValues)),
   layerRefs: ref(Belt.Map.String.t(Dom.element)),
-  savedImages: list(string),
+  savedImages: Belt.Map.String.t(string),
   loadedAudio: ref(Belt.Map.String.t(audioNode)),
   canvasRef: ref(option(Dom.element)),
   drawContext: DrawCommand.drawContext,
   fullscreenCanvas: bool,
+  startingIndexRef: ref(int),
   tickFunctions: ref(Belt.Map.String.t(float => unit)),
   tickCounter: ref(int),
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let defaultState: state = {
-  animationStartTime: ref(0.0),
-  animationLastUpdated: ref(0.0),
-  readPos: ref(0),
-  writePos: ref(0),
-  freqFuncParams: ref((1, 16)),
-  presetDrawerOpen: false,
-  filterInput: None,
-  mediaStream: None,
-  audioGraph: ref(emptyAudioGraph),
-  micInput: None,
-  cameraInput: ref(None),
-  score: Some((exampleScore, ref(0))),
-  params: snd(List.nth(presets, 0)),
-  oscillatorBank: ref(None),
-  filterBanks: None,
-  currentFilterValues: ref(None),
-  compressor: ref(None),
-  merger: ref(None),
-  savedImages: [],
-  layerRefs: ref(Belt.Map.String.empty),
-  loadedAudio: ref(Belt.Map.String.empty),
-  canvasRef: ref(None),
-  drawContext: {
-    maybeCtxRef: ref(None),
-    width: 1,
-    height: 1,
-    variables: Belt.Map.String.empty,
-  },
-  fullscreenCanvas: false,
-  tickCounter: ref(0),
-  tickFunctions: ref(Belt.Map.String.empty),
-  timerId: ref(None),
+let defaultState = () => {
+  let layerRefs = ref(Belt.Map.String.empty);
+
+  {
+    animationStartTime: ref(0.0),
+    animationLastUpdated: ref(0.0),
+    readPos: ref(0),
+    writePos: ref(0),
+    freqFuncParams: ref((1, 16)),
+    presetDrawerOpen: false,
+    filterInput: None,
+    mediaStream: None,
+    audioGraph: ref(emptyAudioGraph),
+    micInput: None,
+    cameraInput: ref(None),
+    score: Some(exampleScore),
+    params: snd(List.nth(presets, 0)),
+    oscillatorBank: ref(None),
+    filterBanks: None,
+    currentFilterValues: ref(None),
+    compressor: ref(None),
+    masterGain: ref(None),
+    merger: ref(None),
+    savedImages: Belt.Map.String.empty,
+    layerRefs,
+    loadedAudio: ref(Belt.Map.String.empty),
+    canvasRef: ref(None),
+    drawContext: {
+      maybeCtxRef: ref(None),
+      width: 1,
+      height: 1,
+      layerRefs,
+      variables: Belt.Map.String.empty,
+    },
+    startingIndexRef: ref(0),
+    fullscreenCanvas: false,
+    tickCounter: ref(0),
+    tickFunctions: ref(Belt.Map.String.empty),
+    timerId: ref(None),
+  };
 };
 
 type action =
@@ -89,8 +99,6 @@ type action =
   | TogglePresetDrawer
   | SaveImage
   | ToggleFullscreen
-  | SetScoreEventIndex(int)
-  | AdjustScoreEventIndex(int)
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -99,9 +107,6 @@ type action =
   | ChangeLayer(layer, option(layer))
   | SetLayers(list(layer))
   | SetParams(params);
-
-[@bs.val] external decodeURIComponent : string => string = "";
-[@bs.val] external encodeURIComponent : string => string = "";
 
 let setCanvasRef = (theRef, {ReasonReact.state}) => {
   let maybeRef = Js.Nullable.toOption(theRef);
@@ -205,12 +210,6 @@ let clearCanvas = (canvasElement, width, height) => {
   Ctx.clearRect(ctx, 0, 0, width, height);
 };
 
-let pushParamsState = newParams => {
-  let newParamsJson =
-    encodeURIComponent(Js.Json.stringify(EncodeParams.params(newParams)));
-  ReasonReact.Router.push("#" ++ newParamsJson);
-};
-
 let getReadAndWritePos = (f: (int, int) => unit, {ReasonReact.state}) : unit => {
   let width = state.params.width;
 
@@ -236,9 +235,11 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     Ctx._setFilter(ctx, layer.filters);
 
     let layerKey = getLayerKey(layer);
-    switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
-    | None => ()
-    | Some(f) => f(float_of_int(state.tickCounter^))
+    if (state.tickCounter^ mod layer.tickPeriod === layer.tickPhase) {
+      switch (Belt.Map.String.get(state.tickFunctions^, layerKey)) {
+      | None => ()
+      | Some(f) => f(float_of_int(state.tickCounter^))
+      };
     };
 
     let maybeLayerRef = Belt.Map.String.get(state.layerRefs^, layerKey);
@@ -258,17 +259,25 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         let canvasAsSource = getCanvasAsSource(canvasElt);
         DrawCommand.(
           switch (analysisSize) {
-          | WithHistory(_) =>
+          | Slit =>
+            let x =
+              wrapCoord(
+                state.writePos^ + state.params.writePosOffset,
+                0,
+                width,
+              );
+            Ctx.drawImageDestRect(ctx, canvasAsSource, x, 0, 1, height);
+          | CircularBuffer(_)
+          | History(_) =>
             Ctx.drawImageDestRect(ctx, canvasAsSource, 0, 0, width, height)
           | DestRect({x, y}) =>
             let analysisX = getLength(state.drawContext, x);
             let analysisY = getLength(state.drawContext, y);
-            /* let x = */
-            /* wrapCoord(state.writePos^ + state.params.writePosOffset, 0, width); */
             Ctx.drawImage(ctx, canvasAsSource, analysisX, analysisY);
           }
         );
       }
+    | Slitscan(_)
     | MIDIKeyboard =>
       switch (maybeLayerRef) {
       | None => ()
@@ -296,8 +305,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
         Ctx.drawImage(ctx, canvasSource, 0, 0);
       }
     | HandDrawn
+    | Text(_)
     | Draw(_)
-    | Slitscan(_)
     | Image(_)
     | Video(_) =>
       switch (maybeLayerRef) {
@@ -325,8 +334,8 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
           classList,
         );
       };
-    | KeycodeReader
-    | KeycodeWriter =>
+    | KeycodeReader(_)
+    | KeycodeWriter(_) =>
       switch (maybeLayerRef) {
       | None => ()
       | Some(canvasEl) =>
@@ -347,47 +356,31 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
       let xToRead =
         wrapCoord(state.readPos^ + state.params.readPosOffset, 0, width);
       let slice = Ctx.getImageData(ctx, xToRead, 0, 1, height);
+      ImageDataUtil.updateFilterValuesFromImageData(
+        slice,
+        readerType,
+        state.currentFilterValues,
+      );
+
       /* let slice = */
       /*   Ctx.getImageData(ctx, width / 2, height / 2, height / 10, 10); */
       /* Ctx.strokeRect(ctx, width / 2, height / 2, height / 10, 10); */
-      ImageDataUtil.(
-        switch (readerType) {
-        | Channel(channel) =>
-          Ctx.setFillStyle(
-            ctx,
-            switch (channel) {
-            | R => rgba(127, 0, 0, 0.5)
-            | G => rgba(0, 127, 0, 0.5)
-            | B => rgba(0, 0, 127, 0.5)
-            | A => rgba(127, 127, 127, 0.5)
-            },
-          );
-          Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      switch (readerType) {
+      | Channel(channel) =>
+        Ctx.setFillStyle(
+          ctx,
           switch (channel) {
-          | R
-          | G
-          | B =>
-            let (l, r) = imageDataToStereo(slice, channel, B);
-            state.currentFilterValues := Some(Stereo(l, r));
-          | A =>
-            state.currentFilterValues :=
-              Some(Mono(imageDataToFloatArray(slice, channel)))
-          };
-        | Saturation =>
-          Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
-          Ctx.fillRect(ctx, xToRead, 0, 1, height);
-          let saturations =
-            Array.map(
-              ({r, g, b}) => {
-                let (_, s, _) = Color.rgbToHslFloat(r, g, b);
-                s;
-              },
-              imageDataToPixels(slice),
-            );
-
-          state.currentFilterValues := Some(Mono(saturations));
-        }
-      );
+          | R => rgba(127, 0, 0, 0.5)
+          | G => rgba(0, 127, 0, 0.5)
+          | B => rgba(0, 0, 127, 0.5)
+          | A => rgba(127, 127, 127, 0.5)
+          },
+        );
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      | Saturation =>
+        Ctx.setFillStyle(ctx, rgba(255, 255, 255, 0.5));
+        Ctx.fillRect(ctx, xToRead, 0, 1, height);
+      };
     };
 
     mark(performance, layerKey ++ "end");
@@ -583,14 +576,15 @@ let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
 
 let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   ...component,
-  initialState: () => defaultState,
+  initialState: defaultState,
   reducer: (action, state) =>
     switch (action) {
     | AddSavedImage(url) =>
+      let timestamp = [%bs.raw "new Date().toISOString()"];
       ReasonReact.Update({
         ...state,
-        savedImages: [url, ...state.savedImages],
-      })
+        savedImages: Belt.Map.String.set(state.savedImages, timestamp, url),
+      });
     | SaveImage =>
       ReasonReact.SideEffects(
         (
@@ -608,27 +602,6 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         ...state,
         presetDrawerOpen: ! state.presetDrawerOpen,
       })
-    | SetScoreEventIndex(i) => ReasonReact.NoUpdate
-    | AdjustScoreEventIndex(i) =>
-      ReasonReact.SideEffects(
-        (
-          _self =>
-            switch (state.score) {
-            | Some(({events}, eventIndexRef)) =>
-              eventIndexRef :=
-                clamp(
-                  ~minVal=0,
-                  ~maxVal=Array.length(events) - 1,
-                  eventIndexRef^ + i,
-                );
-              let eventIndex = eventIndexRef^;
-
-              pushParamsState(events[eventIndex].params);
-              Js.log({j|Adjusting score index; score now at $(eventIndex)|j});
-            | None => ()
-            }
-        ),
-      )
     | ToggleFullscreen =>
       ReasonReact.Update({
         ...state,
@@ -746,7 +719,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     let compressor =
       makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
 
+    let masterGain = createGain(audioCtx);
+
     self.state.compressor := Some(compressor);
+    self.state.masterGain := Some(masterGain);
+    setValueAtTime(masterGain |. gain_Get, currentTime(audioCtx), 0.5);
 
     let noise = pinkNoise(audioCtx);
     self.send(SetFilterInput(noise));
@@ -755,9 +732,11 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
       self.state.audioGraph^
       |> addNode(("merger", unwrapChannelMerger(merger)))
       |> addNode(("compressor", unwrapCompressor(compressor)))
+      |> addNode(("masterGain", unwrapGain(masterGain)))
       |> addNode(("sink", defaultSink(audioCtx)))
       |> addEdge(("merger", "compressor", 0, 0))
-      |> addEdge(("compressor", "sink", 0, 0))
+      |> addEdge(("compressor", "masterGain", 0, 0))
+      |> addEdge(("masterGain", "sink", 0, 0))
       |> updateConnections;
 
     generateNewFilterBanks(audioCtx, self);
@@ -814,6 +793,14 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     let watcherID =
       ReasonReact.Router.watchUrl(url => {
+        let maybeIndex =
+          switch (int_of_string(url.search)) {
+          | i =>
+            self.state.startingIndexRef := i;
+            Some(i);
+          | exception _ => None
+          };
+
         let hash = decodeURIComponent(url.hash);
 
         switch (Json.parse(hash)) {
@@ -825,12 +812,19 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         | None => Js.log("Could not parse json")
         };
       });
+
     self.onUnmount(() => ReasonReact.Router.unwatchUrl(watcherID));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     if (url.hash === "") {
-      pushParamsState(snd(List.nth(presets, 0)));
+      pushParamsState(~maybeI=Some(0), snd(List.nth(presets, 0)));
+    } else if (url.search === "") {
+      pushParamsState(~maybeI=Some(0), snd(List.nth(presets, 0)));
     } else {
-      ReasonReact.Router.push("#" ++ url.hash);
+      switch (int_of_string(url.search)) {
+      | i => self.state.startingIndexRef := i
+      | exception _ => ()
+      };
+      ReasonReact.Router.push("?" ++ url.search ++ "#" ++ url.hash);
     };
   },
   didUpdate: ({oldSelf, newSelf}) => {
@@ -900,202 +894,199 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   render: self =>
     MaterialUi.(
       <div>
-        <CssBaseline />
-        <AppBar position=`Sticky>
-          <Toolbar>
-            <IconButton
-              color=`Inherit onClick=(_evt => self.send(TogglePresetDrawer))>
-              <MaterialUIIcons.Menu />
-            </IconButton>
-            <GrowTitle
+
+          <CssBaseline />
+          <AppBar position=`Sticky>
+            <Toolbar>
+              <IconButton
+                color=`Inherit
+                onClick=(_evt => self.send(TogglePresetDrawer))>
+                <MaterialUIIcons.Menu />
+              </IconButton>
+              <GrowTitle
+                render=(
+                  classes =>
+                    <Typography
+                      variant=`Title
+                      color=`Inherit
+                      classes=[Title(classes.grow)]>
+                      (ReasonReact.string("GAYER"))
+                    </Typography>
+                )
+              />
+              (
+                switch (self.state.score) {
+                | Some(score) => <ScoreControl score />
+                | None => ReasonReact.null
+                }
+              )
+            </Toolbar>
+          </AppBar>
+          <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
+            <SizedDrawer
               render=(
                 classes =>
-                  <Typography
-                    variant=`Title
-                    color=`Inherit
-                    classes=[Title(classes.grow)]>
-                    (ReasonReact.string("GAYER"))
-                  </Typography>
+                  <Drawer
+                    variant=`Temporary
+                    open_=self.state.presetDrawerOpen
+                    classes=[Paper(classes.paper)]>
+                    <div
+                      style=(
+                        ReactDOMRe.Style.make(
+                          ~display="flex",
+                          ~alignItems="center",
+                          ~justifyContent="flex-end",
+                          ~padding="0 8px",
+                          (),
+                        )
+                      )>
+                      <IconButton
+                        onClick=(_evt => self.send(TogglePresetDrawer))
+                        color=`Inherit>
+                        <MaterialUIIcons.ChevronLeft />
+                      </IconButton>
+                    </div>
+                    <Divider />
+                    <div
+                      tabIndex=0
+                      role="button"
+                      onClick=(_evt => self.send(TogglePresetDrawer))
+                      onKeyDown=(_evt => self.send(TogglePresetDrawer))>
+                      <List component=(`String("nav"))>
+                        (
+                          ReasonReact.array(
+                            Array.of_list(presets)
+                            |> Array.mapi((i, (name, preset)) =>
+                                 <ListItem
+                                   key=name
+                                   button=true
+                                   onClick=(
+                                     _evt =>
+                                       pushParamsState(
+                                         ~maybeI=Some(i),
+                                         preset,
+                                       )
+                                   )>
+                                   <ListItemText>
+                                     (ReasonReact.string(name))
+                                   </ListItemText>
+                                 </ListItem>
+                               ),
+                          )
+                        )
+                      </List>
+                    </div>
+                  </Drawer>
               )
             />
-            (
-              Belt.Option.isSome(self.state.score) ?
-                <div>
-                  <IconButton
-                    color=`Inherit
-                    onClick=(_evt => self.send(AdjustScoreEventIndex(-1)))>
-                    <MaterialUIIcons.SkipPrevious />
-                  </IconButton>
-                  <IconButton
-                    color=`Inherit
-                    onClick=(_evt => self.send(AdjustScoreEventIndex(1)))>
-                    <MaterialUIIcons.SkipNext />
-                  </IconButton>
-                </div> :
-                ReasonReact.null
-            )
-          </Toolbar>
-        </AppBar>
-        <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
-          <SizedDrawer
-            render=(
-              classes =>
-                <Drawer
-                  variant=`Temporary
-                  open_=self.state.presetDrawerOpen
-                  classes=[Paper(classes.paper)]>
-                  <div
-                    style=(
-                      ReactDOMRe.Style.make(
-                        ~display="flex",
-                        ~alignItems="center",
-                        ~justifyContent="flex-end",
-                        ~padding="0 8px",
-                        (),
-                      )
-                    )>
-                    <IconButton
-                      onClick=(_evt => self.send(TogglePresetDrawer))
-                      color=`Inherit>
-                      <MaterialUIIcons.ChevronLeft />
-                    </IconButton>
-                  </div>
-                  <Divider />
-                  <div
-                    tabIndex=0
-                    role="button"
-                    onClick=(_evt => self.send(TogglePresetDrawer))
-                    onKeyDown=(_evt => self.send(TogglePresetDrawer))>
-                    <List component=(`String("nav"))>
-                      (
-                        ReasonReact.array(
-                          Array.of_list(presets)
-                          |> Array.map(((name, preset)) =>
-                               <ListItem
-                                 key=name
-                                 button=true
-                                 onClick=(_evt => pushParamsState(preset))>
-                                 <ListItemText>
-                                   (ReasonReact.string(name))
-                                 </ListItemText>
-                               </ListItem>
-                             ),
-                        )
-                      )
-                    </List>
-                  </div>
-                </Drawer>
-            )
-          />
-          <Grid container=true spacing=Grid.V24>
-            <Grid item=true xs=Grid.V6>
-              <Params
-                params=self.state.params
-                onMoveCard=(layers => self.send(SetLayers(layers)))
-                onChangeLayer=(
-                  (oldLayer, maybeNewLayer) =>
-                    self.send(ChangeLayer(oldLayer, maybeNewLayer))
-                )
-                onSetRef=(
-                  (layer, theRef) =>
-                    self.handle(setLayerRef(audioCtx), (layer, theRef))
-                )
-                layerRefs=self.state.layerRefs
-                onSetParams=(newParams => pushParamsState(newParams))
-                millisPerAudioTick=16
-                saveTick=(saveTick(self))
-                getAudio=(getAnalysisInput(audioCtx, self.state))
-              />
-            </Grid>
-            <Grid item=true xs=Grid.V6>
-              <div
-                id="main-display"
-                style=(
-                  ReactDOMRe.Style.make(
-                    ~marginBottom="24px",
-                    ~minHeight="400px",
-                    ~position="relative",
-                    (),
+            <Grid container=true spacing=Grid.V24>
+              <Grid item=true xs=Grid.V6>
+                <Params
+                  params=self.state.params
+                  onMoveCard=(layers => self.send(SetLayers(layers)))
+                  onChangeLayer=(
+                    (oldLayer, maybeNewLayer) =>
+                      self.send(ChangeLayer(oldLayer, maybeNewLayer))
                   )
-                )>
-                <MediaProvider
-                  audioCtx
-                  audioGraph=self.state.audioGraph
-                  globalDrawContext=self.state.drawContext
-                  getAudio=(getAnalysisInput(audioCtx, self.state))
                   onSetRef=(
                     (layer, theRef) =>
                       self.handle(setLayerRef(audioCtx), (layer, theRef))
                   )
                   layerRefs=self.state.layerRefs
-                  currentFilterValues=self.state.currentFilterValues
-                  rootWidth=self.state.params.width
-                  rootHeight=self.state.params.height
-                  millisPerAudioTick=16
-                  getReadAndWritePos=(self.handle(getReadAndWritePos))
+                  onSetParams=(newParams => pushParamsState(newParams))
                   saveTick=(saveTick(self))
-                  layers=(sortLayers(self.state.params.layers))
+                  savedImages=self.state.savedImages
                 />
-                <canvas
-                  ref=(self.handle(setCanvasRef))
-                  width=(Js.Int.toString(self.state.params.width))
-                  height=(Js.Int.toString(self.state.params.height))
+              </Grid>
+              <Grid item=true xs=Grid.V4>
+                <div
+                  id="main-display"
                   style=(
                     ReactDOMRe.Style.make(
-                      ~imageRendering="crisp-edges",
-                      ~transform=
-                        "scale("
-                        ++ Js.Float.toString(
-                             400.0 /. float_of_int(self.state.params.height),
-                           )
-                        ++ ")",
-                      ~transformOrigin="top left",
+                      ~marginBottom="24px",
+                      ~minHeight="400px",
+                      ~position="fixed",
                       (),
                     )
-                  )
-                />
-              </div>
-              /* <Button */
-              /*   style=( */
-              /*     ReactDOMRe.Style.make( */
-              /*       ~position="absolute", */
-              /*       ~right="0px", */
-              /*       ~bottom="0px", */
-              /*       (), */
-              /*     ) */
-              /*   ) */
-              /*   variant=`Contained */
-              /*   onClick=(evt => self.send(ToggleFullscreen))> */
-              /*   ( */
-              /*     self.state.fullscreenCanvas ? */
-              /*       <MaterialUIIcons.FullscreenExit /> : */
-              /*       <MaterialUIIcons.Fullscreen /> */
-              /*   ) */
-              /*   (ReasonReact.string("Fullscreen")) */
-              /* </Button> */
-              <div>
-                <div style=(ReactDOMRe.Style.make(~marginBottom="24px", ()))>
-                  <Button
-                    variant=`Contained onClick=(_evt => self.send(SaveImage))>
-                    <MaterialUIIcons.PhotoCamera />
-                    (ReasonReact.string("Snapshot"))
-                  </Button>
+                  )>
+                  <MediaProvider
+                    audioCtx
+                    audioGraph=self.state.audioGraph
+                    globalDrawContext=self.state.drawContext
+                    getAudio=(getAnalysisInput(audioCtx, self.state))
+                    onSetRef=(
+                      (layer, theRef) =>
+                        self.handle(setLayerRef(audioCtx), (layer, theRef))
+                    )
+                    layerRefs=self.state.layerRefs
+                    currentFilterValues=self.state.currentFilterValues
+                    readPos=self.state.readPos
+                    writePos=self.state.writePos
+                    rootWidth=self.state.params.width
+                    rootHeight=self.state.params.height
+                    millisPerTick=self.state.params.millisPerTick
+                    saveTick=(saveTick(self))
+                    layers=(sortLayers(self.state.params.layers))
+                  />
+                  <canvas
+                    ref=(self.handle(setCanvasRef))
+                    width=(Js.Int.toString(self.state.params.width))
+                    height=(Js.Int.toString(self.state.params.height))
+                    style=(
+                      ReactDOMRe.Style.make(
+                        ~imageRendering="crisp-edges",
+                        ~transform=
+                          "scale("
+                          ++ Js.Float.toString(
+                               400.0 /. float_of_int(self.state.params.height),
+                             )
+                          ++ ")",
+                        ~transformOrigin="top left",
+                        (),
+                      )
+                    )
+                  />
                 </div>
-                (
-                  self.state.savedImages
-                  |> Array.of_list
-                  |> Array.map(url =>
-                       <img
-                         key=(Js.Int.toString(Hashtbl.hash(url)))
-                         src=url
-                       />
-                     )
-                  |> ReasonReact.array
-                )
-              </div>
+              </Grid>
+              <Grid item=true xs=Grid.V2>
+                <Button
+                  variant=`Contained
+                  onClick=(_evt => self.send(SaveImage))
+                  style=(ReactDOMRe.Style.make(~position="fixed", ()))>
+                  <MaterialUIIcons.PhotoCamera />
+                  (ReasonReact.string("Snapshot"))
+                </Button>
+                <div style=(ReactDOMRe.Style.make(~marginTop="48px", ()))>
+                  (
+                    self.state.savedImages
+                    |> Belt.Map.String.toArray
+                    |> Array.map(((key, url)) =>
+                         <img key width="100%" src=url />
+                       )
+                    |> ReasonReact.array
+                  )
+                </div>
+              </Grid>
             </Grid>
-          </Grid>
+          </div>
         </div>
-      </div>
+        /* <Button */
+        /*   style=( */
+        /*     ReactDOMRe.Style.make( */
+        /*       ~position="absolute", */
+        /*       ~right="0px", */
+        /*       ~bottom="0px", */
+        /*       (), */
+        /*     ) */
+        /*   ) */
+        /*   variant=`Contained */
+        /*   onClick=(evt => self.send(ToggleFullscreen))> */
+        /*   ( */
+        /*     self.state.fullscreenCanvas ? */
+        /*       <MaterialUIIcons.FullscreenExit /> : */
+        /*       <MaterialUIIcons.Fullscreen /> */
+        /*   ) */
+        /*   (ReasonReact.string("Fullscreen")) */
+        /* </Button> */
     ),
 };

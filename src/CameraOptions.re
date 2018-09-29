@@ -1,56 +1,54 @@
-type slitscanOptions =
-  | ReadPosX
-  | ReadPosY
-  | StaticX(int)
-  | StaticY(int);
+open DrawCommand;
 
 type cameraOptions = {
   sourceLayerKey: string,
-  slitscan: slitscanOptions,
+  sourceRect: rect,
+  destRect: option(rect),
+  sourceXDelta: length,
+  sourceYDelta: length,
+  destXDelta: length,
+  destYDelta: length,
+};
+
+let slitscanDefaults = {
+  sourceLayerKey: "webcam",
+  sourceRect: {
+    x: Divide(Width, Constant(2)),
+    y: Pixels(0),
+    w: Pixels(1),
+    h: Height,
+  },
+  destRect: Some({x: Pixels(0), y: Pixels(0), w: Pixels(1), h: Height}),
+  sourceXDelta: Pixels(0),
+  sourceYDelta: Pixels(0),
+  destXDelta: Pixels(1),
+  destYDelta: Pixels(0),
 };
 
 module DecodeCameraOptions = {
-  let slitscanOptions = json =>
-    Json.Decode.(
-      json
-      |> (
-        field("type", string)
-        |> andThen((type_, json) =>
-             switch (type_) {
-             | "readPosX" => ReadPosX
-             | "readPosY" => ReadPosY
-             | "staticX" => json |> map(i => StaticX(i), field("x", int))
-             | "staticY" => json |> map(i => StaticY(i), field("y", int))
-             | _ => StaticX(320)
-             }
-           )
-      )
-    );
-
   let cameraOptions = json =>
     Json.Decode.{
       sourceLayerKey: json |> field("source", string),
-      slitscan: json |> field("slitscan", slitscanOptions),
+      sourceRect: json |> field("sourceRect", DecodeDrawCommand.rect),
+      destRect: json |> optional(field("destRect", DecodeDrawCommand.rect)),
+      sourceXDelta: json |> field("sourceXDelta", DecodeDrawCommand.length),
+      sourceYDelta: json |> field("sourceYDelta", DecodeDrawCommand.length),
+      destXDelta: json |> field("destXDelta", DecodeDrawCommand.length),
+      destYDelta: json |> field("destYDelta", DecodeDrawCommand.length),
     };
 };
 
 module EncodeCameraOptions = {
-  let slitscanOptions: slitscanOptions => Js.Json.t =
-    Json.Encode.(
-      fun
-      | ReadPosX => object_([("type", string("readPosX"))])
-      | ReadPosY => object_([("type", string("readPosY"))])
-      | StaticX(i) =>
-        object_([("type", string("staticX")), ("x", int(i))])
-      | StaticY(i) =>
-        object_([("type", string("staticY")), ("y", int(i))])
-    );
-
   let cameraOptions = r =>
     Json.Encode.(
       object_([
         ("source", string(r.sourceLayerKey)),
-        ("slitscan", slitscanOptions(r.slitscan)),
+        ("sourceRect", EncodeDrawCommand.rect(r.sourceRect)),
+        ("destRect", nullable(EncodeDrawCommand.rect, r.destRect)),
+        ("sourceXDelta", EncodeDrawCommand.length(r.sourceXDelta)),
+        ("sourceYDelta", EncodeDrawCommand.length(r.sourceYDelta)),
+        ("destXDelta", EncodeDrawCommand.length(r.destXDelta)),
+        ("destYDelta", EncodeDrawCommand.length(r.destYDelta)),
       ])
     );
 };

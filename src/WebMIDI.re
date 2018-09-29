@@ -11,36 +11,50 @@ type webMidiNote =
   };
 
 [@bs.deriving abstract]
+type webMidiController =
+  pri {
+    [@bs.as "name"]
+    controllerName: string,
+    [@bs.as "number"]
+    controllerNumber: int,
+  };
+
+[@bs.deriving abstract]
 type webMidiEvent =
   pri {
     channel: midiChannel,
     data: array(int), /* Uint8Array */
     note: webMidiNote,
+    controller: webMidiController,
     rawVelocity: int,
     timestamp: float,
     [@bs.as "type"]
     webMidiEventType: string,
     velocity: float,
+    value: int,
   };
 
 module WebMidiEventType = {
   type t =
     | NoteOn
     | NoteOff
-    | PitchBend;
+    | PitchBend
+    | ControlChange;
 
   let eventType_of_string: string => t =
     fun
     | "noteon" => NoteOn
     | "noteoff" => NoteOff
     | "pitchbend" => PitchBend
+    | "controlchange" => ControlChange
     | _ => NoteOff;
 
   let string_of_eventType: t => string =
     fun
     | NoteOn => "noteon"
     | NoteOff => "noteoff"
-    | PitchBend => "pitchbend";
+    | PitchBend => "pitchbend"
+    | ControlChange => "controlchange";
 };
 
 [@bs.deriving abstract]
@@ -85,12 +99,21 @@ let midiEvent_of_webMidiEvent: webMidiEvent => midiEvent =
       WebMidiEventType.eventType_of_string(
         webMidiEvent |. webMidiEventTypeGet,
       );
-    let noteNumber = webMidiEvent |. noteGet |. numberGet;
-    let velocity = webMidiEvent |. velocityGet;
     switch (eventType) {
-    | WebMidiEventType.NoteOn => NoteOn((noteNumber, velocity))
-    | WebMidiEventType.NoteOff => NoteOff((noteNumber, 0.0))
-    | WebMidiEventType.PitchBend => NoteOff((noteNumber, 0.0))
+    | WebMidiEventType.NoteOn =>
+      let noteNumber = webMidiEvent |. noteGet |. numberGet;
+      let velocity = webMidiEvent |. velocityGet;
+      NoteOn((noteNumber, velocity));
+    | WebMidiEventType.NoteOff =>
+      let noteNumber = webMidiEvent |. noteGet |. numberGet;
+      let velocity = webMidiEvent |. velocityGet;
+      NoteOff((noteNumber, 0.0));
+    | WebMidiEventType.PitchBend => NoteOff((0, 0.0))
+    | WebMidiEventType.ControlChange =>
+      let controllerNumber =
+        webMidiEvent |. controllerGet |. controllerNumberGet;
+      let value = webMidiEvent |. valueGet;
+      ControlChange((controllerNumber, float_of_int(value) /. 127.0));
     };
   };
 

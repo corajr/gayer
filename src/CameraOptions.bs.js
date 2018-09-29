@@ -3,95 +3,24 @@
 import * as Block from "bs-platform/lib/es6/block.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
-
-function slitscanOptions(json) {
-  return Json_decode.andThen((function (type_, json) {
-                switch (type_) {
-                  case "readPosX" : 
-                      return /* ReadPosX */0;
-                  case "readPosY" : 
-                      return /* ReadPosY */1;
-                  case "staticX" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticX */Block.__(0, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("x", Json_decode.$$int, param);
-                                  }), json);
-                  case "staticY" : 
-                      return Json_decode.map((function (i) {
-                                    return /* StaticY */Block.__(1, [i]);
-                                  }), (function (param) {
-                                    return Json_decode.field("y", Json_decode.$$int, param);
-                                  }), json);
-                  default:
-                    return /* StaticX */Block.__(0, [320]);
-                }
-              }), (function (param) {
-                return Json_decode.field("type", Json_decode.string, param);
-              }), json);
-}
+import * as DrawCommand$Gayer from "./DrawCommand.bs.js";
 
 function cameraOptions(json) {
+  var partial_arg = DrawCommand$Gayer.DecodeDrawCommand[/* rect */2];
   return /* record */[
           /* sourceLayerKey */Json_decode.field("source", Json_decode.string, json),
-          /* slitscan */Json_decode.field("slitscan", slitscanOptions, json)
+          /* sourceRect */Json_decode.field("sourceRect", DrawCommand$Gayer.DecodeDrawCommand[/* rect */2], json),
+          /* destRect */Json_decode.optional((function (param) {
+                  return Json_decode.field("destRect", partial_arg, param);
+                }), json),
+          /* sourceXDelta */Json_decode.field("sourceXDelta", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json),
+          /* sourceYDelta */Json_decode.field("sourceYDelta", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json),
+          /* destXDelta */Json_decode.field("destXDelta", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json),
+          /* destYDelta */Json_decode.field("destYDelta", DrawCommand$Gayer.DecodeDrawCommand[/* length */1], json)
         ];
 }
 
-var DecodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions,
-  /* cameraOptions */cameraOptions
-];
-
-function slitscanOptions$1(param) {
-  if (typeof param === "number") {
-    if (param === 0) {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosX"
-                  ],
-                  /* [] */0
-                ]);
-    } else {
-      return Json_encode.object_(/* :: */[
-                  /* tuple */[
-                    "type",
-                    "readPosY"
-                  ],
-                  /* [] */0
-                ]);
-    }
-  } else if (param.tag) {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticY"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "y",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  } else {
-    return Json_encode.object_(/* :: */[
-                /* tuple */[
-                  "type",
-                  "staticX"
-                ],
-                /* :: */[
-                  /* tuple */[
-                    "x",
-                    param[0]
-                  ],
-                  /* [] */0
-                ]
-              ]);
-  }
-}
+var DecodeCameraOptions = /* module */[/* cameraOptions */cameraOptions];
 
 function cameraOptions$1(r) {
   return Json_encode.object_(/* :: */[
@@ -101,20 +30,71 @@ function cameraOptions$1(r) {
               ],
               /* :: */[
                 /* tuple */[
-                  "slitscan",
-                  slitscanOptions$1(r[/* slitscan */1])
+                  "sourceRect",
+                  DrawCommand$Gayer.EncodeDrawCommand[/* rect */2](r[/* sourceRect */1])
                 ],
-                /* [] */0
+                /* :: */[
+                  /* tuple */[
+                    "destRect",
+                    Json_encode.nullable(DrawCommand$Gayer.EncodeDrawCommand[/* rect */2], r[/* destRect */2])
+                  ],
+                  /* :: */[
+                    /* tuple */[
+                      "sourceXDelta",
+                      DrawCommand$Gayer.EncodeDrawCommand[/* length */1](r[/* sourceXDelta */3])
+                    ],
+                    /* :: */[
+                      /* tuple */[
+                        "sourceYDelta",
+                        DrawCommand$Gayer.EncodeDrawCommand[/* length */1](r[/* sourceYDelta */4])
+                      ],
+                      /* :: */[
+                        /* tuple */[
+                          "destXDelta",
+                          DrawCommand$Gayer.EncodeDrawCommand[/* length */1](r[/* destXDelta */5])
+                        ],
+                        /* :: */[
+                          /* tuple */[
+                            "destYDelta",
+                            DrawCommand$Gayer.EncodeDrawCommand[/* length */1](r[/* destYDelta */6])
+                          ],
+                          /* [] */0
+                        ]
+                      ]
+                    ]
+                  ]
+                ]
               ]
             ]);
 }
 
-var EncodeCameraOptions = /* module */[
-  /* slitscanOptions */slitscanOptions$1,
-  /* cameraOptions */cameraOptions$1
+var EncodeCameraOptions = /* module */[/* cameraOptions */cameraOptions$1];
+
+var slitscanDefaults = /* record */[
+  /* sourceLayerKey */"webcam",
+  /* sourceRect : record */[
+    /* x : Divide */Block.__(6, [
+        /* Width */0,
+        /* Constant */Block.__(0, [2])
+      ]),
+    /* y : Pixels */Block.__(2, [0]),
+    /* w : Pixels */Block.__(2, [1]),
+    /* h : Height */1
+  ],
+  /* destRect *//* record */[
+    /* x : Pixels */Block.__(2, [0]),
+    /* y : Pixels */Block.__(2, [0]),
+    /* w : Pixels */Block.__(2, [1]),
+    /* h : Height */1
+  ],
+  /* sourceXDelta : Pixels */Block.__(2, [0]),
+  /* sourceYDelta : Pixels */Block.__(2, [0]),
+  /* destXDelta : Pixels */Block.__(2, [1]),
+  /* destYDelta : Pixels */Block.__(2, [0])
 ];
 
 export {
+  slitscanDefaults ,
   DecodeCameraOptions ,
   EncodeCameraOptions ,
   

@@ -27,6 +27,7 @@ let make =
       ~rootWidth,
       ~rootHeight,
       ~saveTick,
+      ~savedImages,
       _children,
     ) => {
   let handleCardsChange = (state, ids) => {
@@ -100,7 +101,11 @@ let make =
           ),
         );
       onDrop(drake, makeDropFn(state));
-      onUnmount(() => destroy(drake));
+      onUnmount(() =>
+        try (destroy(drake)) {
+        | e => ()
+        }
+      );
       state.dragulaRef := Some(drake);
       ();
     | _ => ()
@@ -128,13 +133,14 @@ let make =
                  key=card.id
                  id=card.id
                  style=(ReactDOMRe.Style.make(~marginBottom="16px", ()))>
-                 <Layer
+                 <LayerControl
                    layer=card.layer
                    changeLayer=onChangeLayer
                    width=rootWidth
                    height=rootHeight
                    onSetRef
                    saveTick
+                   savedImages
                    layerKeys
                    layerRefs
                  />

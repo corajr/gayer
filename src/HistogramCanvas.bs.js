@@ -2,7 +2,6 @@
 
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Color$Gayer from "./Color.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
@@ -12,7 +11,7 @@ import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("HistogramCanvas");
 
-function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWritePos, width, height, _) {
+function make(setRef, layerKey, layerRefs, saveTick, rootHeight, readPos, _, height, _$1) {
   var saveRef = function (aRef, param) {
     Curry._1(setRef, aRef);
     var maybeRef = (aRef == null) ? undefined : Js_primitive.some(aRef);
@@ -32,15 +31,11 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                             if (match !== undefined && match$1 !== undefined) {
                               var rootCtx = Js_primitive.valFromOption(match).getContext("2d");
                               var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
-                              var xToRead = /* record */[/* contents */0];
-                              Curry._1(getReadAndWritePos, (function (toRead, _) {
-                                      xToRead[0] = toRead;
-                                      return /* () */0;
-                                    }));
-                              var slice = rootCtx.getImageData(xToRead[0], 0, 1, rootHeight);
-                              var binFn = function (param) {
+                              var slice = rootCtx.getImageData(readPos[0], 0, 1, rootHeight);
+                              var rootOctaveHeight = rootHeight / 10 | 0;
+                              var binFn = function (i, param) {
                                 var match = Color$Gayer.rgbToHslFloat(param[/* r */0], param[/* g */1], param[/* b */2]);
-                                var octave = match[2] * 9.0 | 0;
+                                var octave = Caml_int32.div((rootHeight - i | 0) - 1 | 0, rootOctaveHeight);
                                 var offsetInOctave = match[0] * 11.0 | 0;
                                 var bin = Caml_int32.imul(octave, 12) + offsetInOctave | 0;
                                 return /* tuple */[
@@ -49,20 +44,8 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                                       ];
                               };
                               var histogram = ImageDataUtil$Gayer.imageDataToHistogram(120, binFn, 10.0, slice);
-                              var n = height / 120 | 0;
-                              for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
-                                var offset = Caml_int32.imul((n - i | 0) - 1 | 0, 120);
-                                for(var j = 0; j <= 119; ++j){
-                                  var h = j % 12 / 12.0;
-                                  var s = Caml_array.caml_array_get(histogram, j);
-                                  var l = (j / 10 | 0) / 10.0;
-                                  var yPos = offset + ((120 - j | 0) - 1 | 0) | 0;
-                                  var match$2 = s > 0.05;
-                                  var color = Color$Gayer.hsl(undefined, h, s, match$2 ? l : 0.0);
-                                  ctx.fillStyle = color;
-                                  ctx.fillRect(0, yPos, 1, 1);
-                                }
-                              }
+                              var img = ImageDataUtil$Gayer.makeImageDataFromFloats(histogram, 1, height);
+                              ctx.putImageData(img, 0, 0);
                               return /* () */0;
                             } else {
                               return /* () */0;
@@ -80,7 +63,7 @@ function make(setRef, layerKey, layerRefs, saveTick, rootHeight, getReadAndWrite
                             opacity: "0.0"
                           },
                           height: height.toString(),
-                          width: width.toString()
+                          width: "1"
                         });
             }),
           /* initialState */(function () {

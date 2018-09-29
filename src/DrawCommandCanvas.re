@@ -1,5 +1,5 @@
 open Canvas;
-open Canvas.DrawCommand;
+open DrawCommand;
 
 type state = {drawContext};
 let component = ReasonReact.reducerComponent(__MODULE__);
@@ -30,6 +30,7 @@ let make =
         maybeCtxRef: ref(None),
         width,
         height,
+        layerRefs,
         variables: Belt.Map.String.empty,
       },
     },

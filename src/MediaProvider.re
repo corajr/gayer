@@ -18,8 +18,9 @@ let make =
       ~layerRefs,
       ~currentFilterValues,
       ~saveTick,
-      ~getReadAndWritePos,
-      ~millisPerAudioTick,
+      ~readPos,
+      ~writePos,
+      ~millisPerTick,
       _children,
     ) => {
   ...component,
@@ -101,10 +102,11 @@ let make =
                 layerRefs
                 setRef=(onSetRef(layer))
                 saveTick
-                millisPerTick=millisPerAudioTick
+                millisPerTick
                 width=rootWidth
                 height=rootHeight
-                getReadAndWritePos
+                readPos
+                writePos
                 globalDrawContext
                 currentFilterValues
                 layerContent=layer.content

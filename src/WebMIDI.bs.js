@@ -5,6 +5,8 @@ import * as Curry from "bs-platform/lib/es6/curry.js";
 
 function eventType_of_string(param) {
   switch (param) {
+    case "controlchange" : 
+        return /* ControlChange */3;
     case "noteoff" : 
         return /* NoteOff */1;
     case "noteon" : 
@@ -24,6 +26,8 @@ function string_of_eventType(param) {
         return "noteoff";
     case 2 : 
         return "pitchbend";
+    case 3 : 
+        return "controlchange";
     
   }
 }
@@ -49,18 +53,34 @@ function webMidiChannelToJs(param) {
 
 function midiEvent_of_webMidiEvent(webMidiEvent) {
   var eventType = eventType_of_string(webMidiEvent.type);
-  var noteNumber = webMidiEvent.note.number;
-  var velocity = webMidiEvent.velocity;
-  if (eventType !== 0) {
-    return /* NoteOff */Block.__(1, [/* tuple */[
-                noteNumber,
-                0.0
-              ]]);
-  } else {
-    return /* NoteOn */Block.__(0, [/* tuple */[
-                noteNumber,
-                velocity
-              ]]);
+  switch (eventType) {
+    case 0 : 
+        var noteNumber = webMidiEvent.note.number;
+        var velocity = webMidiEvent.velocity;
+        return /* NoteOn */Block.__(0, [/* tuple */[
+                    noteNumber,
+                    velocity
+                  ]]);
+    case 1 : 
+        var noteNumber$1 = webMidiEvent.note.number;
+        webMidiEvent.velocity;
+        return /* NoteOff */Block.__(1, [/* tuple */[
+                    noteNumber$1,
+                    0.0
+                  ]]);
+    case 2 : 
+        return /* NoteOff */Block.__(1, [/* tuple */[
+                    0,
+                    0.0
+                  ]]);
+    case 3 : 
+        var controllerNumber = webMidiEvent.controller.number;
+        var value = webMidiEvent.value;
+        return /* ControlChange */Block.__(2, [/* tuple */[
+                    controllerNumber,
+                    value / 127.0
+                  ]]);
+    
   }
 }
 

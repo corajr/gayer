@@ -5,9 +5,7 @@ open LayerGenerator;
 open Presets;
 open CameraOptions;
 
-let slitscan = StaticX(320);
-
-let cameraOptExamples = [{sourceLayerKey: "blah", slitscan}];
+let cameraOptExamples = [slitscanDefaults];
 
 describe("EncodeCameraOptions <=> DecodeCameraOptions", () =>
   testAll("decode inverts encode", cameraOptExamples, cameraOptions =>

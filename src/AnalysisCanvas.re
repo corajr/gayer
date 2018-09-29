@@ -16,7 +16,7 @@ type state = {
   timerId: ref(option(Js.Global.intervalId)),
 };
 
-let drawCQTBar = (ctx, state, options, width, height) => {
+let drawCQTBar = (ctx, state, options, writePos, width, height) => {
   let audioDataL = CQT.getInputArray(state.cqt^, 0);
   let audioDataR = CQT.getInputArray(state.cqt^, 1);
   getFloatTimeDomainData(state.analyserL^, audioDataL);
@@ -24,11 +24,21 @@ let drawCQTBar = (ctx, state, options, width, height) => {
   CQT.calc(state.cqt^);
   CQT.renderLine(state.cqt^, 1);
   let cqtLine = CQT.getOutputArray(state.cqt^);
+
+  let xToWrite =
+    switch (options.analysisSize) {
+    | CircularBuffer(_) => writePos^ mod width
+    | _ => width - 1
+    };
+
   switch (options.readerType) {
   | Channel(_) =>
     let outputImageData = makeImageData(~cqtLine);
-    Ctx.putImageData(ctx, outputImageData, width - 1, 0);
-  | Saturation => ()
+    Ctx.putImageData(ctx, outputImageData, xToWrite, 0);
+  | Saturation =>
+    let outputImageData =
+      makeImageDataWithPalette(~cqtLine, ~palette=Palette.saturationRainbow);
+    Ctx.putImageData(ctx, outputImageData, xToWrite, 0);
   };
 };
 
@@ -41,6 +51,7 @@ let make =
       ~layerKey,
       ~audioCtx,
       ~audioGraph,
+      ~writePos,
       ~options,
       ~millisPerTick,
       ~saveRef,
@@ -104,7 +115,7 @@ let make =
       );
 
       switch (options.analysisSize) {
-      | WithHistory(_) =>
+      | History(_) =>
         saveTick(self.onUnmount, layerKey, _t =>
           switch (self.state.canvasRef^) {
           | Some(canvas) =>
@@ -115,7 +126,7 @@ let make =
           | None => ()
           }
         )
-      | _ => ()
+      | _ => saveTick(self.onUnmount, layerKey, _t => ())
       };
 
       setTimer(
@@ -125,12 +136,45 @@ let make =
           | Some(canvas) =>
             let canvasElement = getFromReact(canvas);
             let ctx = getContext(canvasElement);
-            drawCQTBar(ctx, self.state, options, width, height);
+            drawCQTBar(ctx, self.state, options, writePos, width, height);
           | None => ()
           },
         millisPerTick,
       );
       self.onUnmount(() => maybeClearTimer(self.state.timerId));
+    },
+    willUpdate: ({oldSelf, newSelf}) => {
+      maybeClearTimer(oldSelf.state.timerId);
+      switch (options.analysisSize) {
+      | History(_) =>
+        saveTick(
+          _f => (),
+          layerKey,
+          _t =>
+            switch (newSelf.state.canvasRef^) {
+            | Some(canvas) =>
+              let canvasElement = getFromReact(canvas);
+              let ctx = getContext(canvasElement);
+
+              Ctx.drawImage(ctx, getCanvasAsSource(canvasElement), -1, 0);
+            | None => ()
+            },
+        )
+      | _ => saveTick(_f => (), layerKey, _t => ())
+      };
+
+      setTimer(
+        newSelf.state.timerId,
+        () =>
+          switch (newSelf.state.canvasRef^) {
+          | Some(canvas) =>
+            let canvasElement = getFromReact(canvas);
+            let ctx = getContext(canvasElement);
+            drawCQTBar(ctx, newSelf.state, options, writePos, width, height);
+          | None => ()
+          },
+        millisPerTick,
+      );
     },
     reducer: ((), _state) => ReasonReact.NoUpdate,
     render: self =>

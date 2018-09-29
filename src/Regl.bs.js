@@ -4,6 +4,8 @@ import * as Block from "bs-platform/lib/es6/block.js";
 import * as Json_decode from "@glennsl/bs-json/src/Json_decode.bs.js";
 import * as Json_encode from "@glennsl/bs-json/src/Json_encode.bs.js";
 
+var reinit = function (texture,src){return texture(src);};
+
 var triangleSpec = {
   frag: "\n     precision mediump float;\n     uniform vec4 color;\n     void main () {\n         gl_FragColor = color;\n     }\n  ",
   vert: "\n     precision mediump float;\n     attribute vec2 position;\n     void main () {\n       gl_Position = vec4(position, 0, 1);\n     }\n  ",
@@ -64,7 +66,7 @@ function sobelSpec(regl) {
 
 function displaceSpec(regl) {
   return {
-          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform sampler2D displace_map;\n     uniform float maximum;\n     uniform float time;\n     uniform vec2 resolution;\n     varying vec2 uv;\n\n     void main () {\n\t   float x = 1.0 / resolution.x;\n\t   float y = 1.0 / resolution.y;\n     float time_e      = time * 0.001;\n     vec2 uv_t         = vec2(uv.s + time_e, uv.t + time_e);\n     vec4 displace     = texture2D(displace_map, uv_t);\n     float displace_k  = displace.g * maximum;\n     vec2 uv_displaced = vec2(uv.x + (displace_k * x),\n       uv.y + (displace_k * y));\n\n     gl_FragColor = texture2D(texture, uv_displaced);\n     }\n     ",
+          frag: "\n     precision mediump float;\n     uniform sampler2D texture;\n     uniform sampler2D displace_map;\n     uniform float maximum;\n     uniform float time;\n     uniform vec2 resolution;\n     varying vec2 uv;\n     const float TAU = 6.28318530718;\n\n     void main () {\n\t   float x = 1.0 / resolution.x;\n\t   float y = 1.0 / resolution.y;\n     float time_e      = time * 0.1;\n     float x_t = 0.0;\n     float y_t = 0.0;\n     vec2 uv_t         = vec2(uv.s + x_t, uv.t + y_t);\n     vec4 displace     = texture2D(displace_map, uv_t);\n     vec2 uv_displaced = vec2(uv.x + (displace.r * maximum * x),\n       uv.y + (displace.b * maximum * y));\n\n     gl_FragColor = texture2D(texture, uv_displaced);\n     }\n     ",
           vert: "\n     precision mediump float;\n     attribute vec2 position;\n     varying vec2 uv;\n     void main () {\n     uv = position;\n     gl_Position = vec4(-(1.0 - 2.0 * position.x), 1.0 - 2.0 * position.y, 0, 1);\n     }\n     ",
           attributes: {
             position: /* array */[
@@ -207,6 +209,7 @@ var DecodeReglOptions = /* module */[
 ];
 
 export {
+  reinit ,
   triangleSpec ,
   sobelSpec ,
   displaceSpec ,

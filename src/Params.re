@@ -92,6 +92,8 @@ module EncodeParams = {
     );
 };
 
+let nth = List.nth;
+
 let component = ReasonReact.statelessComponent("Params");
 
 let make =
@@ -102,9 +104,8 @@ let make =
       ~layerRefs,
       ~onChangeLayer,
       ~onSetParams,
-      ~getAudio,
       ~saveTick,
-      ~millisPerAudioTick,
+      ~savedImages,
       _children,
     ) => {
   ...component,
@@ -149,6 +150,22 @@ let make =
                       label=(ReasonReact.string("Clear between frames"))
                     />
                   </FormGroup>
+                  <IntSlider
+                    label="Width"
+                    value=params.width
+                    min=120
+                    max=720
+                    step=120
+                    onChange=(width => onSetParams({...params, width}))
+                  />
+                  <IntSlider
+                    label="Height"
+                    value=params.height
+                    min=120
+                    max=720
+                    step=120
+                    onChange=(height => onSetParams({...params, height}))
+                  />
                   <IntSlider
                     label="Read position offset"
                     value=params.readPosOffset
@@ -257,6 +274,14 @@ let make =
               </ExpansionPanelDetails>
             </ExpansionPanel>
           </div>
+          /* <MIDIListener */
+          /*   onChange=( */
+          /*     ((i, v)) => { */
+          /*       let layer = nth(params.layers, i); */
+          /*       onChangeLayer(layer, Some({...layer, alpha: v})); */
+          /*     } */
+          /*   ) */
+          /* /> */
           <div style=(ReactDOMRe.Style.make(~marginLeft="24px", ()))>
             <NewLayerButton
               onAdd=(
@@ -290,6 +315,7 @@ let make =
         layerRefs
         onChangeLayer
         saveTick
+        savedImages
         rootWidth=params.width
         rootHeight=params.height
       />

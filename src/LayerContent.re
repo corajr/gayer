@@ -15,7 +15,8 @@ let make =
       ~millisPerTick,
       ~width,
       ~height,
-      ~getReadAndWritePos,
+      ~readPos,
+      ~writePos,
       ~globalDrawContext,
       ~currentFilterValues,
       ~layerContent,
@@ -31,9 +32,11 @@ let make =
           <SlitscanCanvas
             layerKey
             layerRefs
-            sourceKey=opts.sourceLayerKey
             setRef
             saveTick
+            globalDrawContext
+            writePos
+            opts
             width
             height
           />
@@ -48,10 +51,12 @@ let make =
           />
         | Video(url) => <VideoFile layerKey setRef url audioCtx audioGraph />
         | Analysis(options) =>
-          open Canvas.DrawCommand;
+          open DrawCommand;
           let (w, h) =
             switch (options.analysisSize) {
-            | WithHistory({w, h}) => (w, h)
+            | Slit => (Pixels(1), Height)
+            | CircularBuffer({w, h}) => (w, h)
+            | History({w, h}) => (w, h)
             | DestRect({w, h}) => (w, h)
             };
 
@@ -65,19 +70,22 @@ let make =
             audioGraph
             options
             millisPerTick
+            writePos
             saveTick
             saveRef=setRef
           />;
         | MIDIKeyboard => <MIDICanvas setRef height />
-        | KeycodeWriter => <KeycodeCanvas layerKey layerRefs setRef />
-        | KeycodeReader =>
+        | KeycodeWriter(format) =>
+          <KeycodeCanvas layerKey layerRefs format setRef />
+        | KeycodeReader(format) =>
           <KeycodeReaderCanvas
             layerKey
             layerRefs
+            format
             setRef
             saveTick
             currentFilterValues
-            getReadAndWritePos
+            writePos
           />
         | Draw(cmds) =>
           <DrawCommandCanvas
@@ -113,7 +121,7 @@ let make =
             width=1
             rootHeight=height
             height=120
-            getReadAndWritePos
+            readPos
             saveTick
           />
         | Regl(opts) =>
@@ -127,6 +135,7 @@ let make =
             audioCtx
             audioGraph
           />
+        | Text(_)
         | DrawGlobal(_)
         | PitchClasses(_)
         | Fill(_)

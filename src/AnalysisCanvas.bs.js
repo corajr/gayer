@@ -3,14 +3,16 @@
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
 import * as CQT$Gayer from "./CQT.bs.js";
+import * as Caml_int32 from "bs-platform/lib/es6/caml_int32.js";
 import * as Audio$Gayer from "./Audio.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Timing$Gayer from "./Timing.bs.js";
+import * as Palette$Gayer from "./Palette.bs.js";
 import * as AudioGraph$Gayer from "./AudioGraph.bs.js";
 import * as ImageDataUtil$Gayer from "./ImageDataUtil.bs.js";
 
-function drawCQTBar(ctx, state, options, width, _) {
+function drawCQTBar(ctx, state, options, writePos, width, _) {
   var audioDataL = state[/* cqt */4][0].get_input_array(0);
   var audioDataR = state[/* cqt */4][0].get_input_array(1);
   state[/* analyserL */0][0].getFloatTimeDomainData(audioDataL);
@@ -18,19 +20,24 @@ function drawCQTBar(ctx, state, options, width, _) {
   state[/* cqt */4][0].calc();
   state[/* cqt */4][0].render_line(1);
   var cqtLine = state[/* cqt */4][0].get_output_array();
-  var match = options[/* readerType */1];
-  if (match) {
+  var match = options[/* analysisSize */2];
+  var xToWrite;
+  xToWrite = typeof match === "number" || match.tag ? width - 1 | 0 : Caml_int32.mod_(writePos[0], width);
+  var match$1 = options[/* readerType */1];
+  if (match$1) {
     var outputImageData = ImageDataUtil$Gayer.makeImageData(cqtLine);
-    ctx.putImageData(outputImageData, width - 1 | 0, 0);
+    ctx.putImageData(outputImageData, xToWrite, 0);
     return /* () */0;
   } else {
+    var outputImageData$1 = ImageDataUtil$Gayer.makeImageDataWithPalette(Palette$Gayer.saturationRainbow, cqtLine);
+    ctx.putImageData(outputImageData$1, xToWrite, 0);
     return /* () */0;
   }
 }
 
 var component = ReasonReact.reducerComponent("AnalysisCanvas");
 
-function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerTick, saveRef, saveTick, _) {
+function make(width, height, layerKey, audioCtx, audioGraph, writePos, options, millisPerTick, saveRef, saveTick, _) {
   var setCanvasRef = function (theRef, param) {
     param[/* state */1][/* canvasRef */5][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
     return Curry._1(saveRef, theRef);
@@ -55,7 +62,10 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                       return /* () */0;
                     }));
               var match = options[/* analysisSize */2];
-              if (!match.tag) {
+              var exit = 0;
+              if (typeof match === "number" || match.tag !== 1) {
+                exit = 1;
+              } else {
                 Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
                         var match = self[/* state */1][/* canvasRef */5][0];
                         if (match !== undefined) {
@@ -68,11 +78,16 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
                         }
                       }));
               }
+              if (exit === 1) {
+                Curry._3(saveTick, self[/* onUnmount */4], layerKey, (function () {
+                        return /* () */0;
+                      }));
+              }
               Timing$Gayer.setTimer(self[/* state */1][/* timerId */6], (function () {
                       var match = self[/* state */1][/* canvasRef */5][0];
                       if (match !== undefined) {
                         var ctx = Js_primitive.valFromOption(match).getContext("2d");
-                        return drawCQTBar(ctx, self[/* state */1], options, width, height);
+                        return drawCQTBar(ctx, self[/* state */1], options, writePos, width, height);
                       } else {
                         return /* () */0;
                       }
@@ -83,7 +98,45 @@ function make(width, height, layerKey, audioCtx, audioGraph, options, millisPerT
             }),
           /* didUpdate */component[/* didUpdate */5],
           /* willUnmount */component[/* willUnmount */6],
-          /* willUpdate */component[/* willUpdate */7],
+          /* willUpdate */(function (param) {
+              var newSelf = param[/* newSelf */1];
+              Timing$Gayer.maybeClearTimer(param[/* oldSelf */0][/* state */1][/* timerId */6]);
+              var match = options[/* analysisSize */2];
+              var exit = 0;
+              if (typeof match === "number" || match.tag !== 1) {
+                exit = 1;
+              } else {
+                Curry._3(saveTick, (function () {
+                        return /* () */0;
+                      }), layerKey, (function () {
+                        var match = newSelf[/* state */1][/* canvasRef */5][0];
+                        if (match !== undefined) {
+                          var canvas = Js_primitive.valFromOption(match);
+                          var ctx = canvas.getContext("2d");
+                          ctx.drawImage(canvas, -1, 0);
+                          return /* () */0;
+                        } else {
+                          return /* () */0;
+                        }
+                      }));
+              }
+              if (exit === 1) {
+                Curry._3(saveTick, (function () {
+                        return /* () */0;
+                      }), layerKey, (function () {
+                        return /* () */0;
+                      }));
+              }
+              return Timing$Gayer.setTimer(newSelf[/* state */1][/* timerId */6], (function () {
+                            var match = newSelf[/* state */1][/* canvasRef */5][0];
+                            if (match !== undefined) {
+                              var ctx = Js_primitive.valFromOption(match).getContext("2d");
+                              return drawCQTBar(ctx, newSelf[/* state */1], options, writePos, width, height);
+                            } else {
+                              return /* () */0;
+                            }
+                          }), millisPerTick);
+            }),
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("canvas", {

@@ -27,10 +27,19 @@ let make =
     let buffer = createBuffer(audioCtx, 1, w * h, sampleRate);
     self.state.audioBuffer := Some(buffer);
 
+    let gain = createGain(audioCtx);
+    setValueAtTime(gain |. gain_Get, currentTime(audioCtx), 0.1);
+
+    audioGraph :=
+      audioGraph^
+      |> addNode((layerKey, unwrapGain(gain)))
+      |> addEdge((layerKey, "compressor", 0, 0))
+      |> updateConnections;
+
     saveTick(self.onUnmount, layerKey, _t =>
       switch (
         self.state.audioBuffer^,
-        getNode("compressor", audioGraph^),
+        getNode(layerKey, audioGraph^),
         Belt.Map.String.get(layerRefs^, "root"),
       ) {
       | (Some(buffer), Some(sink), Some(canvas)) =>

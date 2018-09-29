@@ -4,13 +4,13 @@ import * as List from "bs-platform/lib/es6/list.js";
 import * as $$Array from "bs-platform/lib/es6/array.js";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
-import * as Layer$Gayer from "../Layer.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
 import * as Dragula$Gayer from "./Dragula.bs.js";
 import * as ReactDragula from "react-dragula";
 import * as Belt_MapString from "bs-platform/lib/es6/belt_MapString.js";
 import * as RList$Rationale from "rationale/src/RList.js";
+import * as LayerControl$Gayer from "../LayerControl.bs.js";
 
 var defaultState_000 = /* cards : record */[/* contents : [] */0];
 
@@ -26,7 +26,7 @@ var defaultState = /* record */[
 
 var component = ReasonReact.reducerComponent("Container");
 
-function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, rootWidth, rootHeight, saveTick, _) {
+function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, rootWidth, rootHeight, saveTick, savedImages, _) {
   var dragulaDecorator = function (theRef, param) {
     var state = param[/* state */1];
     state[/* dragContainerRef */1][0] = (theRef == null) ? undefined : Js_primitive.some(theRef);
@@ -94,8 +94,13 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, 
               }
             }));
       Curry._1(onUnmount, (function () {
-              destroy(drake);
-              return /* () */0;
+              try {
+                destroy(drake);
+                return /* () */0;
+              }
+              catch (e){
+                return /* () */0;
+              }
             }));
       state$1[/* dragulaRef */2][0] = Js_primitive.some(drake);
       return /* () */0;
@@ -124,7 +129,7 @@ function make(cards, onMoveCard, onChangeLayer, onSetRef, layerKeys, layerRefs, 
                                                 style: {
                                                   marginBottom: "16px"
                                                 }
-                                              }, ReasonReact.element(undefined, undefined, Layer$Gayer.make(card[/* layer */1], layerKeys, layerRefs, onSetRef, saveTick, onChangeLayer, rootWidth, rootHeight, /* array */[])));
+                                              }, ReasonReact.element(undefined, undefined, LayerControl$Gayer.make(card[/* layer */1], layerKeys, layerRefs, onSetRef, saveTick, onChangeLayer, savedImages, rootWidth, rootHeight, /* array */[])));
                                   }), cards)));
             }),
           /* initialState */(function () {

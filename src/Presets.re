@@ -1,5 +1,5 @@
 open Audio;
-open Canvas.DrawCommand;
+open DrawCommand;
 open Layer;
 open LayerGenerator;
 open Music;
@@ -12,7 +12,19 @@ open RawAudio;
    a variety of other parameters as well. Complete definitions are available in
    Params.re. */
 
-let singleNote = {...defaultParams, layers: [singleNoteLayer(60), reader]};
+let singleNote = {
+  ...defaultParams,
+  millisPerTick: 100,
+  layers: [
+    text(
+      "GAYER is a tool to help you turn images into sound (and vice versa).\n"
+      ++ "You should be hearing a single note -- MIDI note 60, AKA middle C.\n\n"
+      ++ "If you don't hear anything, please check your volume settings.",
+    ),
+    singleNoteLayer(60),
+    reader,
+  ],
+};
 
 let harmonyParams = {
   ...defaultParams,
@@ -69,43 +81,18 @@ let webcamEdgeDetect = {
 
 let slitscanParams = {
   ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
-  readPosOffset: defaultSize - 1,
-  writePosOffset: defaultSize - 1,
   shouldClear: false,
   layers: [
-    analyzer(Mic),
+    analyzer(Mic, ~analysisSize=Slit),
     /* squareColumnLayer, */
-    {...webcam, alpha: 0.0},
-    slitscan,
-    sobel("root"),
+    {...webcam, alpha: 0.0, id: Some("webcam4slitscan")},
+    {...sobel("webcam4slitscan"), alpha: 0.0, id: Some("sobel4slitscan")},
+    {...slitscan("sobel4slitscan"), alpha: 0.5},
     /* pitchFilter(cMajor), */
     reader,
   ],
 };
 
-let slitscanEdgeDetectParams = {
-  ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
-  readPosOffset: defaultSize - 1,
-  writePosOffset: defaultSize - 1,
-  shouldClear: false,
-  layers: [
-    slitscan,
-    /* sobel, */
-    analyzer(Mic),
-    /* pitchFilter(cMajor), */
-    historyLayer,
-    reader,
-  ],
-};
-
-let slitscanHistogramParams = {
-  ...slitscanParams,
-  layers: [webcam, slitscan, histogram, historyLayer, reader],
-};
 let whiteboardParams = {
   ...defaultParams,
   layers: [
@@ -180,21 +167,18 @@ let debussyFile = analyzer(AudioFile("media/la_cathedrale_engloutie.m4a"));
 
 let debussy = {...history, layers: [debussyFile, historyLayer, reader]};
 
-let droste = {
+let equationFile = analyzer(AudioFile("media/equation.ogg"));
+
+let equation = {...history, layers: [equationFile, reader]};
+
+let dissolve = {
   ...defaultParams,
-  readPosDelta: 0,
-  writePosDelta: 0,
+  writePosOffset: 2,
   shouldClear: false,
   layers: [
-    {
-      ...analyzer(Mic),
-      transformMatrix: {
-        ...defaultTransform,
-        horizontalScaling: float_of_int(defaultSize),
-      },
-    },
-    drosteLayer,
-    reader,
+    analyzer(Mic, ~analysisSize=Slit),
+    {...drosteLayer, alpha: 0.1},
+    {...reader, alpha: 0.0},
   ],
 };
 
@@ -203,10 +187,9 @@ let fourSeasons = {
   layers: [
     img("media/four_seasons.jpg"),
     /* sobel, */
-    /* histogram, */
+    histogram,
     pitchFilter(cMinor),
-    saturationReader,
-    /* reader, */
+    reader,
   ],
 };
 
@@ -220,7 +203,7 @@ let midi = {
   layers: [fill("black"), midiKeyboard, {...reader, alpha: 0.0}],
 };
 
-let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
+let midiDroste = {...dissolve, layers: [midiKeyboard, drosteLayer, reader]};
 
 let readFromCenterLine = {
   ...history,
@@ -237,7 +220,7 @@ let historyBackAndForth = {
 
 let vinyl = {
   ...readFromCenterLine,
-  layers: [rotateLayer, analyzer(Mic), reader],
+  layers: [rotateLayer(degreesToRadians(1.0)), analyzer(Mic), reader],
 };
 
 let videoURL = "media/nonfree/kishi_bashi-say_yeah.mp4";
@@ -253,7 +236,8 @@ let video = {
 
 let lesTresRichesHeures = {
   ...defaultParams,
-  outputGain: 0.05,
+  outputGain: 0.1,
+  readPosDelta: (-1),
   layers: [
     img("media/les_tres_riches_heures.jpg"),
     sobel("root"),
@@ -262,12 +246,21 @@ let lesTresRichesHeures = {
   ],
 };
 
-let histogram = {
+let histogramParams = {
   ...defaultParams,
-  layers: [hubble, pitchFilter(cMajor), histogram],
+  layers: [webcam, histogram, saturationReader],
 };
 
-let rawAudio = {...defaultParams, layers: [rawAudioWriter, rawAudioReader]};
+let rawAudio = {
+  ...defaultParams,
+  millisPerTick: 92,
+  layers: [
+    webcam,
+    {...fill("cyan"), compositeOperation: Multiply},
+    {...rawAudioWriter, compositeOperation: Lighter},
+    rawAudioReader,
+  ],
+};
 
 let rawAudioAndSpacy = {
   ...defaultParams,
@@ -284,58 +277,79 @@ let keycodeParams = {
   ],
 };
 
+let welcome = {
+  ...defaultParams,
+  layers: [
+    text(
+      "Welcome to GAYER, the Graphical Audio plaYER!\n"
+      ++ "Please press the >| button at the top of the screen to begin.",
+    ),
+    fill("white"),
+    {...drawText("GAYER", ~color="black"), alpha: 0.5},
+  ],
+};
+
 let welcomeAudio = {
   ...defaultParams,
   layers: [
     fill("black"),
-    text("GAYER", ~color="red", ~fillOrStroke=Stroke),
+    drawText("GAYER", ~color="red", ~fillOrStroke=Stroke),
     saturationReader,
   ],
 };
 
 let displaceParams = {
-  ...defaultParams,
+  ...history,
+  shouldClear: true,
   layers: [
-    {...webcam, alpha: 0.0, id: Some("webcam")},
-    displace("webcam", "analyzer"),
     {
-      ...analyzer(Mic, ~includeHistory=true),
-      alpha: 0.1,
+      ...analyzer(Mic, ~analysisSize=History({w: Width, h: Height})),
       id: Some("analyzer"),
     },
     reader,
+    {...webcam, alpha: 0.0, id: Some("webcam")},
+    displace("webcam", "analyzer"),
+  ],
+};
+
+let rawAudioWarning = {
+  ...defaultParams,
+  layers: [
+    text(
+      "WARNING! The next mode has a high potential for audio feedback.\n"
+      ++ "Please lower your volume before continuing.",
+    ),
+    fill("red"),
+    drawText("WARNING!", ~color="black"),
   ],
 };
 
 let presetsWithoutLayerIds = [
-  /* ("Displace", displaceParams), */
-  /* ("Welcome", {...defaultParams, layers: [fill("black"), text("GAYER")]}), */
-  /* ("Spectrogram", {...defaultParams, layers: [analyzer(Mic)]}), */
-  /* ("Welcome (Audio)", welcomeAudio), */
-  ("Spacy", {...defaultParams, layers: spacy}),
+  ("Welcome", welcome),
   ("Single note", singleNote),
-  ("Mic (CQT analysis)", history),
-  /* ("Hand-drawn", handDrawnParams), */
+  ("Spacy", {...defaultParams, layers: spacy}),
+  ("Tughra of Suleiman", tughra),
+  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
+  ("Four Seasons", fourSeasons),
+  ("Is it a crime?", isItACrime),
+  ("Audio file", equation),
   ("Webcam (edge detection)", webcamEdgeDetect),
+  ("Mic (CQT spectrogram)", history),
+  /* ("Hand-drawn", handDrawnParams), */
   /* ("Slitscan", slitscanParams), */
-  /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
-  /* ("Slitscan (color histogram)", slitscanHistogramParams), */
-  /* ("Keycode", keycodeParams), */
+  /* ("Histogram", histogramParams), */
+  ("Keycode", keycodeParams),
+  ("Displace", displaceParams),
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
-  /* ("Angle", droste), */
-  ("Tughra of Suleiman", tughra),
-  ("Four Seasons", fourSeasons),
-  ({js|Les Très Riches Heures|js}, lesTresRichesHeures),
-  ("Is it a crime?", isItACrime),
+  ("Dissolve", dissolve),
   ("MIDI (requires MIDI keyboard)", midi),
-  /* ("Audio file", debussy), */
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
-  /* ("Whiteboard", whiteboardParams), */
   /* ("Mic feedback (may be loud!)", feedback), */
-  /* ("Raw audio (can feedback!)", rawAudio), */
+  ("Raw Audio Warning", rawAudioWarning),
+  ("Raw audio (can feedback!)", rawAudio),
   /* ("Raw audio and spacy", rawAudioAndSpacy), */
   ("Empty", {...defaultParams, layers: []}),
 ];

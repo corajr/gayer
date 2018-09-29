@@ -8,11 +8,11 @@ import * as Caml_array from "bs-platform/lib/es6/caml_array.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Canvas$Gayer from "./Canvas.bs.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
-import * as KeyboardManager$Gayer from "./KeyboardManager.bs.js";
+import * as KeycodeUtil$Gayer from "./KeycodeUtil.bs.js";
 
 var component = ReasonReact.reducerComponent("KeycodeReaderCanvas-Gayer");
 
-function make(layerKey, _, setRef, saveTick, currentFilterValues, getReadAndWritePos, $staropt$star, $staropt$star$1, $staropt$star$2, _$1) {
+function make(layerKey, _, _$1, setRef, saveTick, currentFilterValues, writePos, $staropt$star, $staropt$star$1, $staropt$star$2, _$2) {
   var width = $staropt$star !== undefined ? $staropt$star : 240;
   var height = $staropt$star$1 !== undefined ? $staropt$star$1 : 240;
   var fontSize = $staropt$star$2 !== undefined ? $staropt$star$2 : 12;
@@ -32,11 +32,6 @@ function make(layerKey, _, setRef, saveTick, currentFilterValues, getReadAndWrit
                             var match$1 = self[/* state */1][/* canvasRef */0][0];
                             if (match !== undefined && match$1 !== undefined) {
                               var values = match[0];
-                              var writePos = /* record */[/* contents */0];
-                              Curry._1(getReadAndWritePos, (function (_, w) {
-                                      writePos[0] = w;
-                                      return /* () */0;
-                                    }));
                               var ctx = Js_primitive.valFromOption(match$1).getContext("2d");
                               ctx.fillStyle = Canvas$Gayer.rgba(0, 0, 0, 0.008);
                               ctx.fillRect(0, 0, width, height);
@@ -45,7 +40,7 @@ function make(layerKey, _, setRef, saveTick, currentFilterValues, getReadAndWrit
                               for(var i = 0 ,i_finish = n - 1 | 0; i <= i_finish; ++i){
                                 var v = Caml_array.caml_array_get(values, i);
                                 if (v > 0.1) {
-                                  var keyCodeN = KeyboardManager$Gayer.yToKeyCode(height, i);
+                                  var keyCodeN = KeycodeUtil$Gayer.yToKeyCode(height, i);
                                   var s = $$String.make(1, Char.chr(keyCodeN));
                                   ctx.fillStyle = Canvas$Gayer.rgba(255, 255, 255, v);
                                   ctx.fillText(s, writePos[0], i);
@@ -81,10 +76,7 @@ function make(layerKey, _, setRef, saveTick, currentFilterValues, getReadAndWrit
         ];
 }
 
-var yToKeyCode = KeyboardManager$Gayer.yToKeyCode;
-
 export {
-  yToKeyCode ,
   component ,
   make ,
   

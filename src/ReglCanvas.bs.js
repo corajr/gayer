@@ -3,6 +3,7 @@
 import * as Regl from "regl";
 import * as Curry from "bs-platform/lib/es6/curry.js";
 import * as React from "react";
+import * as Js_exn from "bs-platform/lib/es6/js_exn.js";
 import * as Regl$Gayer from "./Regl.bs.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 import * as Js_primitive from "bs-platform/lib/es6/js_primitive.js";
@@ -12,14 +13,34 @@ function copyLayerToTexture(maybeRegl, textureRefs, layerRefs, layerKey, texture
   var match = maybeRegl[0];
   var match$1 = Belt_MapString.get(layerRefs[0], layerKey);
   if (match !== undefined && match$1 !== undefined) {
+    var match$2 = Belt_MapString.get(textureRefs[0], textureKey);
+    if (match$2 !== undefined) {
+      try {
+        Js_primitive.valFromOption(match$2).destroy();
+      }
+      catch (exn){
+        
+      }
+    }
+    var exit = 0;
+    var tex;
     try {
-      var aTexture = Js_primitive.valFromOption(match).texture(Js_primitive.valFromOption(match$1));
-      textureRefs[0] = Belt_MapString.set(textureRefs[0], textureKey, aTexture);
+      tex = Js_primitive.valFromOption(match).texture(Js_primitive.valFromOption(match$1));
+      exit = 1;
+    }
+    catch (raw_exn){
+      var exn$1 = Js_exn.internalToOCamlException(raw_exn);
+      if (exn$1[0] === Js_exn.$$Error) {
+        return /* () */0;
+      } else {
+        throw exn$1;
+      }
+    }
+    if (exit === 1) {
+      textureRefs[0] = Belt_MapString.set(textureRefs[0], textureKey, tex);
       return /* () */0;
     }
-    catch (exn){
-      return /* () */0;
-    }
+    
   } else {
     return /* () */0;
   }
@@ -120,7 +141,15 @@ function make(layerRefs, opts, setRef, saveTick, layerKey, width, height, _) {
                           }));
             }),
           /* didUpdate */component[/* didUpdate */5],
-          /* willUnmount */component[/* willUnmount */6],
+          /* willUnmount */(function (self) {
+              var match = self[/* state */1][/* reglRef */1][0];
+              if (match !== undefined) {
+                Js_primitive.valFromOption(match).destroy();
+                return /* () */0;
+              } else {
+                return /* () */0;
+              }
+            }),
           /* willUpdate */(function (param) {
               var newSelf = param[/* newSelf */1];
               return Curry._3(saveTick, (function () {
