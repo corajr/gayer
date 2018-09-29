@@ -955,95 +955,79 @@ var equation = /* record */[
   equation_014
 ];
 
-var init$4 = LayerGenerator$Gayer.fill(undefined, "red");
+var dissolve_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
-var droste_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+var dissolve_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var droste_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+var dissolve_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var droste_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+var dissolve_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
 
-var droste_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+var dissolve_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
 
-var droste_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+var dissolve_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
-var droste_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+var dissolve_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
 
-var droste_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+var dissolve_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
 
-var droste_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+var dissolve_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
 
-var droste_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+var dissolve_010 = /* q */Params$Gayer.defaultParams[/* q */10];
 
-var droste_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+var dissolve_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 
-var droste_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+var dissolve_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
-var droste_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
-
-var droste_014 = /* layers : :: */[
+var dissolve_014 = /* layers : :: */[
   LayerGenerator$Gayer.analyzer(undefined, /* Slit */0, /* Mic */2),
   /* :: */[
     /* record */[
-      /* content */init$4[/* content */0],
-      /* enabled */init$4[/* enabled */1],
-      /* alpha */init$4[/* alpha */2],
-      /* compositeOperation : Multiply */11,
-      /* rotation */init$4[/* rotation */4],
-      /* transformMatrix */init$4[/* transformMatrix */5],
-      /* filters */init$4[/* filters */6],
-      /* tickPeriod */init$4[/* tickPeriod */7],
-      /* tickPhase */init$4[/* tickPhase */8],
-      /* id */init$4[/* id */9]
+      /* content */LayerGenerator$Gayer.drosteLayer[/* content */0],
+      /* enabled */LayerGenerator$Gayer.drosteLayer[/* enabled */1],
+      /* alpha */0.1,
+      /* compositeOperation */LayerGenerator$Gayer.drosteLayer[/* compositeOperation */3],
+      /* rotation */LayerGenerator$Gayer.drosteLayer[/* rotation */4],
+      /* transformMatrix */LayerGenerator$Gayer.drosteLayer[/* transformMatrix */5],
+      /* filters */LayerGenerator$Gayer.drosteLayer[/* filters */6],
+      /* tickPeriod */LayerGenerator$Gayer.drosteLayer[/* tickPeriod */7],
+      /* tickPhase */LayerGenerator$Gayer.drosteLayer[/* tickPhase */8],
+      /* id */LayerGenerator$Gayer.drosteLayer[/* id */9]
     ],
     /* :: */[
       /* record */[
-        /* content */LayerGenerator$Gayer.drosteLayer[/* content */0],
-        /* enabled */LayerGenerator$Gayer.drosteLayer[/* enabled */1],
-        /* alpha */0.9,
-        /* compositeOperation */LayerGenerator$Gayer.drosteLayer[/* compositeOperation */3],
-        /* rotation */LayerGenerator$Gayer.drosteLayer[/* rotation */4],
-        /* transformMatrix */LayerGenerator$Gayer.drosteLayer[/* transformMatrix */5],
-        /* filters */LayerGenerator$Gayer.drosteLayer[/* filters */6],
-        /* tickPeriod */LayerGenerator$Gayer.drosteLayer[/* tickPeriod */7],
-        /* tickPhase */LayerGenerator$Gayer.drosteLayer[/* tickPhase */8],
-        /* id */LayerGenerator$Gayer.drosteLayer[/* id */9]
+        /* content */LayerGenerator$Gayer.reader[/* content */0],
+        /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
+        /* alpha */0.0,
+        /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
+        /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
+        /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
+        /* filters */LayerGenerator$Gayer.reader[/* filters */6],
+        /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
+        /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
+        /* id */LayerGenerator$Gayer.reader[/* id */9]
       ],
-      /* :: */[
-        /* record */[
-          /* content */LayerGenerator$Gayer.reader[/* content */0],
-          /* enabled */LayerGenerator$Gayer.reader[/* enabled */1],
-          /* alpha */0.0,
-          /* compositeOperation */LayerGenerator$Gayer.reader[/* compositeOperation */3],
-          /* rotation */LayerGenerator$Gayer.reader[/* rotation */4],
-          /* transformMatrix */LayerGenerator$Gayer.reader[/* transformMatrix */5],
-          /* filters */LayerGenerator$Gayer.reader[/* filters */6],
-          /* tickPeriod */LayerGenerator$Gayer.reader[/* tickPeriod */7],
-          /* tickPhase */LayerGenerator$Gayer.reader[/* tickPhase */8],
-          /* id */LayerGenerator$Gayer.reader[/* id */9]
-        ],
-        /* [] */0
-      ]
+      /* [] */0
     ]
   ]
 ];
 
-var droste = /* record */[
-  droste_000,
-  droste_001,
-  droste_002,
-  droste_003,
-  droste_004,
-  /* writePosOffset */4,
-  droste_006,
-  droste_007,
-  droste_008,
-  droste_009,
-  droste_010,
-  droste_011,
-  droste_012,
+var dissolve = /* record */[
+  dissolve_000,
+  dissolve_001,
+  dissolve_002,
+  dissolve_003,
+  dissolve_004,
+  /* writePosOffset */2,
+  dissolve_006,
+  dissolve_007,
+  dissolve_008,
+  dissolve_009,
+  dissolve_010,
+  dissolve_011,
+  dissolve_012,
   /* shouldClear */false,
-  droste_014
+  dissolve_014
 ];
 
 var fourSeasons_000 = /* width */Params$Gayer.defaultParams[/* width */0];
@@ -1222,29 +1206,29 @@ var midi = /* record */[
   midi_014
 ];
 
-var midiDroste_000 = droste_000;
+var midiDroste_000 = dissolve_000;
 
-var midiDroste_001 = droste_001;
+var midiDroste_001 = dissolve_001;
 
-var midiDroste_002 = droste_002;
+var midiDroste_002 = dissolve_002;
 
-var midiDroste_003 = droste_003;
+var midiDroste_003 = dissolve_003;
 
-var midiDroste_004 = droste_004;
+var midiDroste_004 = dissolve_004;
 
-var midiDroste_006 = droste_006;
+var midiDroste_006 = dissolve_006;
 
-var midiDroste_007 = droste_007;
+var midiDroste_007 = dissolve_007;
 
-var midiDroste_008 = droste_008;
+var midiDroste_008 = dissolve_008;
 
-var midiDroste_009 = droste_009;
+var midiDroste_009 = dissolve_009;
 
-var midiDroste_010 = droste_010;
+var midiDroste_010 = dissolve_010;
 
-var midiDroste_011 = droste_011;
+var midiDroste_011 = dissolve_011;
 
-var midiDroste_012 = droste_012;
+var midiDroste_012 = dissolve_012;
 
 var midiDroste_014 = /* layers : :: */[
   LayerGenerator$Gayer.midiKeyboard,
@@ -1263,7 +1247,7 @@ var midiDroste = /* record */[
   midiDroste_002,
   midiDroste_003,
   midiDroste_004,
-  /* writePosOffset */4,
+  /* writePosOffset */2,
   midiDroste_006,
   midiDroste_007,
   midiDroste_008,
@@ -1591,7 +1575,7 @@ var histogramParams = /* record */[
   histogramParams_014
 ];
 
-var init$5 = LayerGenerator$Gayer.fill(undefined, "cyan");
+var init$4 = LayerGenerator$Gayer.fill(undefined, "cyan");
 
 var rawAudio_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1623,16 +1607,16 @@ var rawAudio_014 = /* layers : :: */[
   LayerGenerator$Gayer.webcam,
   /* :: */[
     /* record */[
-      /* content */init$5[/* content */0],
-      /* enabled */init$5[/* enabled */1],
-      /* alpha */init$5[/* alpha */2],
+      /* content */init$4[/* content */0],
+      /* enabled */init$4[/* enabled */1],
+      /* alpha */init$4[/* alpha */2],
       /* compositeOperation : Multiply */11,
-      /* rotation */init$5[/* rotation */4],
-      /* transformMatrix */init$5[/* transformMatrix */5],
-      /* filters */init$5[/* filters */6],
-      /* tickPeriod */init$5[/* tickPeriod */7],
-      /* tickPhase */init$5[/* tickPhase */8],
-      /* id */init$5[/* id */9]
+      /* rotation */init$4[/* rotation */4],
+      /* transformMatrix */init$4[/* transformMatrix */5],
+      /* filters */init$4[/* filters */6],
+      /* tickPeriod */init$4[/* tickPeriod */7],
+      /* tickPhase */init$4[/* tickPhase */8],
+      /* id */init$4[/* id */9]
     ],
     /* :: */[
       /* record */[
@@ -1798,7 +1782,7 @@ var keycodeParams = /* record */[
   keycodeParams_014
 ];
 
-var init$6 = LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "black", undefined, "GAYER");
+var init$5 = LayerGenerator$Gayer.drawText(undefined, undefined, undefined, undefined, undefined, "black", undefined, "GAYER");
 
 var welcome_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
@@ -1834,16 +1818,16 @@ var welcome_014 = /* layers : :: */[
     LayerGenerator$Gayer.fill(undefined, "white"),
     /* :: */[
       /* record */[
-        /* content */init$6[/* content */0],
-        /* enabled */init$6[/* enabled */1],
+        /* content */init$5[/* content */0],
+        /* enabled */init$5[/* enabled */1],
         /* alpha */0.5,
-        /* compositeOperation */init$6[/* compositeOperation */3],
-        /* rotation */init$6[/* rotation */4],
-        /* transformMatrix */init$6[/* transformMatrix */5],
-        /* filters */init$6[/* filters */6],
-        /* tickPeriod */init$6[/* tickPeriod */7],
-        /* tickPhase */init$6[/* tickPhase */8],
-        /* id */init$6[/* id */9]
+        /* compositeOperation */init$5[/* compositeOperation */3],
+        /* rotation */init$5[/* rotation */4],
+        /* transformMatrix */init$5[/* transformMatrix */5],
+        /* filters */init$5[/* filters */6],
+        /* tickPeriod */init$5[/* tickPeriod */7],
+        /* tickPhase */init$5[/* tickPhase */8],
+        /* id */init$5[/* id */9]
       ],
       /* [] */0
     ]
@@ -1925,7 +1909,7 @@ var welcomeAudio = /* record */[
   welcomeAudio_014
 ];
 
-var init$7 = LayerGenerator$Gayer.analyzer(undefined, /* History */Block.__(1, [/* record */[
+var init$6 = LayerGenerator$Gayer.analyzer(undefined, /* History */Block.__(1, [/* record */[
           /* w : Width */0,
           /* h : Height */1
         ]]), /* Mic */2);
@@ -1954,15 +1938,15 @@ var displaceParams_012 = history_012;
 
 var displaceParams_014 = /* layers : :: */[
   /* record */[
-    /* content */init$7[/* content */0],
-    /* enabled */init$7[/* enabled */1],
-    /* alpha */init$7[/* alpha */2],
-    /* compositeOperation */init$7[/* compositeOperation */3],
-    /* rotation */init$7[/* rotation */4],
-    /* transformMatrix */init$7[/* transformMatrix */5],
-    /* filters */init$7[/* filters */6],
-    /* tickPeriod */init$7[/* tickPeriod */7],
-    /* tickPhase */init$7[/* tickPhase */8],
+    /* content */init$6[/* content */0],
+    /* enabled */init$6[/* enabled */1],
+    /* alpha */init$6[/* alpha */2],
+    /* compositeOperation */init$6[/* compositeOperation */3],
+    /* rotation */init$6[/* rotation */4],
+    /* transformMatrix */init$6[/* transformMatrix */5],
+    /* filters */init$6[/* filters */6],
+    /* tickPeriod */init$6[/* tickPeriod */7],
+    /* tickPhase */init$6[/* tickPhase */8],
     /* id */"analyzer"
   ],
   /* :: */[
@@ -2147,7 +2131,7 @@ var presetsWithoutLayerIds_001 = /* :: */[
                         /* :: */[
                           /* tuple */[
                             "Dissolve",
-                            droste
+                            dissolve
                           ],
                           /* :: */[
                             /* tuple */[
@@ -2276,7 +2260,7 @@ export {
   debussy ,
   equationFile ,
   equation ,
-  droste ,
+  dissolve ,
   fourSeasons ,
   handDrawnParams ,
   midi ,

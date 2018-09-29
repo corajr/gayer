@@ -171,14 +171,13 @@ let equationFile = analyzer(AudioFile("media/equation.ogg"));
 
 let equation = {...history, layers: [equationFile, reader]};
 
-let droste = {
+let dissolve = {
   ...defaultParams,
-  writePosOffset: 4,
+  writePosOffset: 2,
   shouldClear: false,
   layers: [
     analyzer(Mic, ~analysisSize=Slit),
-    {...fill("red"), compositeOperation: Multiply},
-    {...drosteLayer, alpha: 0.9},
+    {...drosteLayer, alpha: 0.1},
     {...reader, alpha: 0.0},
   ],
 };
@@ -205,7 +204,7 @@ let midi = {
   layers: [fill("black"), midiKeyboard, {...reader, alpha: 0.0}],
 };
 
-let midiDroste = {...droste, layers: [midiKeyboard, drosteLayer, reader]};
+let midiDroste = {...dissolve, layers: [midiKeyboard, drosteLayer, reader]};
 
 let readFromCenterLine = {
   ...history,
@@ -345,7 +344,7 @@ let presetsWithoutLayerIds = [
   /* ("History (-|-)", historyBackAndForth), */
   /* ("Video", video), */
   /* ("Rotation", vinyl), */
-  ("Dissolve", droste),
+  ("Dissolve", dissolve),
   ("MIDI (requires MIDI keyboard)", midi),
   /* ("Harmony", harmonyParams), */
   /* ("King Wen", iChing), */
