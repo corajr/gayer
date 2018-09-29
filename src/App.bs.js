@@ -313,9 +313,7 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       case 2 : 
-          if (maybeLayerRef !== undefined) {
-            ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
-          }
+          exit = 1;
           break;
       case 3 : 
           if (maybeLayerRef !== undefined) {
@@ -324,7 +322,7 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       default:
-        exit = 1;
+        exit = 2;
     }
   } else {
     switch (match$1.tag | 0) {
@@ -334,6 +332,9 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 2 : 
           DrawCommand$Gayer.drawCommands(state[/* drawContext */23], match$1[0]);
+          break;
+      case 4 : 
+          exit = 1;
           break;
       case 7 : 
           if (maybeLayerRef !== undefined) {
@@ -347,7 +348,7 @@ function drawLayer(ctx, width, height, state, layer) {
               switch (analysisSize.tag | 0) {
                 case 0 : 
                 case 1 : 
-                    exit$1 = 3;
+                    exit$1 = 4;
                     break;
                 case 2 : 
                     var match$3 = analysisSize[0];
@@ -358,7 +359,7 @@ function drawLayer(ctx, width, height, state, layer) {
                 
               }
             }
-            if (exit$1 === 3) {
+            if (exit$1 === 4) {
               ctx.drawImage(analysisCanvas, 0, 0, width, height);
             }
             
@@ -380,7 +381,7 @@ function drawLayer(ctx, width, height, state, layer) {
           break;
       case 9 : 
       case 10 : 
-          exit = 2;
+          exit = 3;
           break;
       case 11 : 
           var match$4 = match$1[0];
@@ -428,12 +429,13 @@ function drawLayer(ctx, width, height, state, layer) {
           }
           break;
       default:
-        exit = 1;
+        exit = 2;
     }
   }
   switch (exit) {
     case 1 : 
     case 2 : 
+    case 3 : 
         if (maybeLayerRef !== undefined) {
           ctx.drawImage(Js_primitive.valFromOption(maybeLayerRef), 0, 0, width, height);
         }

@@ -93,10 +93,6 @@ let slitscanParams = {
   ],
 };
 
-let slitscanHistogramParams = {
-  ...slitscanParams,
-  layers: [webcam, slitscan("root"), histogram, historyLayer, reader],
-};
 let whiteboardParams = {
   ...defaultParams,
   layers: [
@@ -252,9 +248,9 @@ let lesTresRichesHeures = {
   ],
 };
 
-let histogram = {
+let histogramParams = {
   ...defaultParams,
-  layers: [hubble, pitchFilter(cMajor), histogram],
+  layers: [webcam, histogram, saturationReader],
 };
 
 let rawAudio = {
@@ -343,8 +339,7 @@ let presetsWithoutLayerIds = [
   ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
   ("Slitscan", slitscanParams),
-  /* ("Slitscan (edge detection)", slitscanEdgeDetectParams), */
-  /* ("Slitscan (color histogram)", slitscanHistogramParams), */
+  ("Histogram", histogramParams),
   ("Keycode", keycodeParams),
   ("Displace", displaceParams),
   /* ("History (-|-)", historyBackAndForth), */

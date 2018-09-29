@@ -75,7 +75,7 @@ let imageDataToStereo =
 let imageDataToHistogram =
     (
       ~binCount: int,
-      ~binFn: pixel => (int, float),
+      ~binFn: (int, pixel) => (int, float),
       ~divideBy: float=1.0,
       imageData: imageData,
     )
@@ -84,8 +84,8 @@ let imageDataToHistogram =
   let output = Array.make(binCount, 0.0);
   let outputMax = ref(0.0);
   mapImageData(imageData, rawDataToPixel)
-  |> Array.iter(pixel => {
-       let (i, v) = binFn(pixel);
+  |> Array.iteri((i, pixel) => {
+       let (i, v) = binFn(i, pixel);
        output[i] = output[i] +. v;
        if (output[i] > outputMax^) {
          outputMax := output[i];

@@ -277,6 +277,7 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
           }
         );
       }
+    | Slitscan(_)
     | MIDIKeyboard =>
       switch (maybeLayerRef) {
       | None => ()
@@ -306,7 +307,6 @@ let drawLayer: (ctx, int, int, state, layer) => unit =
     | HandDrawn
     | Text(_)
     | Draw(_)
-    | Slitscan(_)
     | Image(_)
     | Video(_) =>
       switch (maybeLayerRef) {

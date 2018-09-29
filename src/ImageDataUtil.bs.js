@@ -86,12 +86,12 @@ function imageDataToHistogram(binCount, binFn, $staropt$star, imageData) {
   var divideBy = $staropt$star !== undefined ? $staropt$star : 1.0;
   var output = Caml_array.caml_make_vect(binCount, 0.0);
   var outputMax = /* record */[/* contents */0.0];
-  $$Array.iter((function (pixel) {
-          var match = Curry._1(binFn, pixel);
-          var i = match[0];
-          Caml_array.caml_array_set(output, i, Caml_array.caml_array_get(output, i) + match[1]);
-          if (Caml_array.caml_array_get(output, i) > outputMax[0]) {
-            outputMax[0] = Caml_array.caml_array_get(output, i);
+  $$Array.iteri((function (i, pixel) {
+          var match = Curry._2(binFn, i, pixel);
+          var i$1 = match[0];
+          Caml_array.caml_array_set(output, i$1, Caml_array.caml_array_get(output, i$1) + match[1]);
+          if (Caml_array.caml_array_get(output, i$1) > outputMax[0]) {
+            outputMax[0] = Caml_array.caml_array_get(output, i$1);
             return /* () */0;
           } else {
             return 0;

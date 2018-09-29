@@ -11,6 +11,10 @@ var attachVideoStream = function (video,stream){
 
 var unmute = function (video){video.muted = false;};
 
+var getWidth = function (video){return video.width;};
+
+var getHeight = function (video){return video.height;};
+
 var component = ReasonReact.statelessComponent("Video");
 
 function make(_, url, setAudioRef, setImageRef) {
@@ -49,6 +53,8 @@ function make(_, url, setAudioRef, setImageRef) {
 export {
   attachVideoStream ,
   unmute ,
+  getWidth ,
+  getHeight ,
   component ,
   make ,
   

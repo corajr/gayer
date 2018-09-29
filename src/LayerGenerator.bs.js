@@ -1105,6 +1105,8 @@ function maybeAddId(layer) {
   }
 }
 
+var init$4 = fill(0.0125, "red");
+
 var allLayerTypes = /* array */[
   /* tuple */[
     "image",
@@ -1125,6 +1127,10 @@ var allLayerTypes = /* array */[
   /* tuple */[
     "webcam",
     webcam
+  ],
+  /* tuple */[
+    "hue histogram",
+    histogram
   ],
   /* tuple */[
     "slitscan",
@@ -1170,7 +1176,18 @@ var allLayerTypes = /* array */[
   ],
   /* tuple */[
     "fill",
-    fill(0.0125, "white")
+    /* record */[
+      /* content */init$4[/* content */0],
+      /* enabled */init$4[/* enabled */1],
+      /* alpha */init$4[/* alpha */2],
+      /* compositeOperation : Multiply */11,
+      /* rotation */init$4[/* rotation */4],
+      /* transformMatrix */init$4[/* transformMatrix */5],
+      /* filters */init$4[/* filters */6],
+      /* tickPeriod */init$4[/* tickPeriod */7],
+      /* tickPhase */init$4[/* tickPhase */8],
+      /* id */init$4[/* id */9]
+    ]
   ],
   /* tuple */[
     "blur",

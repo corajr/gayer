@@ -467,67 +467,6 @@ var slitscanParams = /* record */[
   slitscanParams_014
 ];
 
-var slitscanHistogramParams_000 = slitscanParams_000;
-
-var slitscanHistogramParams_001 = slitscanParams_001;
-
-var slitscanHistogramParams_002 = slitscanParams_002;
-
-var slitscanHistogramParams_003 = slitscanParams_003;
-
-var slitscanHistogramParams_004 = slitscanParams_004;
-
-var slitscanHistogramParams_005 = slitscanParams_005;
-
-var slitscanHistogramParams_006 = slitscanParams_006;
-
-var slitscanHistogramParams_007 = slitscanParams_007;
-
-var slitscanHistogramParams_008 = slitscanParams_008;
-
-var slitscanHistogramParams_009 = slitscanParams_009;
-
-var slitscanHistogramParams_010 = slitscanParams_010;
-
-var slitscanHistogramParams_011 = slitscanParams_011;
-
-var slitscanHistogramParams_012 = slitscanParams_012;
-
-var slitscanHistogramParams_014 = /* layers : :: */[
-  LayerGenerator$Gayer.webcam,
-  /* :: */[
-    LayerGenerator$Gayer.slitscan(undefined, "root"),
-    /* :: */[
-      LayerGenerator$Gayer.histogram,
-      /* :: */[
-        LayerGenerator$Gayer.historyLayer,
-        /* :: */[
-          LayerGenerator$Gayer.reader,
-          /* [] */0
-        ]
-      ]
-    ]
-  ]
-];
-
-var slitscanHistogramParams = /* record */[
-  slitscanHistogramParams_000,
-  slitscanHistogramParams_001,
-  slitscanHistogramParams_002,
-  slitscanHistogramParams_003,
-  slitscanHistogramParams_004,
-  slitscanHistogramParams_005,
-  slitscanHistogramParams_006,
-  slitscanHistogramParams_007,
-  slitscanHistogramParams_008,
-  slitscanHistogramParams_009,
-  slitscanHistogramParams_010,
-  slitscanHistogramParams_011,
-  slitscanHistogramParams_012,
-  /* shouldClear */false,
-  slitscanHistogramParams_014
-];
-
 var whiteboardParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
 var whiteboardParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
@@ -1595,61 +1534,61 @@ var lesTresRichesHeures = /* record */[
   lesTresRichesHeures_014
 ];
 
-var histogram_000 = /* width */Params$Gayer.defaultParams[/* width */0];
+var histogramParams_000 = /* width */Params$Gayer.defaultParams[/* width */0];
 
-var histogram_001 = /* height */Params$Gayer.defaultParams[/* height */1];
+var histogramParams_001 = /* height */Params$Gayer.defaultParams[/* height */1];
 
-var histogram_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
+var histogramParams_002 = /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2];
 
-var histogram_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
+var histogramParams_003 = /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3];
 
-var histogram_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
+var histogramParams_004 = /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4];
 
-var histogram_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
+var histogramParams_005 = /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5];
 
-var histogram_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
+var histogramParams_006 = /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6];
 
-var histogram_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
+var histogramParams_007 = /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7];
 
-var histogram_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
+var histogramParams_008 = /* inputGain */Params$Gayer.defaultParams[/* inputGain */8];
 
-var histogram_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
+var histogramParams_009 = /* outputGain */Params$Gayer.defaultParams[/* outputGain */9];
 
-var histogram_010 = /* q */Params$Gayer.defaultParams[/* q */10];
+var histogramParams_010 = /* q */Params$Gayer.defaultParams[/* q */10];
 
-var histogram_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
+var histogramParams_011 = /* transpose */Params$Gayer.defaultParams[/* transpose */11];
 
-var histogram_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
+var histogramParams_012 = /* stereo */Params$Gayer.defaultParams[/* stereo */12];
 
-var histogram_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
+var histogramParams_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13];
 
-var histogram_014 = /* layers : :: */[
-  LayerGenerator$Gayer.hubble,
+var histogramParams_014 = /* layers : :: */[
+  LayerGenerator$Gayer.webcam,
   /* :: */[
-    LayerGenerator$Gayer.pitchFilter(Music$Gayer.cMajor),
+    LayerGenerator$Gayer.histogram,
     /* :: */[
-      LayerGenerator$Gayer.histogram,
+      LayerGenerator$Gayer.saturationReader,
       /* [] */0
     ]
   ]
 ];
 
-var histogram = /* record */[
-  histogram_000,
-  histogram_001,
-  histogram_002,
-  histogram_003,
-  histogram_004,
-  histogram_005,
-  histogram_006,
-  histogram_007,
-  histogram_008,
-  histogram_009,
-  histogram_010,
-  histogram_011,
-  histogram_012,
-  histogram_013,
-  histogram_014
+var histogramParams = /* record */[
+  histogramParams_000,
+  histogramParams_001,
+  histogramParams_002,
+  histogramParams_003,
+  histogramParams_004,
+  histogramParams_005,
+  histogramParams_006,
+  histogramParams_007,
+  histogramParams_008,
+  histogramParams_009,
+  histogramParams_010,
+  histogramParams_011,
+  histogramParams_012,
+  histogramParams_013,
+  histogramParams_014
 ];
 
 var init$5 = LayerGenerator$Gayer.fill(undefined, "cyan");
@@ -2197,56 +2136,62 @@ var presetsWithoutLayerIds_001 = /* :: */[
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Keycode",
-                        keycodeParams
+                        "Histogram",
+                        histogramParams
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Displace",
-                          displaceParams
+                          "Keycode",
+                          keycodeParams
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Dissolve",
-                            droste
+                            "Displace",
+                            displaceParams
                           ],
                           /* :: */[
                             /* tuple */[
-                              "MIDI (requires MIDI keyboard)",
-                              midi
+                              "Dissolve",
+                              droste
                             ],
                             /* :: */[
                               /* tuple */[
-                                "Raw Audio Warning",
-                                rawAudioWarning
+                                "MIDI (requires MIDI keyboard)",
+                                midi
                               ],
                               /* :: */[
                                 /* tuple */[
-                                  "Raw audio (can feedback!)",
-                                  rawAudio
+                                  "Raw Audio Warning",
+                                  rawAudioWarning
                                 ],
                                 /* :: */[
                                   /* tuple */[
-                                    "Empty",
-                                    /* record */[
-                                      /* width */Params$Gayer.defaultParams[/* width */0],
-                                      /* height */Params$Gayer.defaultParams[/* height */1],
-                                      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                                      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                                      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                                      /* q */Params$Gayer.defaultParams[/* q */10],
-                                      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                                      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                                      /* layers : [] */0
-                                    ]
+                                    "Raw audio (can feedback!)",
+                                    rawAudio
                                   ],
-                                  /* [] */0
+                                  /* :: */[
+                                    /* tuple */[
+                                      "Empty",
+                                      /* record */[
+                                        /* width */Params$Gayer.defaultParams[/* width */0],
+                                        /* height */Params$Gayer.defaultParams[/* height */1],
+                                        /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                                        /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                                        /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                                        /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                                        /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                                        /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                                        /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                                        /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                                        /* q */Params$Gayer.defaultParams[/* q */10],
+                                        /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                                        /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                                        /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                                        /* layers : [] */0
+                                      ]
+                                    ],
+                                    /* [] */0
+                                  ]
                                 ]
                               ]
                             ]
@@ -2327,7 +2272,6 @@ export {
   webcamParams ,
   webcamEdgeDetect ,
   slitscanParams ,
-  slitscanHistogramParams ,
   whiteboardParams ,
   isItACrime ,
   tughra ,
@@ -2349,7 +2293,7 @@ export {
   videoURL ,
   video ,
   lesTresRichesHeures ,
-  histogram ,
+  histogramParams ,
   rawAudio ,
   rawAudioAndSpacy ,
   keycodeParams ,

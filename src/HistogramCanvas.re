@@ -31,10 +31,11 @@ let make =
       let ctx = getContext(getFromReact(histogramCanvas));
       let slice = Ctx.getImageData(rootCtx, readPos^, 0, 1, rootHeight);
 
+      let rootOctaveHeight = rootHeight / 10;
       let bins = 120;
-      let binFn = ({r, g, b, a}) => {
-        let (h, s, l) = rgbToHslFloat(r, g, b);
-        let octave = int_of_float(l *. 9.0);
+      let binFn = (i, {r, g, b}) => {
+        let (h, s, _) = rgbToHslFloat(r, g, b);
+        let octave = (rootHeight - i - 1) / rootOctaveHeight;
         let octaveHeight = 12;
         let offsetInOctave = int_of_float(h *. 11.0);
         let bin = octave * octaveHeight + offsetInOctave;
@@ -44,25 +45,8 @@ let make =
       let histogram =
         imageDataToHistogram(~binCount=bins, ~binFn, ~divideBy=10.0, slice);
 
-      /* let img = makeImageDataFromFloats(histogram, 1, height); */
-      /* Ctx.putImageData(ctx, img, 0, 0); */
-
-      let n = height / bins;
-      for (i in 0 to n - 1) {
-        let offset = (n - i - 1) * bins;
-        for (j in 0 to bins - 1) {
-          let h = float_of_int(j mod 12) /. 12.0;
-          let s = histogram[j];
-          /* let s = Js.Math.pow_float(histogram[j], 2.0); */
-          let l = float_of_int(j / 10) /. 10.0;
-
-          let yPos = offset + (bins - j - 1);
-
-          let color = hsl(h, s, s > 0.05 ? l : 0.0);
-          Ctx.setFillStyle(ctx, color);
-          Ctx.fillRect(ctx, 0, yPos, 1, 1);
-        };
-      };
+      let img = makeImageDataFromFloats(histogram, 1, height);
+      Ctx.putImageData(ctx, img, 0, 0);
 
     | _ => ()
     };
@@ -76,7 +60,7 @@ let make =
       <canvas
         style=(ReactDOMRe.Style.make(~opacity="0.0", ()))
         ref=(self.handle(saveRef))
-        width=(Js.Int.toString(width))
+        width="1"
         height=(Js.Int.toString(height))
       />,
   };
