@@ -9,11 +9,12 @@ import * as MaterialUi_Select from "@jsiebern/bs-material-ui/src/MaterialUi_Sele
 import * as MaterialUi_MenuItem from "@jsiebern/bs-material-ui/src/MaterialUi_MenuItem.bs.js";
 
 var allImages = /* array */[
-  "media/farm2018/1.jpg",
   "media/four_seasons.jpg",
-  "media/harmony.jpg",
   "media/hilbert_curve.png",
   "media/hubble_ultra_deep_field.jpg",
+  "media/hubble_ultra_deep_field_cleaned.jpg",
+  "media/fermi_lat_5year_gamma.jpg",
+  "media/city_lights_2012.jpg",
   "media/is_it_a_crime_large.png",
   "media/cyber_winnie.png",
   "media/les_tres_riches_heures.jpg",

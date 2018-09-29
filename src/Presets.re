@@ -338,7 +338,7 @@ let presetsWithoutLayerIds = [
   ("Webcam (edge detection)", webcamEdgeDetect),
   ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
-  ("Slitscan", slitscanParams),
+  /* ("Slitscan", slitscanParams), */
   ("Histogram", histogramParams),
   ("Keycode", keycodeParams),
   ("Displace", displaceParams),
