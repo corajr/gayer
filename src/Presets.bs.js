@@ -1061,10 +1061,13 @@ var fourSeasons_013 = /* shouldClear */Params$Gayer.defaultParams[/* shouldClear
 var fourSeasons_014 = /* layers : :: */[
   LayerGenerator$Gayer.img("media/four_seasons.jpg"),
   /* :: */[
-    LayerGenerator$Gayer.pitchFilter(Music$Gayer.cMinor),
+    LayerGenerator$Gayer.histogram,
     /* :: */[
-      LayerGenerator$Gayer.saturationReader,
-      /* [] */0
+      LayerGenerator$Gayer.pitchFilter(Music$Gayer.cMinor),
+      /* :: */[
+        LayerGenerator$Gayer.reader,
+        /* [] */0
+      ]
     ]
   ]
 ];
@@ -2115,62 +2118,56 @@ var presetsWithoutLayerIds_001 = /* :: */[
                   ],
                   /* :: */[
                     /* tuple */[
-                      "Histogram",
-                      histogramParams
+                      "Keycode",
+                      keycodeParams
                     ],
                     /* :: */[
                       /* tuple */[
-                        "Keycode",
-                        keycodeParams
+                        "Displace",
+                        displaceParams
                       ],
                       /* :: */[
                         /* tuple */[
-                          "Displace",
-                          displaceParams
+                          "Dissolve",
+                          dissolve
                         ],
                         /* :: */[
                           /* tuple */[
-                            "Dissolve",
-                            dissolve
+                            "MIDI (requires MIDI keyboard)",
+                            midi
                           ],
                           /* :: */[
                             /* tuple */[
-                              "MIDI (requires MIDI keyboard)",
-                              midi
+                              "Raw Audio Warning",
+                              rawAudioWarning
                             ],
                             /* :: */[
                               /* tuple */[
-                                "Raw Audio Warning",
-                                rawAudioWarning
+                                "Raw audio (can feedback!)",
+                                rawAudio
                               ],
                               /* :: */[
                                 /* tuple */[
-                                  "Raw audio (can feedback!)",
-                                  rawAudio
+                                  "Empty",
+                                  /* record */[
+                                    /* width */Params$Gayer.defaultParams[/* width */0],
+                                    /* height */Params$Gayer.defaultParams[/* height */1],
+                                    /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
+                                    /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
+                                    /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
+                                    /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
+                                    /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
+                                    /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
+                                    /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
+                                    /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
+                                    /* q */Params$Gayer.defaultParams[/* q */10],
+                                    /* transpose */Params$Gayer.defaultParams[/* transpose */11],
+                                    /* stereo */Params$Gayer.defaultParams[/* stereo */12],
+                                    /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
+                                    /* layers : [] */0
+                                  ]
                                 ],
-                                /* :: */[
-                                  /* tuple */[
-                                    "Empty",
-                                    /* record */[
-                                      /* width */Params$Gayer.defaultParams[/* width */0],
-                                      /* height */Params$Gayer.defaultParams[/* height */1],
-                                      /* readPosDelta */Params$Gayer.defaultParams[/* readPosDelta */2],
-                                      /* writePosDelta */Params$Gayer.defaultParams[/* writePosDelta */3],
-                                      /* readPosOffset */Params$Gayer.defaultParams[/* readPosOffset */4],
-                                      /* writePosOffset */Params$Gayer.defaultParams[/* writePosOffset */5],
-                                      /* millisPerTick */Params$Gayer.defaultParams[/* millisPerTick */6],
-                                      /* audioInputSetting */Params$Gayer.defaultParams[/* audioInputSetting */7],
-                                      /* inputGain */Params$Gayer.defaultParams[/* inputGain */8],
-                                      /* outputGain */Params$Gayer.defaultParams[/* outputGain */9],
-                                      /* q */Params$Gayer.defaultParams[/* q */10],
-                                      /* transpose */Params$Gayer.defaultParams[/* transpose */11],
-                                      /* stereo */Params$Gayer.defaultParams[/* stereo */12],
-                                      /* shouldClear */Params$Gayer.defaultParams[/* shouldClear */13],
-                                      /* layers : [] */0
-                                    ]
-                                  ],
-                                  /* [] */0
-                                ]
+                                /* [] */0
                               ]
                             ]
                           ]

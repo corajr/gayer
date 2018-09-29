@@ -187,10 +187,9 @@ let fourSeasons = {
   layers: [
     img("media/four_seasons.jpg"),
     /* sobel, */
-    /* histogram, */
+    histogram,
     pitchFilter(cMinor),
-    saturationReader,
-    /* reader, */
+    reader,
   ],
 };
 
@@ -338,7 +337,7 @@ let presetsWithoutLayerIds = [
   ("Mic (CQT spectrogram)", history),
   /* ("Hand-drawn", handDrawnParams), */
   /* ("Slitscan", slitscanParams), */
-  ("Histogram", histogramParams),
+  /* ("Histogram", histogramParams), */
   ("Keycode", keycodeParams),
   ("Displace", displaceParams),
   /* ("History (-|-)", historyBackAndForth), */
