@@ -325,8 +325,8 @@ let rawAudioWarning = {
 };
 
 let presetsWithoutLayerIds = [
-  ("Welcome", welcome),
-  ("Single note", singleNote),
+  /* ("Welcome", welcome), */
+  /* ("Single note", singleNote), */
   ("Spacy", {...defaultParams, layers: spacy}),
   ("Tughra of Suleiman", tughra),
   ({js|Les Très Riches Heures|js}, lesTresRichesHeures),

@@ -20,6 +20,9 @@ type audioInputSetting = AudioInput.audioInputSetting;
 type filterInput = audioNode;
 
 type state = {
+  audioCtx: ref(option(audioContext)),
+  audioPaused: bool,
+  audioInitFn: ref(option(unit => unit)),
   animationStartTime: ref(float),
   animationLastUpdated: ref(float),
   readPos: ref(int),
@@ -57,6 +60,9 @@ let defaultState = () => {
   {
     animationStartTime: ref(0.0),
     animationLastUpdated: ref(0.0),
+    audioCtx: ref(None),
+    audioInitFn: ref(None),
+    audioPaused: true,
     readPos: ref(0),
     writePos: ref(0),
     freqFuncParams: ref((1, 16)),
@@ -99,6 +105,8 @@ type action =
   | TogglePresetDrawer
   | SaveImage
   | ToggleFullscreen
+  | ToggleAudio
+  | ResumeAudio
   | AddSavedImage(string)
   | SetFilterInput(audioNode)
   | SetMicInput(audioNode)
@@ -574,11 +582,14 @@ let saveTick = ({ReasonReact.state}, onUnmount, key, tickFn) => {
   );
 };
 
-let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
+let make = _children => {
   ...component,
   initialState: defaultState,
   reducer: (action, state) =>
     switch (action) {
+    | ToggleAudio =>
+      ReasonReact.Update({...state, audioPaused: ! state.audioPaused})
+    | ResumeAudio => ReasonReact.Update({...state, audioPaused: false})
     | AddSavedImage(url) =>
       let timestamp = [%bs.raw "new Date().toISOString()"];
       ReasonReact.Update({
@@ -713,49 +724,55 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
       )
     },
   didMount: self => {
-    let merger = createChannelMerger(audioCtx);
-    self.state.merger := Some(merger);
+    let audioInit = audioCtx => {
+      self.state.audioCtx := Some(audioCtx);
 
-    let compressor =
-      makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
+      let merger = createChannelMerger(audioCtx);
+      self.state.merger := Some(merger);
 
-    let masterGain = createGain(audioCtx);
+      let compressor =
+        makeCompressor(~audioCtx, ~paramValues=defaultCompressorValues);
 
-    self.state.compressor := Some(compressor);
-    self.state.masterGain := Some(masterGain);
-    setValueAtTime(masterGain |. gain_Get, currentTime(audioCtx), 0.5);
+      let masterGain = createGain(audioCtx);
 
-    let noise = pinkNoise(audioCtx);
-    self.send(SetFilterInput(noise));
+      self.state.compressor := Some(compressor);
+      self.state.masterGain := Some(masterGain);
+      setValueAtTime(masterGain |. gain_Get, currentTime(audioCtx), 0.5);
 
-    self.state.audioGraph :=
-      self.state.audioGraph^
-      |> addNode(("merger", unwrapChannelMerger(merger)))
-      |> addNode(("compressor", unwrapCompressor(compressor)))
-      |> addNode(("masterGain", unwrapGain(masterGain)))
-      |> addNode(("sink", defaultSink(audioCtx)))
-      |> addEdge(("merger", "compressor", 0, 0))
-      |> addEdge(("compressor", "masterGain", 0, 0))
-      |> addEdge(("masterGain", "sink", 0, 0))
-      |> updateConnections;
+      let noise = pinkNoise(audioCtx);
+      self.send(SetFilterInput(noise));
 
-    generateNewFilterBanks(audioCtx, self);
+      self.state.audioGraph :=
+        self.state.audioGraph^
+        |> addNode(("merger", unwrapChannelMerger(merger)))
+        |> addNode(("compressor", unwrapCompressor(compressor)))
+        |> addNode(("masterGain", unwrapGain(masterGain)))
+        |> addNode(("sink", defaultSink(audioCtx)))
+        |> addEdge(("merger", "compressor", 0, 0))
+        |> addEdge(("compressor", "masterGain", 0, 0))
+        |> addEdge(("masterGain", "sink", 0, 0))
+        |> updateConnections;
 
-    (
-      switch (getAudioVisualStream()) {
-      | None => ()
-      | Some(streamPromise) =>
-        streamPromise
-        |> Js.Promise.then_(stream => {
-             self.send(SetMediaStream(stream));
-             let audio = createMediaStreamSource(audioCtx, stream);
-             self.send(SetMicInput(audio));
-             Js.Promise.resolve();
-           })
-        |> ignore
-      }
-    )
-    |> ignore;
+      generateNewFilterBanks(audioCtx, self);
+
+      (
+        switch (getAudioVisualStream()) {
+        | None => ()
+        | Some(streamPromise) =>
+          streamPromise
+          |> Js.Promise.then_(stream => {
+               self.send(SetMediaStream(stream));
+               let audio = createMediaStreamSource(audioCtx, stream);
+               self.send(SetMicInput(audio));
+               Js.Promise.resolve();
+             })
+          |> ignore
+        }
+      )
+      |> ignore;
+    };
+
+    self.state.audioInitFn := Some(_ => makeDefaultAudioCtx() |> audioInit);
 
     self.send(Clear);
 
@@ -828,6 +845,20 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
     };
   },
   didUpdate: ({oldSelf, newSelf}) => {
+    switch (newSelf.state.audioCtx^) {
+    | Some(audioCtx) =>
+      if (newSelf.state.audioPaused) {
+        Audio.suspend(audioCtx);
+      } else {
+        Audio.resume(audioCtx);
+      }
+    | None =>
+      switch (newSelf.state.audioInitFn^) {
+      | Some(f) => f()
+      | None => ()
+      }
+    };
+
     if (oldSelf.state.filterInput != newSelf.state.filterInput
         || oldSelf.state.filterBanks != newSelf.state.filterBanks) {
       disconnectInputs(oldSelf.state);
@@ -835,15 +866,19 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
 
     if (oldSelf.state.params.audioInputSetting
         != newSelf.state.params.audioInputSetting) {
-      let (_, audio) =
-        getAnalysisInput(
-          audioCtx,
-          newSelf.state,
-          newSelf.state.params.audioInputSetting,
-        );
-      switch (audio) {
+      switch (newSelf.state.audioCtx^) {
+      | Some(audioCtx) =>
+        let (_, audio) =
+          getAnalysisInput(
+            audioCtx,
+            newSelf.state,
+            newSelf.state.params.audioInputSetting,
+          );
+        switch (audio) {
+        | None => ()
+        | Some(audio) => newSelf.send(SetFilterInput(audio))
+        };
       | None => ()
-      | Some(audio) => newSelf.send(SetFilterInput(audio))
       };
     };
 
@@ -868,7 +903,10 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
         || oldSelf.state.params.transpose != newSelf.state.params.transpose
         || oldSelf.state.params.stereo != newSelf.state.params.stereo
         || oldSelf.state.params.height != newSelf.state.params.height) {
-      generateNewFilterBanks(audioCtx, newSelf);
+      switch (newSelf.state.audioCtx^) {
+      | Some(audioCtx) => generateNewFilterBanks(audioCtx, newSelf)
+      | None => ()
+      };
     };
 
     if (oldSelf.state.params.millisPerTick
@@ -892,201 +930,225 @@ let make = (~audioCtx=makeDefaultAudioCtx(), _children) => {
   },
   willUnmount: self => disconnectInputs(self.state),
   render: self =>
-    MaterialUi.(
-      <div>
+    switch (self.state.audioCtx^) {
+    | Some(audioCtx) =>
+      MaterialUi.(
+        <div>
 
-          <CssBaseline />
-          <AppBar position=`Sticky>
-            <Toolbar>
-              <IconButton
-                color=`Inherit
-                onClick=(_evt => self.send(TogglePresetDrawer))>
-                <MaterialUIIcons.Menu />
-              </IconButton>
-              <GrowTitle
+            <CssBaseline />
+            <AppBar position=`Sticky>
+              <Toolbar>
+                <IconButton
+                  color=`Inherit
+                  onClick=(_evt => self.send(TogglePresetDrawer))>
+                  <MaterialUIIcons.Menu />
+                </IconButton>
+                <GrowTitle
+                  render=(
+                    classes =>
+                      <Typography
+                        variant=`Title
+                        color=`Inherit
+                        classes=[Title(classes.grow)]>
+                        (ReasonReact.string("GAYER"))
+                      </Typography>
+                  )
+                />
+                (
+                  switch (self.state.score) {
+                  | Some(score) => <ScoreControl score />
+                  | None => ReasonReact.null
+                  }
+                )
+              </Toolbar>
+            </AppBar>
+            <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
+              <SizedDrawer
                 render=(
                   classes =>
-                    <Typography
-                      variant=`Title
-                      color=`Inherit
-                      classes=[Title(classes.grow)]>
-                      (ReasonReact.string("GAYER"))
-                    </Typography>
+                    <Drawer
+                      variant=`Temporary
+                      open_=self.state.presetDrawerOpen
+                      classes=[Paper(classes.paper)]>
+                      <div
+                        style=(
+                          ReactDOMRe.Style.make(
+                            ~display="flex",
+                            ~alignItems="center",
+                            ~justifyContent="flex-end",
+                            ~padding="0 8px",
+                            (),
+                          )
+                        )>
+                        <IconButton
+                          onClick=(_evt => self.send(TogglePresetDrawer))
+                          color=`Inherit>
+                          <MaterialUIIcons.ChevronLeft />
+                        </IconButton>
+                      </div>
+                      <Divider />
+                      <div
+                        tabIndex=0
+                        role="button"
+                        onClick=(_evt => self.send(TogglePresetDrawer))
+                        onKeyDown=(_evt => self.send(TogglePresetDrawer))>
+                        <List component=(`String("nav"))>
+                          (
+                            ReasonReact.array(
+                              Array.of_list(presets)
+                              |> Array.mapi((i, (name, preset)) =>
+                                   <ListItem
+                                     key=name
+                                     button=true
+                                     onClick=(
+                                       _evt =>
+                                         pushParamsState(
+                                           ~maybeI=Some(i),
+                                           preset,
+                                         )
+                                     )>
+                                     <ListItemText>
+                                       (ReasonReact.string(name))
+                                     </ListItemText>
+                                   </ListItem>
+                                 ),
+                            )
+                          )
+                        </List>
+                      </div>
+                    </Drawer>
                 )
               />
-              (
-                switch (self.state.score) {
-                | Some(score) => <ScoreControl score />
-                | None => ReasonReact.null
-                }
-              )
-            </Toolbar>
-          </AppBar>
-          <div style=(ReactDOMRe.Style.make(~padding="12px", ()))>
-            <SizedDrawer
-              render=(
-                classes =>
-                  <Drawer
-                    variant=`Temporary
-                    open_=self.state.presetDrawerOpen
-                    classes=[Paper(classes.paper)]>
-                    <div
-                      style=(
-                        ReactDOMRe.Style.make(
-                          ~display="flex",
-                          ~alignItems="center",
-                          ~justifyContent="flex-end",
-                          ~padding="0 8px",
-                          (),
-                        )
-                      )>
-                      <IconButton
-                        onClick=(_evt => self.send(TogglePresetDrawer))
-                        color=`Inherit>
-                        <MaterialUIIcons.ChevronLeft />
-                      </IconButton>
-                    </div>
-                    <Divider />
-                    <div
-                      tabIndex=0
-                      role="button"
-                      onClick=(_evt => self.send(TogglePresetDrawer))
-                      onKeyDown=(_evt => self.send(TogglePresetDrawer))>
-                      <List component=(`String("nav"))>
-                        (
-                          ReasonReact.array(
-                            Array.of_list(presets)
-                            |> Array.mapi((i, (name, preset)) =>
-                                 <ListItem
-                                   key=name
-                                   button=true
-                                   onClick=(
-                                     _evt =>
-                                       pushParamsState(
-                                         ~maybeI=Some(i),
-                                         preset,
-                                       )
-                                   )>
-                                   <ListItemText>
-                                     (ReasonReact.string(name))
-                                   </ListItemText>
-                                 </ListItem>
-                               ),
-                          )
-                        )
-                      </List>
-                    </div>
-                  </Drawer>
-              )
-            />
-            <Grid container=true spacing=Grid.V24>
-              <Grid item=true xs=Grid.V6>
-                <Params
-                  params=self.state.params
-                  onMoveCard=(layers => self.send(SetLayers(layers)))
-                  onChangeLayer=(
-                    (oldLayer, maybeNewLayer) =>
-                      self.send(ChangeLayer(oldLayer, maybeNewLayer))
-                  )
-                  onSetRef=(
-                    (layer, theRef) =>
-                      self.handle(setLayerRef(audioCtx), (layer, theRef))
-                  )
-                  layerRefs=self.state.layerRefs
-                  onSetParams=(newParams => pushParamsState(newParams))
-                  saveTick=(saveTick(self))
-                  savedImages=self.state.savedImages
-                />
-              </Grid>
-              <Grid item=true xs=Grid.V4>
-                <div
-                  id="main-display"
-                  style=(
-                    ReactDOMRe.Style.make(
-                      ~marginBottom="24px",
-                      ~minHeight="400px",
-                      ~position="fixed",
-                      (),
+              <Grid container=true spacing=Grid.V24>
+                <Grid item=true xs=Grid.V6>
+                  <Params
+                    params=self.state.params
+                    onMoveCard=(layers => self.send(SetLayers(layers)))
+                    onChangeLayer=(
+                      (oldLayer, maybeNewLayer) =>
+                        self.send(ChangeLayer(oldLayer, maybeNewLayer))
                     )
-                  )>
-                  <MediaProvider
-                    audioCtx
-                    audioGraph=self.state.audioGraph
-                    globalDrawContext=self.state.drawContext
-                    getAudio=(getAnalysisInput(audioCtx, self.state))
                     onSetRef=(
                       (layer, theRef) =>
                         self.handle(setLayerRef(audioCtx), (layer, theRef))
                     )
                     layerRefs=self.state.layerRefs
-                    currentFilterValues=self.state.currentFilterValues
-                    readPos=self.state.readPos
-                    writePos=self.state.writePos
-                    rootWidth=self.state.params.width
-                    rootHeight=self.state.params.height
-                    millisPerTick=self.state.params.millisPerTick
+                    onSetParams=(newParams => pushParamsState(newParams))
                     saveTick=(saveTick(self))
-                    layers=(sortLayers(self.state.params.layers))
+                    savedImages=self.state.savedImages
                   />
-                  <canvas
-                    ref=(self.handle(setCanvasRef))
-                    width=(Js.Int.toString(self.state.params.width))
-                    height=(Js.Int.toString(self.state.params.height))
+                </Grid>
+                <Grid item=true xs=Grid.V4>
+                  <div
+                    id="main-display"
                     style=(
                       ReactDOMRe.Style.make(
-                        ~imageRendering="crisp-edges",
-                        ~transform=
-                          "scale("
-                          ++ Js.Float.toString(
-                               400.0 /. float_of_int(self.state.params.height),
-                             )
-                          ++ ")",
-                        ~transformOrigin="top left",
+                        ~marginBottom="24px",
+                        ~minHeight="400px",
+                        ~position="fixed",
                         (),
                       )
+                    )>
+                    <MediaProvider
+                      audioCtx
+                      audioGraph=self.state.audioGraph
+                      globalDrawContext=self.state.drawContext
+                      getAudio=(getAnalysisInput(audioCtx, self.state))
+                      onSetRef=(
+                        (layer, theRef) =>
+                          self.handle(
+                            setLayerRef(audioCtx),
+                            (layer, theRef),
+                          )
+                      )
+                      layerRefs=self.state.layerRefs
+                      currentFilterValues=self.state.currentFilterValues
+                      readPos=self.state.readPos
+                      writePos=self.state.writePos
+                      rootWidth=self.state.params.width
+                      rootHeight=self.state.params.height
+                      millisPerTick=self.state.params.millisPerTick
+                      saveTick=(saveTick(self))
+                      layers=(sortLayers(self.state.params.layers))
+                    />
+                    <canvas
+                      ref=(self.handle(setCanvasRef))
+                      width=(Js.Int.toString(self.state.params.width))
+                      height=(Js.Int.toString(self.state.params.height))
+                      style=(
+                        ReactDOMRe.Style.make(
+                          ~imageRendering="crisp-edges",
+                          ~transform=
+                            "scale("
+                            ++ Js.Float.toString(
+                                 400.0
+                                 /. float_of_int(self.state.params.height),
+                               )
+                            ++ ")",
+                          ~transformOrigin="top left",
+                          (),
+                        )
+                      )
+                    />
+                  </div>
+                </Grid>
+                <Grid item=true xs=Grid.V2>
+                  <Button
+                    variant=`Contained
+                    onClick=(_evt => self.send(SaveImage))
+                    style=(ReactDOMRe.Style.make(~position="fixed", ()))>
+                    <MaterialUIIcons.PhotoCamera />
+                    (ReasonReact.string("Snapshot"))
+                  </Button>
+                  <Button
+                    variant=`Contained
+                    onClick=(_evt => self.send(ToggleAudio))
+                    style=(
+                      ReactDOMRe.Style.make(
+                        ~position="fixed",
+                        ~right="0px",
+                        (),
+                      )
+                    )>
+                    (
+                      self.state.audioPaused ?
+                        <MaterialUIIcons.VolumeUp /> :
+                        <MaterialUIIcons.VolumeMute />
                     )
-                  />
-                </div>
+                  </Button>
+                  <div style=(ReactDOMRe.Style.make(~marginTop="48px", ()))>
+                    (
+                      self.state.savedImages
+                      |> Belt.Map.String.toArray
+                      |> Array.map(((key, url)) =>
+                           <img key width="100%" src=url />
+                         )
+                      |> ReasonReact.array
+                    )
+                  </div>
+                </Grid>
               </Grid>
-              <Grid item=true xs=Grid.V2>
-                <Button
-                  variant=`Contained
-                  onClick=(_evt => self.send(SaveImage))
-                  style=(ReactDOMRe.Style.make(~position="fixed", ()))>
-                  <MaterialUIIcons.PhotoCamera />
-                  (ReasonReact.string("Snapshot"))
-                </Button>
-                <div style=(ReactDOMRe.Style.make(~marginTop="48px", ()))>
-                  (
-                    self.state.savedImages
-                    |> Belt.Map.String.toArray
-                    |> Array.map(((key, url)) =>
-                         <img key width="100%" src=url />
-                       )
-                    |> ReasonReact.array
-                  )
-                </div>
-              </Grid>
-            </Grid>
+            </div>
           </div>
-        </div>
-        /* <Button */
-        /*   style=( */
-        /*     ReactDOMRe.Style.make( */
-        /*       ~position="absolute", */
-        /*       ~right="0px", */
-        /*       ~bottom="0px", */
-        /*       (), */
-        /*     ) */
-        /*   ) */
-        /*   variant=`Contained */
-        /*   onClick=(evt => self.send(ToggleFullscreen))> */
-        /*   ( */
-        /*     self.state.fullscreenCanvas ? */
-        /*       <MaterialUIIcons.FullscreenExit /> : */
-        /*       <MaterialUIIcons.Fullscreen /> */
-        /*   ) */
-        /*   (ReasonReact.string("Fullscreen")) */
-        /* </Button> */
-    ),
+          /* <Button */
+          /*   style=( */
+          /*     ReactDOMRe.Style.make( */
+          /*       ~position="absolute", */
+          /*       ~right="0px", */
+          /*       ~bottom="0px", */
+          /*       (), */
+          /*     ) */
+          /*   ) */
+          /*   variant=`Contained */
+          /*   onClick=(evt => self.send(ToggleFullscreen))> */
+          /*   ( */
+          /*     self.state.fullscreenCanvas ? */
+          /*       <MaterialUIIcons.FullscreenExit /> : */
+          /*       <MaterialUIIcons.Fullscreen /> */
+          /*   ) */
+          /*   (ReasonReact.string("Fullscreen")) */
+          /* </Button> */
+      )
+    | None => ReasonReact.null
+    },
 };

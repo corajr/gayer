@@ -187,6 +187,9 @@ external getFrequencyResponse :
 
 [@bs.get] external getAudioContext : audioNode => audioContext = "context";
 
+[@bs.send] external suspend : audioContext => unit = "";
+[@bs.send] external resume : audioContext => unit = "";
+
 [@bs.send] external createAnalyser : audioContext => analyser = "";
 [@bs.send] external createBiquadFilter : audioContext => biquadFilter = "";
 

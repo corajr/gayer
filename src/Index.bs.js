@@ -4,7 +4,7 @@ import * as App$Gayer from "./App.bs.js";
 import * as ReactDOMRe from "reason-react/src/ReactDOMRe.js";
 import * as ReasonReact from "reason-react/src/ReasonReact.js";
 
-ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, App$Gayer.make(undefined, /* array */[])), "main");
+ReactDOMRe.renderToElementWithId(ReasonReact.element(undefined, undefined, App$Gayer.make(/* array */[])), "main");
 
 export {
   
