@@ -22,6 +22,7 @@ This software is licensed under GPL 3.0.
 ## Run Project
 
 ```sh
+export NODE_OPTIONS=--openssl-legacy-provider
 yarn install
 yarn start
 # in another tab

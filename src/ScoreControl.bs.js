@@ -13,9 +13,32 @@ import * as MaterialUIIcons from "bs-material-ui-icons/src/MaterialUIIcons.js";
 import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_IconButton.bs.js";
 import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 
+function maybeResumeAudio(audioCtx) {
+  console.log(audioCtx.state);
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+    return /* () */0;
+  } else {
+    return 0;
+  }
+}
+
+function setRef(aRef, param) {
+  var state = param[/* state */1];
+  if (!state[/* onclickAdded */2][0] && !(aRef == null)) {
+    state[/* onclickAdded */2][0] = true;
+    aRef.addEventListener("click", (function () {
+            return maybeResumeAudio(state[/* audioCtx */1][0]);
+          }));
+    return /* () */0;
+  } else {
+    return 0;
+  }
+}
+
 var component = ReasonReact.reducerComponent("ScoreControl-Gayer");
 
-function make(score, _) {
+function make(score, audioCtx, _) {
   return /* record */[
           /* debugName */component[/* debugName */0],
           /* reactClassInternal */component[/* reactClassInternal */1],
@@ -28,6 +51,7 @@ function make(score, _) {
           /* shouldUpdate */component[/* shouldUpdate */8],
           /* render */(function (self) {
               return React.createElement("div", {
+                          ref: Curry._1(self[/* handle */0], setRef),
                           style: {
                             display: "flex",
                             flexDirection: "row",
@@ -57,13 +81,21 @@ function make(score, _) {
               catch (exn){
                 startingIndex = 0;
               }
-              return /* record */[/* eventIndex */startingIndex];
+              return /* record */[
+                      /* eventIndex */startingIndex,
+                      /* audioCtx : record */[/* contents */audioCtx],
+                      /* onclickAdded : record */[/* contents */false]
+                    ];
             }),
           /* retainedProps */component[/* retainedProps */11],
           /* reducer */(function (action, state) {
               if (action.tag) {
                 return /* UpdateWithSideEffects */Block.__(2, [
-                          /* record */[/* eventIndex */Canvas$Gayer.clamp(0, score[/* events */0].length - 1 | 0, action[0] + state[/* eventIndex */0] | 0)],
+                          /* record */[
+                            /* eventIndex */Canvas$Gayer.clamp(0, score[/* events */0].length - 1 | 0, action[0] + state[/* eventIndex */0] | 0),
+                            /* audioCtx */state[/* audioCtx */1],
+                            /* onclickAdded */state[/* onclickAdded */2]
+                          ],
                           (function (self) {
                               var eventIndex = self[/* state */1][/* eventIndex */0];
                               Routes$Gayer.pushParamsState(Js_primitive.some(eventIndex), Caml_array.caml_array_get(score[/* events */0], eventIndex)[/* params */0]);
@@ -73,7 +105,11 @@ function make(score, _) {
                         ]);
               } else {
                 return /* UpdateWithSideEffects */Block.__(2, [
-                          /* record */[/* eventIndex */Canvas$Gayer.clamp(0, score[/* events */0].length - 1 | 0, action[0])],
+                          /* record */[
+                            /* eventIndex */Canvas$Gayer.clamp(0, score[/* events */0].length - 1 | 0, action[0]),
+                            /* audioCtx */state[/* audioCtx */1],
+                            /* onclickAdded */state[/* onclickAdded */2]
+                          ],
                           (function (self) {
                               var eventIndex = self[/* state */1][/* eventIndex */0];
                               Routes$Gayer.pushParamsState(Js_primitive.some(eventIndex), Caml_array.caml_array_get(score[/* events */0], eventIndex)[/* params */0]);
@@ -92,6 +128,8 @@ var clamp = Canvas$Gayer.clamp;
 
 export {
   clamp ,
+  maybeResumeAudio ,
+  setRef ,
   component ,
   make ,
   

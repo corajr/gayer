@@ -3,15 +3,34 @@ open Score;
 
 let clamp = Canvas.clamp;
 
+let maybeResumeAudio = (audioCtx) => {
+  Js.log(Audio.state(audioCtx));
+  if (Audio.state(audioCtx) == "suspended") {
+    Audio.resume(audioCtx);
+  };
+};
+
 type action =
   | SetEventIndex(int)
   | AdjustEventIndex(int);
 
-type state = {eventIndex: int};
+
+type state = {eventIndex: int, audioCtx: ref(Audio.audioContext), onclickAdded: ref(bool)};
+
+let setRef = (aRef, {ReasonReact.state}) =>
+  if (!state.onclickAdded^) {
+    switch (Js.Nullable.toOption(aRef)) {
+    | Some(el) =>
+      state.onclickAdded := true;
+      el |> Webapi.Dom.Element.addEventListener("click", _evt => { maybeResumeAudio(state.audioCtx^); });
+    | None => ()
+    };
+};
+
 
 let component = ReasonReact.reducerComponent(__MODULE__);
 
-let make = (~score, _children) => {
+let make = (~score, ~audioCtx, _children) => {
   ...component,
   initialState: () => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
@@ -21,7 +40,7 @@ let make = (~score, _children) => {
       | exception _ => 0
       };
 
-    {eventIndex: startingIndex};
+    {eventIndex: startingIndex, audioCtx: ref(audioCtx), onclickAdded: ref(false)};
   },
   reducer: (action, state) =>
     switch (action) {
@@ -66,9 +85,11 @@ let make = (~score, _children) => {
         ),
       )
     },
+
   render: self =>
     MaterialUi.(
       <div
+        ref=(self.handle(setRef))
         style=(
           ReactDOMRe.Style.make(
             ~display="flex",

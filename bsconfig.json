@@ -38,6 +38,6 @@
     "@jsiebern/bs-material-ui"
   ],
   "bs-dev-dependencies": ["@glennsl/bs-jest"],
-  "ppx-flags": ["./node_modules/@jsiebern/bs-material-ui/ppx_withStyles"],
+  "ppx-flags": ["./node_modules/@jsiebern/bs-material-ui/bin/ppx_withStyles-darwin-x64"],
   "refmt": 3
 }
