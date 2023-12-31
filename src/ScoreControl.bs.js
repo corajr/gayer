@@ -14,12 +14,17 @@ import * as MaterialUi_IconButton from "@jsiebern/bs-material-ui/src/MaterialUi_
 import * as NumericTextField$Gayer from "./NumericTextField.bs.js";
 
 function maybeResumeAudio(audioCtx) {
-  console.log(audioCtx.state);
-  if (audioCtx.state === "suspended") {
-    audioCtx.resume();
-    return /* () */0;
+  if (audioCtx !== undefined) {
+    var audioCtx$1 = Js_primitive.valFromOption(audioCtx);
+    console.log(audioCtx$1.state);
+    if (audioCtx$1.state === "suspended") {
+      audioCtx$1.resume();
+      return /* () */0;
+    } else {
+      return 0;
+    }
   } else {
-    return 0;
+    return /* () */0;
   }
 }
 
@@ -28,7 +33,7 @@ function setRef(aRef, param) {
   if (!state[/* onclickAdded */2][0] && !(aRef == null)) {
     state[/* onclickAdded */2][0] = true;
     aRef.addEventListener("click", (function () {
-            return maybeResumeAudio(state[/* audioCtx */1][0]);
+            return maybeResumeAudio(state[/* audioCtx */1]);
           }));
     return /* () */0;
   } else {
@@ -83,7 +88,7 @@ function make(score, audioCtx, _) {
               }
               return /* record */[
                       /* eventIndex */startingIndex,
-                      /* audioCtx : record */[/* contents */audioCtx],
+                      /* audioCtx */audioCtx,
                       /* onclickAdded : record */[/* contents */false]
                     ];
             }),

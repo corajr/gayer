@@ -3,7 +3,9 @@ open Score;
 
 let clamp = Canvas.clamp;
 
-let maybeResumeAudio = (audioCtx) => {
+let maybeResumeAudio = (audioCtx) => switch (audioCtx) {
+  | None => ()
+  | Some(audioCtx) => 
   Js.log(Audio.state(audioCtx));
   if (Audio.state(audioCtx) == "suspended") {
     Audio.resume(audioCtx);
@@ -15,14 +17,14 @@ type action =
   | AdjustEventIndex(int);
 
 
-type state = {eventIndex: int, audioCtx: ref(Audio.audioContext), onclickAdded: ref(bool)};
+type state = {eventIndex: int, audioCtx: option(Audio.audioContext), onclickAdded: ref(bool)};
 
 let setRef = (aRef, {ReasonReact.state}) =>
   if (!state.onclickAdded^) {
     switch (Js.Nullable.toOption(aRef)) {
     | Some(el) =>
       state.onclickAdded := true;
-      el |> Webapi.Dom.Element.addEventListener("click", _evt => { maybeResumeAudio(state.audioCtx^); });
+      el |> Webapi.Dom.Element.addEventListener("click", _evt => { maybeResumeAudio(state.audioCtx); });
     | None => ()
     };
 };
@@ -30,7 +32,7 @@ let setRef = (aRef, {ReasonReact.state}) =>
 
 let component = ReasonReact.reducerComponent(__MODULE__);
 
-let make = (~score, ~audioCtx, _children) => {
+let make = (~score, ~audioCtx=?, _children) => {
   ...component,
   initialState: () => {
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
@@ -40,7 +42,7 @@ let make = (~score, ~audioCtx, _children) => {
       | exception _ => 0
       };
 
-    {eventIndex: startingIndex, audioCtx: ref(audioCtx), onclickAdded: ref(false)};
+    {eventIndex: startingIndex, audioCtx: audioCtx, onclickAdded: ref(false)};
   },
   reducer: (action, state) =>
     switch (action) {

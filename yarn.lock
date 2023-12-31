@@ -5400,6 +5400,11 @@ recompose@^0.28.0:
     react-lifecycles-compat "^3.0.2"
     symbol-observable "^1.0.4"
 
+refmt@^1.13.7-1:
+  version "1.13.7-1"
+  resolved "https://registry.yarnpkg.com/refmt/-/refmt-1.13.7-1.tgz#c3159bcaf23b20cf2dc86cb161570792f62d1481"
+  integrity sha512-fJbHIhRMUjKbnm6tjvExL9cTrjvYgAose+G4aDPJGSCbTaQbPUu/JINRqUUaotAJtXVzqdcLhlNqrCmVfUNqFg==
+
 regenerate@^1.2.1:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/regenerate/-/regenerate-1.4.0.tgz#4a856ec4b56e4077c557589cae85e7a4c8869a11"
